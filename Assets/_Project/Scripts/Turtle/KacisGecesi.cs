@@ -131,10 +131,17 @@ namespace IkiDunya.Turtle
             foreach (Yavru yavru in suru.Yavrular)
             {
                 if (yavru.SuAnki != Yavru.Durum.Suruyor) continue;
+                if (dalga.Cekiliyor) yavru.BuDalgadaSavruldu = false;
                 if (kum.KiyidanUzaklik(yavru.transform.position) >= dalga.SuKenari) continue;
 
+                // Suyun içindeki yavru dalga çekilince kurtulur. Dalga vururken giren yavru bir kez geri savrulur,
+                // sonra suda kalıp çekilmeyi bekler; her karede itilmez.
                 if (dalga.Cekiliyor) yavru.Kurtar();
-                else yavru.Savrul(kum.transform.forward * kacisAyarlari.SavrulmaMesafesi);
+                else if (!yavru.BuDalgadaSavruldu)
+                {
+                    yavru.Savrul(kum.transform.forward * kacisAyarlari.SavrulmaMesafesi);
+                    yavru.BuDalgadaSavruldu = true;
+                }
             }
         }
 
