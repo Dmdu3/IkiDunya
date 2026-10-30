@@ -8,6 +8,18 @@ EditorBuildSettings:
   - enabled: 1
     path: Assets/Scenes/SampleScene.unity
     guid: 99c9720ab356a0642a771bea13969a05
+  - enabled: 1
+    path: Assets/_Project/Scenes/Level/menu.unity
+    guid: 01c8bcce73847114c8b327f8f53c7616
+  - enabled: 1
+    path: Assets/_Project/Scenes/Level/Kumsal.unity
+    guid: 982e475fa6e111e4980a596f85c52dc7
+  - enabled: 1
+    path: Assets/_Project/Scenes/Level/Bolum5_IlkYuzus.unity
+    guid: d24af8f4ef28fcc43a0c7cb8c05b9d56
+  - enabled: 1
+    path: Assets/_Project/Scenes/Level/Bolum1_Donus.unity
+    guid: a8ddda9b7b1ae9f4fa483ad43cb74147
   m_configObjects:
     com.unity.input.settings.actions: {fileID: -944628639613478452, guid: 052faaac586de48259a63d0c4782560b, type: 3}
   m_UseUCBPForAssetBundles: 0

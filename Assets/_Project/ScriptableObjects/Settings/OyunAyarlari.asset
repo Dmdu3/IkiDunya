@@ -1,0 +1,25 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: a64ef21533c447c4399f05ba28678bea, type: 3}
+  m_Name: OyunAyarlari
+  m_EditorClassIdentifier: Assembly-CSharp::IkiDunya.Core.OyunAyarlari
+  menuSahnesi: Menu
+  bolum1Sahnesi: Bolum1_Donus
+  kumsalSahnesi: Kumsal
+  bolum5Sahnesi: Bolum5_IlkYuzus
+  yuvaGecesiSayisi: 3
+  kacisGecesiSayisi: 3
+  gecelerArasiTur: 1
+  bekleyisTurSayisi: 6
+  bolum5OncesiTur: 1
+  bolgeSayisi: 8
+  katmanEnFazla: 3
