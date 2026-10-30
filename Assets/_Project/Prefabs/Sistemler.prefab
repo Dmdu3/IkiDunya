@@ -45,8 +45,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: cf19ac0f0661ed247a1c9e2069b2f718, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::IkiDunya.Core.OyunAkisi
-  ayarlar: {fileID: 11400000, guid: ace48434b60827240bad09ae35707c7a, type: 2}
-  kumsal: {fileID: 11400000, guid: 3a1707204029353449f4e0989faaab21, type: 2}
+  ayarlar: {fileID: 0}
+  kumsal: {fileID: 0}
 --- !u!114 &2307576971766123699
 MonoBehaviour:
   m_ObjectHideFlags: 0
