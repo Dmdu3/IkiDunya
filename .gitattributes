@@ -1,0 +1,33 @@
+* text=auto
+
+*.cs      text diff=csharp
+*.md      text eol=lf
+
+# Unity YAML: akıllı birleştirme (docs/EKIP-REHBERI.md)
+*.unity       merge=unityyamlmerge eol=lf
+*.prefab      merge=unityyamlmerge eol=lf
+*.asset       merge=unityyamlmerge eol=lf
+*.mat         merge=unityyamlmerge eol=lf
+*.anim        merge=unityyamlmerge eol=lf
+*.controller  merge=unityyamlmerge eol=lf
+*.meta        merge=unityyamlmerge eol=lf
+
+# İkili dosyalar
+*.png binary
+*.jpg binary
+*.jpeg binary
+*.psd binary
+*.tga binary
+*.exr binary
+*.fbx binary
+*.obj binary
+*.blend binary
+*.glb binary
+*.wav binary
+*.mp3 binary
+*.ogg binary
+*.ttf binary
+*.otf binary
+*.mp4 binary
+*.pdf binary
+*.docx binary
