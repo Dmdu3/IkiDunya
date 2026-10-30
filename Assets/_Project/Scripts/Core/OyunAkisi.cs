@@ -41,6 +41,12 @@ namespace IkiDunya.Core
                 Destroy(gameObject);
                 return;
             }
+            if (ayarlar == null || kumsal == null)
+            {
+                Debug.LogError("OyunAkisi: Ayarlar ve Kumsal alanlarına ScriptableObjects/Settings'teki OyunAyarlari ve KumsalDurumu asset'lerini bağla.", this);
+                enabled = false;
+                return;
+            }
             ornek = this;
             DontDestroyOnLoad(gameObject);
             akis = ayarlar.AkisiKur();
@@ -72,6 +78,7 @@ namespace IkiDunya.Core
         /// <summary>Menüden yeni oyun: kumsal sıfırlanır, Bölüm 1 başlar.</summary>
         public static void YeniOyun()
         {
+            if (ornek == null) return;
             ornek.KumsaliSifirla();
             ornek.AdimaGec(0);
         }
@@ -79,13 +86,14 @@ namespace IkiDunya.Core
         /// <summary>Şu anki adım bitti (gece bitti, tur bitti); sıradakine geçilir.</summary>
         public static void AdimBitti()
         {
-            if (ornek.yukleniyor) return;
+            if (ornek == null || ornek.yukleniyor) return;
             if (ornek.sira + 1 < ornek.akis.Count) ornek.AdimaGec(ornek.sira + 1);
             else MenuyeDon();
         }
 
         public static void MenuyeDon()
         {
+            if (ornek == null) return;
             ornek.sira = -1;
             ornek.SahneYukle(ornek.ayarlar.MenuSahnesi, () => MenuyeDonuldu?.Invoke());
         }
