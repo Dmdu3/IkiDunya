@@ -1,0 +1,26 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 488ddde213029ed49a5fc1bb61dbd573, type: 3}
+  m_Name: YavruAyarlari
+  m_EditorClassIdentifier: Assembly-CSharp::IkiDunya.Turtle.YavruAyarlari
+  yurumeHizi: 1.6
+  takipHizCarpani: 1.2
+  yerCekimi: 20
+  enerjiEnFazla: 100
+  arkaMesafe: 0.8
+  topluYaricap: 0.6
+  daginikYaricap: 2.5
+  katSayisi: 5
+  sogumaSuresi: 20
+  olumculSicaklik: 0.4
+  kumAltiEnerjiKaybi: 2.5
+  varsayilanYavruSayisi: 12
