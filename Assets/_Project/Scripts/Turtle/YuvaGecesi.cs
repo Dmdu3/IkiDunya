@@ -1,3 +1,4 @@
+using System;
 using IkiDunya.Core;
 using IkiDunya.Hazards;
 using UnityEngine;
@@ -19,8 +20,15 @@ namespace IkiDunya.Turtle
 
         private Durum durum;
         private int kalanDeneme;
+        private Yuva sonYuva;
+        private int bitisKaresi;
 
         public int KalanDeneme => kalanDeneme;
+
+        /// <summary>Gece bitince; kazılan yuvayla. Sonuç ekranı gösterir; oyuncu tıklayınca akış ilerler.</summary>
+        public event Action<Yuva> SonucHazir;
+        /// <summary>Sonuç ekranı kapanınca.</summary>
+        public event Action SonucKapandi;
 
         private void OnEnable()
         {
@@ -46,9 +54,8 @@ namespace IkiDunya.Turtle
 
         private void AdimBasladi(Adim adim)
         {
-            bool bizim = adim.Tur == AdimTuru.YuvaGecesi;
-            anne.gameObject.SetActive(bizim);
-            if (bizim) Basla();
+            // Anne ve gecenin nesneleri AdimNesneleri ile açılıp kapanır.
+            if (adim.Tur == AdimTuru.YuvaGecesi) Basla();
             else durum = Durum.Kapali;
         }
 
@@ -69,6 +76,7 @@ namespace IkiDunya.Turtle
         private void Update()
         {
             if (durum == Durum.DenizeDonus && kum.KiyidanUzaklik(anne.transform.position) < 0f) GeceBitti();
+            else if (durum == Durum.Bitti && Time.frameCount != bitisKaresi && (GameInput.TiklaBasildi || GameInput.ZiplaDalBasildi)) SonucuKapat();
         }
 
         private void InsanGordu(Transform gorulen)
@@ -112,14 +120,23 @@ namespace IkiDunya.Turtle
             int yumurta = bant == SicaklikBandi.Kirmizi ? ayarlar.KirmiziBantYumurta : ayarlar.YumurtaSayisi;
             var yuva = new Yuva(kum.Bolge(yer), yer, bant, kum.DalgaAltinda(yer), yumurta, ayarlar.KuluckaHafta);
             kumsal.YuvaEkle(yuva);
+            sonYuva = yuva;
             Debug.Log($"YuvaGecesi: yuva kazıldı — bölge {yuva.Bolge}, {bant}, dalga altında: {yuva.DalgaAltinda}, {yumurta} yumurta.");
         }
 
         private void GeceBitti()
         {
             durum = Durum.Bitti;
+            bitisKaresi = Time.frameCount;
             anne.Kilitli = true;
             Debug.Log("YuvaGecesi: gece bitti.");
+            SonucHazir?.Invoke(sonYuva);
+        }
+
+        private void SonucuKapat()
+        {
+            durum = Durum.Kapali;
+            SonucKapandi?.Invoke();
             if (OyunAkisi.Var) OyunAkisi.AdimBitti();
         }
     }

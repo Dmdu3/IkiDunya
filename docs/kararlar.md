@@ -6,6 +6,10 @@ ozet: Ekipçe alınan kararlar, tarih ve nedeniyle. En yeni en üstte. GDD'yi de
 
 | Tarih | Karar | Neden | Kim |
 |---|---|---|---|
+| 2026-10-31 | `KumsalDurumu`'na `IsikYasagi` ve `IsikYasagiAyarla(var)` | Işık Yasağı kartı otel ve yol ışıklarını kapatır; telefon feneri yasağa uymaz | Umut |
+| 2026-10-31 | Kaçışta öncü yavru takılmaz ve yönünü kaybetmez; kurtaran odur | Oyuncu öncüyü sürer; öncü takılırsa kurtaracak kimse kalmaz | Umut |
+| 2026-10-31 | Martı: dalış alanında 3 ya da daha çok yavru varsa 3, yoksa 1 yavru alır | GDD'deki "toplu sürüden 3, dağınıktan 1" kuralını sürünün o anki yayılmasından ölçmek | Umut |
+| 2026-10-31 | Gecenin sonuç paneli şimdilik yazısız (sayı ve renk) | Oyuncu metni önce `docs/metinler.md`'ye girer; Yusuf'un listesi gelene kadar | Umut |
 | 2026-10-31 | GDD'deki kamera satırı birinci şahıs olarak güncellendi | 2026-10-30 kamera kararı (hayvan kısımları birinci şahıs, insan kısmı yönetim ekranı) | Umut |
 | 2026-10-31 | `KumsalDurumu`'na `KumIsinmasi` ve `KumIsinmasiDegistir(fark)`: bütün kum kaç bant ısındı | GDD'deki sıcak dalgası olayı ("gelecek tur bütün kum 1 bant ısınacak") kumsala bu yolla yansır | Umut |
 | 2026-10-30 | `KumsalDurumu` taslağı: ScriptableObject asset'i; bölge katmanları (çöp, ışık, şezlong, insan), bölge yapıları (gölgelik, kumul onarımı, tilki çiti, araç izi), yuvalar, kayıp izleri, denizdeki ağ, denize ulaşan yavru; açık metotlar `docs/DURUM.md`'de. Bütçe, gönüllü ve halk desteği insan kısmında kalır | Sahneler arasında yaşar, inspector'da görünür, iki taraf aynı asset'e bağlanır. Toprak'ın onayıyla kesinleşir | Umut |

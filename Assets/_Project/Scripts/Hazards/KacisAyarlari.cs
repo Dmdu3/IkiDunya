@@ -28,6 +28,11 @@ namespace IkiDunya.Hazards
         [Tooltip("Dalga vururken suya giren yavrunun bir kez geri savrulduğu mesafe (metre).")]
         [SerializeField] private float savrulmaMesafesi = 1f;
 
+        [Header("Işık")]
+        [Tooltip("Işığın yavruyu kendine çekme hızı (m/sn); oyuncu karşı yöne bastırır.")]
+        [SerializeField] private float isikCekimGucu = 0.8f;
+
+        public float IsikCekimGucu => isikCekimGucu;
         public float GunDogumuSuresi => gunDogumuSuresi;
         public float LekeBaslangicOlcegi => lekeBaslangicOlcegi;
         public float LekeSonOlcegi => lekeSonOlcegi;

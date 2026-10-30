@@ -12,11 +12,13 @@ using UnityEngine.UI;
 
 namespace IkiDunya.Editor
 {
-    /// <summary>Gri kutu deneme sahnelerini kurar: yuva gecesi (anne, kazma, insanlar, çöp) ve kaçış gecesi (sürü, sıcak lekeler, dalga, gün doğumu).</summary>
+    /// <summary>Kumsal sahnelerini kurar: deneme sahneleri (yuva gecesi, kaçış gecesi) ve oyunun Kumsal sahnesi (iki gece + geçici insan turu, adım adım açılır).</summary>
     public static class GriKumsalKur
     {
         private const string YuvaSahnesi = "Assets/_Project/Scenes/Prototypes/GriKumsal.unity";
         private const string KacisSahnesi = "Assets/_Project/Scenes/Prototypes/GriKacis.unity";
+        private const string KumsalSahnesi = "Assets/_Project/Scenes/Levels/Kumsal.unity";
+        private const string SistemlerKalibi = "Assets/_Project/Prefabs/Sistemler.prefab";
         private const string MalzemeKlasoru = "Assets/_Project/Scenes/Prototypes/GriKumsal";
         private const string AyarKlasoru = "Assets/_Project/ScriptableObjects/Settings";
         private const string YavruKalibi = "Assets/_Project/Prefabs/Turtles/Yavru.prefab";
@@ -31,33 +33,62 @@ namespace IkiDunya.Editor
         private const float DalgaCizgisiZ = 6f;
         private const int BolgeSayisi = 8;
 
-        private static Material kum, kumKoyu, deniz, taban, beyaz, engel, cop, kaplumbaga, insan, leke, iz, koni, termalSerit;
+        private static Material kum, kumKoyu, deniz, taban, beyaz, engel, cop, kaplumbaga, insan, leke, iz, koni, tilkiKonisi, golge, siper, tilki, termalSerit;
 
         [MenuItem("İki Dünya/Gri kutu kumsalı kur (yuva gecesi)")]
         public static void YuvaGecesiKur()
         {
             if (!SahneAc(YuvaSahnesi, out Scene sahne)) return;
-
             KumSicakligi kumSicakligi = OrtakKur();
+            YuvaKur(kumSicakligi, null);
+            Kaydet(sahne, YuvaSahnesi);
+        }
+
+        [MenuItem("İki Dünya/Gri kutu kaçışı kur")]
+        public static void KacisGecesiKur()
+        {
+            if (!SahneAc(KacisSahnesi, out Scene sahne)) return;
+            KumSicakligi kumSicakligi = OrtakKur();
+            KacisKur(kumSicakligi, null);
+            Kaydet(sahne, KacisSahnesi);
+        }
+
+        /// <summary>Oyunun Kumsal sahnesi (Bölüm 2–4): yuva gecesi, kaçış gecesi ve geçici insan turu; her biri kendi adımında açılır.</summary>
+        [MenuItem("İki Dünya/Kumsal sahnesini kur (oyun)")]
+        public static void KumsalSahnesiKur()
+        {
+            if (!SahneAc(KumsalSahnesi, out Scene sahne)) return;
+            KumSicakligi kumSicakligi = OrtakKur();
+            YuvaKur(kumSicakligi, Grup("YuvaGecesiNesneleri", AdimTuru.YuvaGecesi));
+            KacisKur(kumSicakligi, Grup("KacisGecesiNesneleri", AdimTuru.KacisGecesi));
+            InsanTuruKur(Grup("InsanTuruNesneleri", AdimTuru.InsanTuru));
+            PrefabUtility.InstantiatePrefab(AssetDatabase.LoadAssetAtPath<GameObject>(SistemlerKalibi));
+            Kaydet(sahne, KumsalSahnesi);
+        }
+
+        // ---- Yuva gecesi ----
+
+        private static void YuvaKur(KumSicakligi kumSicakligi, Transform grup)
+        {
             var kumsal = Ayar<KumsalDurumu>("KumsalDurumu");
 
             // Engeller: şezlonglar (dolaşılır) ve çöp yığınları (takılır)
-            var engeller = new GameObject("Engeller").transform;
+            Transform engeller = Bos("Engeller", grup);
             Kutu("Sezlong_0", engeller, new Vector3(-6f, 0.25f, 12f), new Vector3(0.7f, 0.5f, 2f), engel, "Obstacle");
             Kutu("Sezlong_1", engeller, new Vector3(-4f, 0.25f, 12f), new Vector3(0.7f, 0.5f, 2f), engel, "Obstacle");
             Kutu("Sezlong_2", engeller, new Vector3(5f, 0.25f, 18f), new Vector3(0.7f, 0.5f, 2f), engel, "Obstacle");
-            CopYigini("CopYigini_0", engeller, new Vector3(2f, 0.2f, 9f));
-            CopYigini("CopYigini_1", engeller, new Vector3(-10f, 0.2f, 20f));
+            Tuzak("CopYigini_0", engeller, new Vector3(2f, 0.2f, 9f), new Vector3(1.2f, 0.4f, 1.2f), TrashTrap.Turu.CopYigini);
+            Tuzak("CopYigini_1", engeller, new Vector3(-10f, 0.2f, 20f), new Vector3(1.2f, 0.4f, 1.2f), TrashTrap.Turu.CopYigini);
 
             // İnsanlar: biri telefon fenerli
-            var insanlar = new GameObject("Insanlar").transform;
+            Transform insanlar = Bos("Insanlar", grup);
             InsanKur("Insan_0", insanlar, new Vector3(-22f, 0f, 26f), new Vector3(-6f, 0f, 26f), false);
             InsanKur("Insan_1", insanlar, new Vector3(6f, 0f, 16f), new Vector3(22f, 0f, 16f), true);
 
-            // Anne
             var baslangic = new GameObject("AnneBaslangic").transform;
             baslangic.SetPositionAndRotation(new Vector3(0f, 0.1f, 1f), Quaternion.identity);
             GameObject anne = AnneKur(baslangic);
+            anne.transform.SetParent(grup, true);
 
             var gece = new GameObject("YuvaGecesi").AddComponent<YuvaGecesi>();
             Bagla(gece, "ayarlar", Ayar<AnneAyarlari>("AnneAyarlari"));
@@ -68,7 +99,7 @@ namespace IkiDunya.Editor
             Bagla(gece, "baslangic", baslangic);
 
             // Arayüz: enerji ve kazma çubuğu
-            Transform tuval = TuvalKur();
+            Transform tuval = TuvalKur("YuvaArayuzu", grup);
             Cubuk enerjiCubugu = CubukKur("EnerjiCubugu", tuval, new Vector2(0.03f, 0.04f), new Vector2(0.28f, 0.065f), new Color(0.4f, 0.8f, 0.45f), false);
             var enerjiGostergesi = enerjiCubugu.gameObject.AddComponent<EnerjiCubugu>();
             Bagla(enerjiGostergesi, "enerji", anne.GetComponent<Enerji>());
@@ -79,18 +110,17 @@ namespace IkiDunya.Editor
             Bagla(kazmaGostergesi, "kazma", anne.GetComponent<AnneKazma>());
             Bagla(kazmaGostergesi, "cubuk", kazmaCubugu);
 
-            Kaydet(sahne, YuvaSahnesi);
+            SonucPaneliKur(gece, null);
         }
 
-        [MenuItem("İki Dünya/Gri kutu kaçışı kur")]
-        public static void KacisGecesiKur()
-        {
-            if (!SahneAc(KacisSahnesi, out Scene sahne)) return;
+        // ---- Kaçış gecesi ----
 
-            KumSicakligi kumSicakligi = OrtakKur();
+        private static void KacisKur(KumSicakligi kumSicakligi, Transform grup)
+        {
             var kumsal = Ayar<KumsalDurumu>("KumsalDurumu");
             var kacisAyarlari = Ayar<KacisAyarlari>("KacisAyarlari");
             var yavruAyarlari = Ayar<YavruAyarlari>("YavruAyarlari");
+            var avciAyarlari = Ayar<AvciAyarlari>("AvciAyarlari");
 
             var gunDogumu = new GameObject("GunDogumu").AddComponent<GunDogumu>();
             Bagla(gunDogumu, "ayarlar", kacisAyarlari);
@@ -105,16 +135,39 @@ namespace IkiDunya.Editor
             Bagla(dalga, "suSeridi", serit.transform);
 
             // Sıcak kum lekeleri: sıcak bantlarda
-            var lekeler = new GameObject("SicakLekeler").transform;
+            Transform lekeler = Bos("SicakLekeler", grup);
             Vector3[] lekeYerleri = { new Vector3(-3f, 0f, 16f), new Vector3(4f, 0f, 12f), new Vector3(-12f, 0f, 19f), new Vector3(12f, 0f, 21f) };
             for (int i = 0; i < lekeYerleri.Length; i++)
                 SicakLeke($"SicakLeke_{i}", lekeler, lekeYerleri[i], kacisAyarlari, gunDogumu, kumSicakligi, kumsal);
+
+            // Çöp: takan tuzaklar ve labirent (şişe dolaşılır, kum kalesi atlanır)
+            Transform copler = Bos("Copler", grup);
+            Tuzak("Ag_0", copler, new Vector3(-2f, 0.01f, 14f), new Vector3(0.8f, 0.02f, 0.8f), TrashTrap.Turu.Ag);
+            Tuzak("Halka_0", copler, new Vector3(2.5f, 0.01f, 8f), new Vector3(0.5f, 0.02f, 0.5f), TrashTrap.Turu.Halka);
+            Tuzak("TekerlekIzi_0", copler, new Vector3(5f, 0.01f, 17f), new Vector3(6f, 0.02f, 0.5f), TrashTrap.Turu.TekerlekIzi);
+            Kutu("Sise_0", copler, new Vector3(-1f, 0.15f, 18f), new Vector3(0.15f, 0.3f, 0.15f), cop, "Trash");
+            Kutu("Sise_1", copler, new Vector3(1.2f, 0.15f, 15f), new Vector3(0.15f, 0.3f, 0.15f), cop, "Trash");
+            Kutu("KumKalesi_0", copler, new Vector3(0f, 0.07f, 11f), new Vector3(1.5f, 0.14f, 0.5f), kumKoyu, "Trash");
+
+            // Kumul gölgesi: tilkiden saklanılan siperler
+            Transform siperler = Bos("Siperler", grup);
+            Siper("KumulGolgesi_0", siperler, new Vector3(-6f, 0f, 22f), new Vector3(3f, 1f, 4f));
+            Siper("KumulGolgesi_1", siperler, new Vector3(6f, 0f, 19f), new Vector3(3f, 1f, 4f));
+
+            // Avcılar ve ışık
+            Transform avcilar = Bos("Avcilar", grup);
+            YengecKur("Yengec_0", avcilar, new Vector3(-5f, 0f, 8f), avciAyarlari);
+            YengecKur("Yengec_1", avcilar, new Vector3(5f, 0f, 5f), avciAyarlari);
+            MartiKur(avcilar, avciAyarlari);
+            TilkiKur(avcilar, avciAyarlari, kumsal);
+            IsikKur("OtelIsigi", avcilar, new Vector3(18f, 0f, 24f), kacisAyarlari, kumsal);
 
             // Sürü ve gözü
             var yuva = new GameObject("VarsayilanYuva").transform;
             yuva.position = new Vector3(0f, 0.1f, 22f);
 
             var suru = new GameObject("Suru").AddComponent<Suru>();
+            suru.transform.SetParent(grup, false);
             suru.transform.SetPositionAndRotation(yuva.position, Quaternion.LookRotation(Vector3.back));
             var goz = KameraKur(suru.transform, new Vector3(0f, 0.5f, 0f), null);
             Bagla(suru, "ayarlar", yavruAyarlari);
@@ -131,8 +184,8 @@ namespace IkiDunya.Editor
             Bagla(gece, "dalga", dalga);
             Bagla(gece, "varsayilanYuva", yuva);
 
-            // Arayüz: kumdan çıkış paneli ve gün doğumu çubuğu
-            Transform tuval = TuvalKur();
+            // Arayüz: kumdan çıkış paneli, gün doğumu ve kurtarma çubuğu
+            Transform tuval = TuvalKur("KacisArayuzu", grup);
             var panel = new GameObject("CikisPaneli", typeof(RectTransform), typeof(Image));
             panel.layer = LayerMask.NameToLayer("UI");
             panel.transform.SetParent(tuval, false);
@@ -143,6 +196,7 @@ namespace IkiDunya.Editor
             Cubuk sicaklik = CubukKur("YuzeySicakligi", panel.transform, new Vector2(0.53f, 0.2f), new Vector2(0.56f, 0.8f), Color.red, true);
             Cubuk cikisEnerjisi = CubukKur("CikisEnerjisi", panel.transform, new Vector2(0.35f, 0.1f), new Vector2(0.65f, 0.125f), new Color(0.4f, 0.8f, 0.45f), false);
             Cubuk gunCubugu = CubukKur("GunDogumuCubugu", tuval, new Vector2(0.3f, 0.94f), new Vector2(0.7f, 0.96f), new Color(1f, 0.75f, 0.3f), false);
+            Cubuk yardimCubugu = CubukKur("YardimCubugu", tuval, new Vector2(0.42f, 0.42f), new Vector2(0.58f, 0.445f), Color.white, false);
 
             var gosterge = tuval.gameObject.AddComponent<KacisGostergesi>();
             Bagla(gosterge, "gece", gece);
@@ -154,8 +208,25 @@ namespace IkiDunya.Editor
             Bagla(gosterge, "yuzeySicakligi", sicaklik);
             Bagla(gosterge, "cikisEnerjisi", cikisEnerjisi);
             Bagla(gosterge, "gunDogumuCubugu", gunCubugu);
+            Bagla(gosterge, "suru", suru);
+            Bagla(gosterge, "yardimCubugu", yardimCubugu);
 
-            Kaydet(sahne, KacisSahnesi);
+            SonucPaneliKur(null, gece);
+        }
+
+        // ---- Geçici insan turu ----
+
+        private static void InsanTuruKur(Transform grup)
+        {
+            // Kumsala tepeden bakan kamera; yönetim ekranı gelene kadar.
+            var kamera = new GameObject("YonetimKamerasi");
+            kamera.transform.SetParent(grup, false);
+            kamera.transform.SetPositionAndRotation(new Vector3(0f, 55f, KumsalDerinligi / 2f), Quaternion.Euler(90f, 0f, 0f));
+            kamera.AddComponent<UnityEngine.Camera>();
+            kamera.AddComponent<AudioListener>();
+
+            var tur = new GameObject("GeciciInsanTuru").AddComponent<GeciciInsanTuru>();
+            Bagla(tur, "kumsal", Ayar<KumsalDurumu>("KumsalDurumu"));
         }
 
         // ---- Ortak ----
@@ -200,6 +271,10 @@ namespace IkiDunya.Editor
             iz = Malzeme("KayipIzi", new Color(0.25f, 0.1f, 0.1f));
             termalSerit = Malzeme("TermalSerit", Color.white, "Universal Render Pipeline/Unlit");
             koni = SaydamMalzeme("GorusKonisi", new Color(1f, 0.95f, 0.5f, 0.3f));
+            tilkiKonisi = SaydamMalzeme("TilkiKonisi", new Color(1f, 0.5f, 0.2f, 0.3f));
+            golge = SaydamMalzeme("Golge", new Color(0f, 0f, 0f, 0.5f));
+            siper = Malzeme("Siper", new Color(0.62f, 0.56f, 0.42f));
+            tilki = Malzeme("Tilki", new Color(0.85f, 0.45f, 0.15f));
         }
 
         /// <summary>Kum, deniz, kumul, dalga çizgisi, bölgeler, kum sıcaklığı ve termal görünüm, kumsal yapıları.</summary>
@@ -299,11 +374,21 @@ namespace IkiDunya.Editor
             return anne;
         }
 
-        private static void CopYigini(string ad, Transform ebeveyn, Vector3 konum)
+        private static void Tuzak(string ad, Transform ebeveyn, Vector3 konum, Vector3 boyut, TrashTrap.Turu tur)
         {
-            GameObject yigin = Kutu(ad, ebeveyn, konum, new Vector3(1.2f, 0.4f, 1.2f), cop, "Trash");
-            yigin.GetComponent<Collider>().isTrigger = true;
-            yigin.AddComponent<TrashTrap>();
+            GameObject tuzak = Kutu(ad, ebeveyn, konum, boyut, cop, "Trash");
+            var kutu = (BoxCollider)tuzak.GetComponent<Collider>();
+            kutu.isTrigger = true;
+            // Yassı tuzaklar da yavruyu içine alsın diye collider yukarı uzatılır.
+            if (boyut.y < 0.1f)
+            {
+                kutu.size = new Vector3(1f, 0.3f / boyut.y, 1f);
+                kutu.center = new Vector3(0f, 0.15f / boyut.y, 0f);
+            }
+            var bilesen = tuzak.AddComponent<TrashTrap>();
+            var so = new SerializedObject(bilesen);
+            so.FindProperty("tur").enumValueIndex = (int)tur;
+            so.ApplyModifiedPropertiesWithoutUndo();
         }
 
         private static void InsanKur(string ad, Transform ebeveyn, Vector3 a, Vector3 b, bool fenerli)
@@ -362,6 +447,179 @@ namespace IkiDunya.Editor
             Bagla(bolge, "gunDogumu", gunDogumu);
             Bagla(bolge, "kum", kumSicakligi);
             Bagla(bolge, "kumsal", kumsal);
+        }
+
+        private static void Siper(string ad, Transform ebeveyn, Vector3 konum, Vector3 boyut)
+        {
+            GameObject nesne = Kutu(ad, ebeveyn, konum + Vector3.up * 0.5f, boyut, siper, "Cover");
+            nesne.GetComponent<Collider>().isTrigger = true;
+            Object.DestroyImmediate(nesne.GetComponent<MeshRenderer>());
+            // Görünen gölge: kumun üstünde ince koyu şerit
+            GameObject gorunus = Kutu($"{ad}_Gorunus", ebeveyn, konum + Vector3.up * 0.006f, new Vector3(boyut.x, 0.01f, boyut.z), siper, "Default");
+            Object.DestroyImmediate(gorunus.GetComponent<Collider>());
+            nesne.AddComponent<Cover>();
+        }
+
+        private static void YengecKur(string ad, Transform ebeveyn, Vector3 konum, AvciAyarlari ayarlar)
+        {
+            var kok = Bos(ad, ebeveyn);
+            kok.position = konum;
+            GameObject delik = GameObject.CreatePrimitive(PrimitiveType.Cylinder);
+            delik.name = "TitreyenKum";
+            Object.DestroyImmediate(delik.GetComponent<Collider>());
+            delik.transform.SetParent(kok, false);
+            delik.transform.localPosition = Vector3.up * 0.01f;
+            delik.transform.localScale = new Vector3(0.5f, 0.01f, 0.5f);
+            delik.GetComponent<Renderer>().sharedMaterial = kumKoyu;
+
+            var yengec = kok.gameObject.AddComponent<Yengec>();
+            Bagla(yengec, "ayarlar", ayarlar);
+            Bagla(yengec, "titreyenKum", delik.transform);
+        }
+
+        private static void MartiKur(Transform ebeveyn, AvciAyarlari ayarlar)
+        {
+            var kok = Bos("Marti", ebeveyn);
+            kok.position = new Vector3(0f, 15f, 15f);
+            GameObject golgeNesnesi = GameObject.CreatePrimitive(PrimitiveType.Cylinder);
+            golgeNesnesi.name = "Golge";
+            Object.DestroyImmediate(golgeNesnesi.GetComponent<Collider>());
+            golgeNesnesi.transform.SetParent(kok, false);
+            golgeNesnesi.transform.localScale = new Vector3(ayarlar.MartiDalisYaricapi * 2f, 0.005f, ayarlar.MartiDalisYaricapi * 2f);
+            var renderer = golgeNesnesi.GetComponent<Renderer>();
+            renderer.sharedMaterial = golge;
+            renderer.shadowCastingMode = ShadowCastingMode.Off;
+
+            var marti = kok.gameObject.AddComponent<Marti>();
+            Bagla(marti, "ayarlar", ayarlar);
+            Bagla(marti, "golge", golgeNesnesi.transform);
+        }
+
+        private static void TilkiKur(Transform ebeveyn, AvciAyarlari ayarlar, KumsalDurumu kumsal)
+        {
+            var noktaA = Bos("TilkiYolu_A", ebeveyn);
+            noktaA.position = new Vector3(-25f, 0f, 30f);
+            var noktaB = Bos("TilkiYolu_B", ebeveyn);
+            noktaB.position = new Vector3(25f, 0f, 30f);
+
+            var kok = Bos("Tilki", ebeveyn);
+            kok.SetPositionAndRotation(noktaA.position, Quaternion.LookRotation(Vector3.right));
+            GameObject govde = Kutu("Govde", kok, new Vector3(0f, 0.2f, 0f), new Vector3(0.3f, 0.35f, 0.8f), tilki, "Predator");
+            Object.DestroyImmediate(govde.GetComponent<Collider>());
+            govde.isStatic = false;
+
+            var bilesen = kok.gameObject.AddComponent<Tilki>();
+            Bagla(bilesen, "ayarlar", ayarlar);
+            Bagla(bilesen, "kumsal", kumsal);
+            Bagla(bilesen, "koniMalzemesi", tilkiKonisi);
+            Bagla(bilesen, "govde", govde);
+            var so = new SerializedObject(bilesen);
+            SerializedProperty noktalar = so.FindProperty("noktalar");
+            noktalar.arraySize = 2;
+            noktalar.GetArrayElementAtIndex(0).objectReferenceValue = noktaA;
+            noktalar.GetArrayElementAtIndex(1).objectReferenceValue = noktaB;
+            so.ApplyModifiedPropertiesWithoutUndo();
+        }
+
+        private static void IsikKur(string ad, Transform ebeveyn, Vector3 konum, KacisAyarlari ayarlar, KumsalDurumu kumsal)
+        {
+            var kok = Bos(ad, ebeveyn);
+            kok.position = konum;
+            kok.gameObject.layer = LayerMask.NameToLayer("Hazard");
+            GameObject direk = Kutu("Direk", kok, new Vector3(0f, 1.5f, 0f), new Vector3(0.2f, 3f, 0.2f), engel, "Obstacle");
+            direk.isStatic = false;
+
+            var lamba = new GameObject("Lamba").AddComponent<Light>();
+            lamba.transform.SetParent(kok, false);
+            lamba.transform.localPosition = Vector3.up * 3f;
+            lamba.type = LightType.Point;
+            lamba.range = 16f;
+            lamba.intensity = 4f;
+            lamba.color = new Color(1f, 0.85f, 0.6f);
+
+            // Çekim alanı: lambanın çevresindeki kum
+            var alan = kok.gameObject.AddComponent<SphereCollider>();
+            alan.isTrigger = true;
+            alan.radius = 9f;
+
+            var isik = kok.gameObject.AddComponent<IsikKaynagi>();
+            Bagla(isik, "ayarlar", ayarlar);
+            Bagla(isik, "kumsal", kumsal);
+            Bagla(isik, "isik", lamba);
+        }
+
+        // ---- Sonuç paneli ----
+
+        private static void SonucPaneliKur(YuvaGecesi yuvaGecesi, KacisGecesi kacisGecesi)
+        {
+            Transform tuval = TuvalKur("SonucArayuzu", null);
+            tuval.GetComponent<Canvas>().sortingOrder = 10;
+            var panel = tuval.gameObject.AddComponent<GeceSonucuPaneli>();
+            Bagla(panel, "termal", Ayar<TermalAyarlari>("TermalAyarlari"));
+
+            if (yuvaGecesi != null)
+            {
+                Bagla(panel, "yuvaGecesi", yuvaGecesi);
+                RectTransform kutu = PanelKur("YuvaSonucu", tuval);
+                Bagla(panel, "yuvaPaneli", kutu.gameObject);
+                Bagla(panel, "yuvaBandi", RenkKaresi(kutu, 0, Color.white));
+                Bagla(panel, "yumurtaSayisi", SayiYazisi(kutu, 0));
+            }
+
+            if (kacisGecesi != null)
+            {
+                Bagla(panel, "kacisGecesi", kacisGecesi);
+                RectTransform kutu = PanelKur("KacisSonucu", tuval);
+                Bagla(panel, "kacisPaneli", kutu.gameObject);
+                Color[] renkler = { new Color(0.4f, 0.8f, 0.45f), new Color(0.85f, 0.25f, 0.2f), new Color(1f, 0.55f, 0.75f), new Color(0.4f, 0.65f, 1f) };
+                string[] alanlar = { "kurtulan", "kaybedilen", "disi", "erkek" };
+                for (int i = 0; i < alanlar.Length; i++)
+                {
+                    RenkKaresi(kutu, i, renkler[i]);
+                    Bagla(panel, alanlar[i], SayiYazisi(kutu, i));
+                }
+            }
+        }
+
+        private static RectTransform PanelKur(string ad, Transform tuval)
+        {
+            var panel = new GameObject(ad, typeof(RectTransform), typeof(Image));
+            panel.layer = LayerMask.NameToLayer("UI");
+            panel.transform.SetParent(tuval, false);
+            var rect = (RectTransform)panel.transform;
+            Yasla(rect, new Vector2(0.4f, 0.3f), new Vector2(0.6f, 0.7f));
+            panel.GetComponent<Image>().color = new Color(0f, 0f, 0f, 0.75f);
+            panel.SetActive(false);
+            return rect;
+        }
+
+        /// <summary>Panelde i. satırın solundaki renkli kare.</summary>
+        private static Image RenkKaresi(RectTransform panel, int satir, Color renk)
+        {
+            var kare = new GameObject($"Renk_{satir}", typeof(RectTransform), typeof(Image));
+            kare.layer = LayerMask.NameToLayer("UI");
+            kare.transform.SetParent(panel, false);
+            float ust = 0.9f - satir * 0.2f;
+            Yasla((RectTransform)kare.transform, new Vector2(0.15f, ust - 0.12f), new Vector2(0.35f, ust));
+            var resim = kare.GetComponent<Image>();
+            resim.color = renk;
+            return resim;
+        }
+
+        /// <summary>Panelde i. satırın sağındaki sayı.</summary>
+        private static Text SayiYazisi(RectTransform panel, int satir)
+        {
+            var nesne = new GameObject($"Sayi_{satir}", typeof(RectTransform), typeof(Text));
+            nesne.layer = LayerMask.NameToLayer("UI");
+            nesne.transform.SetParent(panel, false);
+            float ust = 0.9f - satir * 0.2f;
+            Yasla((RectTransform)nesne.transform, new Vector2(0.45f, ust - 0.14f), new Vector2(0.9f, ust + 0.02f));
+            var yazi = nesne.GetComponent<Text>();
+            yazi.font = Resources.GetBuiltinResource<Font>("LegacyRuntime.ttf");
+            yazi.fontSize = 48;
+            yazi.alignment = TextAnchor.MiddleLeft;
+            yazi.color = Color.white;
+            return yazi;
         }
 
         // ---- Kalıplar (prefab) ----
@@ -439,15 +697,35 @@ namespace IkiDunya.Editor
             return bakis;
         }
 
-        private static Transform TuvalKur()
+        private static Transform TuvalKur(string ad, Transform grup)
         {
-            var tuval = new GameObject("Arayuz", typeof(Canvas), typeof(CanvasScaler));
+            var tuval = new GameObject(ad, typeof(Canvas), typeof(CanvasScaler));
             tuval.layer = LayerMask.NameToLayer("UI");
+            tuval.transform.SetParent(grup, false);
             tuval.GetComponent<Canvas>().renderMode = RenderMode.ScreenSpaceOverlay;
             var olcek = tuval.GetComponent<CanvasScaler>();
             olcek.uiScaleMode = CanvasScaler.ScaleMode.ScaleWithScreenSize;
             olcek.referenceResolution = new Vector2(1920f, 1080f);
             return tuval.transform;
+        }
+
+        /// <summary>Adımına göre açılıp kapanan nesne grubu (AdimNesneleri).</summary>
+        private static Transform Grup(string ad, AdimTuru tur)
+        {
+            var grup = new GameObject(ad).AddComponent<AdimNesneleri>();
+            var so = new SerializedObject(grup);
+            SerializedProperty turler = so.FindProperty("turler");
+            turler.arraySize = 1;
+            turler.GetArrayElementAtIndex(0).enumValueIndex = (int)tur;
+            so.ApplyModifiedPropertiesWithoutUndo();
+            return grup.transform;
+        }
+
+        private static Transform Bos(string ad, Transform ebeveyn)
+        {
+            var nesne = new GameObject(ad).transform;
+            nesne.SetParent(ebeveyn, false);
+            return nesne;
         }
 
         /// <summary>Koyu arka plan ve renkli dolgudan bir çubuk; Cubuk bileşeni arka plandadır, dolgu ilk çocuğudur.</summary>

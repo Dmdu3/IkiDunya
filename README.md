@@ -87,6 +87,14 @@ Bütün tuşlar tek bir dosyada: `Assets/_Project/Scripts/Core/GameInput.cs`. Ye
 | Fare | Kaplumbağa bölümlerinde bakış (birinci şahıs); insan turunda harita, kart ve gönüllü seçimi | |
 | F1–F4 | (Geliştirici) Bölüm 1, Kumsal, Bölüm 5, Menü'ye geç | |
 
+## PC build
+
+1. Unity'de **File → Build Profiles**.
+2. Sol listeden **Windows** seç; seçili değilse **Switch Platform**.
+3. **Scene List**'te sıra: `Menu`, `Bolum1_Donus`, `Kumsal`, `Bolum5_IlkYuzus` (hepsi işaretli).
+4. Denemek için **Development Build** açık kalsın: F1–F4 geliştirici tuşları sadece bu build'de çalışır.
+5. **Build** → çıkış klasörü olarak repo dışında bir yer seç (ör. `C:\Projeler\IkiDunya_Build`). Build klasörü repoya girmez.
+
 ## Kullanılan paketler
 
 - Universal Render Pipeline
