@@ -11,14 +11,15 @@ ozet: Ekip için kurulum ve günlük çalışma rehberi. Kod yazmayanlar da bu a
 3. E-postana gelen **repo davetini** kabul et.
 4. **GitHub Desktop** kur ve hesabınla giriş yap. (Toprak ve Umut isterse komut satırı kullanır.)
 5. GitHub Desktop → **File → Clone repository** → `IkiDunya` → bilgisayarında bir klasör seç.
-6. Unity Hub → **Add → Add project from disk** → klonladığın klasördeki **`Unity`** klasörünü seç. İlk açılış birkaç dakika sürer.
-7. Unity'de `Assets/_Project/Sahneler/Deneme/` içine kendi sahneni oluştur: `<Ad>.unity`.
+6. **Git LFS:** GitHub Desktop'ta kuruludur; komut satırı kullanıyorsan bir kere `git lfs install`.
+7. Unity Hub → **Add → Add project from disk** → klonladığın klasörün kendisi (`IkiDunya`). İlk açılış birkaç dakika sürer.
+8. Unity'de `Assets/Sandbox/<Ad>/` içinde kendi deneme sahneni oluştur.
 
 ## 2. Her çalışmada
 
 1. GitHub Desktop → **Current branch: main** → **Fetch origin** → **Pull**.
 2. **Current branch → New branch** → `isim/kisa-is` (ör. `yusuf/kart-metinleri`).
-3. Çalış. Unity'de **sadece kendi klasörlerinde ve kendi deneme sahnende** değişiklik yap (`docs/klasorler.md`).
+3. Çalış. Unity'de **sadece kendi klasörlerinde ve kendi Sandbox'ında** değişiklik yap (`docs/klasorler.md`). Dosyaları Unity'nin Project penceresinden taşı ve sil.
 4. GitHub Desktop'ta değişikliklere bak; ilgisiz dosya varsa sağ tık → **Discard**.
 5. Altta kısa bir açıklama yaz → **Commit** → **Push origin**.
 6. **Create Pull Request** → tarayıcıda şablonu doldur → **Create**.

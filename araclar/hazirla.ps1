@@ -1,4 +1,5 @@
-﻿$ErrorActionPreference = 'Stop'
+﻿# Continue: gh/git hata yazınca pencere kapanmasın; sonuçlar $LASTEXITCODE ile kontrol ediliyor
+$ErrorActionPreference = 'Continue'
 $Repo = Split-Path $PSScriptRoot -Parent
 $RepoAdi = 'IkiDunya'
 $UnitySurum = '6000.3.25f1'
@@ -86,7 +87,16 @@ if ($Gh) { gh auth status 2>$null | Out-Null; $Gh = ($LASTEXITCODE -eq 0) }
 if ((git -C $Repo remote) -contains 'origin') {
   $Url = git -C $Repo remote get-url origin
   Write-Host "Zaten bağlı: $Url" -ForegroundColor Yellow
-  git -C $Repo push -u origin main
+  git -C $Repo fetch -q origin
+  $ileri = git -C $Repo rev-list --count origin/main..main 2>$null
+  if ($ileri -and [int]$ileri -gt 0) {
+    $dal = 'umut/kurulum-' + (Get-Date -Format 'MMdd-HHmm')
+    git -C $Repo switch -q -c $dal
+    git -C $Repo push -q -u origin $dal
+    git -C $Repo branch -f main origin/main
+    Write-Host "main'e doğrudan gönderilemez; değişiklikler '$dal' dalına gönderildi." -ForegroundColor Yellow
+    Write-Host "GitHub'da PR aç ve birleştir; sonra GitHub Desktop'ta main'e geç ve Pull." -ForegroundColor Yellow
+  } else { Write-Host "GitHub ile aynı, gönderilecek bir şey yok." }
 } elseif ($Gh) {
   gh repo create $RepoAdi --private --source $Repo --remote origin --push
   if ($LASTEXITCODE -ne 0) { Bitir "GitHub'da repo açılamadı (aynı adla repo var olabilir). Hata mesajını Claude'a gönder." Red }
@@ -114,9 +124,9 @@ if ($Gh -and $Sahip) {
   foreach ($ad in $Ekip.Keys) {
     $k = $Ekip[$ad]
     if ($k) {
-      gh api -X PUT "repos/$Sahip/$RepoAdi/collaborators/$k" -f permission=push 2>$null | Out-Null
-      if ($LASTEXITCODE -eq 0) { Write-Host "Davet gönderildi: $ad ($k)" -ForegroundColor Green }
-      else { Write-Host "Davet gönderilemedi: $k — elle ekle." -ForegroundColor Yellow }
+      $cikti = gh api -X PUT "repos/$Sahip/$RepoAdi/collaborators/$k" -f permission=push 2>&1
+      if ($LASTEXITCODE -eq 0) { Write-Host "Davet tamam: $ad ($k)" -ForegroundColor Green }
+      else { Write-Host "Davet gönderilemedi: $ad ($k). Kullanıcı adı doğru mu? GitHub: $($cikti | Out-String)" -ForegroundColor Yellow }
     }
   }
   $Kural = Join-Path $env:TEMP 'ikidunya-kural.json'
@@ -126,8 +136,10 @@ if ($Gh -and $Sahip) {
  "rules":[{"type":"deletion"},{"type":"non_fast_forward"},
   {"type":"pull_request","parameters":{"required_approving_review_count":0,"dismiss_stale_reviews_on_push":false,"require_code_owner_review":false,"require_last_push_approval":false,"required_review_thread_resolution":false}}]}
 '@ | Set-Content -LiteralPath $Kural -Encoding ascii
-  gh api -X POST "repos/$Sahip/$RepoAdi/rulesets" --input $Kural 2>$null | Out-Null
-  if ($LASTEXITCODE -eq 0) { Write-Host "main kuralı açıldı: PR zorunlu, onay zorunlu değil." -ForegroundColor Green }
+  $varOlan = gh api "repos/$Sahip/$RepoAdi/rulesets" --jq '.[].name' 2>$null
+  if ($varOlan -contains 'main-koruma') { Write-Host "main kuralı zaten açık (main-koruma)." -ForegroundColor Green; $LASTEXITCODE = 0 }
+  else { gh api -X POST "repos/$Sahip/$RepoAdi/rulesets" --input $Kural 2>&1 | Out-Null }
+  if ($LASTEXITCODE -eq 0) { Write-Host "main kuralı tamam: PR zorunlu, onay zorunlu değil." -ForegroundColor Green }
   else { Write-Host "main kuralı açılamadı (private repoda GitHub Pro gerekebilir). Settings > Rules'tan elle aç." -ForegroundColor Yellow }
 } else {
   Write-Host "Elle yap: GitHub'da repo > Settings > Collaborators > Add people (rol: Write)" -ForegroundColor Yellow
