@@ -8,7 +8,7 @@ Her faz sonunda oynanabilir bir sürüm olur. Bir faz bitmeden sonrakine geçilm
 
 ## Faz 0 — Kurulum
 - [ ] **Umut:** Unity projesini oluştur, klasörleri kur, ilk commit, GitHub (bkz. `EKIP-REHBERI.md`).
-- [ ] **Herkes:** Unity 6000.3.25f1 ve GitHub Desktop kur, repoyu klonla, projeyi aç, kendi deneme sahneni oluştur.
+- [ ] **Herkes:** Unity 6000.3.25f1 ve GitHub Desktop kur, repoyu klonla, projeyi aç, `Assets/Sandbox/<ad>` içinde deneme sahneni oluştur.
 
 ## Faz 1 — Kumsal çekirdeği (tek gece, tek tur)
 Hedef: bir yuva gecesi → bir insan turu → bir kaçış gecesi uçtan uca oynanır.

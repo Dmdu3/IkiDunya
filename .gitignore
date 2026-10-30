@@ -1,43 +1,56 @@
-# Unity (proje Unity/ klasöründe)
-Unity/[Ll]ibrary/
-Unity/[Tt]emp/
-Unity/[Oo]bj/
-Unity/[Bb]uild/
-Unity/[Bb]uilds/
-Unity/[Ll]ogs/
-Unity/[Uu]ser[Ss]ettings/
-Unity/[Mm]emoryCaptures/
-Unity/[Rr]ecordings/
-Unity/Assets/Plugins/Editor/JetBrains*
-Unity/Assets/[Ss]treamingAssets/aa*
-Unity/*.csproj
-Unity/*.sln
-Unity/*.slnx
-Unity/*.suo
-Unity/*.tmp
-Unity/*.user
-Unity/*.userprefs
-Unity/*.pidb
-Unity/*.pdb
-Unity/*.mdb
-Unity/*.opendb
-Unity/*.VC.db
-Unity/.vs/
-Unity/.vscode/
-Unity/.idea/
-Unity/.utmp/
-Unity/sysinfo.txt
-*.pidb.meta
-*.pdb.meta
-*.mdb.meta
+# Unity tarafından otomatik üretilen klasörler (repoya girmez)
+/[Ll]ibrary/
+/[Tt]emp/
+/[Oo]bj/
+/[Bb]uild/
+/[Bb]uilds/
+/[Ll]ogs/
+/[Uu]ser[Ss]ettings/
+/[Mm]emoryCaptures/
+/[Rr]ecordings/
+
+# Eski düzen (Unity/ alt klasörü); DUZENLE.bat'tan sonra boş kalır
+/Unity/[Ll]ibrary/
+/Unity/[Tt]emp/
+/Unity/[Ll]ogs/
+/Unity/[Uu]ser[Ss]ettings/
+
+# Asset Store araçları
+/[Aa]ssets/AssetStoreTools*
+
+# IDE / Visual Studio / Rider
+.vs/
+.vscode/
+.idea/
+.gradle/
+.utmp/
+ExportedObj/
+.consulo/
+*.csproj
+*.unityproj
+*.sln
+*.slnx
+*.suo
+*.tmp
+*.user
+*.userprefs
+*.pidb
+*.booproj
+*.svd
+*.pdb
+*.mdb
+*.opendb
+*.VC.db
+
+# Build çıktıları ve crash dosyaları
 *.apk
 *.aab
 *.unitypackage
+*.app
+crashlytics-buildid.txt
+sysinfo.txt
 
-# Build çıktıları
-Builds/
-
-# İşletim sistemi
+# İşletim sistemi çöpleri
 .DS_Store
 Thumbs.db
 desktop.ini
