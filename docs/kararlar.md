@@ -6,6 +6,7 @@ ozet: Ekipçe alınan kararlar, tarih ve nedeniyle. En yeni en üstte. GDD'yi de
 
 | Tarih | Karar | Neden | Kim |
 |---|---|---|---|
+| 2026-10-31 | GDD'deki kamera satırı birinci şahıs olarak güncellendi | 2026-10-30 kamera kararı (hayvan kısımları birinci şahıs, insan kısmı yönetim ekranı) | Umut |
 | 2026-10-31 | `KumsalDurumu`'na `KumIsinmasi` ve `KumIsinmasiDegistir(fark)`: bütün kum kaç bant ısındı | GDD'deki sıcak dalgası olayı ("gelecek tur bütün kum 1 bant ısınacak") kumsala bu yolla yansır | Umut |
 | 2026-10-30 | `KumsalDurumu` taslağı: ScriptableObject asset'i; bölge katmanları (çöp, ışık, şezlong, insan), bölge yapıları (gölgelik, kumul onarımı, tilki çiti, araç izi), yuvalar, kayıp izleri, denizdeki ağ, denize ulaşan yavru; açık metotlar `docs/DURUM.md`'de. Bütçe, gönüllü ve halk desteği insan kısmında kalır | Sahneler arasında yaşar, inspector'da görünür, iki taraf aynı asset'e bağlanır. Toprak'ın onayıyla kesinleşir | Umut |
 | 2026-10-30 | Kamera: kaplumbağa bölümleri (kara ve deniz, anne ve yavru) birinci şahıs; insan kısmı yönetim ekranı | Faz 0 kamera kararı. GDD'deki "üstten ve hafif arkadan takip" satırı buna göre güncellenecek | Umut |
