@@ -7,6 +7,9 @@ namespace IkiDunya.Sandbox
     public class AkisDeneme : MonoBehaviour
     {
         [SerializeField] private KumsalDurumu kumsal;
+        [Tooltip("Akışın olmadığı deneme sahnelerinde 'Kumsalı sıfırla' düğmesi için.")]
+        [SerializeField] private int denemeBolgeSayisi = 8;
+        [SerializeField] private int denemeKatmanEnFazla = 3;
 
         private int degisiklikSayisi;
 
@@ -30,7 +33,7 @@ namespace IkiDunya.Sandbox
 
         private void OnGUI()
         {
-            GUILayout.BeginArea(new Rect(10, 10, 320, 400), GUI.skin.box);
+            GUILayout.BeginArea(new Rect(10, 10, 320, 520), GUI.skin.box);
 
             GUILayout.Label(OyunAkisi.MenudeMi ? "Menü" : $"Adım: {OyunAkisi.SuAnkiAdim}");
             GUILayout.Label($"Bölge: {kumsal.BolgeSayisi} · Yuva: {kumsal.Yuvalar.Count} · Kayıp izi: {kumsal.KayipIzleri.Count}");
@@ -48,8 +51,13 @@ namespace IkiDunya.Sandbox
                 if (GUILayout.Button("Menüye dön")) OyunAkisi.MenuyeDon();
             }
 
+            if (GUILayout.Button("Kumsalı sıfırla")) kumsal.Sifirla(denemeBolgeSayisi, denemeKatmanEnFazla);
+            if (GUILayout.Button($"Kum ısınması +1 (şu an {kumsal.KumIsinmasi})")) kumsal.KumIsinmasiDegistir(1);
+            if (GUILayout.Button("Kum ısınması −1")) kumsal.KumIsinmasiDegistir(-1);
+
             if (kumsal.BolgeSayisi > 0)
             {
+                if (GUILayout.Button("Bölge 0: gölgelik kaldır")) kumsal.YapiKaldir(0, BolgeYapisi.Golgelik);
                 if (GUILayout.Button("Bölge 0: çöp +1")) kumsal.KatmanDegistir(0, BolgeKatmani.Cop, 1);
                 if (GUILayout.Button("Bölge 0: gölgelik koy")) kumsal.YapiKoy(0, BolgeYapisi.Golgelik);
                 if (GUILayout.Button("Yuva ekle"))

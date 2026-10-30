@@ -12,6 +12,7 @@ namespace IkiDunya.Core
         [SerializeField] private List<Yuva> yuvalar = new List<Yuva>();
         [SerializeField] private List<KayipIzi> kayipIzleri = new List<KayipIzi>();
         [SerializeField] private int denizdekiAg;
+        [SerializeField] private int kumIsinmasi;
         [SerializeField] private int denizeUlasanYavru;
 
         public event Action Degisti;
@@ -20,6 +21,8 @@ namespace IkiDunya.Core
         public IReadOnlyList<Yuva> Yuvalar => yuvalar;
         public IReadOnlyList<KayipIzi> KayipIzleri => kayipIzleri;
         public int DenizdekiAg => denizdekiAg;
+        /// <summary>Bütün kumun kaç bant ısındığı (sıcak dalgası +1); kum sıcaklığına eklenir.</summary>
+        public int KumIsinmasi => kumIsinmasi;
         public int DenizeUlasanYavru => denizeUlasanYavru;
 
         public Bolge BolgeAl(int bolge) => bolgeler[bolge];
@@ -32,6 +35,7 @@ namespace IkiDunya.Core
             yuvalar.Clear();
             kayipIzleri.Clear();
             denizdekiAg = 0;
+            kumIsinmasi = 0;
             denizeUlasanYavru = 0;
             Degisti?.Invoke();
         }
@@ -59,6 +63,12 @@ namespace IkiDunya.Core
         public void DenizdekiAgDegistir(int fark)
         {
             denizdekiAg = Mathf.Max(0, denizdekiAg + fark);
+            Degisti?.Invoke();
+        }
+
+        public void KumIsinmasiDegistir(int fark)
+        {
+            kumIsinmasi += fark;
             Degisti?.Invoke();
         }
 

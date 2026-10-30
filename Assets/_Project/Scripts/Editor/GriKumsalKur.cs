@@ -1,4 +1,6 @@
 using IkiDunya.Camera;
+using IkiDunya.Core;
+using IkiDunya.Hazards;
 using IkiDunya.Turtle;
 using IkiDunya.UI.Night;
 using UnityEditor;
@@ -9,7 +11,7 @@ using UnityEngine.UI;
 
 namespace IkiDunya.Editor
 {
-    /// <summary>Gri kutu kumsal deneme sahnesini kurar: kum, deniz, kumul, dalga çizgisi, bölgeler, birkaç engel ve birinci şahıs anne.</summary>
+    /// <summary>Gri kutu kumsal deneme sahnesini kurar: kum, deniz, kumul, dalga çizgisi, bölgeler, birkaç engel, termal görünüm ve birinci şahıs anne.</summary>
     public static class GriKumsalKur
     {
         private const string SahneYolu = "Assets/_Project/Scenes/Prototypes/GriKumsal.unity";
@@ -95,6 +97,8 @@ namespace IkiDunya.Editor
             Kutu("CopYigini_0", engeller, new Vector3(2f, 0.2f, 9f), new Vector3(1.2f, 0.4f, 1.2f), cop, "Trash");
             Kutu("CopYigini_1", engeller, new Vector3(-10f, 0.2f, 20f), new Vector3(1.2f, 0.4f, 1.2f), cop, "Trash");
 
+            TermalKur(Malzeme("TermalSerit", Color.white, "Universal Render Pipeline/Unlit"));
+
             GameObject anne = AnneKur(kaplumbaga);
             EnerjiCubuguKur(anne.GetComponent<Enerji>());
 
@@ -139,6 +143,26 @@ namespace IkiDunya.Editor
             Bagla(bakis, "govde", anne.transform);
 
             return anne;
+        }
+
+        private static void TermalKur(Material serit)
+        {
+            // Konumu deniz kenarının ortası; +z karaya doğru.
+            var nesne = new GameObject("KumSicakligi");
+            var kum = nesne.AddComponent<KumSicakligi>();
+            var kumsal = Ayar<KumsalDurumu>("KumsalDurumu");
+            Bagla(kum, "ayarlar", Ayar<TermalAyarlari>("TermalAyarlari"));
+            Bagla(kum, "kumsal", kumsal);
+            var so = new SerializedObject(kum);
+            so.FindProperty("uzunluk").floatValue = KumsalUzunlugu;
+            so.FindProperty("derinlik").floatValue = KumsalDerinligi;
+            so.FindProperty("bolgeSayisi").intValue = BolgeSayisi;
+            so.ApplyModifiedPropertiesWithoutUndo();
+
+            var termal = nesne.AddComponent<TermalGorunum>();
+            Bagla(termal, "kum", kum);
+            Bagla(termal, "kumsal", kumsal);
+            Bagla(termal, "seritMalzemesi", serit);
         }
 
         private static void EnerjiCubuguKur(Enerji enerji)
@@ -188,13 +212,13 @@ namespace IkiDunya.Editor
             return kutu;
         }
 
-        private static Material Malzeme(string ad, Color renk)
+        private static Material Malzeme(string ad, Color renk, string shader = "Universal Render Pipeline/Lit")
         {
             string yol = $"{MalzemeKlasoru}/{ad}.mat";
             var malzeme = AssetDatabase.LoadAssetAtPath<Material>(yol);
             if (malzeme == null)
             {
-                malzeme = new Material(Shader.Find("Universal Render Pipeline/Lit"));
+                malzeme = new Material(Shader.Find(shader));
                 AssetDatabase.CreateAsset(malzeme, yol);
             }
             malzeme.SetColor("_BaseColor", renk);
