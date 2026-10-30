@@ -6,9 +6,7 @@ ozet: Ekipçe alınan kararlar, tarih ve nedeniyle. En yeni en üstte. GDD'yi de
 
 | Tarih | Karar | Neden | Kim |
 |---|---|---|---|
-| 2026-10-31 | Anne karada yan yürümez: W/S ileri-geri, fare ile döner; A/D sadece kazma | GDD'de anne için hem WASD hareket hem A/D kazma var; ikisi çakışmasın. Kaplumbağa da yan yürümez | Umut |
-| 2026-10-31 | Kaçış gecesi n, Bölüm 2'deki n. yuvadan çıkar; kuluçka 8 hafta (tur) | 1. yuva ile 1. kaçış arasında 8 tur geçiyor (2 + 6), sonraki yuvalar da aynı aralıkla çıkar | Umut |
-| 2026-10-31 | Denemeler bitince anne bulunduğu bölgede kıyıya yakın (2 m) kendiliğinden yuva kazar | GDD: "kumsalın en yakın noktası, genelde kötü bir yer"; kıyıya yakın yer serin ama dalga altında | Umut |
+| 2026-10-31 | GDD'deki kamera satırı birinci şahıs olarak güncellendi | 2026-10-30 kamera kararı (hayvan kısımları birinci şahıs, insan kısmı yönetim ekranı) | Umut |
 | 2026-10-31 | `KumsalDurumu`'na `KumIsinmasi` ve `KumIsinmasiDegistir(fark)`: bütün kum kaç bant ısındı | GDD'deki sıcak dalgası olayı ("gelecek tur bütün kum 1 bant ısınacak") kumsala bu yolla yansır | Umut |
 | 2026-10-30 | `KumsalDurumu` taslağı: ScriptableObject asset'i; bölge katmanları (çöp, ışık, şezlong, insan), bölge yapıları (gölgelik, kumul onarımı, tilki çiti, araç izi), yuvalar, kayıp izleri, denizdeki ağ, denize ulaşan yavru; açık metotlar `docs/DURUM.md`'de. Bütçe, gönüllü ve halk desteği insan kısmında kalır | Sahneler arasında yaşar, inspector'da görünür, iki taraf aynı asset'e bağlanır. Toprak'ın onayıyla kesinleşir | Umut |
 | 2026-10-30 | Kamera: kaplumbağa bölümleri (kara ve deniz, anne ve yavru) birinci şahıs; insan kısmı yönetim ekranı | Faz 0 kamera kararı. GDD'deki "üstten ve hafif arkadan takip" satırı buna göre güncellenecek | Umut |

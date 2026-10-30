@@ -20,7 +20,7 @@ Bu belgedeki bütün rakamlar başlangıç değeridir; testle ayarlanır.
 
 Bütün kaplumbağa bölümleri aynı kamerada, aynı tuşlarla ve aynı enerji çubuğuyla oynanır. Bölümleri tehditler ve hedef ayırır.
 
-- **Kamera:** üstten ve hafif arkadan takip.
+- **Kamera:** birinci şahıs, kaplumbağanın gözünden (karada ve denizde, anne ve yavru). İnsan kısmı yönetim ekranıdır.
 - **Enerji:** 0–100. Hareket ve tehditler azaltır. Biterse son kontrol noktasından devam edilir; oyun bitmez.
 - **Kontrol noktaları:** her bölümde 2–4 tane.
 - **Uyarı kuralı:** her tehdit vurmadan önce görünür ya da duyulur bir işaret verir (titreyen kum, düşen gölge, yaklaşan pervane sesi). Oyuncu hiçbir tehditten habersiz yakalanmaz.
