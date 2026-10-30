@@ -4,7 +4,7 @@ ozet: Mekanik tarafın durumu ve sistemlerin haritası. Bir sistem eklendikçe y
 
 # Durum
 
-Son güncelleme: 2026-10-31 — Faz 3: yuva gecesi (kazma, çöp, insanlar, deneme hakkı) ve kaçış gecesi (kumdan çıkış, sürü, sıcak leke, gün doğumu, dalga), kayıp izleri, gölgelik yazıldı (Unity'de henüz denenmedi).
+Son güncelleme: 2026-10-31 — Faz 3 tamamlanıyor: iki gece Kumsal sahnesinde akışa bağlandı (geçici insan turuyla); kaçışta çöp, E ile kurtarma, zıplama, avcılar (yengeç, martı, tilki), ışık; gecenin sonuç paneli. Unity'de henüz denenmedi.
 
 ## Sistem haritası
 
@@ -17,8 +17,9 @@ Son güncelleme: 2026-10-31 — Faz 3: yuva gecesi (kazma, çöp, insanlar, dene
 | Kameralar (hayvan kısmı birinci şahıs, insan kısmı yönetim ekranı) | `Camera` | `BirinciSahisKamera`, `KameraAyarlari` | Umut | Yapılıyor |
 | Anne (kara): hareket, enerji, kazma | `Turtle` | `AnneKara`, `AnneKazma`, `AnneAyarlari`, `Enerji` | Umut | Yapılıyor |
 | Yuva gecesi: denemeler, yuva sonucu | `Turtle` | `YuvaGecesi` | Umut | Yapılıyor |
-| Kaçış gecesi: kumdan çıkış, koşu | `Turtle` | `KacisGecesi`, `Suru`, `Yavru`, `YavruAyarlari` | Umut | Yapılıyor |
-| Gece göstergeleri (enerji, kazma, kumdan çıkış, gün doğumu) | `UI/Night` | `EnerjiCubugu`, `Cubuk`, `KazmaGostergesi`, `KacisGostergesi` | Umut | Yapılıyor |
+| Kaçış gecesi: kumdan çıkış, koşu, kurtarma | `Turtle` | `KacisGecesi`, `Suru`, `Yavru`, `YavruAyarlari` | Umut | Yapılıyor |
+| Adıma göre sahne parçaları, geçici insan turu | `Core` | `AdimNesneleri`, `GeciciInsanTuru` | Umut | Yapılıyor (insan turu geçici) |
+| Gece göstergeleri (enerji, kazma, kumdan çıkış, gün doğumu, kurtarma) ve sonuç paneli | `UI/Night` | `EnerjiCubugu`, `Cubuk`, `KazmaGostergesi`, `KacisGostergesi`, `GeceSonucuPaneli` | Umut | Yapılıyor (yazısız) |
 | Gri kutu kumsal ve layer kurulumu | `Editor` | `GriKumsalKur`, `KatmanKurulumu` | Umut | Yapılıyor |
 | Deniz hareketi, nefes | `Turtle` | — | Umut | Planlandı |
 | Kum sıcaklığı ve termal görünüm (T) | `Hazards` | `KumSicakligi`, `TermalGorunum`, `TermalAyarlari` | Umut | Yapılıyor |
@@ -26,8 +27,9 @@ Son güncelleme: 2026-10-31 — Faz 3: yuva gecesi (kazma, çöp, insanlar, dene
 | İnsanlar ve görüş konisi | `Hazards` | `Insan`, `InsanAyarlari` | Umut | Yapılıyor |
 | Sıcak kum lekesi, gün doğumu, dalga | `Hazards` | `HazardZone`, `GunDogumu`, `Dalga`, `KacisAyarlari` | Umut | Yapılıyor |
 | Kumsalı durumdan kurma (gölgelik, kayıp izleri) | `Hazards` | `KumsalYapilari` | Umut | Yapılıyor |
-| Tehlike bölgeleri (ışık, ağ) | `Hazards` | `HazardZone` | Umut | Planlandı |
-| Avcılar | `Hazards` | — | Umut | Planlandı |
+| Kaçışta çöp (ağ, halka, tekerlek izi) | `Hazards` | `TrashTrap` | Umut | Yapılıyor |
+| Avcılar | `Hazards` | `Yengec`, `Marti`, `Tilki`, `AvciAyarlari`, `Cover`; `Core/IAvlanabilir` | Umut | Yapılıyor |
+| Işık kaynakları | `Hazards` | `IsikKaynagi` | Umut | Yapılıyor |
 | Kayıp izleri | `Turtle`, `Hazards` | `KacisGecesi` yazar, `KumsalYapilari` gösterir | Umut | Yapılıyor |
 | Kumsal haritası ve tur akışı | `Management` | — | Toprak | Planlandı |
 | Gönüllüler ve görevler | `Management` | — | Toprak | Planlandı |
@@ -48,6 +50,7 @@ Durum değerleri: Planlandı · Yapılıyor · Oynanabilir · Bitti.
 | Katmanlar (0–`katmanEnFazla`) | `Cop`, `Isik`, `Sezlong`, `Insan` | | |
 | Yapılar (var/yok) | `Golgelik`, `KumulOnarimi`, `TilkiCiti`, `AracIzi` | | |
 | Denizdeki ağ | `DenizdekiAg` | `DenizdekiAgDegistir(fark)` | İnsan kısmı |
+| Işık yasağı (otel ve yol ışıkları kapalı) | `IsikYasagi` | `IsikYasagiAyarla(var)` | İnsan kısmı (Işık Yasağı kartı) |
 | Kum ısınması (bütün kum kaç bant ısındı) | `KumIsinmasi` | `KumIsinmasiDegistir(fark)` | İnsan kısmı (sıcak dalgası olayı) |
 | Yuvalar | `Yuvalar` (bölge, konum, bant, dalga altında mı, yumurta, çıkışa kalan hafta, kafesli) | `YuvaEkle` (yuva gecesi), `YuvaKafesle`, `YuvaTasi`, `YuvaYumurtaKaybet`, `BirHaftaGecti` | Ekleme kaplumbağa, gerisi insan kısmı |
 | Kayıp izleri | `KayipIzleri` (bölge, konum, neden, kanıt açıldı mı) | `KayipIziEkle` (gece), `KanitAc` (insan turu) | İkisi |
@@ -59,6 +62,7 @@ Bütçe, gönüllü ve halk desteği `KumsalDurumu`'nda değil; insan kısmını
 
 - **İki Dünya → Layer'ları kur:** README'deki layer'ları boş yuvalara ekler.
 - **İki Dünya → Gri kutu kumsalı kur (yuva gecesi):** `Scenes/Prototypes/GriKumsal.unity` — kumsal, termal görünüm, şezlong, çöp yığını, 2 insan (biri fenerli), anne (hareket, kazma), yuva gecesi, enerji ve kazma çubuğu.
+- **İki Dünya → Kumsal sahnesini kur (oyun):** `Scenes/Levels/Kumsal.unity` — iki gecenin hepsi ve geçici insan turu; her grup (`YuvaGecesiNesneleri`, `KacisGecesiNesneleri`, `InsanTuruNesneleri`) sadece kendi adımında açılır. `Sistemler` prefab'ı da konur.
 - **İki Dünya → Gri kutu kaçışı kur:** `Scenes/Prototypes/GriKacis.unity` — kumsal, sıcak kum lekeleri, dalga, gün doğumu, sürü, kaçış gecesi, kumdan çıkış paneli ve gün doğumu çubuğu.
 - İki araç da eksik ayar asset'lerini `ScriptableObjects/Settings`'te, `Yavru`, `Golgelik`, `KayipIzi` kalıplarını `Prefabs/` altında oluşturur. Deneme sahnelerinde akış yoktur; gece kendiliğinden başlar.
 
@@ -76,7 +80,13 @@ Bütçe, gönüllü ve halk desteği `KumsalDurumu`'nda değil; insan kısmını
 
 **Kumsalı durumdan kurma (`KumsalYapilari`).** Gölgelikli bölgeye gölgelik koyar, kayıp izlerinin yerine işaret bırakır; `KumsalDurumu` değişince yeniden kurar. Kumul onarımı olan bölgede dalga çizgisi 4 m denize çekilir (`KumSicakligi.DalgaAltinda`); çizginin görüntüsü henüz kaymıyor.
 
-Henüz yok: yavruların çöpe takılması ve E ile kurtarma, avcılar, ışık, tilki (Faz 5); gecenin sonuç ekranı (metinler gerekiyor).
+**Kaçışta çöp, avcılar, ışık.** Ağ ve halka izleyen yavruyu takar, tekerlek izi ters çevirir; öncü yanına gidip E'yi basılı tutar (2 / 1,5 sn), bu sırada sürü bekler, sayaç işler. Space bütün sürüyü zıplatır (kum kalesi atlanır, şişe dolaşılır). Öncü takılmaz ve yönünü kaybetmez; oyuncu onu kendisi sürer. Yengeç deliği 2 sn titrer, sonra yanındaki bir yavruyu alır (zıplayan kurtulur). Martının gölgesi 1,5 sn önce düşer; dalış alanında 3+ yavru varsa 3, yoksa 1 yavru alır. Tilki her gece ihtimalle gelir (çit varsa yarı ihtimal), kumsalın kenarında gezer, konisinde siperde olmayan bir yavru görürse koşar, sürü 3 sn panikle dağılır. Işık alanındaki yavru ışığa çekilir; 5 sn kalırsa yönünü kaybedip karaya yürür, öncü E ile geri çağırır. Gün doğunca kumda kalanlar o an başlarına gelen nedenle kaybedilir (takılı → Ağ, ters → Çöp, yön kaybı → Işık, diğer → Isı).
+
+**Gecenin sonu.** Yuva gecesi yuvanın bandını ve yumurta sayısını, kaçış kurtulan, kaybedilen, dişi ve erkek sayısını gösterir (dişi oranı yuvanın bandından). Tıklayınca ya da Space'le akış ilerler. Şimdilik yazı yok, sadece sayı ve renk; yazılar `docs/metinler.md`'ye girince eklenecek.
+
+**Geçici insan turu.** Kumsala tepeden bakılır; tıklayınca bir hafta geçer (`BirHaftaGecti`) ve tur biter. Toprak'ın yönetim ekranı gelince kaldırılacak.
+
+Henüz yok: ay ışığının yönü göstermesi (görsel), tilkinin yuvayı bozması, öncünün de takılabilmesi.
 
 ## Oyun akışı
 

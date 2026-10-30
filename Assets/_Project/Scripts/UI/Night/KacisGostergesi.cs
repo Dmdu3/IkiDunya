@@ -5,7 +5,7 @@ using UnityEngine;
 
 namespace IkiDunya.UI.Night
 {
-    /// <summary>Kaçış gecesinin göstergeleri: kumdan çıkışta kum kesiti, yüzey sıcaklığı ve enerji; koşuda gün doğumu.</summary>
+    /// <summary>Kaçış gecesinin göstergeleri: kumdan çıkışta kum kesiti, yüzey sıcaklığı ve enerji; koşuda gün doğumu ve E ile kurtarma.</summary>
     public class KacisGostergesi : MonoBehaviour
     {
         [SerializeField] private KacisGecesi gece;
@@ -24,6 +24,9 @@ namespace IkiDunya.UI.Night
 
         [Header("Koşu")]
         [SerializeField] private Cubuk gunDogumuCubugu;
+        [SerializeField] private Suru suru;
+        [Tooltip("E basılıyken kurtarmanın doluluğu; ekranın ortasında.")]
+        [SerializeField] private Cubuk yardimCubugu;
 
         private void Update()
         {
@@ -31,6 +34,9 @@ namespace IkiDunya.UI.Night
             bool kosu = gece.SuAnki == KacisGecesi.Asama.Kosu;
             if (cikisPaneli.activeSelf != cikis) cikisPaneli.SetActive(cikis);
             if (gunDogumuCubugu.gameObject.activeSelf != kosu) gunDogumuCubugu.gameObject.SetActive(kosu);
+            bool yardim = kosu && suru.YardimEdiyor;
+            if (yardimCubugu.gameObject.activeSelf != yardim) yardimCubugu.gameObject.SetActive(yardim);
+            if (yardim) yardimCubugu.Ayarla(suru.YardimOrani);
 
             if (cikis)
             {

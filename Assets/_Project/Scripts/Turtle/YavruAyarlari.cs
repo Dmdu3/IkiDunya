@@ -1,3 +1,4 @@
+using IkiDunya.Core;
 using UnityEngine;
 
 namespace IkiDunya.Turtle
@@ -20,6 +21,31 @@ namespace IkiDunya.Turtle
         [SerializeField] private float topluYaricap = 0.6f;
         [Tooltip("Shift basılıyken dağınık sürünün yarıçapı (metre).")]
         [SerializeField] private float daginikYaricap = 2.5f;
+
+        [Tooltip("Space ile zıplamanın ilk hızı (m/sn); küçük engellerin üstünden geçmeye yeter.")]
+        [SerializeField] private float ziplamaHizi = 3f;
+
+        [Header("Takılma ve kurtarma (E basılı)")]
+        [Tooltip("Öncünün kurtarabilmek için yavruya en fazla uzaklığı (metre).")]
+        [SerializeField] private float kurtarmaMesafesi = 1.2f;
+        [Tooltip("Ağa ya da halkaya takılan yavruyu kurtarma süresi (GDD: 2 sn).")]
+        [SerializeField] private float agKurtarmaSuresi = 2f;
+        [Tooltip("Tekerlek izinde ters dönen yavruyu çevirme süresi (GDD: 1,5 sn).")]
+        [SerializeField] private float tersKurtarmaSuresi = 1.5f;
+        [Tooltip("Yönünü kaybeden yavruyu sürüye geri çağırma süresi.")]
+        [SerializeField] private float geriCagirmaSuresi = 0.3f;
+
+        [Header("Işık ve tilki")]
+        [Tooltip("Işığın içinde bu kadar kalan yavru yönünü kaybeder (GDD: 5 sn).")]
+        [SerializeField] private float yonKaybetmeSuresi = 5f;
+        [Tooltip("Yönünü kaybeden yavru karaya bu hız çarpanıyla yürür.")]
+        [SerializeField] private float yonKaybedenHizCarpani = 0.5f;
+        [Tooltip("Tilki görünce sürünün panikle dağınık kaldığı süre (sn).")]
+        [SerializeField] private float panikSuresi = 3f;
+
+        [Header("Cinsiyet (yuvanın sıcaklık bandına göre dişi oranı)")]
+        [Tooltip("Mavi, Yeşil, Turuncu, Kırmızı. GDD: çoğu erkek, dengeli, çoğu dişi, hepsi dişi.")]
+        [SerializeField] private float[] disiOranlari = { 0.2f, 0.5f, 0.8f, 1f };
 
         [Header("Kumdan çıkış")]
         [Tooltip("Yavruların kumun kaç kat altında başladığı (GDD: 5).")]
@@ -45,5 +71,15 @@ namespace IkiDunya.Turtle
         public float OlumculSicaklik => olumculSicaklik;
         public float KumAltiEnerjiKaybi => kumAltiEnerjiKaybi;
         public int VarsayilanYavruSayisi => varsayilanYavruSayisi;
+        public float ZiplamaHizi => ziplamaHizi;
+        public float KurtarmaMesafesi => kurtarmaMesafesi;
+        public float AgKurtarmaSuresi => agKurtarmaSuresi;
+        public float TersKurtarmaSuresi => tersKurtarmaSuresi;
+        public float GeriCagirmaSuresi => geriCagirmaSuresi;
+        public float YonKaybetmeSuresi => yonKaybetmeSuresi;
+        public float YonKaybedenHizCarpani => yonKaybedenHizCarpani;
+        public float PanikSuresi => panikSuresi;
+
+        public float DisiOrani(SicaklikBandi bant) => disiOranlari[(int)bant];
     }
 }
