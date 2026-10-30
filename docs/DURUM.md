@@ -4,7 +4,7 @@ ozet: Mekanik tarafın durumu ve sistemlerin haritası. Bir sistem eklendikçe y
 
 # Durum
 
-Son güncelleme: 2026-10-30 — Faz 2 (teknik kurulum). `Scripts/Core` iskeleti denendi. Faz 3 başı: gri kutu kumsal, birinci şahıs kamera, anne kara hareketi ve enerji yazıldı (Unity'de henüz denenmedi).
+Son güncelleme: 2026-10-31 — Faz 3: yuva gecesi (kazma, çöp, insanlar, deneme hakkı) ve kaçış gecesi (kumdan çıkış, sürü, sıcak leke, gün doğumu, dalga), kayıp izleri, gölgelik yazıldı (Unity'de henüz denenmedi).
 
 ## Sistem haritası
 
@@ -15,15 +15,20 @@ Son güncelleme: 2026-10-30 — Faz 2 (teknik kurulum). `Scripts/Core` iskeleti 
 | Tuşlar | `Core` | `GameInput` | Umut | Yapılıyor |
 | Kayıt | `Core` | — | Umut | Planlandı |
 | Kameralar (hayvan kısmı birinci şahıs, insan kısmı yönetim ekranı) | `Camera` | `BirinciSahisKamera`, `KameraAyarlari` | Umut | Yapılıyor |
-| Anne (kara): hareket, enerji, kazma | `Turtle` | `AnneKara`, `AnneAyarlari`, `Enerji` | Umut | Yapılıyor (hareket ve enerji; kazma yok) |
-| Enerji çubuğu | `UI/Night` | `EnerjiCubugu` | Umut | Yapılıyor |
+| Anne (kara): hareket, enerji, kazma | `Turtle` | `AnneKara`, `AnneKazma`, `AnneAyarlari`, `Enerji` | Umut | Yapılıyor |
+| Yuva gecesi: denemeler, yuva sonucu | `Turtle` | `YuvaGecesi` | Umut | Yapılıyor |
+| Kaçış gecesi: kumdan çıkış, koşu | `Turtle` | `KacisGecesi`, `Suru`, `Yavru`, `YavruAyarlari` | Umut | Yapılıyor |
+| Gece göstergeleri (enerji, kazma, kumdan çıkış, gün doğumu) | `UI/Night` | `EnerjiCubugu`, `Cubuk`, `KazmaGostergesi`, `KacisGostergesi` | Umut | Yapılıyor |
 | Gri kutu kumsal ve layer kurulumu | `Editor` | `GriKumsalKur`, `KatmanKurulumu` | Umut | Yapılıyor |
-| Yavru sürüsü | `Turtle` | — | Umut | Planlandı |
 | Deniz hareketi, nefes | `Turtle` | — | Umut | Planlandı |
 | Kum sıcaklığı ve termal görünüm (T) | `Hazards` | `KumSicakligi`, `TermalGorunum`, `TermalAyarlari` | Umut | Yapılıyor |
-| Tehlike bölgeleri (sıcak leke, ışık, ağ) | `Hazards` | `HazardZone` | Umut | Planlandı |
+| Çöp yığını (anne takılır) | `Hazards` | `TrashTrap` | Umut | Yapılıyor |
+| İnsanlar ve görüş konisi | `Hazards` | `Insan`, `InsanAyarlari` | Umut | Yapılıyor |
+| Sıcak kum lekesi, gün doğumu, dalga | `Hazards` | `HazardZone`, `GunDogumu`, `Dalga`, `KacisAyarlari` | Umut | Yapılıyor |
+| Kumsalı durumdan kurma (gölgelik, kayıp izleri) | `Hazards` | `KumsalYapilari` | Umut | Yapılıyor |
+| Tehlike bölgeleri (ışık, ağ) | `Hazards` | `HazardZone` | Umut | Planlandı |
 | Avcılar | `Hazards` | — | Umut | Planlandı |
-| Kayıp izleri | `Hazards` | — | Umut | Planlandı |
+| Kayıp izleri | `Turtle`, `Hazards` | `KacisGecesi` yazar, `KumsalYapilari` gösterir | Umut | Yapılıyor |
 | Kumsal haritası ve tur akışı | `Management` | — | Toprak | Planlandı |
 | Gönüllüler ve görevler | `Management` | — | Toprak | Planlandı |
 | Kartlar | `Management` | `CardDefinition` | Toprak | Planlandı |
@@ -53,13 +58,25 @@ Bütçe, gönüllü ve halk desteği `KumsalDurumu`'nda değil; insan kısmını
 ## Araçlar
 
 - **İki Dünya → Layer'ları kur:** README'deki layer'ları boş yuvalara ekler.
-- **İki Dünya → Gri kutu kumsalı kur:** `Scenes/Prototypes/GriKumsal.unity` sahnesini baştan kurar (kum, deniz, kumul, dalga çizgisi, 8 bölge, şezlong ve çöp, birinci şahıs anne, enerji çubuğu). Eksik `AnneAyarlari` ve `KameraAyarlari` asset'lerini `ScriptableObjects/Settings`'te oluşturur.
+- **İki Dünya → Gri kutu kumsalı kur (yuva gecesi):** `Scenes/Prototypes/GriKumsal.unity` — kumsal, termal görünüm, şezlong, çöp yığını, 2 insan (biri fenerli), anne (hareket, kazma), yuva gecesi, enerji ve kazma çubuğu.
+- **İki Dünya → Gri kutu kaçışı kur:** `Scenes/Prototypes/GriKacis.unity` — kumsal, sıcak kum lekeleri, dalga, gün doğumu, sürü, kaçış gecesi, kumdan çıkış paneli ve gün doğumu çubuğu.
+- İki araç da eksik ayar asset'lerini `ScriptableObjects/Settings`'te, `Yavru`, `Golgelik`, `KayipIzi` kalıplarını `Prefabs/` altında oluşturur. Deneme sahnelerinde akış yoktur; gece kendiliğinden başlar.
 
 ## Kum sıcaklığı
 
 `KumSicakligi.Bant(konum)` bir noktanın bandını verir: denizden uzaklığa göre Mavi → Yeşil → Turuncu → Kırmızı (sınırlar `TermalAyarlari`'nda: 8, 18, 30 m), gölgelikli bölgede 1 bant serin, `KumsalDurumu.KumIsinmasi` kadar sıcak. Termal görünüm (T) her bölge ve bant için kumun üstüne renkli şerit serer; kumsal değişince yeniden renklenir. Kazma bu bandı yuvaya yazacak.
 
 > Bantların denizden uzaklığa göre dizilmesi bir başlangıç varsayımı (serin bant dalga çizgisine yakın: serin ama fırtına riski). GDD yerleşimi söylemiyor; denemede değişebilir.
+
+## Kumsal geceleri
+
+**Yuva gecesi (`YuvaGecesi`).** Anne denizden çıkar; W/S ile yürür, fareyle döner. Yerde dururken A ve D'ye sırayla basınca kazma başlar (20 vuruş), kısa yumurtlama, sonra örtme (10 vuruş). Yuvanın bölgesi, bandı, dalga çizgisine göre yeri ve yumurta sayısı (kırmızı bantta 6) `KumsalDurumu.YuvaEkle` ile yazılır; anne denize dönünce gece biter. İnsanın görüş konisine girmek ya da enerjinin bitmesi denemeyi bitirir; 2 deneme de biterse anne bulunduğu bölgede kıyıya yakın kendiliğinden yuva kazar. Çöp yığını anneyi 2 sn durdurur, 5 enerji alır.
+
+**Kaçış gecesi (`KacisGecesi`).** Gecenin yuvası Bölüm 2'deki aynı sıradaki yuvadır (yoksa deneme yuvası). Kumdan çıkış: W ile 5 kat; yüzey zamanla serinler, ölümcül sıcaklığın üstünde çıkılırsa yavruların o oranı ölür; kum altında enerji biterse çıkış baştan. Koşu: öncüyü oyuncu sürer, diğerleri izler, Shift dağıtır. Sıcak lekeler gün doğdukça büyür (gölgelikli bölgede yarı boy), içindeki yavru enerji kaybeder. Dalga son 5 m'de gelip gider: çekilirken suya giren kurtulur, vururken giren geri savrulur. Öncü kurtulur ya da ölürse sıradaki yavru öncü olur. Gün doğunca kumda kalanlar kaybedilir. Her kayıp `KayipIziEkle`, her kurtulan `DenizeUlasti(1)`.
+
+**Kumsalı durumdan kurma (`KumsalYapilari`).** Gölgelikli bölgeye gölgelik koyar, kayıp izlerinin yerine işaret bırakır; `KumsalDurumu` değişince yeniden kurar. Kumul onarımı olan bölgede dalga çizgisi 4 m denize çekilir (`KumSicakligi.DalgaAltinda`); çizginin görüntüsü henüz kaymıyor.
+
+Henüz yok: yavruların çöpe takılması ve E ile kurtarma, avcılar, ışık, tilki (Faz 5); gecenin sonuç ekranı (metinler gerekiyor).
 
 ## Oyun akışı
 

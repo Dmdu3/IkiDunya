@@ -3,7 +3,7 @@ using UnityEngine;
 
 namespace IkiDunya.Hazards
 {
-    /// <summary>Kumsalın herhangi bir noktasındaki sıcaklık bandını verir: denizden uzaklık, bölgedeki gölgelik ve genel ısınma.</summary>
+    /// <summary>Kumsalın yerleşimi ve bir noktanın durumu: bölgesi, sıcaklık bandı (denizden uzaklık, gölgelik, genel ısınma), dalga çizgisinin altında mı.</summary>
     public class KumSicakligi : MonoBehaviour
     {
         [SerializeField] private TermalAyarlari ayarlar;
@@ -13,6 +13,8 @@ namespace IkiDunya.Hazards
         [SerializeField] private float uzunluk = 80f;
         [SerializeField] private float derinlik = 40f;
         [SerializeField] private int bolgeSayisi = 8;
+        [Tooltip("Dalga çizgisinin deniz kenarından uzaklığı (metre).")]
+        [SerializeField] private float dalgaCizgisi = 6f;
 
         public TermalAyarlari Ayarlar => ayarlar;
         public float Uzunluk => uzunluk;
@@ -31,6 +33,23 @@ namespace IkiDunya.Hazards
         public float KiyidanUzaklik(Vector3 konum) => transform.InverseTransformPoint(konum).z;
 
         public SicaklikBandi Bant(Vector3 konum) => Bant(Bolge(konum), KiyidanUzaklik(konum));
+
+        /// <summary>Nokta dalga çizgisinin altında mı (fırtına basabilir). Kumul onarımı olan bölgede çizgi denize çekilir.</summary>
+        public bool DalgaAltinda(Vector3 konum)
+        {
+            int bolge = Bolge(konum);
+            float cizgi = dalgaCizgisi;
+            if (bolge < kumsal.BolgeSayisi && kumsal.BolgeAl(bolge).Var(BolgeYapisi.KumulOnarimi))
+                cizgi -= ayarlar.KumulOnarimiGeriCekilme;
+            return KiyidanUzaklik(konum) < cizgi;
+        }
+
+        /// <summary>Kumsal üstündeki bir noktanın dünya konumu (bölge ortası, kıyıdan uzaklık).</summary>
+        public Vector3 BolgeNoktasi(int bolge, float kiyidanUzaklik)
+        {
+            float x = -uzunluk / 2f + BolgeGenisligi * (bolge + 0.5f);
+            return transform.TransformPoint(new Vector3(x, 0f, kiyidanUzaklik));
+        }
 
         public SicaklikBandi Bant(int bolge, float kiyidanUzaklik)
         {

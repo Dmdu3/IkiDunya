@@ -26,12 +26,19 @@ namespace IkiDunya.Camera
         {
             // Duraklatma menüsü gelene kadar Esc imleci serbest bırakır, tekrar Esc kilitler.
             if (GameInput.DuraklatBasildi) ImleciKilitle(Cursor.lockState != CursorLockMode.Locked);
-            if (Cursor.lockState != CursorLockMode.Locked) return;
+            if (Cursor.lockState != CursorLockMode.Locked || govde == null) return;
 
             Vector2 bakis = GameInput.Bakis * ayarlar.Hassasiyet;
             govde.Rotate(0f, bakis.x, 0f, Space.World);
             egim = Mathf.Clamp(egim - bakis.y, -ayarlar.YukariSinir, -ayarlar.AsagiSinir);
             transform.localRotation = Quaternion.Euler(egim, 0f, 0f);
+        }
+
+        /// <summary>Gövdeyi değiştirir (ör. öncü yavru değişince).</summary>
+        public void GovdeAyarla(Transform yeniGovde)
+        {
+            govde = yeniGovde;
+            egim = 0f;
         }
 
         private static void ImleciKilitle(bool kilitle)

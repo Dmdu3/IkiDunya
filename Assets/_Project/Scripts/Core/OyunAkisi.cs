@@ -18,6 +18,8 @@ namespace IkiDunya.Core
 
         public static Adim SuAnkiAdim { get; private set; }
         public static bool MenudeMi => ornek == null || ornek.sira < 0;
+        /// <summary>Sahnede oyun akışı var mı. Deneme sahnelerinde yoktur; gece kendi kendine başlar. Awake'te kurulur, Start'larda güvenle okunur.</summary>
+        public static bool Var => ornek != null;
 
         private static OyunAkisi ornek;
 
