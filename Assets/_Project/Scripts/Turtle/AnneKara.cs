@@ -1,9 +1,10 @@
 using IkiDunya.Core;
+using IkiDunya.Hazards;
 using UnityEngine;
 
 namespace IkiDunya.Turtle
 {
-    /// <summary>Annenin karada birinci şahıs hareketi: WASD baktığı yöne göre, Shift hızlı; enerji saniye saniye azalır.</summary>
+    /// <summary>Annenin karada birinci şahıs hareketi: W/S ileri-geri, fare ile döner (A/D kazmaya ayrılmış); enerji saniye saniye azalır.</summary>
     [RequireComponent(typeof(CharacterController), typeof(Enerji))]
     public class AnneKara : MonoBehaviour
     {
@@ -12,52 +13,61 @@ namespace IkiDunya.Turtle
         private CharacterController kontrol;
         private Enerji enerji;
         private float dikeyHiz;
+        private float takiliKalan;
+
+        /// <summary>Kazarken ya da yumurtlarken true; anne yerinden kıpırdamaz.</summary>
+        public bool Kilitli { get; set; }
+        public bool Yerde => kontrol.isGrounded;
+        // Başka objelerin OnEnable'ı bu Awake'ten önce çalışabilir; bu yüzden gerekince bulunur.
+        public Enerji Enerji => enerji != null ? enerji : enerji = GetComponent<Enerji>();
 
         private void Awake()
         {
             kontrol = GetComponent<CharacterController>();
-            enerji = GetComponent<Enerji>();
-        }
-
-        private void OnEnable()
-        {
-            enerji.Bitti += EnerjiBitti;
-        }
-
-        private void OnDisable()
-        {
-            enerji.Bitti -= EnerjiBitti;
         }
 
         private void Start()
         {
-            enerji.Doldur(ayarlar.EnerjiEnFazla);
+            Enerji.Doldur(ayarlar.EnerjiEnFazla);
         }
 
         private void Update()
         {
-            if (enerji.BittiMi) return;
+            if (Enerji.BittiMi) return;
 
-            Vector2 girdi = Vector2.ClampMagnitude(GameInput.Hareket, 1f);
-            bool hareketEdiyor = girdi.sqrMagnitude > 0.01f;
+            if (takiliKalan > 0f) takiliKalan -= Time.deltaTime;
+            bool durmali = Kilitli || takiliKalan > 0f;
+
+            float ileri = durmali ? 0f : Mathf.Clamp(GameInput.Hareket.y, -1f, 1f);
+            bool hareketEdiyor = Mathf.Abs(ileri) > 0.01f;
             bool hizli = hareketEdiyor && GameInput.HizliBasili;
-
-            Vector3 yon = transform.forward * girdi.y + transform.right * girdi.x;
             float hiz = ayarlar.YurumeHizi * (hizli ? ayarlar.HizliCarpani : 1f);
 
             if (kontrol.isGrounded && dikeyHiz < 0f) dikeyHiz = -1f;
             dikeyHiz -= ayarlar.YerCekimi * Time.deltaTime;
 
-            kontrol.Move((yon * hiz + Vector3.up * dikeyHiz) * Time.deltaTime);
+            kontrol.Move((transform.forward * ileri * hiz + Vector3.up * dikeyHiz) * Time.deltaTime);
 
             float kayip = ayarlar.KaradaEnerjiKaybi * (hizli ? ayarlar.HizliEnerjiCarpani : 1f);
-            enerji.Harca(kayip * Time.deltaTime);
+            Enerji.Harca(kayip * Time.deltaTime);
         }
 
-        private void EnerjiBitti()
+        /// <summary>Anneyi bir noktaya ışınlar (deneme başı); CharacterController açıkken konum yazılamaz.</summary>
+        public void Isinla(Vector3 konum, Quaternion yon)
         {
-            // GDD: enerji biterse son kontrol noktasından devam edilir. Kontrol noktaları gelene kadar sadece durur.
-            Debug.Log("AnneKara: enerji bitti.");
+            kontrol.enabled = false;
+            transform.SetPositionAndRotation(konum, yon);
+            kontrol.enabled = true;
+            dikeyHiz = 0f;
+            takiliKalan = 0f;
+            Kilitli = false;
+        }
+
+        private void OnTriggerEnter(Collider diger)
+        {
+            if (!diger.TryGetComponent(out TrashTrap tuzak) || tuzak.Tur != TrashTrap.Turu.CopYigini) return;
+            takiliKalan = ayarlar.CopDurmaSuresi;
+            Enerji.Harca(ayarlar.CopEnerjiKaybi);
         }
     }
 }

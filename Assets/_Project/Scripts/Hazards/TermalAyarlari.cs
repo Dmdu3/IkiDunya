@@ -3,7 +3,7 @@ using UnityEngine;
 
 namespace IkiDunya.Hazards
 {
-    /// <summary>Kum sıcaklığı bantlarının yerleşimi ve termal görünüm renkleri (GDD: Bölüm 2, Termal görünüm).</summary>
+    /// <summary>Kum sıcaklığı bantlarının yerleşimi, termal görünüm renkleri ve dalga çizgisi kayması (GDD: Bölüm 2).</summary>
     [CreateAssetMenu(menuName = "İki Dünya/Termal Ayarları", fileName = "TermalAyarlari")]
     public class TermalAyarlari : ScriptableObject
     {
@@ -22,7 +22,12 @@ namespace IkiDunya.Hazards
         [Tooltip("Gölgelik olan bölgede kum kaç bant serinler (GDD: 1).")]
         [SerializeField] private int golgelikSerinletme = 1;
 
+        [Header("Dalga çizgisi")]
+        [Tooltip("Kumul onarımı olan bölgede dalga çizgisinin denize doğru çekildiği mesafe (GDD: 4 m).")]
+        [SerializeField] private float kumulOnarimiGeriCekilme = 4f;
+
         public float[] BantSinirlari => bantSinirlari;
+        public float KumulOnarimiGeriCekilme => kumulOnarimiGeriCekilme;
         public int GolgelikSerinletme => golgelikSerinletme;
 
         public Color Renk(SicaklikBandi bant) => bantRenkleri[(int)bant];

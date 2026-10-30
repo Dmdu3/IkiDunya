@@ -76,7 +76,7 @@ Bütün tuşlar tek bir dosyada: `Assets/_Project/Scripts/Core/GameInput.cs`. Ye
 
 | Tuş | Anne | Yavru |
 | --- | --- | --- |
-| WASD | Hareket | Hareket (sürüde öncü yavru) |
+| WASD | Hareket (karada W/S ve fare; A/D kazmaya ayrılmış) | Hareket (sürüde öncü yavru) |
 | Shift | Hızlı hareket (3 kat enerji) | Kumsalda sürüyü dağıt, bırakınca toplan |
 | Space | Denizde yüzeye çık / dal | Kumsalda atla, denizde dal |
 | E (basılı) | Ye, ağdan kurtul | Takılan ya da ters dönen yavruyu kurtar |
@@ -84,7 +84,7 @@ Bütün tuşlar tek bir dosyada: `Assets/_Project/Scripts/Core/GameInput.cs`. Ye
 | W (kum altında) | – | Bir kat yukarı kaz |
 | T | Termal görünüm | Termal görünüm |
 | Esc | Duraklatma menüsü | Duraklatma menüsü |
-| Fare | İnsan turunda harita, kart ve gönüllü seçimi | |
+| Fare | Kaplumbağa bölümlerinde bakış (birinci şahıs); insan turunda harita, kart ve gönüllü seçimi | |
 | F1–F4 | (Geliştirici) Bölüm 1, Kumsal, Bölüm 5, Menü'ye geç | |
 
 ## Kullanılan paketler
