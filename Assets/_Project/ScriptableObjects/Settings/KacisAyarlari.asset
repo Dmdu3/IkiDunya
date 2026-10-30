@@ -1,0 +1,22 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 7feadd74b8382344eae145c65aa2bbbb, type: 3}
+  m_Name: KacisAyarlari
+  m_EditorClassIdentifier: Assembly-CSharp::IkiDunya.Hazards.KacisAyarlari
+  gunDogumuSuresi: 150
+  lekeBaslangicOlcegi: 1
+  lekeSonOlcegi: 2.5
+  golgelikLekeCarpani: 0.5
+  sicakLekeHasari: 30
+  dalgaBolgesi: 5
+  dalgaPeriyodu: 6
+  savrulmaMesafesi: 2
