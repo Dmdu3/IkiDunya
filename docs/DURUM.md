@@ -4,7 +4,7 @@ ozet: Mekanik tarafın durumu ve sistemlerin haritası. Bir sistem eklendikçe y
 
 # Durum
 
-Son güncelleme: 2026-10-30 — Faz 2 (teknik kurulum). `Scripts/Core` iskeleti yazıldı (Unity'de henüz derlenip denenmedi).
+Son güncelleme: 2026-10-30 — Faz 2 (teknik kurulum). `Scripts/Core` iskeleti denendi. Faz 3 başı: gri kutu kumsal, birinci şahıs kamera, anne kara hareketi ve enerji yazıldı (Unity'de henüz denenmedi).
 
 ## Sistem haritası
 
@@ -14,10 +14,13 @@ Son güncelleme: 2026-10-30 — Faz 2 (teknik kurulum). `Scripts/Core` iskeleti 
 | Kumsal durumu (ortak durum) | `Core` | `KumsalDurumu` | Umut | Yapılıyor (taslak) |
 | Tuşlar | `Core` | `GameInput` | Umut | Yapılıyor |
 | Kayıt | `Core` | — | Umut | Planlandı |
-| Kameralar (hayvan kısmı birinci şahıs, insan kısmı yönetim ekranı) | `Camera` | — | Umut | Planlandı |
-| Anne (kara): hareket, enerji, kazma | `Turtle` | — | Umut | Planlandı |
+| Kameralar (hayvan kısmı birinci şahıs, insan kısmı yönetim ekranı) | `Camera` | `BirinciSahisKamera`, `KameraAyarlari` | Umut | Yapılıyor |
+| Anne (kara): hareket, enerji, kazma | `Turtle` | `AnneKara`, `AnneAyarlari`, `Enerji` | Umut | Yapılıyor (hareket ve enerji; kazma yok) |
+| Enerji çubuğu | `UI/Night` | `EnerjiCubugu` | Umut | Yapılıyor |
+| Gri kutu kumsal ve layer kurulumu | `Editor` | `GriKumsalKur`, `KatmanKurulumu` | Umut | Yapılıyor |
 | Yavru sürüsü | `Turtle` | — | Umut | Planlandı |
 | Deniz hareketi, nefes | `Turtle` | — | Umut | Planlandı |
+| Kum sıcaklığı ve termal görünüm (T) | `Hazards` | `KumSicakligi`, `TermalGorunum`, `TermalAyarlari` | Umut | Yapılıyor |
 | Tehlike bölgeleri (sıcak leke, ışık, ağ) | `Hazards` | `HazardZone` | Umut | Planlandı |
 | Avcılar | `Hazards` | — | Umut | Planlandı |
 | Kayıp izleri | `Hazards` | — | Umut | Planlandı |
@@ -40,11 +43,23 @@ Durum değerleri: Planlandı · Yapılıyor · Oynanabilir · Bitti.
 | Katmanlar (0–`katmanEnFazla`) | `Cop`, `Isik`, `Sezlong`, `Insan` | | |
 | Yapılar (var/yok) | `Golgelik`, `KumulOnarimi`, `TilkiCiti`, `AracIzi` | | |
 | Denizdeki ağ | `DenizdekiAg` | `DenizdekiAgDegistir(fark)` | İnsan kısmı |
+| Kum ısınması (bütün kum kaç bant ısındı) | `KumIsinmasi` | `KumIsinmasiDegistir(fark)` | İnsan kısmı (sıcak dalgası olayı) |
 | Yuvalar | `Yuvalar` (bölge, konum, bant, dalga altında mı, yumurta, çıkışa kalan hafta, kafesli) | `YuvaEkle` (yuva gecesi), `YuvaKafesle`, `YuvaTasi`, `YuvaYumurtaKaybet`, `BirHaftaGecti` | Ekleme kaplumbağa, gerisi insan kısmı |
 | Kayıp izleri | `KayipIzleri` (bölge, konum, neden, kanıt açıldı mı) | `KayipIziEkle` (gece), `KanitAc` (insan turu) | İkisi |
 | Denize ulaşan yavru | `DenizeUlasanYavru` | `DenizeUlasti(adet)` | Kaplumbağa |
 
 Bütçe, gönüllü ve halk desteği `KumsalDurumu`'nda değil; insan kısmının kendi verisi.
+
+## Araçlar
+
+- **İki Dünya → Layer'ları kur:** README'deki layer'ları boş yuvalara ekler.
+- **İki Dünya → Gri kutu kumsalı kur:** `Scenes/Prototypes/GriKumsal.unity` sahnesini baştan kurar (kum, deniz, kumul, dalga çizgisi, 8 bölge, şezlong ve çöp, birinci şahıs anne, enerji çubuğu). Eksik `AnneAyarlari` ve `KameraAyarlari` asset'lerini `ScriptableObjects/Settings`'te oluşturur.
+
+## Kum sıcaklığı
+
+`KumSicakligi.Bant(konum)` bir noktanın bandını verir: denizden uzaklığa göre Mavi → Yeşil → Turuncu → Kırmızı (sınırlar `TermalAyarlari`'nda: 8, 18, 30 m), gölgelikli bölgede 1 bant serin, `KumsalDurumu.KumIsinmasi` kadar sıcak. Termal görünüm (T) her bölge ve bant için kumun üstüne renkli şerit serer; kumsal değişince yeniden renklenir. Kazma bu bandı yuvaya yazacak.
+
+> Bantların denizden uzaklığa göre dizilmesi bir başlangıç varsayımı (serin bant dalga çizgisine yakın: serin ama fırtına riski). GDD yerleşimi söylemiyor; denemede değişebilir.
 
 ## Oyun akışı
 
@@ -52,4 +67,4 @@ Bütçe, gönüllü ve halk desteği `KumsalDurumu`'nda değil; insan kısmını
 
 ## Bilinen sorunlar
 
-—
+- `IkiDunya.Camera` namespace'i yüzünden `IkiDunya.*` içindeki kodda `Camera` yazınca Unity'nin kamera sınıfı değil bu namespace bulunur. Kamera sınıfı için `UnityEngine.Camera` yaz.
