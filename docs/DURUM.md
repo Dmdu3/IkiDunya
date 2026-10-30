@@ -4,7 +4,7 @@ ozet: Mekanik tarafın durumu ve sistemlerin haritası. Bir sistem eklendikçe y
 
 # Durum
 
-Son güncelleme: 2026-10-30 — Faz 2 (teknik kurulum). `Scripts/Core` iskeleti yazıldı (Unity'de henüz derlenip denenmedi).
+Son güncelleme: 2026-10-30 — Faz 2 (teknik kurulum). `Scripts/Core` iskeleti denendi. Faz 3 başı: gri kutu kumsal, birinci şahıs kamera, anne kara hareketi ve enerji yazıldı (Unity'de henüz denenmedi).
 
 ## Sistem haritası
 
@@ -14,8 +14,10 @@ Son güncelleme: 2026-10-30 — Faz 2 (teknik kurulum). `Scripts/Core` iskeleti 
 | Kumsal durumu (ortak durum) | `Core` | `KumsalDurumu` | Umut | Yapılıyor (taslak) |
 | Tuşlar | `Core` | `GameInput` | Umut | Yapılıyor |
 | Kayıt | `Core` | — | Umut | Planlandı |
-| Kameralar (hayvan kısmı birinci şahıs, insan kısmı yönetim ekranı) | `Camera` | — | Umut | Planlandı |
-| Anne (kara): hareket, enerji, kazma | `Turtle` | — | Umut | Planlandı |
+| Kameralar (hayvan kısmı birinci şahıs, insan kısmı yönetim ekranı) | `Camera` | `BirinciSahisKamera`, `KameraAyarlari` | Umut | Yapılıyor |
+| Anne (kara): hareket, enerji, kazma | `Turtle` | `AnneKara`, `AnneAyarlari`, `Enerji` | Umut | Yapılıyor (hareket ve enerji; kazma yok) |
+| Enerji çubuğu | `UI/Night` | `EnerjiCubugu` | Umut | Yapılıyor |
+| Gri kutu kumsal ve layer kurulumu | `Editor` | `GriKumsalKur`, `KatmanKurulumu` | Umut | Yapılıyor |
 | Yavru sürüsü | `Turtle` | — | Umut | Planlandı |
 | Deniz hareketi, nefes | `Turtle` | — | Umut | Planlandı |
 | Tehlike bölgeleri (sıcak leke, ışık, ağ) | `Hazards` | `HazardZone` | Umut | Planlandı |
@@ -46,10 +48,15 @@ Durum değerleri: Planlandı · Yapılıyor · Oynanabilir · Bitti.
 
 Bütçe, gönüllü ve halk desteği `KumsalDurumu`'nda değil; insan kısmının kendi verisi.
 
+## Araçlar
+
+- **İki Dünya → Layer'ları kur:** README'deki layer'ları boş yuvalara ekler.
+- **İki Dünya → Gri kutu kumsalı kur:** `Scenes/Prototypes/GriKumsal.unity` sahnesini baştan kurar (kum, deniz, kumul, dalga çizgisi, 8 bölge, şezlong ve çöp, birinci şahıs anne, enerji çubuğu). Eksik `AnneAyarlari` ve `KameraAyarlari` asset'lerini `ScriptableObjects/Settings`'te oluşturur.
+
 ## Oyun akışı
 
 `OyunAkisi` her oyun sahnesinde durur (ilki sahneler arasında yaşar). Adımlar `OyunAyarlari.AkisiKur()` ile GDD'deki sıradan kurulur: Bölüm 1 → 3 yuva gecesi (aralarında 1'er tur) → 6 bekleyiş turu → 3 kaçış gecesi (her birinden sonra 1 tur) → Bölüm 5; toplam 11 tur. Sistemler `OyunAkisi.AdimBasladi` event'ini dinler, adımları bitince `OyunAkisi.AdimBitti()` der. Kumsal sahnesinde gece ve tur arasında sahne yeniden yüklenmez. Bir oyun sahnesinde doğrudan Play'e basılırsa akış o sahnenin ilk adımından başlar. F1–F4 sadece geliştirici sürümünde çalışır.
 
 ## Bilinen sorunlar
 
-—
+- `IkiDunya.Camera` namespace'i yüzünden `IkiDunya.*` içindeki kodda `Camera` yazınca Unity'nin kamera sınıfı değil bu namespace bulunur. Kamera sınıfı için `UnityEngine.Camera` yaz.
