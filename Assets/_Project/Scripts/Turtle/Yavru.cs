@@ -19,6 +19,8 @@ namespace IkiDunya.Turtle
         private readonly List<HazardZone> icindeOldugu = new List<HazardZone>();
 
         public Durum SuAnki { get; private set; }
+        /// <summary>Bu dalga vururken bir kez geri savruldu mu; dalga çekilince sıfırlanır.</summary>
+        public bool BuDalgadaSavruldu { get; set; }
 
         /// <summary>Kaybedildiğinde; nedeniyle.</summary>
         public event Action<Yavru, KayipNedeni> Kaybedildi;

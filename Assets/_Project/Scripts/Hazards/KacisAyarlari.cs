@@ -18,15 +18,15 @@ namespace IkiDunya.Hazards
         [Tooltip("Gölgelikli bölgede leke bu çarpanla küçülür (GDD: gölgelik → sıcak lekeler küçük).")]
         [SerializeField] private float golgelikLekeCarpani = 0.5f;
         [Tooltip("Lekenin içindeki yavrunun saniyede kaybettiği enerji.")]
-        [SerializeField] private float sicakLekeHasari = 30f;
+        [SerializeField] private float sicakLekeHasari = 15f;
 
         [Header("Dalga")]
         [Tooltip("Dalganın gelip gittiği kıyı şeridi (GDD: son 5 m).")]
         [SerializeField] private float dalgaBolgesi = 5f;
         [Tooltip("Bir dalganın gelip gitme süresi (sn).")]
-        [SerializeField] private float dalgaPeriyodu = 6f;
-        [Tooltip("Dalga vururken suya giren yavrunun geri savrulduğu mesafe (metre).")]
-        [SerializeField] private float savrulmaMesafesi = 2f;
+        [SerializeField] private float dalgaPeriyodu = 8f;
+        [Tooltip("Dalga vururken suya giren yavrunun bir kez geri savrulduğu mesafe (metre).")]
+        [SerializeField] private float savrulmaMesafesi = 1f;
 
         public float GunDogumuSuresi => gunDogumuSuresi;
         public float LekeBaslangicOlcegi => lekeBaslangicOlcegi;
