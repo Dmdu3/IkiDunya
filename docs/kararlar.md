@@ -6,6 +6,7 @@ ozet: Ekipçe alınan kararlar, tarih ve nedeniyle. En yeni en üstte. GDD'yi de
 
 | Tarih | Karar | Neden | Kim |
 |---|---|---|---|
+| 2026-10-30 | Kamera: kaplumbağa bölümleri (kara ve deniz, anne ve yavru) birinci şahıs; insan kısmı yönetim ekranı | Faz 0 kamera kararı. GDD'deki "üstten ve hafif arkadan takip" satırı buna göre güncellenecek | Umut |
 | 2026-10-30 | Repo düzeni Anadolu'yla aynı: Unity projesi reponun kökünde; `Assets/_Project/{Scripts,ScriptableObjects,Scenes,Prefabs,Art,Models,Materials,Animations,Audio,Shaders}`, `Assets/Sandbox/<ad>`, `Assets/ThirdParty/<yayıncı>`, `Tools/`, `docs/DURUM.md` | İki projede aynı alışkanlık; Claude Code ve ekip aynı yerleri bilir | Umut |
 | 2026-10-30 | Script klasörleri İngilizce: Core, Camera, Turtle, Hazards, Management, UI, Editor | Anadolu ve Unity alışkanlığı | Umut |
 | 2026-10-30 | Büyük dosyalar Git LFS ile (Anadolu'daki gibi) | Görsel, ses ve modeller geçmişi şişirmesin | Umut |
