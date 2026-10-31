@@ -17,6 +17,7 @@ namespace IkiDunya.Hazards
         public static event Action<Transform> Gordu;
 
         private readonly Collider[] bulunan = new Collider[16];
+        private Vector3[] yol;
         private int hedef;
         private float beklemeKalan;
         private int kaplumbagaMaskesi;
@@ -32,6 +33,18 @@ namespace IkiDunya.Hazards
             kaplumbagaMaskesi = LayerMask.GetMask("Turtle");
             engelMaskesi = LayerMask.GetMask("Obstacle", "Structure");
             GorusKonisi.Ciz(transform, Menzil, ayarlar.GorusAcisi, koniMalzemesi);
+            if (yol == null && noktalar != null)
+            {
+                yol = new Vector3[noktalar.Length];
+                for (int i = 0; i < noktalar.Length; i++) yol[i] = noktalar[i].position;
+            }
+        }
+
+        /// <summary>Sahnede sonradan kurulan insanın gidip geldiği iki nokta.</summary>
+        public void Kur(Vector3 a, Vector3 b)
+        {
+            yol = new[] { a, b };
+            hedef = 1;
         }
 
         private void Update()
@@ -42,18 +55,18 @@ namespace IkiDunya.Hazards
 
         private void Yuru()
         {
-            if (noktalar == null || noktalar.Length == 0) return;
+            if (yol == null || yol.Length == 0) return;
             if (beklemeKalan > 0f)
             {
                 beklemeKalan -= Time.deltaTime;
                 return;
             }
 
-            Vector3 fark = noktalar[hedef].position - transform.position;
+            Vector3 fark = yol[hedef] - transform.position;
             fark.y = 0f;
             if (fark.magnitude < 0.1f)
             {
-                hedef = (hedef + 1) % noktalar.Length;
+                hedef = (hedef + 1) % yol.Length;
                 beklemeKalan = ayarlar.Bekleme;
                 return;
             }

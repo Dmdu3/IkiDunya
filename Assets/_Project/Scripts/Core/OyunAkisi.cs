@@ -159,7 +159,7 @@ namespace IkiDunya.Core
 
         private void KumsaliSifirla()
         {
-            kumsal.Sifirla(ayarlar.BolgeSayisi, ayarlar.KatmanEnFazla);
+            ayarlar.KumsaliSifirla(kumsal);
         }
     }
 }
