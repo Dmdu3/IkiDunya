@@ -14,10 +14,22 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::IkiDunya.Management.KartTanimi
   id: kart_temiz_enerji
   etki: 11
+  tur: 2
   hedef: 0
   bedel: 4
+  bakim: 0
   deger: 1
+  gucluDeger: 0
   bastan: 1
-  kanit: 0
+  kanit: 2
   kanitUcuzlatir: 0
   tekSeferlik: 1
+  acilUyari: 6
+  destekFarki: 1
+  paydasFarki:
+    otel: 0
+    belediye: 0
+    balikci: 0
+  kosulVar: 0
+  kosulPaydas: 0
+  kosulEnAz: 0

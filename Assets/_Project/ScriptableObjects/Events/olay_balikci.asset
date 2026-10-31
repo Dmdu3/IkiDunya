@@ -16,7 +16,22 @@ MonoBehaviour:
   etki: 2
   uyari: 0
   destekIster: 0
+  kosul: 0
+  kosulPaydas: 0
+  kosulTur: 0
   aButce: -2
   aDestek: 0
+  aPaydas:
+    otel: 0
+    belediye: 0
+    balikci: 2
+  aGonullu: 0
+  aSonraki: {fileID: 11400000, guid: 62bcca3ab5b14ef40bd5449b0b828827, type: 2}
   bButce: 0
   bDestek: 0
+  bPaydas:
+    otel: 0
+    belediye: 0
+    balikci: -1
+  bGonullu: 0
+  bSonraki: {fileID: 0}

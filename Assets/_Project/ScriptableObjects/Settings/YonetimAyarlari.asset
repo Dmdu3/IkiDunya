@@ -22,29 +22,60 @@ MonoBehaviour:
   baslangicDestek: 4
   destekEnFazla: 10
   dusukDestekEsigi: 3
-  eldekiKart: 4
+  iliskiEnAz: -3
+  iliskiEnCok: 3
+  dostEsigi: 2
+  kusEsigi: -2
+  otelSponsoru: 1
+  belediyeKesintisi: 1
+  politikaIndirimi: 1
+  balikciAgCarpani: 2
+  eldekiKart: 5
   tasimaUzakligi: 12
+  gucluKanit: 2
+  ortaklikSezlongu: 1
   otelSezlongu: 3
   festivalArtisi: 2
   firtinaKaybi: 0.5
   temizEnerjiKorumasi: 0.5
+  otelBarArtisi: 1
+  festivalCopBolgesi: 3
+  otelIsikArtisi: 1
+  otelIsikSuresi: 2
+  kopekAvciCarpani: 2
   copBirikimi: 0.3
+  kalabalikCopu: 0.1
   avciIhtimali: 0.2
   avciYumurtaKaybi: 0.3
   citCarpani: 0.5
   kartlar:
   - {fileID: 11400000, guid: 8a578e50bebf111428905ed2a7d97f4b, type: 2}
-  - {fileID: 11400000, guid: ff9b5753d0e30cf4db9f56b5aad6ed57, type: 2}
   - {fileID: 11400000, guid: 8b122664b49906946ba089720f38a2ac, type: 2}
+  - {fileID: 11400000, guid: 5b56c36baacd8bb428c69b79b2a87a4f, type: 2}
+  - {fileID: 11400000, guid: 6a5dab85fe3fa074890465fcc89712e4, type: 2}
+  - {fileID: 11400000, guid: 96d29e4fbb89d8840be9c54a84c88819, type: 2}
+  - {fileID: 11400000, guid: c13a58817f9ee0448b51697cf486d2b0, type: 2}
+  - {fileID: 11400000, guid: ff9b5753d0e30cf4db9f56b5aad6ed57, type: 2}
   - {fileID: 11400000, guid: 3e2714f21310b8a4a9b7e0311444c557, type: 2}
+  - {fileID: 11400000, guid: 945e907e372a8384c80c1a2d76c40917, type: 2}
+  - {fileID: 11400000, guid: 9b3e507d2e15ea342a601683f9fc2a54, type: 2}
+  - {fileID: 11400000, guid: bb41fad5f6b405a4eb35dd201dfa8b35, type: 2}
+  - {fileID: 11400000, guid: 93b34bc27b900c248b34a566425d6985, type: 2}
+  - {fileID: 11400000, guid: 6b427473cc81867428122d5cde25a4e3, type: 2}
+  - {fileID: 11400000, guid: 2710af3fcbbbcaf4a93e728bc1521ec5, type: 2}
   - {fileID: 11400000, guid: 75ed7b1a6c3fbfd44b2ce4ce28508454, type: 2}
   - {fileID: 11400000, guid: de1fcc25a6e68d04a8afdc796b227545, type: 2}
   - {fileID: 11400000, guid: 77e3905befb7bd0499a653b9ecee98fb, type: 2}
-  - {fileID: 11400000, guid: 5b56c36baacd8bb428c69b79b2a87a4f, type: 2}
-  - {fileID: 11400000, guid: 945e907e372a8384c80c1a2d76c40917, type: 2}
-  - {fileID: 11400000, guid: 9b3e507d2e15ea342a601683f9fc2a54, type: 2}
-  - {fileID: 11400000, guid: be986c8367ab5ab41a6ad12534bd613d, type: 2}
+  - {fileID: 11400000, guid: aeb1b8542762cb147b75801176591e79, type: 2}
+  - {fileID: 11400000, guid: 6c3eef8d1f36b9b4386f9db19f4d34e1, type: 2}
+  - {fileID: 11400000, guid: b6d40a9da00304a40a67c529c42c5a4d, type: 2}
   - {fileID: 11400000, guid: 82e04033697c2c04bab00cde2a0615bc, type: 2}
+  - {fileID: 11400000, guid: 19352b432d925504e933de53f1e9fff0, type: 2}
+  - {fileID: 11400000, guid: 8358b37aece1aeb43b3262a4364a5758, type: 2}
+  - {fileID: 11400000, guid: e023c3b672be85f499ed2de3445bd050, type: 2}
+  - {fileID: 11400000, guid: be986c8367ab5ab41a6ad12534bd613d, type: 2}
+  - {fileID: 11400000, guid: 6f6e4502441740d4a88f62e8ded9cc35, type: 2}
+  - {fileID: 11400000, guid: cf20871599b16aa4cb168ce720c62852, type: 2}
   gorevler:
   - {fileID: 11400000, guid: 0c1068d550ad4964c9b5a199b7140f3a, type: 2}
   - {fileID: 11400000, guid: fc38931d3208d7344827cea80782af41, type: 2}
@@ -53,8 +84,18 @@ MonoBehaviour:
   - {fileID: 11400000, guid: e20febd77e4d8d542a23d2f2b8e40676, type: 2}
   olaylar:
   - {fileID: 11400000, guid: 3bbdb903fa279874082564e224c582ed, type: 2}
+  - {fileID: 11400000, guid: 4dc9bb443145f094291a58ccf7a90086, type: 2}
   - {fileID: 11400000, guid: d0e4585139cd07e4a8c41c5208e091b3, type: 2}
+  - {fileID: 11400000, guid: bd0d32e85c6ab92448fe88fc2fbb829f, type: 2}
   - {fileID: 11400000, guid: 1c8fd426ba543024a9b2396c903f77ed, type: 2}
+  - {fileID: 11400000, guid: 62bcca3ab5b14ef40bd5449b0b828827, type: 2}
   - {fileID: 11400000, guid: b93597653afaed044ad4cae1fb4e897a, type: 2}
   - {fileID: 11400000, guid: ccdca7ef9fc2a604cb0360312d57df1a, type: 2}
   - {fileID: 11400000, guid: 8aea8dddfb8f5b64fbdad79075273a2e, type: 2}
+  - {fileID: 11400000, guid: 003d34f47ac64fc44aa07b93fd5c70ce, type: 2}
+  - {fileID: 11400000, guid: 0783a2fe40d26bf44a8a3ec495513d69, type: 2}
+  - {fileID: 11400000, guid: 379ef7ebcea71be44ab33f817789e352, type: 2}
+  - {fileID: 11400000, guid: 1d2f4a98f910a8f4cbbda6e6ec893b92, type: 2}
+  - {fileID: 11400000, guid: b27d35f54a866a448a54e729e3e56f7f, type: 2}
+  - {fileID: 11400000, guid: 836934bf99365084fb86e15e79a7c149, type: 2}
+  - {fileID: 11400000, guid: bcda5a971cb954e4aa60d1b6baf7e13a, type: 2}

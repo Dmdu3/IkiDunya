@@ -14,10 +14,22 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::IkiDunya.Management.KartTanimi
   id: kart_ag_temizligi
   etki: 8
+  tur: 1
   hedef: 0
   bedel: 3
+  bakim: 0
   deger: 1
+  gucluDeger: 0
   bastan: 1
   kanit: 2
   kanitUcuzlatir: 0
   tekSeferlik: 0
+  acilUyari: 6
+  destekFarki: 0
+  paydasFarki:
+    otel: 0
+    belediye: 0
+    balikci: 1
+  kosulVar: 0
+  kosulPaydas: 0
+  kosulEnAz: 0
