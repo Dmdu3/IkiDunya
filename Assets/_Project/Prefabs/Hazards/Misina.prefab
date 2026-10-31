@@ -135,6 +135,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 2380619751959546837}
+  - component: {fileID: 3015890657651486068}
   m_Layer: 10
   m_Name: Misina
   m_TagString: Untagged
@@ -158,3 +159,19 @@ Transform:
   - {fileID: 1000432690313674545}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &3015890657651486068
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2450522356479654285}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 2055d1b9e5a991243b8972670378111b, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::IkiDunya.Hazards.Parilti
+  ayarlar: {fileID: 11400000, guid: e578735364c9f2747b616effa9abff4f, type: 2}
+  parcalar:
+  - {fileID: 4338765473247611403}
+  renk: {r: 0.95, g: 0.95, b: 0.8, a: 1}
