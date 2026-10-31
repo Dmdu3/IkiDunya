@@ -58,7 +58,10 @@ namespace IkiDunya.Core
         {
             if (!aktif) return;
             gecen += Time.deltaTime;
-            kaplumbaga.position = Vector3.Lerp(baslangic, yuruyusSonu.position, Mathf.Clamp01(gecen / yuruyusSuresi));
+            // Kumsal düz değilse kaplumbağa kumun altında kalmaz, yokuşu çıkar.
+            Vector3 yer = Vector3.Lerp(baslangic, yuruyusSonu.position, Mathf.Clamp01(gecen / yuruyusSuresi));
+            yer.y = Mathf.Max(yer.y, Zemin.Yukseklik(yer, yer.y));
+            kaplumbaga.position = yer;
 
             // Kaplumbağa yürürken tıklama atlanmaz; sonra tıklayınca oyun biter.
             if (gecen < yuruyusSuresi || !GameInput.TiklaBasildi) return;

@@ -4,7 +4,7 @@ ozet: Mekanik tarafın durumu ve sistemlerin haritası. Bir sistem eklendikçe y
 
 # Durum
 
-Son güncelleme: 2026-11-01 — Alpha main'de, deneme listesi tamam (editörde 300+ FPS). Dalda (`umut/yonetim-ekrani`): insan kısmı (yönetim ekranı, Faz 0–4) Umut tarafından; geçici insan turu kalktı. Unity'de henüz denenmedi.
+Son güncelleme: 2026-11-01 — Alpha main'de, deneme listesi tamam (editörde 300+ FPS). Main'de: insan kısmı (yönetim ekranı, Faz 0–4). Dalda (`umut/kumsal-arazi`): Yusuf'un kumsal arazisi, stilize denizi ve objeleri kumsal sahnesine bağlandı. Unity'de henüz denenmedi.
 
 ## Sistem haritası
 
@@ -188,4 +188,16 @@ Toprak'ın onayıyla Umut yazdı (2026-11-01). Sayılar GDD'den; kâğıt protot
 **Metinler.** Bütün yazılar id ile (kart ve görev adları metinler.md'de var; açıklamalar `Açıklama` sütunundan `id_aciklama`, olay seçenekleri `Seçenek A/B` sütunlarından `id_a`, `id_b` olarak aktarılır). Ekranın kendi yazıları için yeni id'ler Yusuf'ta.
 
 Henüz yok: kartların ve olay penceresinin görsel hali (Faz 9), arayüz sesleri, gönüllü atamasını geri alma.
+
+## Kumsal arazisi (Yusuf'un modelleri)
+
+**Kumsal sahnesini kur** (ve gri kumsal/kaçış komutları) `KumsalArazi` kalıbını bulursa gri kum, kumul, deniz tabanı ve su yüzeyi yerine onu koyar (önce `Prefabs/Environment/KumsalArazi.prefab`, yoksa `Sandbox/Yusuf/KumsalArazi/`); bulamazsa gri kutu kurar. Arazi kumsalın düzeniyle aynı: kıyı z≈0 (±4,5 m kıvrımlı), kara +z, deniz yüzeyi y = −0,55, kumullar z≈37–45, 300 m genişlik (oyun ortadaki 80 m'yi kullanır).
+- **Zemine oturtma (`Core/Zemin`):** Ground layer'a yukarıdan bakıp yüksekliği verir. `KumSicakligi.BolgeNoktasi` artık zemine oturmuş nokta verir (çöp, şezlong, ışık, gölgelik, araç izi, insan yolu, yuva taşıma); insanlar ve tilki yürürken, finaldeki kaplumbağa kumu izler. Kurulum, düz kuma göre konmuş kaçış ve final parçalarını (sıcak lekeler, kum kalesi, siperler, avcılar, sürü, anne başlangıcı, final izleri) arazinin yüksekliğine taşır.
+- **Kıvrımlı kıyı:** kurulum kıyıyı araziden metre metre ölçer (`KumSicakligi.kiyiCizgisi`); kıyıdan uzaklık (sıcaklık bantları, dalga çizgisi, kaçıştaki dalga, bölge noktaları) o x'teki kıyıdan ölçülür.
+- **Termal görünüm:** şeritler kumu izleyen ızgara (1 m), kıyıyı izler; ilk T'de kurulur.
+- **Harita (insan turu):** imleç zemine çarpar; bölge vurgusu kumsalın 6 m üstünde.
+- **Objeler:** çöp yığını (`Cop_Yigini_1`), şişe, şezlong ve kaçıştaki kum kalesi Yusuf'un modelleriyle görünür; gri kutunun collider'ı ve layer'ı kalır (oynanış aynı). Model bulunmazsa gri kutu.
+- Arazi varken kaçıştaki düz su şeridi görünmez (dalga logic'i aynı; görüntüyü Yusuf'un denizi veriyor).
+
+Henüz yok: Bölüm 1 ve 5 için deniz tabanı modeli; ağ, tekerlek izi, ışık direği, gölgelik, insan, tilki modelleri; arazi dosyalarının kalıcı klasöre (`Prefabs/Environment`, `Models/Kumsal`) taşınması (Yusuf, Unity içinden).
 

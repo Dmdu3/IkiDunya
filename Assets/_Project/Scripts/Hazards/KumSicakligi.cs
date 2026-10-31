@@ -3,7 +3,8 @@ using UnityEngine;
 
 namespace IkiDunya.Hazards
 {
-    /// <summary>Kumsalın yerleşimi ve bir noktanın durumu: bölgesi, sıcaklık bandı (denizden uzaklık, gölgelik, genel ısınma), dalga çizgisinin altında mı.</summary>
+    /// <summary>Kumsalın yerleşimi ve bir noktanın durumu: bölgesi, sıcaklık bandı (denizden uzaklık, gölgelik, genel ısınma), dalga çizgisinin altında mı.
+    /// Kıyı düz değilse (kumsal arazisi) kıyı çizgisi x boyunca örneklenir; kıyıdan uzaklık oradan ölçülür.</summary>
     public class KumSicakligi : MonoBehaviour
     {
         [SerializeField] private TermalAyarlari ayarlar;
@@ -15,6 +16,11 @@ namespace IkiDunya.Hazards
         [SerializeField] private int bolgeSayisi = 8;
         [Tooltip("Dalga çizgisinin deniz kenarından uzaklığı (metre).")]
         [SerializeField] private float dalgaCizgisi = 6f;
+
+        [Header("Kıyı çizgisi (kumsal arazisi; boşsa kıyı düz, z = 0)")]
+        [Tooltip("Kumsalın solundan sağına, eşit aralıklarla kıyının z'si (yerel). Editör kurulumu araziden ölçer.")]
+        [SerializeField] private float[] kiyiCizgisi = new float[0];
+        [SerializeField] private float kiyiAraligi = 1f;
 
         public TermalAyarlari Ayarlar => ayarlar;
         public float Uzunluk => uzunluk;
@@ -29,8 +35,22 @@ namespace IkiDunya.Hazards
             return Mathf.Clamp(Mathf.FloorToInt(x / BolgeGenisligi), 0, bolgeSayisi - 1);
         }
 
-        /// <summary>Deniz kenarından karaya doğru uzaklık (metre).</summary>
-        public float KiyidanUzaklik(Vector3 konum) => transform.InverseTransformPoint(konum).z;
+        /// <summary>Deniz kenarından karaya doğru uzaklık (metre); kıyı kıvrımlıysa o x'teki kıyıdan.</summary>
+        public float KiyidanUzaklik(Vector3 konum)
+        {
+            Vector3 yerel = transform.InverseTransformPoint(konum);
+            return yerel.z - KiyiZ(yerel.x);
+        }
+
+        /// <summary>Yerel x'te kıyının yerel z'si (düz kıyıda 0).</summary>
+        public float KiyiZ(float yerelX)
+        {
+            if (kiyiCizgisi == null || kiyiCizgisi.Length == 0) return 0f;
+            float sira = Mathf.Clamp((yerelX + uzunluk / 2f) / kiyiAraligi, 0f, kiyiCizgisi.Length - 1);
+            int alt = Mathf.FloorToInt(sira);
+            int ust = Mathf.Min(alt + 1, kiyiCizgisi.Length - 1);
+            return Mathf.Lerp(kiyiCizgisi[alt], kiyiCizgisi[ust], sira - alt);
+        }
 
         public SicaklikBandi Bant(Vector3 konum) => Bant(Bolge(konum), KiyidanUzaklik(konum));
 
@@ -49,11 +69,11 @@ namespace IkiDunya.Hazards
         /// <summary>Kumsal üstündeki bir noktanın dünya konumu (bölge ortası, kıyıdan uzaklık).</summary>
         public Vector3 BolgeNoktasi(int bolge, float kiyidanUzaklik) => BolgeNoktasi(bolge, 0.5f, kiyidanUzaklik);
 
-        /// <summary>Bölgenin içinde soldan sağa oran (0–1) ve kıyıdan uzaklıkla bir nokta.</summary>
+        /// <summary>Bölgenin içinde soldan sağa oran (0–1) ve kıyıdan uzaklıkla bir nokta; zemine oturtulmuş.</summary>
         public Vector3 BolgeNoktasi(int bolge, float bolgeIcinde, float kiyidanUzaklik)
         {
             float x = -uzunluk / 2f + BolgeGenisligi * (bolge + bolgeIcinde);
-            return transform.TransformPoint(new Vector3(x, 0f, kiyidanUzaklik));
+            return Zemin.Oturt(transform.TransformPoint(new Vector3(x, 0f, KiyiZ(x) + kiyidanUzaklik)));
         }
 
         public SicaklikBandi Bant(int bolge, float kiyidanUzaklik)

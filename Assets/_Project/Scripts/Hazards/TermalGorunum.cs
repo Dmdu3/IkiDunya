@@ -11,7 +11,9 @@ namespace IkiDunya.Hazards
         [Tooltip("Işıktan etkilenmeyen düz malzeme (URP Unlit); rengi şerit başına verilir.")]
         [SerializeField] private Material seritMalzemesi;
         [Tooltip("Şeritlerin kumun ne kadar üstünde durduğu (metre).")]
-        [SerializeField] private float yukseklik = 0.03f;
+        [SerializeField] private float yukseklik = 0.05f;
+        [Tooltip("Şeridin kumu izleyen ızgarasının aralığı (metre); küçüldükçe kuma daha iyi oturur.")]
+        [SerializeField] private float agAraligi = 1f;
 
         private static readonly int RenkId = Shader.PropertyToID("_BaseColor");
         private static readonly int DokuId = Shader.PropertyToID("_BaseMap");
@@ -25,12 +27,7 @@ namespace IkiDunya.Hazards
 
         public bool Acik => kok != null && kok.gameObject.activeSelf;
 
-        private void Awake()
-        {
-            blok = new MaterialPropertyBlock();
-            SeritleriKur();
-            kok.gameObject.SetActive(false);
-        }
+        private void Awake() => blok = new MaterialPropertyBlock();
 
         private void OnEnable() => kumsal.Degisti += Renklendir;
         private void OnDisable() => kumsal.Degisti -= Renklendir;
@@ -38,7 +35,9 @@ namespace IkiDunya.Hazards
         private void Update()
         {
             if (!GameInput.TermalBasildi) return;
-            kok.gameObject.SetActive(!Acik);
+            // Şeritler ilk açılışta kurulur: zemin (arazi) o zaman kesin hazırdır.
+            if (kok == null) SeritleriKur();
+            else kok.gameObject.SetActive(!Acik);
             if (Acik) Renklendir();
         }
 
@@ -60,14 +59,11 @@ namespace IkiDunya.Hazards
 
                 for (int i = 0; i < kum.BolgeSayisi; i++)
                 {
-                    GameObject serit = GameObject.CreatePrimitive(PrimitiveType.Quad);
-                    serit.name = $"Bolge{i}_Bant{b}";
-                    Destroy(serit.GetComponent<Collider>());
+                    // Kumu izleyen ızgara: kıyı kıvrımlı ve zemin engebeli olabilir.
+                    var serit = new GameObject($"Bolge{i}_Bant{b}", typeof(MeshFilter), typeof(MeshRenderer));
                     serit.transform.SetParent(kok, false);
-                    float x = -kum.Uzunluk / 2f + kum.BolgeGenisligi * (i + 0.5f);
-                    serit.transform.localPosition = new Vector3(x, yukseklik, (zBas + zSon) / 2f);
-                    serit.transform.localRotation = Quaternion.Euler(90f, 0f, 0f);
-                    serit.transform.localScale = new Vector3(kum.BolgeGenisligi, zSon - zBas, 1f);
+                    float xBas = -kum.Uzunluk / 2f + kum.BolgeGenisligi * i;
+                    serit.GetComponent<MeshFilter>().sharedMesh = SeritAgi(xBas, xBas + kum.BolgeGenisligi, zBas, zSon);
 
                     var renderer = serit.GetComponent<Renderer>();
                     renderer.sharedMaterial = seritMalzemesi;
@@ -81,6 +77,38 @@ namespace IkiDunya.Hazards
                     seritOrtaZ[i, b] = (zBas + zSon) / 2f;
                 }
             }
+        }
+
+        /// <summary>Bölge ve bant için kumun üstüne serilen ızgara (yerel koordinat; z kıyıdan uzaklık).</summary>
+        private Mesh SeritAgi(float xBas, float xSon, float zBas, float zSon)
+        {
+            int nx = Mathf.Max(1, Mathf.CeilToInt((xSon - xBas) / agAraligi));
+            int nz = Mathf.Max(1, Mathf.CeilToInt((zSon - zBas) / agAraligi));
+            var koseler = new Vector3[(nx + 1) * (nz + 1)];
+            var uv = new Vector2[koseler.Length];
+            var ucgenler = new int[nx * nz * 6];
+            for (int z = 0, k = 0; z <= nz; z++)
+                for (int x = 0; x <= nx; x++, k++)
+                {
+                    float yx = Mathf.Lerp(xBas, xSon, (float)x / nx);
+                    float yz = kum.KiyiZ(yx) + Mathf.Lerp(zBas, zSon, (float)z / nz);
+                    Vector3 dunya = kum.transform.TransformPoint(new Vector3(yx, 0f, yz));
+                    float zemin = Zemin.Yukseklik(dunya, kum.transform.position.y);
+                    koseler[k] = kok.InverseTransformPoint(new Vector3(dunya.x, zemin, dunya.z)) + Vector3.up * yukseklik;
+                    uv[k] = new Vector2((float)x / nx, (float)z / nz);
+                }
+            for (int z = 0, t = 0; z < nz; z++)
+                for (int x = 0; x < nx; x++, t += 6)
+                {
+                    int a = z * (nx + 1) + x;
+                    int c = a + nx + 1;
+                    ucgenler[t] = a; ucgenler[t + 1] = c; ucgenler[t + 2] = a + 1;
+                    ucgenler[t + 3] = a + 1; ucgenler[t + 4] = c; ucgenler[t + 5] = c + 1;
+                }
+            var mesh = new Mesh { name = "TermalSerit", vertices = koseler, uv = uv, triangles = ucgenler };
+            mesh.RecalculateNormals();
+            mesh.RecalculateBounds();
+            return mesh;
         }
 
         private void Renklendir()

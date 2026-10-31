@@ -184,7 +184,7 @@ namespace IkiDunya.Hazards
             if (fark.magnitude < 0.3f) return true;
             Vector3 yon = fark.normalized;
             transform.rotation = Quaternion.LookRotation(yon);
-            transform.position += yon * Mathf.Min(hiz * Time.deltaTime, fark.magnitude);
+            transform.position = Zemin.Oturt(transform.position + yon * Mathf.Min(hiz * Time.deltaTime, fark.magnitude));
             return false;
         }
     }
