@@ -4,6 +4,7 @@ using IkiDunya.Core;
 using IkiDunya.Hazards;
 using IkiDunya.Management;
 using UnityEngine;
+using UnityEngine.InputSystem;
 using UnityEngine.UI;
 
 namespace IkiDunya.UI.Management
@@ -50,6 +51,7 @@ namespace IkiDunya.UI.Management
             tur.Degisti += Yenile;
             tur.Yonetim.Degisti += Yenile;
             tur.Kumsal.Degisti += Yenile;
+            GameInput.BaglamalarDegisti += Yenile;
             ileriDugmesi.onClick.AddListener(tur.Ilerle);
             aDugmesi.onClick.AddListener(() => tur.Sec(true));
             bDugmesi.onClick.AddListener(() => tur.Sec(false));
@@ -58,6 +60,7 @@ namespace IkiDunya.UI.Management
 
         private void OnDisable()
         {
+            GameInput.BaglamalarDegisti -= Yenile;
             if (tur == null) return;
             tur.Degisti -= Yenile;
             tur.Yonetim.Degisti -= Yenile;
@@ -72,6 +75,7 @@ namespace IkiDunya.UI.Management
             if (harita.Ustundeki == sonBolge) return;
             sonBolge = harita.Ustundeki;
             BolgeBilgisi();
+            SolPanel();
         }
 
         private void Yenile()
@@ -96,15 +100,32 @@ namespace IkiDunya.UI.Management
             kartPaneli.SetActive(tur.SuAnki == InsanTuru.Asama.Kartlar);
             olayPaneli.SetActive(tur.SuAnki == InsanTuru.Asama.Olay);
             ileriDugmesi.gameObject.SetActive(tur.SuAnki != InsanTuru.Asama.Olay);
+            IleriYazisi();
 
             Rapor();
             Dugmeler();
             Olay();
             YuvaListesi();
             BolgeBilgisi();
+            SolPanel();
 
             hedefYazisi.text = tur.BeklenenHedef == Hedef.Bolge ? Al("hedef_bolge_sec")
                 : tur.BeklenenHedef == Hedef.Yuva ? Al("hedef_yuva_sec") : "";
+        }
+
+        /// <summary>İleri düğmesinde tuşu da yazar (Space ya da ayarlardan atanan). Düğme açılınca MetinYazisi yazıyı tablodan yeniden kurar; bu ondan sonra çağrılır.</summary>
+        private void IleriYazisi()
+        {
+            InputAction e = GameInput.Eylem("ZiplaDal");
+            string tus = e != null ? $"  [{e.GetBindingDisplayString(0)}]" : "";
+            ileriDugmesi.GetComponentInChildren<Text>().text = Al("yonetim_ileri") + tus;
+        }
+
+        /// <summary>Sol panel boşken (yuva yok, imleç haritada değil) haritayı kapatmasın.</summary>
+        private void SolPanel()
+        {
+            bool dolu = yuvaListesi.text.Length > 0 || bolgeBilgisi.text.Length > 0;
+            yuvaListesi.transform.parent.gameObject.SetActive(dolu);
         }
 
         private void Rapor()
@@ -135,12 +156,12 @@ namespace IkiDunya.UI.Management
                 foreach (KartTanimi kart in tur.El)
                 {
                     KartTanimi k = kart;
-                    Dugme(kartDugmeleri, KartYazisi(k), tur.KartOynanabilir(k), tur.BekleyenKart == k, () => tur.KartSec(k), true);
+                    Dugme(kartDugmeleri, KartYazisi(k), tur.KartOynanabilir(k), tur.BekleyenKart == k, () => tur.KartSec(k), kart: true);
                 }
         }
 
         // Açık zeminli düğmede okunan renkler.
-        private const string TurRengi = "#5a5a5a", AcilRengi = "#c0561b", ArtiRengi = "#2e7d32", EksiRengi = "#b03030";
+        private const string TurRengi = "#444444", AcilRengi = "#c0561b", ArtiRengi = "#2e7d32", EksiRengi = "#b03030";
 
         /// <summary>Ad ve bedel; tür, bakım, güçlü mü; açıklama; paydaş ve halk etkisi, koşulu.
         /// Satırlar boyla değil kalınlık ve renkle ayrılır: yazı düğmeye sığacak kadar küçülür (çok kartlı elde dar kalır).</summary>
@@ -171,18 +192,19 @@ namespace IkiDunya.UI.Management
         private static string PaydasId(Paydas p) => $"paydas_{p.ToString().ToLowerInvariant()}";
         private static string Isaretli(int sayi) => sayi > 0 ? $"+{sayi}" : sayi.ToString();
 
-        private void Dugme(Transform ebeveyn, string yazi, bool acik, bool secili, UnityEngine.Events.UnityAction tikla, bool sigdir = false)
+        private void Dugme(Transform ebeveyn, string yazi, bool acik, bool secili, UnityEngine.Events.UnityAction tikla, bool kart = false)
         {
             Button dugme = Instantiate(dugmeKalibi, ebeveyn);
             dugme.gameObject.SetActive(true);
             Text metin = dugme.GetComponentInChildren<Text>();
             metin.text = yazi;
-            if (sigdir)
+            if (kart)
             {
-                // Kalıbın yazı boyu üst sınır; sığmazsa küçülür.
+                // Kalıbın yazı boyu üst sınır; sığmazsa küçülür. Başlıklar yan yana kartlarda aynı hizada dursun diye yazı üstten başlar.
                 metin.resizeTextMaxSize = metin.fontSize;
                 metin.resizeTextMinSize = Mathf.Min(10, metin.fontSize);
                 metin.resizeTextForBestFit = true;
+                metin.alignment = TextAnchor.UpperCenter;
             }
             dugme.interactable = acik;
             if (secili) dugme.GetComponent<Image>().color = new Color(1f, 0.85f, 0.4f);
