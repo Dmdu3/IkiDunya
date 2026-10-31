@@ -34,9 +34,13 @@ namespace IkiDunya.UI.Night
             bool kosu = gece.SuAnki == KacisGecesi.Asama.Kosu;
             if (cikisPaneli.activeSelf != cikis) cikisPaneli.SetActive(cikis);
             if (gunDogumuCubugu.gameObject.activeSelf != kosu) gunDogumuCubugu.gameObject.SetActive(kosu);
-            bool yardim = kosu && suru.YardimEdiyor;
-            if (yardimCubugu.gameObject.activeSelf != yardim) yardimCubugu.gameObject.SetActive(yardim);
-            if (yardim) yardimCubugu.Ayarla(suru.YardimOrani);
+            // Sürü ve kurtarma çubuğu sonradan eklendi; eski sahnede bağlı değilse sadece çubuk görünmez.
+            if (suru != null && yardimCubugu != null)
+            {
+                bool yardim = kosu && suru.YardimEdiyor;
+                if (yardimCubugu.gameObject.activeSelf != yardim) yardimCubugu.gameObject.SetActive(yardim);
+                if (yardim) yardimCubugu.Ayarla(suru.YardimOrani);
+            }
 
             if (cikis)
             {
