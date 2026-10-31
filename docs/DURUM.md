@@ -43,10 +43,12 @@ Son güncelleme: 2026-11-01 — Alpha main'de, deneme listesi tamam (editörde 3
 | İpuçları (ilk karşılaşmada bir kez) | `Core`, `UI/Night` | `Ipucu`, `IpucuPaneli` | Umut | Yapılıyor (yazılar Yusuf'ta) |
 | Ses: olaylar, ortam sesi, müzik | `Core` | `Ses`, `SesYoneticisi`, `SesAyarlari` | Umut | Yapılıyor (klipler Abdü'de) |
 | Kumsal haritası ve tur akışı | `Management`, `UI/Management` | `InsanTuru`, `HaritaSecici`, `YuvaHaritasi`, `YonetimArayuzu` | Toprak | Yapılıyor |
-| Kaynaklar (bütçe, gönüllü, halk desteği), rapor, kayıt | `Management` | `YonetimDurumu`, `YonetimAyarlari`; `Core/IOyunVerisi` | Toprak | Yapılıyor |
+| Kaynaklar (bütçe, gönüllü, halk desteği, bakım), rapor, kayıt | `Management` | `YonetimDurumu`, `YonetimAyarlari`; `Core/IOyunVerisi` | Toprak | Yapılıyor |
+| Paydaşlar (Otel, Belediye, Balıkçılar) | `Management` | `Paydas`, `YonetimDurumu`, `YonetimAyarlari` | Toprak | Yapılıyor (Unity'de bir turda denendi, 2026-11-01) |
 | Gönüllüler ve görevler | `Management` | `GorevTanimi`, `Etkiler` | Toprak | Yapılıyor |
-| Kartlar | `Management` | `KartTanimi`, `Etkiler` | Toprak | Yapılıyor |
-| Kanıtlar, olaylar, tur sonu simülasyonu | `Management` | `OlayTanimi`, `Etkiler` | Toprak | Yapılıyor |
+| Kartlar (5 tür, 27 kart; Acil kartlar uyarıyla ele gelir) | `Management` | `KartTanimi`, `Etkiler`, `InsanTuru` | Toprak | Yapılıyor (Unity'de bir turda denendi: hedefsiz, bölge hedefli, vazgeçme, koşullu, 2026-11-01) |
+| Kanıtlar (ikinci kanıt güçlendirir), olaylar (16, zincir, paydaş tepkisi), uyarılar, tur sonu simülasyonu, avcı riski | `Management` | `OlayTanimi`, `Etkiler` | Toprak | Yapılıyor (bir olay ve tur sonu denendi; zincir, uyarı, güçlenme denenmedi) |
+| İnsan kısmı içeriği (kart, görev, olay asset'leri) | `Management/Editor` | `InsanIcerigiKur` (İki Dünya → İnsan kısmı içeriğini kur) | Toprak | Yapılıyor |
 
 Durum değerleri: Planlandı · Yapılıyor · Oynanabilir · Bitti.
 
@@ -78,6 +80,7 @@ Bütçe, gönüllü ve halk desteği `KumsalDurumu`'nda değil; insan kısmını
 - **İki Dünya → Kumsal sahnesini kur (oyun):** `Scenes/Levels/Kumsal.unity` — iki gecenin hepsi ve geçici insan turu; her grup (`YuvaGecesiNesneleri`, `KacisGecesiNesneleri`, `InsanTuruNesneleri`) sadece kendi adımında açılır. `Sistemler` prefab'ı da konur.
 - **İki Dünya → Bölüm 1 sahnesini kur (deniz)** ve **Bölüm 5 sahnesini kur (deniz):** `Scenes/Levels/Bolum1_Donus` ve `Bolum5_IlkYuzus` sahnelerini gri kutu olarak baştan kurar (deniz, taban basamakları, kontrol noktaları, tehlikeler, göstergeler, `Sistemler`).
 - **İki Dünya → Menü ve duraklatmayı kur:** `Menu` sahnesini (başlık, Yeni oyun, Devam et, Ayarlar, Çıkış) kurar; `Sistemler` kalıbına EventSystem ve duraklatma menüsü ekler, deneme panelini (`AkisDeneme`) çıkarır; önce metinleri aktarır.
+- **İki Dünya → İnsan kısmı içeriğini kur:** 27 kart, 5 gönüllü görevi ve 16 olay asset'ini GDD'deki başlangıç değerleriyle yazar (varsa üstüne; asset'lerde yapılan dengeyi siler) ve `YonetimAyarlari`'na bağlar; elde 5 kart. Toprak'ın aracı (`Management/Editor/InsanIcerigiKur`).
 - **İki Dünya → Metinleri aktar:** `docs/metinler.md`'deki tablolardan `MetinTablosu` asset'ini doldurur. Metinler.md değişince yeniden çalıştırılır. Eksik metin oyunda `[id]` olarak görünür.
 - **İki Dünya → Gri kutu kaçışı kur:** `Scenes/Prototypes/GriKacis.unity` — kumsal, sıcak kum lekeleri, dalga, gün doğumu, sürü, kaçış gecesi, kumdan çıkış paneli ve gün doğumu çubuğu.
 - İki araç da eksik ayar asset'lerini `ScriptableObjects/Settings`'te, `Yavru`, `Golgelik`, `KayipIzi` kalıplarını `Prefabs/` altında oluşturur. Deneme sahnelerinde akış yoktur; gece kendiliğinden başlar.
@@ -172,13 +175,15 @@ Henüz yok: pervane sesi klibi (Abdü).
 
 Toprak'ın onayıyla Umut yazdı (2026-11-01); kodu artık Toprak sürdürür. Sayılar GDD'den; kâğıt prototip atlandı, denge `ScriptableObjects/Settings/YonetimAyarlari`'nda ayarlanır. **Kumsal sahnesini kur (oyun)** 12 kart (`ScriptableObjects/Cards`), 5 görev (`VolunteerTasks`), 6 olay (`Events`) asset'ini GDD değerleriyle yazar ve ekranı kurar; **Menü ve duraklatmayı kur** `YonetimDurumu`'nu kayda bağlar.
 
-**Ekran.** Kumsala tepeden bakılır (kumsalın kendisi harita: çöp, şezlong, ışık, gölgelik, araç izi sahnede görünür; T termal bantları açar). İmlecin altındaki bölge vurgulanır, solda katmanları ve yapıları yazar; yuvalar haritada bandının renginde simge (kafesliyse halkalı), solda listede bant, yumurta ve çıkışa kalan hafta. Kayıp izleri kanıt renginde; tıklanınca kanıt açılır. Üstte tur, bütçe, boş/toplam gönüllü, halk desteği ve aşama.
+**Genişleme (2026-11-01, Toprak).** Paydaşlar (`Paydas`: Otel, Belediye, Balıkçılar; −3..+3, dost +2, küs −2) `YonetimDurumu`'nda; kartlar ve olay seçenekleri `PaydasFarki` taşır. Kart türleri (`KartTuru`), bakım (gelirden düşer), paydaş koşulu, ikinci kanıtla güçlenme (`Guclu`, `Deger`). Acil kartlar havuza değil, uyarı aktifken ele girer. Uyarılar iki aşamalı: olay `bekleyenUyari`'yı kurar, sıradaki `TurBasla` onu `aktifUyari` yapar, `Etkiler.TurSonu` gerçekleştirir. Olaylarda koşul (`OlayKosulu`) ve zincir (`aSonraki`/`bSonraki`; kayıtta liste sırası). Gönüllü Çağrısı ve olayların gönüllü farkı gelecek tura işler (`SonrakiTurGonullu`). Haritadaki yuva listesinde avcı riski (`Etkiler.AvciRiski`).
+
+**Ekran.** Kumsala tepeden bakılır (kumsalın kendisi harita: çöp, şezlong, ışık, gölgelik, araç izi sahnede görünür; T termal bantları açar). İmlecin altındaki bölge vurgulanır, solda katmanları ve yapıları yazar; yuvalar haritada bandının renginde simge (kafesliyse halkalı), solda listede bant, yumurta ve çıkışa kalan hafta. Kayıp izleri kanıt renginde; tıklanınca kanıt açılır. Üstte tur, bütçe, boş/toplam gönüllü, halk desteği ve aşama. Sol panel boşken (yuva yok, imleç haritada değil) gizlenir. Kartlarda yazı üstten başlar (başlıklar aynı hizada); İleri düğmesinde tuşu da yazar (ayarlardan değişirse güncellenir).
 
 **Bir tur (`InsanTuru`).** Tur başında: bir hafta geçer (`BirHaftaGecti`), gelir gelir (ilk tur hariç +3, destek 7+ ise +5), geçen turun uyarısı gerçekleşir (sıcak dalgası: bu tur ve gelen gece kum +1 bant, Temiz Enerji varsa %50 ihtimalle hiç; fırtına: dalga altındaki her yuva yumurtasının yarısını kaybeder, Su izi bırakır). Sonra İleri düğmesi ya da Space ile:
 1. **Rapor:** gelir, denize ulaşan yavru, geçen turun sonunda olanlar (çöp birikti, yuva bozuldu), uyarının sonucu, bu tur açılan kanıtlar.
 2. **Gönüllüler:** görev seç, haritada bölge ya da yuva seç (her atama bir gönüllü). Temizlik çöp −1, devriye o tur ve gece insan yok, kafes yuvaya tilki giremez, gölge ve sulama yuva o tur ve gece 1 bant serin, bilgilendirme destek +1. Gönüllü: 4 + her 10 yavruya 1 (en fazla 10) + çağrı − okul.
 3. **Kartlar:** havuzdan 4 kart; bütçe yettiğince oynanır, hedefli kartta haritada seçilir (aynı karta tekrar tıklamak vazgeçer). Oynanmayanlar havuza döner; kalıcı yasaklar ve Temiz Enerji bir kez oynanır.
-4. **Olay:** rastgele (art arda aynısı gelmez); iki seçenek ya da uyarı (Tamam). Destek 3'ün altındaysa otel ve festivalde kabul kapalı; bütçe yetmeyen seçenek kapalı.
+4. **Olay:** rastgele (art arda aynısı gelmez); iki seçenek ya da uyarı (Tamam). Seçenek düğmesinde kaynak etkisi yazar (bütçe, halk, paydaş, gelecek turun gönüllüsü). Destek 3'ün altındaysa otel ve festivalde kabul kapalı; bütçe yetmeyen seçenek kapalı.
 5. **Tur sonu:** her bölgede %30 çöp +1; kafessiz ve çıkmamış her yuvaya %20 (Tilki Çiti varsa %10) avcı: yumurtanın %30'u gider, Avcı izi. Sonuçlar gelecek turun raporunda. Sonra akış ilerler.
 
 **Kanıtlar.** Isı → Gölgelik 1 ucuz; Işık → Işık Yasağı; Çöp → Araç Yasağı, Şezlong Düzenlemesi; Avcı → Tilki Çiti; Su → Yuva Taşıma. Saha Araştırması açılmamış bir kanıtı rastgele açar.

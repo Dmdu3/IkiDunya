@@ -52,7 +52,7 @@ MonoBehaviour:
   - id: kart_gonullu_cagrisi
     metin: "G\xF6n\xFCll\xFC \xC7a\u011Fr\u0131s\u0131"
   - id: kart_gonullu_cagrisi_aciklama
-    metin: "Bu tur iki g\xF6n\xFCll\xFC daha gelir."
+    metin: "Gelecek hafta iki g\xF6n\xFCll\xFC daha gelir."
   - id: kart_saha_arastirmasi
     metin: "Saha Ara\u015Ft\u0131rmas\u0131"
   - id: kart_saha_arastirmasi_aciklama
@@ -61,6 +61,73 @@ MonoBehaviour:
     metin: Temiz Enerji
   - id: kart_temiz_enerji_aciklama
     metin: "Bug\xFCn bir \u015Fey de\u011Fi\u015Ftirmez. Y\u0131llar sonra fark yarat\u0131r."
+  - id: kart_aydinlatma
+    metin: "Kaplumba\u011Fa Dostu Ayd\u0131nlatma"
+  - id: kart_aydinlatma_aciklama
+    metin: "Se\xE7ilen b\xF6lgenin lambalar\u0131 k\u0131s\u0131k, k\u0131rm\u0131z\u0131
+      \u0131\u015F\u0131kl\u0131ya de\u011Fi\u015Fir."
+  - id: kart_gozcu_kulubesi
+    metin: "G\xF6zc\xFC Kul\xFCbesi"
+  - id: kart_gozcu_kulubesi_aciklama
+    metin: "Se\xE7ilen b\xF6lgede her gece devriye var."
+  - id: kart_kulucka
+    metin: "Kulu\xE7kahane"
+  - id: kart_kulucka_aciklama
+    metin: "B\xFCt\xFCn yuvalar se\xE7ilen b\xF6lgeye ta\u015F\u0131n\u0131r ve kafeslenir.
+      Hepsi tek yerde olur."
+  - id: kart_plaj_tabela
+    metin: "Plaj Tabelalar\u0131"
+  - id: kart_plaj_tabela_aciklama
+    metin: Bu gece kumsalda daha az insan olur.
+  - id: kart_bagis
+    metin: "Ba\u011F\u0131\u015F Kampanyas\u0131"
+  - id: kart_bagis_aciklama
+    metin: "Halk deste\u011Fi kadar ba\u011F\u0131\u015F toplan\u0131r; halk biraz
+      yorulur."
+  - id: kart_basin
+    metin: "Bas\u0131n B\xFClteni"
+  - id: kart_basin_aciklama
+    metin: "Bulunan kan\u0131tlar halka anlat\u0131l\u0131r. Otel bundan ho\u015Flanmaz."
+  - id: kart_lobi
+    metin: Belediye Lobisi
+  - id: kart_lobi_aciklama
+    metin: "Belediyeyle g\xF6r\xFC\u015F\xFCl\xFCr, ili\u015Fki iyile\u015Fir."
+  - id: kart_koruma_alani
+    metin: "Koruma Alan\u0131"
+  - id: kart_koruma_alani_aciklama
+    metin: "Se\xE7ilen b\xF6lge korunur: \u015Fezlong, insan, \u0131\u015F\u0131k
+      ve ara\xE7 kalkar, bir daha giremez."
+  - id: kart_otel_ortakligi
+    metin: "Otel Ortakl\u0131\u011F\u0131"
+  - id: kart_otel_ortakligi_aciklama
+    metin: "Otel \u0131\u015F\u0131klar\u0131n\u0131 k\u0131sar; kar\u015F\u0131l\u0131\u011F\u0131nda
+      bir b\xF6lgeye \u015Fezlong koyar."
+  - id: kart_kooperatif
+    metin: "Bal\u0131k\xE7\u0131 Kooperatifi"
+  - id: kart_kooperatif_aciklama
+    metin: "Bal\u0131k\xE7\u0131larla a\u011F de\u011Fi\u015Fimine ortak olunur."
+  - id: kart_kum_torbasi
+    metin: "Kum Torbas\u0131 Seddi"
+  - id: kart_kum_torbasi_aciklama
+    metin: "Se\xE7ilen b\xF6lgede f\u0131rt\u0131na yuvalar\u0131 basmaz."
+  - id: kart_tahliye
+    metin: Yuva Tahliyesi
+  - id: kart_tahliye_aciklama
+    metin: "Dalga \xE7izgisinin alt\u0131ndaki b\xFCt\xFCn yuvalar g\xFCvenli yere
+      ta\u015F\u0131n\u0131r."
+  - id: kart_acil_sulama
+    metin: Acil Sulama
+  - id: kart_acil_sulama_aciklama
+    metin: "B\xFCt\xFCn yuvalar bu tur ve bu gece serinletilir."
+  - id: kart_dron
+    metin: "Dron Taramas\u0131"
+  - id: kart_dron_aciklama
+    metin: "Haritadaki b\xFCt\xFCn kay\u0131p izleri incelenir, kan\u0131tlar\u0131
+      a\xE7\u0131l\u0131r."
+  - id: kart_universite
+    metin: "\xDCniversite Ortakl\u0131\u011F\u0131"
+  - id: kart_universite_aciklama
+    metin: Bundan sonra her tur bir kart fazla gelir.
   - id: gorev_temizlik
     metin: Temizlik
   - id: gorev_temizlik_aciklama
@@ -108,13 +175,13 @@ MonoBehaviour:
   - id: olay_otel_a
     metin: "Kabul et (b\xFCt\xE7e artar)"
   - id: olay_otel_b
-    metin: "Reddet (halk deste\u011Fi d\xFC\u015Fer)"
+    metin: "Reddet (otel k\xFCser)"
   - id: olay_festival
     metin: "Belediye kumsalda bir gece festivali d\xFCzenlemek istiyor."
   - id: olay_festival_a
     metin: Kabul et (destek artar)
   - id: olay_festival_b
-    metin: Reddet
+    metin: "Reddet (belediye k\xFCser)"
   - id: olay_balikci
     metin: "Bal\u0131k\xE7\u0131lar, a\u011Flar\u0131n\u0131 kaplumba\u011Fa dostu
       a\u011Flarla de\u011Fi\u015Ftirmek i\xE7in destek istiyor."
@@ -123,10 +190,12 @@ MonoBehaviour:
   - id: olay_balikci_b
     metin: "\u015Eimdi de\u011Fil"
   - id: olay_sicak_dalga
-    metin: "Hava tahmini: gelecek hafta s\u0131cak dalgas\u0131. Kum \u0131s\u0131nacak."
+    metin: "Hava tahmini: gelecek haftan\u0131n sonunda s\u0131cak dalgas\u0131.
+      Kum \u0131s\u0131nacak; haz\u0131rlanmak i\xE7in bir haftan var."
   - id: olay_firtina
-    metin: "Hava tahmini: gelecek hafta f\u0131rt\u0131na. Dalga \xE7izgisinin alt\u0131ndaki
-      yuvalar su alabilir."
+    metin: "Hava tahmini: gelecek haftan\u0131n sonunda f\u0131rt\u0131na. Dalga
+      \xE7izgisinin alt\u0131ndaki yuvalar su alabilir; haz\u0131rlanmak i\xE7in
+      bir haftan var."
   - id: olay_okul
     metin: "Bir okul, kumsala ziyaret d\xFCzenlemek istiyor."
   - id: olay_okul_a
@@ -135,6 +204,67 @@ MonoBehaviour:
     metin: Reddet
   - id: olay_tamam
     metin: Tamam
+  - id: olay_otel_bar
+    metin: "Otel kumsala bir bar a\xE7mak istiyor."
+  - id: olay_otel_bar_a
+    metin: Kabul et
+  - id: olay_otel_bar_b
+    metin: Reddet
+  - id: olay_festival_cop
+    metin: "Festivalden sonra kumsal \xE7\xF6p dolu."
+  - id: olay_festival_cop_a
+    metin: "G\xF6n\xFCll\xFCler temizlesin"
+  - id: olay_festival_cop_b
+    metin: "B\u0131rak"
+  - id: olay_balikci_ag_getirdi
+    metin: "Bal\u0131k\xE7\u0131lar denizden bir hayalet a\u011F \xE7\u0131kard\u0131."
+  - id: olay_balikci_ag_getirdi_a
+    metin: Sergile
+  - id: olay_balikci_ag_getirdi_b
+    metin: "Geri d\xF6n\xFC\u015F\xFCme sat"
+  - id: olay_gazeteci
+    metin: "Bir gazeteci kaybolan yuvalar\u0131 soruyor."
+  - id: olay_gazeteci_a
+    metin: "A\xE7\u0131k konu\u015F"
+  - id: olay_gazeteci_b
+    metin: Sessiz kal
+  - id: olay_kopek
+    metin: "Turistler kumsala k\xF6pek getiriyor."
+  - id: olay_kopek_a
+    metin: "Yasak tabelas\u0131 as"
+  - id: olay_kopek_b
+    metin: "\u0130zin ver"
+  - id: olay_bagisci
+    metin: "Bir ba\u011F\u0131\u015F\xE7\u0131, ad\u0131n\u0131n kumsala yaz\u0131lmas\u0131
+      \u015Fart\u0131yla para veriyor."
+  - id: olay_bagisci_a
+    metin: Kabul et
+  - id: olay_bagisci_b
+    metin: Reddet
+  - id: olay_universite
+    metin: "\xDCniversite stajyer g\xF6ndermek istiyor."
+  - id: olay_universite_a
+    metin: Kabul et
+  - id: olay_universite_b
+    metin: Reddet
+  - id: olay_otel_isik
+    metin: "Otel inad\u0131na b\xFCt\xFCn \u0131\u015F\u0131klar\u0131n\u0131 a\xE7t\u0131."
+  - id: olay_otel_isik_a
+    metin: "\u015Eik\xE2yet et"
+  - id: olay_otel_isik_b
+    metin: Bekle
+  - id: olay_belediye_kesinti
+    metin: "Belediye \xF6dene\u011Fi kesmek istiyor."
+  - id: olay_belediye_kesinti_a
+    metin: "Toplant\u0131ya git"
+  - id: olay_belediye_kesinti_b
+    metin: Kabul et
+  - id: olay_balikci_ag_atti
+    metin: "Bal\u0131k\xE7\u0131lar eski a\u011Flar\u0131n\u0131 denize att\u0131."
+  - id: olay_balikci_ag_atti_a
+    metin: "Temizlik ekibi g\xF6nder"
+  - id: olay_balikci_ag_atti_b
+    metin: "B\u0131rak"
   - id: bolum1_giris
     metin: "D\xF6n\xFC\u015F. Do\u011Fdu\u011Fu kumsal onu \xE7a\u011F\u0131r\u0131yor."
   - id: bolum2_giris
@@ -302,6 +432,44 @@ MonoBehaviour:
     metin: "F\u0131rt\u0131nada su alan yuva"
   - id: rapor_sakin
     metin: "Sakin bir hafta ge\xE7ti."
+  - id: paydas_otel
+    metin: Otel
+  - id: paydas_belediye
+    metin: Belediye
+  - id: paydas_balikci
+    metin: "Bal\u0131k\xE7\u0131lar"
+  - id: kart_turu_altyapi
+    metin: "Altyap\u0131"
+  - id: kart_turu_kampanya
+    metin: Kampanya
+  - id: kart_turu_politika
+    metin: Politika
+  - id: kart_turu_acil
+    metin: Acil
+  - id: kart_turu_arastirma
+    metin: "Ara\u015Ft\u0131rma"
+  - id: kart_bakim
+    metin: "bak\u0131m"
+  - id: kart_ister
+    metin: ister
+  - id: kart_guclu
+    metin: "g\xFC\xE7l\xFC"
+  - id: kart_halk
+    metin: Halk
+  - id: uyari_sicakdalga
+    metin: "Bu haftan\u0131n sonunda s\u0131cak dalgas\u0131"
+  - id: uyari_firtina
+    metin: "Bu haftan\u0131n sonunda f\u0131rt\u0131na"
+  - id: yuva_avci_riski
+    metin: "avc\u0131 riski"
+  - id: bolge_korunuyor
+    metin: "Koruma alan\u0131"
+  - id: rapor_bakim
+    metin: "Bak\u0131m"
+  - id: rapor_sponsor
+    metin: "Otel sponsorlu\u011Fu"
+  - id: rapor_kesinti
+    metin: Belediye kesintisi
   - id: hedef_bolge_sec
     metin: "Haritada bir b\xF6lge se\xE7"
   - id: hedef_yuva_sec

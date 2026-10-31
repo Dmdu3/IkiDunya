@@ -21,9 +21,24 @@ Kısa yaz: kart açıklaması en fazla 2 satır, kanıt notu en fazla 3 satır. 
 | kart_sezlong | Şezlong Düzenlemesi | Şezlonglar her akşam toplanır; engeller yarıya iner. |
 | kart_tilki_citi | Tilki Çiti | Kumsalın kenarına çit; tilki daha seyrek gelir. |
 | kart_ag_temizligi | Hayalet Ağ Temizliği | Denizdeki sahipsiz ağlar ve misinalar toplanır. |
-| kart_gonullu_cagrisi | Gönüllü Çağrısı | Bu tur iki gönüllü daha gelir. |
+| kart_gonullu_cagrisi | Gönüllü Çağrısı | Gelecek hafta iki gönüllü daha gelir. |
 | kart_saha_arastirmasi | Saha Araştırması | Henüz bulunmamış bir kanıtı ortaya çıkarır. |
 | kart_temiz_enerji | Temiz Enerji | Bugün bir şey değiştirmez. Yıllar sonra fark yaratır. |
+| kart_aydinlatma | Kaplumbağa Dostu Aydınlatma | Seçilen bölgenin lambaları kısık, kırmızı ışıklıya değişir. |
+| kart_gozcu_kulubesi | Gözcü Kulübesi | Seçilen bölgede her gece devriye var. |
+| kart_kulucka | Kuluçkahane | Bütün yuvalar seçilen bölgeye taşınır ve kafeslenir. Hepsi tek yerde olur. |
+| kart_plaj_tabela | Plaj Tabelaları | Bu gece kumsalda daha az insan olur. |
+| kart_bagis | Bağış Kampanyası | Halk desteği kadar bağış toplanır; halk biraz yorulur. |
+| kart_basin | Basın Bülteni | Bulunan kanıtlar halka anlatılır. Otel bundan hoşlanmaz. |
+| kart_lobi | Belediye Lobisi | Belediyeyle görüşülür, ilişki iyileşir. |
+| kart_koruma_alani | Koruma Alanı | Seçilen bölge korunur: şezlong, insan, ışık ve araç kalkar, bir daha giremez. |
+| kart_otel_ortakligi | Otel Ortaklığı | Otel ışıklarını kısar; karşılığında bir bölgeye şezlong koyar. |
+| kart_kooperatif | Balıkçı Kooperatifi | Balıkçılarla ağ değişimine ortak olunur. |
+| kart_kum_torbasi | Kum Torbası Seddi | Seçilen bölgede fırtına yuvaları basmaz. |
+| kart_tahliye | Yuva Tahliyesi | Dalga çizgisinin altındaki bütün yuvalar güvenli yere taşınır. |
+| kart_acil_sulama | Acil Sulama | Bütün yuvalar bu tur ve bu gece serinletilir. |
+| kart_dron | Dron Taraması | Haritadaki bütün kayıp izleri incelenir, kanıtları açılır. |
+| kart_universite | Üniversite Ortaklığı | Bundan sonra her tur bir kart fazla gelir. |
 
 ## Gönüllü görevleri
 
@@ -49,13 +64,23 @@ Kısa yaz: kart açıklaması en fazla 2 satır, kanıt notu en fazla 3 satır. 
 
 | id | Metin | Seçenek A | Seçenek B |
 |---|---|---|---|
-| olay_otel | Otel kumsala yeni bir şezlong sırası koymak istiyor. | Kabul et (bütçe artar) | Reddet (halk desteği düşer) |
-| olay_festival | Belediye kumsalda bir gece festivali düzenlemek istiyor. | Kabul et (destek artar) | Reddet |
+| olay_otel | Otel kumsala yeni bir şezlong sırası koymak istiyor. | Kabul et (bütçe artar) | Reddet (otel küser) |
+| olay_festival | Belediye kumsalda bir gece festivali düzenlemek istiyor. | Kabul et (destek artar) | Reddet (belediye küser) |
 | olay_balikci | Balıkçılar, ağlarını kaplumbağa dostu ağlarla değiştirmek için destek istiyor. | Destekle (bütçe azalır) | Şimdi değil |
-| olay_sicak_dalga | Hava tahmini: gelecek hafta sıcak dalgası. Kum ısınacak. | — | — |
-| olay_firtina | Hava tahmini: gelecek hafta fırtına. Dalga çizgisinin altındaki yuvalar su alabilir. | — | — |
+| olay_sicak_dalga | Hava tahmini: gelecek haftanın sonunda sıcak dalgası. Kum ısınacak; hazırlanmak için bir haftan var. | — | — |
+| olay_firtina | Hava tahmini: gelecek haftanın sonunda fırtına. Dalga çizgisinin altındaki yuvalar su alabilir; hazırlanmak için bir haftan var. | — | — |
 | olay_okul | Bir okul, kumsala ziyaret düzenlemek istiyor. | Kabul et (bir gönüllü meşgul) | Reddet |
 | olay_tamam | Tamam | | |
+| olay_otel_bar | Otel kumsala bir bar açmak istiyor. | Kabul et | Reddet |
+| olay_festival_cop | Festivalden sonra kumsal çöp dolu. | Gönüllüler temizlesin | Bırak |
+| olay_balikci_ag_getirdi | Balıkçılar denizden bir hayalet ağ çıkardı. | Sergile | Geri dönüşüme sat |
+| olay_gazeteci | Bir gazeteci kaybolan yuvaları soruyor. | Açık konuş | Sessiz kal |
+| olay_kopek | Turistler kumsala köpek getiriyor. | Yasak tabelası as | İzin ver |
+| olay_bagisci | Bir bağışçı, adının kumsala yazılması şartıyla para veriyor. | Kabul et | Reddet |
+| olay_universite | Üniversite stajyer göndermek istiyor. | Kabul et | Reddet |
+| olay_otel_isik | Otel inadına bütün ışıklarını açtı. | Şikâyet et | Bekle |
+| olay_belediye_kesinti | Belediye ödeneği kesmek istiyor. | Toplantıya git | Kabul et |
+| olay_balikci_ag_atti | Balıkçılar eski ağlarını denize attı. | Temizlik ekibi gönder | Bırak |
 
 ## Bölüm girişleri, ipuçları, final
 
@@ -153,6 +178,25 @@ Kısa yaz: kart açıklaması en fazla 2 satır, kanıt notu en fazla 3 satır. 
 | rapor_sicak_dalga_zayif | Sıcak dalgası beklenenden zayıf geçti |
 | rapor_firtina | Fırtınada su alan yuva |
 | rapor_sakin | Sakin bir hafta geçti. |
+| paydas_otel | Otel |
+| paydas_belediye | Belediye |
+| paydas_balikci | Balıkçılar |
+| kart_turu_altyapi | Altyapı |
+| kart_turu_kampanya | Kampanya |
+| kart_turu_politika | Politika |
+| kart_turu_acil | Acil |
+| kart_turu_arastirma | Araştırma |
+| kart_bakim | bakım |
+| kart_ister | ister |
+| kart_guclu | güçlü |
+| kart_halk | Halk |
+| uyari_sicakdalga | Bu haftanın sonunda sıcak dalgası |
+| uyari_firtina | Bu haftanın sonunda fırtına |
+| yuva_avci_riski | avcı riski |
+| bolge_korunuyor | Koruma alanı |
+| rapor_bakim | Bakım |
+| rapor_sponsor | Otel sponsorluğu |
+| rapor_kesinti | Belediye kesintisi |
 | hedef_bolge_sec | Haritada bir bölge seç |
 | hedef_yuva_sec | Haritada bir yuva seç |
 | yuva | Yuva |

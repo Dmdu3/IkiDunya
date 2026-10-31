@@ -22,7 +22,7 @@ namespace IkiDunya.Management
         public int Sayi => sayi;
     }
 
-    /// <summary>İnsan kısmının kendi durumu: bütçe, halk desteği, gönüllüler, açılan kanıtlar, oynanan kalıcı kartlar, bekleyen uyarı, rapor.
+    /// <summary>İnsan kısmının kendi durumu: bütçe, halk desteği, paydaşlar, gönüllüler, açılan kanıtlar, oynanan kalıcı kartlar ve bakımları, uyarılar, olay zinciri, rapor.
     /// Kumsalın durumu KumsalDurumu'nda; bu asset kayda IOyunVerisi olarak girer.</summary>
     [CreateAssetMenu(menuName = "İki Dünya/Yönetim Durumu", fileName = "YonetimDurumu")]
     public class YonetimDurumu : ScriptableObject, IOyunVerisi
@@ -42,6 +42,22 @@ namespace IkiDunya.Management
         [Tooltip("Gelecek tur gelecek uyarının olayı; -1 yok.")]
         [SerializeField] private int bekleyenUyari = -1;
         [SerializeField] private int sonOlay = -1;
+        [Tooltip("Paydaş sırasıyla (Otel, Belediye, Balıkçılar) ilişki.")]
+        [SerializeField] private List<int> iliskiler = new List<int>();
+        [Tooltip("Kanıt türü sırasıyla kaç kez açıldı (ikincisi kartı güçlendirir).")]
+        [SerializeField] private List<int> kanitSayilari = new List<int>();
+        [Tooltip("Oynanan kartların her tur gelirden düşen toplam bakımı.")]
+        [SerializeField] private int bakim;
+        [Tooltip("Üniversite Ortaklığı: her tur fazladan gelen kart.")]
+        [SerializeField] private int ekKart;
+        [SerializeField] private int sonrakiEk;
+        [SerializeField] private List<int> korunanBolgeler = new List<int>();
+        [Tooltip("Bu turun sonunda gerçekleşecek uyarının olayı; -1 yok.")]
+        [SerializeField] private int aktifUyari = -1;
+        [Tooltip("Sıradaki turun olayı (zincir), olay listesindeki sırası; -1 yok.")]
+        [SerializeField] private int zincir = -1;
+        [Tooltip("Köpeklere izin verildi: bu tur avcı ihtimali artar.")]
+        [SerializeField] private bool kopek;
         [SerializeField] private List<RaporSatiri> rapor = new List<RaporSatiri>();
         [SerializeField] private List<RaporSatiri> sonrakiRapor = new List<RaporSatiri>();
 
@@ -55,8 +71,43 @@ namespace IkiDunya.Management
         public int KullanilanGonullu => kullanilanGonullu;
         public IReadOnlyList<KanitTuru> Kanitlar => kanitlar;
         public IReadOnlyList<RaporSatiri> Rapor => rapor;
-        public bool UyariBekliyor(OlayEtkisi olay) => bekleyenUyari == (int)olay;
+        /// <summary>Bu turun sonunda gerçekleşecek uyarı (geçen tur geldi).</summary>
+        public bool UyariAktif(OlayEtkisi olay) => aktifUyari == (int)olay;
+        public bool UyariVar => aktifUyari >= 0;
+        public OlayEtkisi AktifUyari => (OlayEtkisi)aktifUyari;
         public int SonOlay => sonOlay;
+        public int Zincir => zincir;
+        public int Bakim => bakim;
+        public int EkKart => ekKart;
+        public bool Kopek => kopek;
+        public bool Korunuyor(int bolge) => korunanBolgeler.Contains(bolge);
+
+        // ---- Paydaşlar ----
+
+        public int Iliski(Paydas paydas)
+        {
+            Doldur(iliskiler, Enum.GetValues(typeof(Paydas)).Length);
+            return iliskiler[(int)paydas];
+        }
+
+        public bool Dost(Paydas paydas) => Iliski(paydas) >= ayarlar.DostEsigi;
+        public bool Kus(Paydas paydas) => Iliski(paydas) <= ayarlar.KusEsigi;
+
+        public void IliskiDegistir(PaydasFarki fark)
+        {
+            foreach (Paydas paydas in Enum.GetValues(typeof(Paydas)))
+            {
+                int eski = Iliski(paydas);
+                iliskiler[(int)paydas] = Mathf.Clamp(eski + fark.Al(paydas), ayarlar.IliskiEnAz, ayarlar.IliskiEnCok);
+            }
+            Degisti?.Invoke();
+        }
+
+        /// <summary>Eski kayıtta liste kısa olabilir; eksikleri 0 ile doldurur.</summary>
+        private static void Doldur(List<int> liste, int adet)
+        {
+            while (liste.Count < adet) liste.Add(0);
+        }
 
         /// <summary>Bu turdaki toplam gönüllü: başlangıç + denize ulaşan yavrudan gelenler (en fazla sınırı) + çağrı − meşgul.</summary>
         public int Gonullu(KumsalDurumu kumsal)
@@ -70,13 +121,37 @@ namespace IkiDunya.Management
         public bool KanitVar(KanitTuru kanit) => kanitlar.Contains(kanit);
         public bool TekKartOynandi(string id) => oynananTekKartlar.Contains(id);
 
-        /// <summary>Kartın bu turdaki bedeli: ucuzlatan kanıt açıksa 1 eksik (en az 0).</summary>
-        public int Bedel(KartTanimi kart) =>
-            Mathf.Max(0, kart.Bedel - (kart.Bastan && kart.KanitUcuzlatir && KanitVar(kart.Kanit) ? 1 : 0));
+        public int KanitSayisi(KanitTuru kanit)
+        {
+            Doldur(kanitSayilari, Enum.GetValues(typeof(KanitTuru)).Length);
+            // Eski kayıtta sayı yok ama kanıt açık: en az 1.
+            return Mathf.Max(kanitSayilari[(int)kanit], KanitVar(kanit) ? 1 : 0);
+        }
 
-        /// <summary>Kart havuzda mı: baştan ya da kanıtı açık, tek seferlikse daha oynanmamış.</summary>
-        public bool Havuzda(KartTanimi kart) =>
-            (kart.Bastan || KanitVar(kart.Kanit)) && !(kart.TekSeferlik && TekKartOynandi(kart.Id));
+        /// <summary>Kartın bu turdaki bedeli: ucuzlatan kanıt açıksa 1 eksik, Belediye dostsa politikalar ucuz (en az 0).</summary>
+        public int Bedel(KartTanimi kart)
+        {
+            int indirim = kart.Bastan && kart.KanitUcuzlatir && KanitVar(kart.Kanit) ? 1 : 0;
+            if (kart.Tur == KartTuru.Politika && Dost(Paydas.Belediye)) indirim += ayarlar.PolitikaIndirimi;
+            return Mathf.Max(0, kart.Bedel - indirim);
+        }
+
+        /// <summary>Aynı türden yeterince kanıt açıldıysa kart güçlüdür (GDD: Kanıtlar, İkinci kanıt).</summary>
+        public bool Guclu(KartTanimi kart) => kart.GucluDeger > 0 && KanitSayisi(kart.Kanit) >= ayarlar.GucluKanit;
+
+        /// <summary>Etkinin bu turdaki büyüklüğü.</summary>
+        public int Deger(KartTanimi kart) => Guclu(kart) ? kart.GucluDeger : kart.Deger;
+
+        /// <summary>Paydaş koşulu sağlanıyor mu (ör. Koruma Alanı: Belediye +2).</summary>
+        public bool KosulTamam(KartTanimi kart) => !kart.KosulVar || Iliski(kart.KosulPaydas) >= kart.KosulEnAz;
+
+        /// <summary>Kart havuzda mı: baştan ya da kanıtı açık, tek seferlikse daha oynanmamış. Acil kartlar sadece kendi uyarısı varken.</summary>
+        public bool Havuzda(KartTanimi kart)
+        {
+            if (kart.TekSeferlik && TekKartOynandi(kart.Id)) return false;
+            if (kart.Tur == KartTuru.Acil) return UyariAktif(kart.AcilUyari);
+            return kart.Bastan || KanitVar(kart.Kanit);
+        }
 
         // ---- IOyunVerisi ----
 
@@ -94,6 +169,15 @@ namespace IkiDunya.Management
             oynananTekKartlar.Clear();
             bekleyenUyari = -1;
             sonOlay = -1;
+            iliskiler.Clear();
+            kanitSayilari.Clear();
+            bakim = 0;
+            ekKart = 0;
+            sonrakiEk = 0;
+            korunanBolgeler.Clear();
+            aktifUyari = -1;
+            zincir = -1;
+            kopek = false;
             rapor.Clear();
             sonrakiRapor.Clear();
             Degisti?.Invoke();
@@ -112,7 +196,8 @@ namespace IkiDunya.Management
 
         // ---- Tur ----
 
-        /// <summary>Yeni tur: sayaç, gelir (ilk tur hariç), gönüllüler sıfırlanır, meşguller yerine geçer; geçen turun raporu başlar.</summary>
+        /// <summary>Yeni tur: sayaç, gelir (ilk tur hariç; paydaşlar ve bakım dahil), gönüllüler sıfırlanır, meşguller ve ekler yerine geçer,
+        /// geçen turun uyarısı bu turun sonuna kurulur; geçen turun raporu başlar.</summary>
         public void TurBasla(KumsalDurumu kumsal)
         {
             tur++;
@@ -124,12 +209,32 @@ namespace IkiDunya.Management
                 int gelir = ayarlar.TurButcesi(destek);
                 butce += gelir;
                 RaporEkle("rapor_gelir", gelir);
+                if (Dost(Paydas.Otel))
+                {
+                    butce += ayarlar.OtelSponsoru;
+                    RaporEkle("rapor_sponsor", ayarlar.OtelSponsoru);
+                }
+                if (Kus(Paydas.Belediye))
+                {
+                    butce -= ayarlar.BelediyeKesintisi;
+                    RaporEkle("rapor_kesinti", -ayarlar.BelediyeKesintisi);
+                }
+                if (bakim > 0)
+                {
+                    butce -= bakim;
+                    RaporEkle("rapor_bakim", -bakim);
+                }
+                butce = Mathf.Max(0, butce);
             }
+            aktifUyari = bekleyenUyari;
+            bekleyenUyari = -1;
+            kopek = false;
             int yeniYavru = kumsal.DenizeUlasanYavru - sayilanYavru;
             if (yeniYavru > 0) RaporEkle("rapor_denize_ulasan", yeniYavru);
             sayilanYavru = kumsal.DenizeUlasanYavru;
 
-            ekGonullu = 0;
+            ekGonullu = sonrakiEk;
+            sonrakiEk = 0;
             kullanilanGonullu = 0;
             mesgulGonullu = sonrakiMesgul;
             sonrakiMesgul = 0;
@@ -172,25 +277,62 @@ namespace IkiDunya.Management
             Degisti?.Invoke();
         }
 
-        /// <summary>Okul ziyareti: gelecek tur bu kadar gönüllü meşgul.</summary>
-        public void SonrakiTurMesgul(int adet)
+        /// <summary>Gelecek turun gönüllüsü: artı ek gönüllü (Gönüllü Çağrısı, stajyer), eksi meşgul (okul ziyareti).</summary>
+        public void SonrakiTurGonullu(int fark)
         {
-            sonrakiMesgul += adet;
+            if (fark > 0) sonrakiEk += fark;
+            else sonrakiMesgul -= fark;
             Degisti?.Invoke();
         }
 
-        /// <summary>Kanıtı açar; yeniyse true.</summary>
+        /// <summary>Kanıtı açar ya da sayısını artırır; tür yeniyse true.</summary>
         public bool KanitEkle(KanitTuru kanit)
         {
-            if (kanitlar.Contains(kanit)) return false;
-            kanitlar.Add(kanit);
+            int sayi = KanitSayisi(kanit);
+            kanitSayilari[(int)kanit] = sayi + 1;
+            bool yeni = !kanitlar.Contains(kanit);
+            if (yeni) kanitlar.Add(kanit);
             Degisti?.Invoke();
-            return true;
+            return yeni;
         }
 
         public void KartOynandi(KartTanimi kart)
         {
             if (kart.TekSeferlik && !oynananTekKartlar.Contains(kart.Id)) oynananTekKartlar.Add(kart.Id);
+            bakim += kart.Bakim;
+            Degisti?.Invoke();
+        }
+
+        public void EkKartEkle(int adet)
+        {
+            ekKart += adet;
+            Degisti?.Invoke();
+        }
+
+        /// <summary>Koruma Alanı: otel ve festival bu bölgeye giremez.</summary>
+        public void KorumaEkle(int bolge)
+        {
+            if (!korunanBolgeler.Contains(bolge)) korunanBolgeler.Add(bolge);
+            Degisti?.Invoke();
+        }
+
+        /// <summary>Sıradaki turun olayı (olay listesindeki sırası; -1 yok).</summary>
+        public void ZincirAyarla(int sira)
+        {
+            zincir = sira;
+            Degisti?.Invoke();
+        }
+
+        public void KopekAyarla(bool var)
+        {
+            kopek = var;
+            Degisti?.Invoke();
+        }
+
+        /// <summary>Tur sonunda uyarı gerçekleşti.</summary>
+        public void UyariBitti()
+        {
+            aktifUyari = -1;
             Degisti?.Invoke();
         }
 
