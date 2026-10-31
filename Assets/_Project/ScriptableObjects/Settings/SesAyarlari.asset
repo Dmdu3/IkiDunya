@@ -64,6 +64,18 @@ MonoBehaviour:
   - tur: 16
     klipler: []
     duzey: 1
+  - tur: 17
+    klipler: []
+    duzey: 1
+  - tur: 18
+    klipler: []
+    duzey: 1
+  - tur: 19
+    klipler: []
+    duzey: 1
+  - tur: 20
+    klipler: []
+    duzey: 1
   adimSesleri:
   - adim: 0
     ortam: {fileID: 0}
@@ -81,6 +93,9 @@ MonoBehaviour:
     ortam: {fileID: 0}
     muzik: {fileID: 0}
   - adim: 5
+    ortam: {fileID: 0}
+    muzik: {fileID: 0}
+  - adim: 6
     ortam: {fileID: 0}
     muzik: {fileID: 0}
   menuMuzigi: {fileID: 0}
