@@ -1,0 +1,33 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 99d128ce6622a4643ba75dfae73ffbef, type: 3}
+  m_Name: AvciAyarlari
+  m_EditorClassIdentifier: Assembly-CSharp::IkiDunya.Hazards.AvciAyarlari
+  yengecBeklemeEnAz: 4
+  yengecBeklemeEnCok: 9
+  yengecUyari: 2
+  yengecYaricap: 0.8
+  titremeGenligi: 0.03
+  martiBeklemeEnAz: 12
+  martiBeklemeEnCok: 20
+  martiUyari: 1.5
+  martiDalisYaricapi: 1.5
+  martiTopluEsigi: 3
+  martiTopluAv: 3
+  martiAramaYaricapi: 60
+  tilkiIhtimali: 0.5
+  tilkiCitiCarpani: 0.5
+  tilkiYurumeHizi: 1.2
+  tilkiKosuHizi: 4
+  tilkiMenzil: 8
+  tilkiAci: 60
+  tilkiBekleme: 2
