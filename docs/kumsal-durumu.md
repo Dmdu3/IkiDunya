@@ -6,7 +6,7 @@ ozet: İki tarafın sözleşmesi. İnsan kısmı (Toprak) kumsalı sadece bu met
 
 Kod: `Assets/_Project/Scripts/Core/KumsalDurumu.cs`. Asset: `ScriptableObjects/Settings/KumsalDurumu.asset` (kullanan her script `[SerializeField]` ile bağlanır). Her değişiklikten sonra `Degisti` event'i gelir. Yeni oyunda kumsal `KumsalBaslangici` asset'inden kurulur.
 
-> Toprak'ın onayıyla insan kısmını da Umut yazdı (`Management/`, 2026-11-01); kod bu sözleşmeye uyar. Değişiklik bu dosyada PR ile, `docs/kararlar.md`'ye bir satır.
+> Toprak'ın onayıyla insan kısmını Umut yazdı (`Management/`, 2026-11-01); kodu artık Toprak sürdürür ve bu sözleşmeye uyar. Değişiklik bu dosyada PR ile, `docs/kararlar.md`'ye bir satır.
 
 ## Okunanlar
 
