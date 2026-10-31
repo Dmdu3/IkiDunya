@@ -9,92 +9,25 @@ using UnityEngine.UI;
 
 namespace IkiDunya.Editor
 {
-    /// <summary>İnsan kısmını kurar: GDD'deki 12 kart, 5 görev, 6 olay asset'i, YonetimAyarlari ve YonetimDurumu; kumsal sahnesinde harita seçimi, yuva simgeleri, tur akışı ve yönetim ekranı.</summary>
+    /// <summary>Kumsal sahnesine insan turunu kurar: harita seçimi, yuva simgeleri, tur akışı ve yönetim ekranı; YonetimDurumu'nu ayarlara bağlar. İçerik (kart, görev, olay) Toprak'ın aracında (İnsan kısmı içeriğini kur).</summary>
     public static class YonetimKur
     {
-        private const string KartKlasoru = "Assets/_Project/ScriptableObjects/Cards";
-        private const string GorevKlasoru = "Assets/_Project/ScriptableObjects/VolunteerTasks";
-        private const string OlayKlasoru = "Assets/_Project/ScriptableObjects/Events";
-
-        /// <summary>İçerik asset'lerini GDD'deki değerlerle oluşturur (varsa üstüne yazar) ve ayarlara bağlar; durum asset'ini verir.</summary>
+        /// <summary>Yönetim ayarlarını ve durumunu bulur (yoksa oluşturur), durumu ayarlara bağlar. Kart, görev ve olay içeriği Toprak'ın:
+        /// burada yeniden yazılmaz; ayarlarda hiç kart yoksa (ilk kurulum) Toprak'ın aracı (İnsan kısmı içeriğini kur) bir kez çalıştırılır.</summary>
         internal static YonetimDurumu IcerikKur()
         {
-            var kartlar = new List<KartTanimi>
-            {
-                Kart("kart_golgelik", KartEtkisi.Golgelik, Hedef.Bolge, 2, 1, true, KanitTuru.Isi, true, false),
-                Kart("kart_temizlik", KartEtkisi.TemizlikKampanyasi, Hedef.Yok, 2, 3, true, KanitTuru.Cop, false, false),
-                Kart("kart_kumul", KartEtkisi.KumulOnarimi, Hedef.Bolge, 3, 1, true, KanitTuru.Su, false, false),
-                Kart("kart_yuva_tasima", KartEtkisi.YuvaTasima, Hedef.Yuva, 2, 1, false, KanitTuru.Su, false, false),
-                Kart("kart_isik", KartEtkisi.IsikYasagi, Hedef.Yok, 3, 1, false, KanitTuru.Isik, false, true),
-                Kart("kart_arac", KartEtkisi.AracYasagi, Hedef.Yok, 1, 1, false, KanitTuru.Cop, false, true),
-                Kart("kart_sezlong", KartEtkisi.SezlongDuzenlemesi, Hedef.Yok, 2, 1, false, KanitTuru.Cop, false, true),
-                Kart("kart_tilki_citi", KartEtkisi.TilkiCiti, Hedef.Yok, 3, 1, false, KanitTuru.Avci, false, true),
-                Kart("kart_ag_temizligi", KartEtkisi.HayaletAgTemizligi, Hedef.Yok, 3, 1, true, KanitTuru.Cop, false, false),
-                Kart("kart_gonullu_cagrisi", KartEtkisi.GonulluCagrisi, Hedef.Yok, 1, 2, true, KanitTuru.Cop, false, false),
-                Kart("kart_saha_arastirmasi", KartEtkisi.SahaArastirmasi, Hedef.Yok, 1, 1, true, KanitTuru.Cop, false, false),
-                Kart("kart_temiz_enerji", KartEtkisi.TemizEnerji, Hedef.Yok, 4, 1, true, KanitTuru.Isi, false, true),
-            };
-            var gorevler = new List<GorevTanimi>
-            {
-                Gorev("gorev_temizlik", GorevEtkisi.Temizlik, Hedef.Bolge),
-                Gorev("gorev_devriye", GorevEtkisi.Devriye, Hedef.Bolge),
-                Gorev("gorev_kafes", GorevEtkisi.Kafes, Hedef.Yuva),
-                Gorev("gorev_golge", GorevEtkisi.GolgeSulama, Hedef.Yuva),
-                Gorev("gorev_bilgilendirme", GorevEtkisi.Bilgilendirme, Hedef.Yok),
-            };
-            var olaylar = new List<OlayTanimi>
-            {
-                Olay("olay_otel", OlayEtkisi.Otel, false, true, 3, 0, 0, -1),
-                Olay("olay_festival", OlayEtkisi.Festival, false, true, 0, 2, 0, -1),
-                Olay("olay_balikci", OlayEtkisi.Balikci, false, false, -2, 0, 0, 0),
-                Olay("olay_sicak_dalga", OlayEtkisi.SicakDalga, true, false, 0, 0, 0, 0),
-                Olay("olay_firtina", OlayEtkisi.Firtina, true, false, 0, 0, 0, 0),
-                Olay("olay_okul", OlayEtkisi.Okul, false, false, 0, 2, 0, 0),
-            };
-
             var ayarlar = GriKumsalKur.Ayar<YonetimAyarlari>("YonetimAyarlari");
-            ayarlar.IcerikAyarla(kartlar, gorevler, olaylar);
-            EditorUtility.SetDirty(ayarlar);
+            if (ayarlar.Kartlar.Count == 0)
+            {
+                InsanIcerigiKur.Kur(ayarlar);
+                EditorUtility.SetDirty(ayarlar);
+            }
 
             var durum = GriKumsalKur.Ayar<YonetimDurumu>("YonetimDurumu");
             GriKumsalKur.Bagla(durum, "ayarlar", ayarlar);
             EditorUtility.SetDirty(durum);
             AssetDatabase.SaveAssets();
             return durum;
-        }
-
-        private static T Asset<T>(string klasor, string ad) where T : ScriptableObject
-        {
-            string yol = $"{klasor}/{ad}.asset";
-            var asset = AssetDatabase.LoadAssetAtPath<T>(yol);
-            if (asset != null) return asset;
-            asset = ScriptableObject.CreateInstance<T>();
-            AssetDatabase.CreateAsset(asset, yol);
-            return asset;
-        }
-
-        private static KartTanimi Kart(string id, KartEtkisi etki, Hedef hedef, int bedel, int deger, bool bastan, KanitTuru kanit, bool ucuzlatir, bool tek)
-        {
-            var kart = Asset<KartTanimi>(KartKlasoru, id);
-            kart.Kur(id, etki, hedef, bedel, deger, bastan, kanit, ucuzlatir, tek);
-            EditorUtility.SetDirty(kart);
-            return kart;
-        }
-
-        private static GorevTanimi Gorev(string id, GorevEtkisi etki, Hedef hedef)
-        {
-            var gorev = Asset<GorevTanimi>(GorevKlasoru, id);
-            gorev.Kur(id, etki, hedef);
-            EditorUtility.SetDirty(gorev);
-            return gorev;
-        }
-
-        private static OlayTanimi Olay(string id, OlayEtkisi etki, bool uyari, bool destek, int ab, int ad, int bb, int bd)
-        {
-            var olay = Asset<OlayTanimi>(OlayKlasoru, id);
-            olay.Kur(id, etki, uyari, destek, ab, ad, bb, bd);
-            EditorUtility.SetDirty(olay);
-            return olay;
         }
 
         // ---- Sahne ----
