@@ -1,0 +1,34 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: e72bfc499912a5c42bcac17988c68f50, type: 3}
+  m_Name: DenizTehlikeAyarlari
+  m_EditorClassIdentifier: Assembly-CSharp::IkiDunya.Hazards.DenizTehlikeAyarlari
+  akintiHizi: 1.5
+  sicakSuHasari: 3
+  tekneHizi: 6
+  tekneHasari: 25
+  tekneYaricapi: 2.5
+  tekneBekleme: 2
+  denizanasiEnerjisi: 15
+  suzulmeHizi: 0.4
+  kasilmaSikligi: 1.5
+  avciMenzil: 10
+  avciHizi: 2
+  avciKosuHizi: 5
+  avciYakalamaMesafesi: 0.8
+  avciBekleme: 4
+  dalgaAraligi: 6
+  dalgaHizi: 4
+  dalgaBaslangici: 30
+  dalgaDerinligi: 1.2
+  dalgaSavrulmasi: 4
+  seviyeBasinaAg: 2
