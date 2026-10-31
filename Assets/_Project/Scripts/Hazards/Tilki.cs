@@ -4,10 +4,11 @@ using UnityEngine;
 
 namespace IkiDunya.Hazards
 {
-    /// <summary>Tilki: bazı gecelerde kumsalın kenarında gezer. Konisinde siperde olmayan bir yavru görürse ona koşar, sürü panikle dağılır; yakalarsa geri döner.</summary>
+    /// <summary>Tilki: bazı gecelerde kumsalın kenarında gezer. Konisinde siperde olmayan bir yavru görürse ona koşar, sürü panikle dağılır; yakalarsa geri döner.
+    /// Bir süre gezdikten sonra sonraki gecelerin kafessiz bir yuvasını eşeleyip bozar (yumurta kaybı, Avcı kanıtı).</summary>
     public class Tilki : MonoBehaviour
     {
-        private enum Durum { Geziyor, Kosuyor, Donuyor }
+        private enum Durum { Geziyor, Kosuyor, Donuyor, YuvayaGidiyor, Eseliyor }
 
         [SerializeField] private AvciAyarlari ayarlar;
         [SerializeField] private KumsalDurumu kumsal;
@@ -29,6 +30,10 @@ namespace IkiDunya.Hazards
         private int hedefNokta;
         private float beklemeKalan;
         private IAvlanabilir av;
+        private float gezmeSuresi;
+        private bool yuvaDenendi;
+        private int hedefYuva = -1;
+        private float eselemeKalan;
 
         [RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.SubsystemRegistration)]
         private static void StatikleriSifirla() => SuruyuKorkuttu = null;
@@ -49,6 +54,9 @@ namespace IkiDunya.Hazards
             transform.Find("GorusKonisi")?.gameObject.SetActive(geldi);
             durum = Durum.Geziyor;
             av = null;
+            gezmeSuresi = 0f;
+            yuvaDenendi = false;
+            hedefYuva = -1;
             if (noktalar.Length > 0) transform.position = noktalar[0].position;
         }
 
@@ -68,6 +76,18 @@ namespace IkiDunya.Hazards
                 case Durum.Geziyor:
                     Gez();
                     Bak();
+                    YuvayaBak();
+                    break;
+                case Durum.YuvayaGidiyor:
+                    if (Git(kumsal.Yuvalar[hedefYuva].Konum, ayarlar.TilkiYurumeHizi))
+                    {
+                        durum = Durum.Eseliyor;
+                        eselemeKalan = ayarlar.TilkiEselemeSuresi;
+                    }
+                    else Bak();
+                    break;
+                case Durum.Eseliyor:
+                    Esele();
                     break;
                 case Durum.Kosuyor:
                     Kos();
@@ -102,6 +122,42 @@ namespace IkiDunya.Hazards
                 SuruyuKorkuttu?.Invoke(transform.position);
                 return;
             }
+        }
+
+        /// <summary>Bir süre gezdikten sonra, kafessiz ve yumurtası olan sonraki gecelerin yuvasına bir kez gider.</summary>
+        private void YuvayaBak()
+        {
+            if (yuvaDenendi) return;
+            gezmeSuresi += Time.deltaTime;
+            if (gezmeSuresi < ayarlar.TilkiYuvayaGitme) return;
+            yuvaDenendi = true;
+
+            // Bu gecenin yuvası çoktan açıldı; bozulabilecek olanlar sonraki gecelerin yuvaları.
+            int gece = OyunAkisi.Var && !OyunAkisi.MenudeMi ? OyunAkisi.SuAnkiAdim.Sira : 1;
+            for (int i = gece; i < kumsal.Yuvalar.Count; i++)
+            {
+                Yuva yuva = kumsal.Yuvalar[i];
+                if (yuva.Kafesli || yuva.Yumurta <= 0) continue;
+                hedefYuva = i;
+                durum = Durum.YuvayaGidiyor;
+                return;
+            }
+        }
+
+        private void Esele()
+        {
+            // Eşelerken gövde sallanır: oyuncu görürse ne olduğunu anlar.
+            eselemeKalan -= Time.deltaTime;
+            govde.transform.localRotation = Quaternion.Euler(Mathf.Sin(Time.time * 20f) * 10f, 0f, 0f);
+            if (eselemeKalan > 0f) return;
+
+            govde.transform.localRotation = Quaternion.identity;
+            Yuva yuva = kumsal.Yuvalar[hedefYuva];
+            int kayip = Mathf.CeilToInt(yuva.Yumurta * ayarlar.TilkiYumurtaKaybi);
+            kumsal.YuvaYumurtaKaybet(hedefYuva, kayip);
+            kumsal.KayipIziEkle(new KayipIzi(yuva.Bolge, yuva.Konum, KayipNedeni.Tilki));
+            Debug.Log($"Tilki: {hedefYuva + 1}. yuvayı bozdu, {kayip} yumurta kaybedildi.");
+            durum = Durum.Donuyor;
         }
 
         private void Kos()

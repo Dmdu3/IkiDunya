@@ -35,13 +35,15 @@ namespace IkiDunya.Hazards
         public SicaklikBandi Bant(Vector3 konum) => Bant(Bolge(konum), KiyidanUzaklik(konum));
 
         /// <summary>Nokta dalga çizgisinin altında mı (fırtına basabilir). Kumul onarımı olan bölgede çizgi denize çekilir.</summary>
-        public bool DalgaAltinda(Vector3 konum)
+        public bool DalgaAltinda(Vector3 konum) => KiyidanUzaklik(konum) < DalgaCizgisi(Bolge(konum));
+
+        /// <summary>Bir bölgede dalga çizgisinin deniz kenarından uzaklığı; kumul onarımı varsa denize çekilmiş hali.</summary>
+        public float DalgaCizgisi(int bolge)
         {
-            int bolge = Bolge(konum);
             float cizgi = dalgaCizgisi;
             if (bolge < kumsal.BolgeSayisi && kumsal.BolgeAl(bolge).Var(BolgeYapisi.KumulOnarimi))
                 cizgi -= ayarlar.KumulOnarimiGeriCekilme;
-            return KiyidanUzaklik(konum) < cizgi;
+            return cizgi;
         }
 
         /// <summary>Kumsal üstündeki bir noktanın dünya konumu (bölge ortası, kıyıdan uzaklık).</summary>

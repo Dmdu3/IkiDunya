@@ -18,6 +18,11 @@ namespace IkiDunya.Hazards
         [SerializeField] private float tekneYaricapi = 2.5f;
         [Tooltip("Aynı tekne art arda kaç saniyede bir çarpabilir.")]
         [SerializeField] private float tekneBekleme = 2f;
+        [Tooltip("Teknenin suya düşen gölgesi teknenin bu kadar önünde (metre): su altındaki oyuncu tekneyi gelmeden görür.")]
+        [SerializeField] private float tekneGolgeOnu = 6f;
+        [Tooltip("Pervane köpüğünün titreme hızı ve genliği (ölçek oranı).")]
+        [SerializeField] private float kopukTitremeHizi = 18f;
+        [SerializeField] private float kopukTitremeGenligi = 0.35f;
 
         [Header("Besin")]
         [Tooltip("Denizanası yenince kazanılan enerji (GDD: 15).")]
@@ -47,6 +52,9 @@ namespace IkiDunya.Hazards
         [Header("Ağ ve misina")]
         [Tooltip("KumsalDurumu'ndaki denizdeki ağ seviyesinin her biri için kaç ağ ya da misina.")]
         [SerializeField] private int seviyeBasinaAg = 2;
+        [Tooltip("Ağ kenarları ve misinanın parıldama hızı (saniyede) ve en sönük hali (0–1).")]
+        [SerializeField] private float parildamaHizi = 0.8f;
+        [Range(0f, 1f)] [SerializeField] private float parildamaEnAz = 0.35f;
 
         public float AkintiHizi => akintiHizi;
         public float SicakSuHasari => sicakSuHasari;
@@ -54,6 +62,9 @@ namespace IkiDunya.Hazards
         public float TekneHasari => tekneHasari;
         public float TekneYaricapi => tekneYaricapi;
         public float TekneBekleme => tekneBekleme;
+        public float TekneGolgeOnu => tekneGolgeOnu;
+        public float KopukTitremeHizi => kopukTitremeHizi;
+        public float KopukTitremeGenligi => kopukTitremeGenligi;
         public float DenizanasiEnerjisi => denizanasiEnerjisi;
         public float SuzulmeHizi => suzulmeHizi;
         public float KasilmaSikligi => kasilmaSikligi;
@@ -68,5 +79,7 @@ namespace IkiDunya.Hazards
         public float DalgaDerinligi => dalgaDerinligi;
         public float DalgaSavrulmasi => dalgaSavrulmasi;
         public int SeviyeBasinaAg => seviyeBasinaAg;
+        public float ParildamaHizi => parildamaHizi;
+        public float ParildamaEnAz => parildamaEnAz;
     }
 }

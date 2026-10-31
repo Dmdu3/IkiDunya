@@ -7,7 +7,8 @@ using UnityEngine;
 
 namespace IkiDunya.Turtle
 {
-    /// <summary>Yavru sürüsü: oyuncu öncüyü yönetir, diğerleri kısa bir gecikmeyle izler. Shift dağıtır, Space zıplatır, E takılan yavruyu kurtarır (bu sırada sürü bekler).</summary>
+    /// <summary>Yavru sürüsü: oyuncu öncüyü yönetir, diğerleri kısa bir gecikmeyle izler. Shift dağıtır, Space zıplatır, E takılan yavruyu kurtarır (bu sırada sürü bekler).
+    /// Öncü kendisi takılırsa E'yi basılı tutup kendini kurtarır.</summary>
     public class Suru : MonoBehaviour
     {
         [SerializeField] private YavruAyarlari ayarlar;
@@ -91,8 +92,10 @@ namespace IkiDunya.Turtle
             Yardim();
 
             Transform o = oncu.transform;
-            Vector2 girdi = YardimEdiyor ? Vector2.zero : Vector2.ClampMagnitude(GameInput.Hareket, 1f);
-            oncu.Yuru((o.forward * girdi.y + o.right * girdi.x) * ayarlar.YurumeHizi + oncu.IsikCekimi);
+            // Takılı ya da ters dönmüş öncü yürüyemez; E ile kendini kurtarır.
+            bool oncuSerbest = oncu.EngelDurumu == Yavru.Engel.Yok;
+            Vector2 girdi = YardimEdiyor || !oncuSerbest ? Vector2.zero : Vector2.ClampMagnitude(GameInput.Hareket, 1f);
+            oncu.Yuru(oncuSerbest ? (o.forward * girdi.y + o.right * girdi.x) * ayarlar.YurumeHizi + oncu.IsikCekimi : Vector3.zero);
 
             if (GameInput.ZiplaDalBasildi)
                 foreach (Yavru yavru in yavrular) yavru.Zipla();
@@ -138,10 +141,11 @@ namespace IkiDunya.Turtle
             }
         }
 
-        /// <summary>E basılıyken öncünün yanındaki, yardım bekleyen en yakın yavruya yardım eder.</summary>
+        /// <summary>E basılıyken önce öncünün kendisine (takıldıysa), yoksa yanındaki, yardım bekleyen en yakın yavruya yardım eder.</summary>
         private void Yardim()
         {
-            Yavru aday = GameInput.EtkilesBasili ? YardimBekleyenEnYakin() : null;
+            Yavru aday = null;
+            if (GameInput.EtkilesBasili) aday = oncu.EngelDurumu != Yavru.Engel.Yok ? oncu : YardimBekleyenEnYakin();
             if (aday != yardimEdilen)
             {
                 yardimEdilen = aday;

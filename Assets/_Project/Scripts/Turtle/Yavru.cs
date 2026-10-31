@@ -25,7 +25,7 @@ namespace IkiDunya.Turtle
 
         public Durum SuAnki { get; private set; }
         public Engel EngelDurumu { get; private set; }
-        /// <summary>Öncü takılmaz ve yönünü kaybetmez; oyuncu onu kendisi sürer.</summary>
+        /// <summary>Oyuncunun sürdüğü yavru. O da takılır ve ters döner (E basılı tutup kendini kurtarır), ama yönünü kaybetmez.</summary>
         public bool Oncu { get; set; }
         /// <summary>Bu dalga vururken bir kez geri savruldu mu; dalga çekilince sıfırlanır.</summary>
         public bool BuDalgadaSavruldu { get; set; }
@@ -155,7 +155,7 @@ namespace IkiDunya.Turtle
 
         private void Takil(TrashTrap.Turu tur)
         {
-            if (Oncu || EngelDurumu != Engel.Yok || tur == TrashTrap.Turu.CopYigini) return;
+            if (EngelDurumu != Engel.Yok || tur == TrashTrap.Turu.CopYigini) return;
             if (tur == TrashTrap.Turu.TekerlekIzi)
             {
                 EngelDurumu = Engel.Ters;
