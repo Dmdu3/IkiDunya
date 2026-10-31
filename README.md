@@ -84,8 +84,11 @@ Bütün tuşlar tek bir dosyada: `Assets/_Project/Scripts/Core/GameInput.cs`. Ye
 | W (kum altında) | – | Bir kat yukarı kaz |
 | T | Termal görünüm | Termal görünüm |
 | Esc | Duraklatma menüsü (oyuna dön, ayarlar, ana menü) | Duraklatma menüsü |
-| Fare | Kaplumbağa bölümlerinde bakış (birinci şahıs); insan turunda harita, kart ve gönüllü seçimi | |
+| Fare | Kaplumbağa bölümlerinde bakış (birinci şahıs); insan turunda harita, kayıp izleri (kanıt), kart ve gönüllü seçimi | |
 | F1–F4 | (Geliştirici) Bölüm 1, Kumsal, Bölüm 5, Menü'ye geç | |
+| F5 | (Geliştirici) Kare hızı (FPS) göstergesi | |
+
+Oyuncu tuşları oyunda Ayarlar → tuşlar bölümünden değiştirebilir; seçim o bilgisayarda saklanır.
 
 ## PC build
 

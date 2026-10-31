@@ -35,7 +35,7 @@ namespace IkiDunya.Editor
         private const float DalgaCizgisiZ = 6f;
         private const int BolgeSayisi = 8;
 
-        private static Material kum, kumKoyu, deniz, taban, beyaz, engel, cop, kaplumbaga, insan, leke, iz, koni, tilkiKonisi, golge, siper, tilki, termalSerit, ayYolu;
+        private static Material kum, kumKoyu, deniz, taban, beyaz, engel, cop, kaplumbaga, insan, leke, iz, koni, tilkiKonisi, golge, siper, tilki, termalSerit, ayYolu, isikHalkasi;
 
         [MenuItem("İki Dünya/Gri kutu kumsalı kur (yuva gecesi)")]
         public static void YuvaGecesiKur()
@@ -44,6 +44,7 @@ namespace IkiDunya.Editor
             KumSicakligi kumSicakligi = OrtakKur(Bos("Insanlar", null));
             DenemeKumsaliKur();
             YuvaKur(kumSicakligi, null);
+            OrtamKur(sahne);
             Kaydet(sahne, YuvaSahnesi);
         }
 
@@ -54,6 +55,7 @@ namespace IkiDunya.Editor
             KumSicakligi kumSicakligi = OrtakKur(null);
             DenemeKumsaliKur();
             KacisKur(kumSicakligi, null);
+            OrtamKur(sahne);
             Kaydet(sahne, KacisSahnesi);
         }
 
@@ -70,6 +72,7 @@ namespace IkiDunya.Editor
             InsanTuruKur(Grup("InsanTuruNesneleri", AdimTuru.InsanTuru));
             MenuKur.FinalKur(Grup("FinalNesneleri", AdimTuru.Final), sahne, kaplumbaga, leke);
             PrefabUtility.InstantiatePrefab(AssetDatabase.LoadAssetAtPath<GameObject>(SistemlerKalibi));
+            OrtamKur(sahne);
             Kaydet(sahne, KumsalSahnesi);
         }
 
@@ -211,8 +214,15 @@ namespace IkiDunya.Editor
             var kamera = new GameObject("YonetimKamerasi");
             kamera.transform.SetParent(grup, false);
             kamera.transform.SetPositionAndRotation(new Vector3(0f, 55f, KumsalDerinligi / 2f), Quaternion.Euler(90f, 0f, 0f));
-            kamera.AddComponent<UnityEngine.Camera>();
+            var kameraBileseni = kamera.AddComponent<UnityEngine.Camera>();
             kamera.AddComponent<AudioListener>();
+
+            // Kayıp izleri: kanıt renginde simgeler, tıklayınca kanıt açılır
+            var harita = Bos("KayipIziHaritasi", grup).gameObject.AddComponent<KayipIziHaritasi>();
+            Bagla(harita, "kumsal", Ayar<KumsalDurumu>("KumsalDurumu"));
+            Bagla(harita, "ayarlar", Ayar<HaritaAyarlari>("HaritaAyarlari"));
+            Bagla(harita, "kamera", kameraBileseni);
+            Bagla(harita, "simgeMalzemesi", termalSerit);
 
             var tur = new GameObject("GeciciInsanTuru").AddComponent<GeciciInsanTuru>();
             Bagla(tur, "kumsal", Ayar<KumsalDurumu>("KumsalDurumu"));
@@ -282,7 +292,9 @@ namespace IkiDunya.Editor
             insan = Malzeme("Insan", new Color(0.3f, 0.35f, 0.6f));
             leke = Malzeme("SicakLeke", new Color(0.85f, 0.3f, 0.15f));
             iz = Malzeme("KayipIzi", new Color(0.25f, 0.1f, 0.1f));
-            termalSerit = Malzeme("TermalSerit", Color.white, "Universal Render Pipeline/Unlit");
+            // Termal şeritler yarı saydam; kum altından görünür.
+            termalSerit = SaydamMalzeme("TermalSerit", Color.white);
+            isikHalkasi = SaydamMalzeme("IsikHalkasi", new Color(1f, 0.85f, 0.5f, 0.18f));
             koni = SaydamMalzeme("GorusKonisi", new Color(1f, 0.95f, 0.5f, 0.3f));
             tilkiKonisi = SaydamMalzeme("TilkiKonisi", new Color(1f, 0.5f, 0.2f, 0.3f));
             golge = SaydamMalzeme("Golge", new Color(0f, 0f, 0f, 0.5f));
@@ -298,8 +310,7 @@ namespace IkiDunya.Editor
 
             Kutu("Kum", dunya, new Vector3(0f, -0.5f, KumsalDerinligi / 2f), new Vector3(KumsalUzunlugu, 1f, KumsalDerinligi), kum, "Ground");
             Kutu("DenizTabani", dunya, new Vector3(0f, -2f, -DenizDerinligi / 2f), new Vector3(KumsalUzunlugu, 1f, DenizDerinligi), taban, "Ground");
-            GameObject su = Kutu("Deniz", dunya, new Vector3(0f, -0.6f, -DenizDerinligi / 2f), new Vector3(KumsalUzunlugu, 0.1f, DenizDerinligi), deniz, "Water");
-            Object.DestroyImmediate(su.GetComponent<Collider>());
+            SuYuzeyiKur("Deniz", dunya, new Vector3(0f, -0.55f, -DenizDerinligi / 2f), new Vector2(KumsalUzunlugu, DenizDerinligi), deniz);
 
             var kumul = new GameObject("Kumul").transform;
             kumul.SetParent(dunya);
@@ -330,7 +341,7 @@ namespace IkiDunya.Editor
 
             KumSicakligi kumSicakligi = TermalKur();
             // Ay ışığı: denizin üstünde doğru yönü gösteren parlak yol
-            GameObject ay = Kutu("AyYolu", dunya, new Vector3(-6f, -0.54f, -DenizDerinligi / 2f), new Vector3(3f, 0.01f, DenizDerinligi), ayYolu, "Default");
+            GameObject ay = Kutu("AyYolu", dunya, new Vector3(-6f, -0.3f, -DenizDerinligi / 2f), new Vector3(3f, 0.01f, DenizDerinligi), ayYolu, "Default");
             Object.DestroyImmediate(ay.GetComponent<Collider>());
 
             KumsalYapilariKur(kumSicakligi, insanKoku);
@@ -579,6 +590,18 @@ namespace IkiDunya.Editor
             Bagla(isik, "ayarlar", ayarlar);
             Bagla(isik, "kumsal", kumsal);
             Bagla(isik, "isik", lamba);
+
+            // Kumdaki ışık halkası: çekim alanını gösterir
+            GameObject halka = GameObject.CreatePrimitive(PrimitiveType.Cylinder);
+            halka.name = "Halka";
+            Object.DestroyImmediate(halka.GetComponent<Collider>());
+            halka.transform.SetParent(kok, false);
+            halka.transform.localPosition = Vector3.up * 0.02f;
+            halka.transform.localScale = new Vector3(alan.radius * 2f, 0.005f, alan.radius * 2f);
+            var halkaGorunus = halka.GetComponent<Renderer>();
+            halkaGorunus.sharedMaterial = isikHalkasi;
+            halkaGorunus.shadowCastingMode = ShadowCastingMode.Off;
+            Bagla(isik, "halka", halka);
             return kok.gameObject;
         }
 
@@ -701,6 +724,43 @@ namespace IkiDunya.Editor
             GameObject kalip = PrefabUtility.SaveAsPrefabAsset(nesne, yol);
             Object.DestroyImmediate(nesne);
             return kalip;
+        }
+
+        /// <summary>Gece ve gündüz ışığı: sahnenin yönlü ışığı ve bütün kameralar OrtamIsigi'ne bağlanır.</summary>
+        private static void OrtamKur(Scene sahne)
+        {
+            var ortam = new GameObject("OrtamIsigi").AddComponent<OrtamIsigi>();
+            Bagla(ortam, "ayarlar", Ayar<OrtamAyarlari>("OrtamAyarlari"));
+            foreach (GameObject kok in sahne.GetRootGameObjects())
+                if (kok.TryGetComponent(out Light isik) && isik.type == LightType.Directional)
+                {
+                    Bagla(ortam, "isik", isik);
+                    isik.transform.rotation = Quaternion.Euler(35f, 160f, 0f);
+                }
+
+            var kameralar = new System.Collections.Generic.List<UnityEngine.Camera>();
+            foreach (GameObject kok in sahne.GetRootGameObjects())
+                kameralar.AddRange(kok.GetComponentsInChildren<UnityEngine.Camera>(true));
+            var so = new SerializedObject(ortam);
+            SerializedProperty dizi = so.FindProperty("kameralar");
+            dizi.arraySize = kameralar.Count;
+            for (int i = 0; i < kameralar.Count; i++) dizi.GetArrayElementAtIndex(i).objectReferenceValue = kameralar[i];
+            so.ApplyModifiedPropertiesWithoutUndo();
+        }
+
+        /// <summary>Dalgalanan su yüzeyi (çarpışmasız, Water layer).</summary>
+        internal static GameObject SuYuzeyiKur(string ad, Transform ebeveyn, Vector3 konum, Vector2 boyut, Material malzeme)
+        {
+            var su = new GameObject(ad, typeof(MeshFilter), typeof(MeshRenderer));
+            su.layer = LayerMask.NameToLayer("Water");
+            su.transform.SetParent(ebeveyn, false);
+            su.transform.localPosition = konum;
+            su.GetComponent<MeshRenderer>().sharedMaterial = malzeme;
+            var dalga = su.AddComponent<SuDalgalanmasi>();
+            var so = new SerializedObject(dalga);
+            so.FindProperty("boyut").vector2Value = boyut;
+            so.ApplyModifiedPropertiesWithoutUndo();
+            return su;
         }
 
         // ---- Küçük yardımcılar ----

@@ -1,3 +1,4 @@
+using System;
 using UnityEngine;
 using UnityEngine.InputSystem;
 
@@ -6,7 +7,15 @@ namespace IkiDunya.Core
     /// <summary>Oyunun bütün tuşları tek yerde; başka script tuşu doğrudan okumaz.</summary>
     public static class GameInput
     {
+        private const string TuslarAnahtari = "tuslar";
+
         private static InputActionMap harita;
+
+        /// <summary>Ayarlarda bir tuş yeniden atanırken true; o sırada Esc duraklatmayı açıp kapatmaz.</summary>
+        public static bool TusAtaniyor { get; set; }
+
+        /// <summary>Tuş atamaları değişince (kaydedildi ya da varsayılana dönüldü).</summary>
+        public static event Action BaglamalarDegisti;
 
         /// <summary>Oyun duraklatılmamışsa (ve duraklatma bu karede kapanmadıysa) oyun girdileri okunur.</summary>
         private static bool Oyunda => !Duraklatma.Acik && Time.frameCount != Duraklatma.KapanmaKaresi;
@@ -27,6 +36,7 @@ namespace IkiDunya.Core
         private static InputAction gelistiriciKumsal;
         private static InputAction gelistiriciBolum5;
         private static InputAction gelistiriciMenu;
+        private static InputAction gelistiriciPerformans;
 
         // Kaplumbağa bölümleri (birinci şahıs)
         public static Vector2 Hareket => Oyunda ? hareket.ReadValue<Vector2>() : Vector2.zero;          // WASD
@@ -42,7 +52,7 @@ namespace IkiDunya.Core
         public static bool TermalBasildi => Oyunda ? termal.WasPressedThisFrame() : false;       // T
 
         // Genel
-        public static bool DuraklatBasildi => duraklat.WasPressedThisFrame();   // Esc
+        public static bool DuraklatBasildi => !TusAtaniyor && duraklat.WasPressedThisFrame();   // Esc
 
         // İnsan kısmı (yönetim ekranı)
         public static Vector2 IsaretciKonumu => isaretci.ReadValue<Vector2>();
@@ -50,11 +60,12 @@ namespace IkiDunya.Core
         public static bool TiklaBirakildi => Oyunda ? tikla.WasReleasedThisFrame() : false;
         public static bool TiklaBasili => Oyunda ? tikla.IsPressed() : false;
 
-        // Geliştirici (F1–F4)
+        // Geliştirici (F1–F5)
         public static bool GelistiriciBolum1Basildi => gelistiriciBolum1.WasPressedThisFrame();
         public static bool GelistiriciKumsalBasildi => gelistiriciKumsal.WasPressedThisFrame();
         public static bool GelistiriciBolum5Basildi => gelistiriciBolum5.WasPressedThisFrame();
         public static bool GelistiriciMenuBasildi => gelistiriciMenu.WasPressedThisFrame();
+        public static bool GelistiriciPerformansBasildi => gelistiriciPerformans.WasPressedThisFrame();
 
         [RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.BeforeSceneLoad)]
         private static void Kur()
@@ -86,9 +97,31 @@ namespace IkiDunya.Core
             gelistiriciKumsal = harita.AddAction("GelistiriciKumsal", InputActionType.Button, "<Keyboard>/f2");
             gelistiriciBolum5 = harita.AddAction("GelistiriciBolum5", InputActionType.Button, "<Keyboard>/f3");
             gelistiriciMenu = harita.AddAction("GelistiriciMenu", InputActionType.Button, "<Keyboard>/f4");
+            gelistiriciPerformans = harita.AddAction("GelistiriciPerformans", InputActionType.Button, "<Keyboard>/f5");
+
+            // Oyuncunun ayarlardan atadığı tuşlar
+            string kayitli = PlayerPrefs.GetString(TuslarAnahtari, "");
+            if (!string.IsNullOrEmpty(kayitli)) harita.LoadBindingOverridesFromJson(kayitli);
 
             harita.Enable();
             Application.quitting += Kapat;
+        }
+
+        // ---- Tuş atama (ayarlar) ----
+
+        public static InputAction Eylem(string ad) => harita.FindAction(ad);
+
+        public static void BaglamalariKaydet()
+        {
+            PlayerPrefs.SetString(TuslarAnahtari, harita.SaveBindingOverridesAsJson());
+            BaglamalarDegisti?.Invoke();
+        }
+
+        public static void VarsayilanaDon()
+        {
+            harita.RemoveAllBindingOverrides();
+            PlayerPrefs.DeleteKey(TuslarAnahtari);
+            BaglamalarDegisti?.Invoke();
         }
 
         private static void Kapat()

@@ -122,22 +122,74 @@ namespace IkiDunya.Editor
             PrefabUtility.UnloadPrefabContents(kok);
         }
 
+        // Ayarlardaki tuş satırları: metin id'si, GameInput eylemi, bağlama sırası (Hareket: 1 ileri, 2 geri, 3 sol, 4 sağ).
+        private static readonly (string id, string eylem, int sira)[] TusSatirlari =
+        {
+            ("tus_ileri", "Hareket", 1), ("tus_geri", "Hareket", 2), ("tus_sol", "Hareket", 3), ("tus_sag", "Hareket", 4),
+            ("tus_hizli", "Hizli", 0), ("tus_zipla", "ZiplaDal", 0), ("tus_etkiles", "Etkiles", 0), ("tus_termal", "Termal", 0),
+            ("tus_kaz_sol", "KazSol", 0), ("tus_kaz_sag", "KazSag", 0), ("tus_kaz_yukari", "KazYukari", 0),
+        };
+
         private static AyarlarPaneli AyarlarKur(Transform ebeveyn, GameObject oncekiPanel, MetinTablosu metinler)
         {
-            Transform kutu = Liste("AyarlarPaneli", ebeveyn, new Vector2(0.33f, 0.25f), new Vector2(0.67f, 0.6f));
-            Yazi("SesYazisi", kutu, Vector2.zero, Vector2.zero, 28, "ayar_ses", metinler);
+            Transform kutu = Liste("AyarlarPaneli", ebeveyn, new Vector2(0.3f, 0.03f), new Vector2(0.7f, 0.97f));
+            kutu.GetComponent<VerticalLayoutGroup>().spacing = 6f;
+            Yazi("SesYazisi", kutu, Vector2.zero, Vector2.zero, 24, "ayar_ses", metinler);
             Slider ses = Kaydirici(kutu, 0f, 1f);
-            Yazi("FareYazisi", kutu, Vector2.zero, Vector2.zero, 28, "ayar_fare", metinler);
+            Yazi("FareYazisi", kutu, Vector2.zero, Vector2.zero, 24, "ayar_fare", metinler);
             Slider fare = Kaydirici(kutu, 0.2f, 3f);
+
+            Yazi("TuslarYazisi", kutu, Vector2.zero, Vector2.zero, 24, "ayar_tuslar", metinler);
+            foreach ((string id, string eylem, int sira) in TusSatirlari) TusSatiriKur(kutu, id, eylem, sira, metinler);
+            Button varsayilan = Dugme(kutu, "menu_varsayilan", metinler);
             Button geri = Dugme(kutu, "menu_geri", metinler);
 
             var panel = kutu.gameObject.AddComponent<AyarlarPaneli>();
             GriKumsalKur.Bagla(panel, "ses", ses);
             GriKumsalKur.Bagla(panel, "hassasiyet", fare);
             GriKumsalKur.Bagla(panel, "geri", geri);
+            GriKumsalKur.Bagla(panel, "varsayilanTuslar", varsayilan);
             GriKumsalKur.Bagla(panel, "oncekiPanel", oncekiPanel);
             kutu.gameObject.SetActive(false);
             return panel;
+        }
+
+        /// <summary>Bir satır: solda eylemin adı, sağda şu anki tuşu gösteren düğme.</summary>
+        private static void TusSatiriKur(Transform ebeveyn, string id, string eylem, int sira, MetinTablosu metinler)
+        {
+            int ui = LayerMask.NameToLayer("UI");
+            var satir = new GameObject(id, typeof(RectTransform), typeof(HorizontalLayoutGroup), typeof(LayoutElement));
+            satir.layer = ui;
+            satir.transform.SetParent(ebeveyn, false);
+            satir.GetComponent<LayoutElement>().preferredHeight = 34f;
+            var yatay = satir.GetComponent<HorizontalLayoutGroup>();
+            yatay.spacing = 12f;
+            yatay.childControlWidth = yatay.childControlHeight = true;
+            yatay.childForceExpandWidth = yatay.childForceExpandHeight = true;
+
+            Yazi("Ad", satir.transform, Vector2.zero, Vector2.zero, 22, id, metinler);
+
+            var dugme = new GameObject("Tus", typeof(RectTransform), typeof(Image), typeof(Button));
+            dugme.layer = ui;
+            dugme.transform.SetParent(satir.transform, false);
+            dugme.GetComponent<Image>().color = new Color(0.92f, 0.9f, 0.85f);
+            var yaziNesnesi = new GameObject("Yazi", typeof(RectTransform), typeof(Text));
+            yaziNesnesi.layer = ui;
+            yaziNesnesi.transform.SetParent(dugme.transform, false);
+            GriKumsalKur.Yasla((RectTransform)yaziNesnesi.transform, Vector2.zero, Vector2.one);
+            Text tusYazisi = yaziNesnesi.GetComponent<Text>();
+            tusYazisi.font = Resources.GetBuiltinResource<Font>("LegacyRuntime.ttf");
+            tusYazisi.fontSize = 22;
+            tusYazisi.alignment = TextAnchor.MiddleCenter;
+            tusYazisi.color = new Color(0.1f, 0.1f, 0.1f);
+
+            var bilesen = satir.AddComponent<TusSatiri>();
+            var so = new SerializedObject(bilesen);
+            so.FindProperty("eylem").stringValue = eylem;
+            so.FindProperty("baglamaSirasi").intValue = sira;
+            so.ApplyModifiedPropertiesWithoutUndo();
+            GriKumsalKur.Bagla(bilesen, "tusYazisi", tusYazisi);
+            GriKumsalKur.Bagla(bilesen, "dugme", dugme.GetComponent<Button>());
         }
 
         /// <summary>Çocuklarını alt alta dizen bir kutu.</summary>
