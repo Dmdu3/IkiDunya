@@ -14,6 +14,10 @@ namespace IkiDunya.Turtle
         [SerializeField] private Transform baslangic;
         [Tooltip("Sonda kamera uzaklaşsın mı (Bölüm 5 finali).")]
         [SerializeField] private bool finalKamerasi;
+        [Header("Parkur (menüden oynanınca)")]
+        [SerializeField] private ParkurTuru parkur;
+        [Tooltip("Menüden parkur oynanınca yüzücünün başladığı yer; boşsa bu bölümde parkur yok.")]
+        [SerializeField] private Transform parkurBaslangici;
 
         private Transform sonNokta;
         private bool bitti;
@@ -44,6 +48,7 @@ namespace IkiDunya.Turtle
         private void AdimBasladi(Adim yeni)
         {
             if (yeni.Tur == adim) Basla();
+            else if (yeni.Tur == AdimTuru.Parkur && yeni.Sira == (int)parkur && parkurBaslangici != null) ParkurdanBasla();
         }
 
         private void Basla()
@@ -58,6 +63,13 @@ namespace IkiDunya.Turtle
                 Ipucu.Goster("ipucu_nefes");
             }
             else Ipucu.Goster("ipucu_dalga");
+        }
+
+        private void ParkurdanBasla()
+        {
+            bitti = false;
+            sonNokta = parkurBaslangici;
+            yuzucu.Baslat(sonNokta.position, sonNokta.rotation);
         }
 
         /// <summary>GDD: enerji biterse ya da avcı yakalarsa son kontrol noktasından devam edilir.</summary>

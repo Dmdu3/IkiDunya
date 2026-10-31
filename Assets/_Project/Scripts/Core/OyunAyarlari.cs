@@ -52,6 +52,17 @@ namespace IkiDunya.Core
             else kumsal.Sifirla(bolgeSayisi, katmanEnFazla);
         }
 
+        /// <summary>Parkurun oynandığı sahne (menüden oynarken).</summary>
+        public string ParkurSahnesi(ParkurTuru parkur)
+        {
+            switch (parkur)
+            {
+                case ParkurTuru.PosetSurusu: return bolum1Sahnesi;
+                case ParkurTuru.CopSeli: return kumsalSahnesi;
+                default: return bolum5Sahnesi;
+            }
+        }
+
         public string SahneAdi(AdimTuru tur)
         {
             switch (tur)
@@ -94,7 +105,7 @@ namespace IkiDunya.Core
 
     /// <summary>Akıştaki bir adımın türü.</summary>
     /// <remarks>Sahnelerde sayı olarak saklanır: yeni tür hep sona eklenir.</remarks>
-    public enum AdimTuru { Donus, YuvaGecesi, InsanTuru, KacisGecesi, IlkYuzus, Final }
+    public enum AdimTuru { Donus, YuvaGecesi, InsanTuru, KacisGecesi, IlkYuzus, Final, Parkur }
 
     /// <summary>Oyun akışında bir adım: türü, bölümü ve sırası (gece numarası ya da genel tur numarası).</summary>
     public readonly struct Adim

@@ -20,7 +20,9 @@ namespace IkiDunya.Core
         public static event Action MenuyeDonuldu;
 
         public static Adim SuAnkiAdim { get; private set; }
-        public static bool MenudeMi => ornek == null || ornek.sira < 0;
+        public static bool MenudeMi => ornek == null || (ornek.sira < 0 && !ornek.parkur);
+        /// <summary>Menüden bir parkur oynanıyor (hikâyenin dışında; kayıt yazılmaz, bitince menüye dönülür).</summary>
+        public static bool ParkurModunda => ornek != null && ornek.parkur;
         /// <summary>Sahnede oyun akışı var mı. Deneme sahnelerinde yoktur; gece kendi kendine başlar. Awake'te kurulur, Start'larda güvenle okunur.</summary>
         public static bool Var => ornek != null;
         /// <summary>Devam edilebilecek bir kayıt var mı.</summary>
@@ -33,6 +35,7 @@ namespace IkiDunya.Core
         private List<Adim> akis;
         private readonly List<IOyunVerisi> veriler = new List<IOyunVerisi>();
         private int sira = -1;
+        private bool parkur;
         private bool yukleniyor;
         private Gecis gecis;
         private bool performansGoster;
@@ -129,6 +132,11 @@ namespace IkiDunya.Core
         public static bool AdimBitti()
         {
             if (ornek == null || ornek.yukleniyor) return false;
+            if (ornek.parkur)
+            {
+                MenuyeDon();
+                return true;
+            }
             if (ornek.sira + 1 < ornek.akis.Count) ornek.AdimaGec(ornek.sira + 1);
             else
             {
@@ -136,6 +144,14 @@ namespace IkiDunya.Core
                 MenuyeDon();
             }
             return true;
+        }
+
+        /// <summary>Menüden parkur: kumsal ilk haline gelir (kayıt değişmez), parkurun sahnesi yüklenir, parkur başından başlar.</summary>
+        public static void ParkurOyna(ParkurTuru tur)
+        {
+            if (ornek == null || ornek.yukleniyor) return;
+            ornek.KumsaliSifirla();
+            ornek.StartCoroutine(ornek.ParkuraGec(tur));
         }
 
         public static void MenuyeDon()
@@ -182,6 +198,7 @@ namespace IkiDunya.Core
             int oncekiBolum = sira >= 0 ? akis[sira].Bolum : 0;
             yield return gecis.Solustur(1f, ayarlar.GecisSuresi);
 
+            parkur = false;
             sira = yeniSira;
             string sahne = sira >= 0 ? ayarlar.SahneAdi(akis[sira].Tur) : ayarlar.MenuSahnesi;
             if (sira >= 0)
@@ -204,6 +221,24 @@ namespace IkiDunya.Core
                 if (SuAnkiAdim.Bolum != oncekiBolum && ayarlar.Metinler != null)
                     yield return gecis.BaslikGoster(ayarlar.Metinler.Al($"bolum{SuAnkiAdim.Bolum}_giris"), ayarlar.BaslikSuresi);
             }
+
+            yield return gecis.Solustur(0f, ayarlar.GecisSuresi);
+            yukleniyor = false;
+        }
+
+        private IEnumerator ParkuraGec(ParkurTuru tur)
+        {
+            yukleniyor = true;
+            Duraklatma.Kapat();
+            yield return gecis.Solustur(1f, ayarlar.GecisSuresi);
+
+            parkur = true;
+            sira = -1;
+            int bolum = tur == ParkurTuru.PosetSurusu ? 1 : tur == ParkurTuru.CopSeli ? 4 : 5;
+            SuAnkiAdim = new Adim(AdimTuru.Parkur, bolum, (int)tur);
+            AsyncOperation yukleme = SceneManager.LoadSceneAsync(ayarlar.ParkurSahnesi(tur));
+            while (!yukleme.isDone) yield return null;
+            AdimBasladi?.Invoke(SuAnkiAdim);
 
             yield return gecis.Solustur(0f, ayarlar.GecisSuresi);
             yukleniyor = false;

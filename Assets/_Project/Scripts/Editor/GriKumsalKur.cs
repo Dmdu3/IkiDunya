@@ -78,7 +78,7 @@ namespace IkiDunya.Editor
             // İnsanlar kumsalın durumundan kurulur, sadece yuva gecesinde görünür.
             KumSicakligi kumSicakligi = OrtakKur(Bos("Insanlar", yuvaGrubu));
             YuvaKur(kumSicakligi, yuvaGrubu);
-            KacisKur(kumSicakligi, Grup("KacisGecesiNesneleri", AdimTuru.KacisGecesi));
+            KacisKur(kumSicakligi, Grup("KacisGecesiNesneleri", AdimTuru.KacisGecesi, ParkurTuru.CopSeli));
             InsanTuruKur(kumSicakligi, Grup("InsanTuruNesneleri", AdimTuru.InsanTuru));
             MenuKur.FinalKur(Grup("FinalNesneleri", AdimTuru.Final), sahne, kaplumbaga, leke);
             PrefabUtility.InstantiatePrefab(AssetDatabase.LoadAssetAtPath<GameObject>(SistemlerKalibi));
@@ -220,7 +220,65 @@ namespace IkiDunya.Editor
             Bagla(gosterge, "suru", suru);
             Bagla(gosterge, "yardimCubugu", yardimCubugu);
 
+            CopSeliKur(gece, suru);
             SonucPaneliKur(null, gece);
+        }
+
+        /// <summary>Çöp seli (Bölüm 4 minigame'i): kıyı ile yuvalar arasında sırayla su alan çukurlar, gidip gelen yüzen kasalar, selin taşıdığı çöpler. Sahnenin kökünde; içeriği sadece sel gecesinde açık.</summary>
+        private static void CopSeliKur(KacisGecesi gece, Suru suru)
+        {
+            var kok = new GameObject("CopSeli");
+            Transform icerik = Bos("SelIcerik", kok.transform);
+            Material islakKum = Malzeme("IslakKum", new Color(0.55f, 0.47f, 0.35f));
+            Material selSuyu = SaydamMalzeme("SelSuyu", new Color(0.35f, 0.4f, 0.32f, 0.75f));
+            Material kasaMalzemesi = Malzeme("Kasa", new Color(0.6f, 0.42f, 0.25f));
+
+            Vector3[] cukurYerleri = { new Vector3(-14f, 0f, 9f), new Vector3(-5f, 0f, 13f), new Vector3(4f, 0f, 8f), new Vector3(12f, 0f, 14f), new Vector3(0f, 0f, 17f) };
+            var cukurlar = new Object[cukurYerleri.Length];
+            var sular = new Object[cukurYerleri.Length];
+            for (int i = 0; i < cukurYerleri.Length; i++)
+            {
+                GameObject cukur = Kutu($"Cukur_{i}", icerik, cukurYerleri[i] + Vector3.up * 0.01f, new Vector3(7f, 0.02f, 4f), islakKum, "Default");
+                Object.DestroyImmediate(cukur.GetComponent<Collider>());
+                cukur.isStatic = false;
+                GameObject su = Kutu($"Su_{i}", icerik, cukurYerleri[i] + Vector3.up * 0.08f, new Vector3(7f, 0.12f, 4f), selSuyu, "Water");
+                Object.DestroyImmediate(su.GetComponent<Collider>());
+                su.isStatic = false;
+                cukurlar[i] = cukur.transform;
+                sular[i] = su;
+            }
+
+            Vector3[] kasaYerleri = { new Vector3(-8f, 0.3f, 11f), new Vector3(8f, 0.3f, 16f), new Vector3(0f, 0.3f, 6f) };
+            var kasalar = new Object[kasaYerleri.Length];
+            for (int i = 0; i < kasaYerleri.Length; i++)
+            {
+                GameObject kasa = Kutu($"Kasa_{i}", icerik, kasaYerleri[i], new Vector3(1.2f, 0.6f, 0.9f), kasaMalzemesi, "Obstacle");
+                Object.DestroyImmediate(kasa.GetComponent<Collider>());
+                kasa.isStatic = false;
+                kasalar[i] = kasa.transform;
+            }
+
+            // Selin taşıdığı çöpler (dekor; varsa Yusuf'un modelleri)
+            string[] copler = { "Samandira", "Kutu", "Poset", "Sise", "Cop_Yigini_2" };
+            Material selCopu = Malzeme("SelCopu", new Color(0.4f, 0.45f, 0.5f));
+            for (int i = 0; i < copler.Length; i++)
+            {
+                Transform parca = Bos($"SelCopu_{i}", icerik);
+                parca.position = new Vector3(-16f + i * 8f, 0f, 4f + (i % 2) * 15f);
+                GameObject govde = Kutu("Govde", parca, new Vector3(0f, 0.15f, 0f), new Vector3(0.5f, 0.3f, 0.5f), selCopu, "Default");
+                govde.isStatic = false;
+                Object.DestroyImmediate(govde.GetComponent<Collider>());
+                ModelEkle(parca.gameObject, copler[i]);
+            }
+
+            var sel = kok.AddComponent<CopSeli>();
+            Bagla(sel, "ayarlar", Ayar<ParkurAyarlari>("ParkurAyarlari"));
+            Bagla(sel, "gece", gece);
+            Bagla(sel, "suru", suru);
+            Bagla(sel, "icerik", icerik.gameObject);
+            DiziBagla(sel, "cukurlar", cukurlar);
+            DiziBagla(sel, "sular", sular);
+            DiziBagla(sel, "kasalar", kasalar);
         }
 
         // ---- İnsan turu ----
@@ -408,7 +466,7 @@ namespace IkiDunya.Editor
         {
             if (!araziVar) return;
             Physics.SyncTransforms();
-            var gruplar = new System.Collections.Generic.HashSet<string> { "SicakLekeler", "Copler", "Siperler", "Avcilar", "SicakIzler" };
+            var gruplar = new System.Collections.Generic.HashSet<string> { "SicakLekeler", "Copler", "Siperler", "Avcilar", "SicakIzler", "SelIcerik" };
             var tekler = new System.Collections.Generic.HashSet<string> { "AnneBaslangic", "Anne", "VarsayilanYuva", "Suru", "YuruyusSonu" };
             var tasinacak = new System.Collections.Generic.List<Transform>();
             foreach (GameObject kok in sahne.GetRootGameObjects())
@@ -931,13 +989,16 @@ namespace IkiDunya.Editor
         }
 
         /// <summary>Adımına göre açılıp kapanan nesne grubu (AdimNesneleri).</summary>
-        private static Transform Grup(string ad, AdimTuru tur)
+        private static Transform Grup(string ad, AdimTuru tur, params ParkurTuru[] parkurlar)
         {
             var grup = new GameObject(ad).AddComponent<AdimNesneleri>();
             var so = new SerializedObject(grup);
             SerializedProperty turler = so.FindProperty("turler");
             turler.arraySize = 1;
             turler.GetArrayElementAtIndex(0).enumValueIndex = (int)tur;
+            SerializedProperty parkurDizisi = so.FindProperty("parkurlar");
+            parkurDizisi.arraySize = parkurlar.Length;
+            for (int i = 0; i < parkurlar.Length; i++) parkurDizisi.GetArrayElementAtIndex(i).enumValueIndex = (int)parkurlar[i];
             so.ApplyModifiedPropertiesWithoutUndo();
             return grup.transform;
         }

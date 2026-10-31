@@ -55,6 +55,8 @@ namespace IkiDunya.Turtle
         /// <summary>Gece bitince. Sonuç ekranı gösterir; oyuncu tıklayınca akış ilerler.</summary>
         public event Action<Sonuc> SonucHazir;
         public event Action SonucKapandi;
+        /// <summary>Yavrular yüzeye çıkıp koşu başladığında (parkurlar dinler).</summary>
+        public event Action KosuBasladi;
 
         private void OnEnable()
         {
@@ -87,6 +89,8 @@ namespace IkiDunya.Turtle
         {
             // Sürü ve gecenin nesneleri AdimNesneleri ile açılıp kapanır.
             if (adim.Tur == AdimTuru.KacisGecesi) Basla(adim.Sira);
+            // Menüden çöp seli: deneme yuvasından, varsayılan yavru sayısıyla.
+            else if (adim.Tur == AdimTuru.Parkur && adim.Sira == (int)ParkurTuru.CopSeli) Basla(0);
             else SuAnki = Asama.Kapali;
         }
 
@@ -160,6 +164,7 @@ namespace IkiDunya.Turtle
             gunDogumu.Baslat();
             SuAnki = Asama.Kosu;
             Ipucu.Goster("ipucu_suru");
+            KosuBasladi?.Invoke();
         }
 
         private void DalgayaBak()

@@ -23,7 +23,8 @@ namespace IkiDunya.Core
 
         // Finalde güneşin rengini FinalSahnesi verir (Temiz Enerji'ye göre); burada dokunulmaz.
         private void AdimBasladi(Adim adim) =>
-            Uygula(adim.Tur == AdimTuru.YuvaGecesi || adim.Tur == AdimTuru.KacisGecesi, adim.Tur != AdimTuru.Final);
+            Uygula(adim.Tur == AdimTuru.YuvaGecesi || adim.Tur == AdimTuru.KacisGecesi
+                   || (adim.Tur == AdimTuru.Parkur && adim.Sira == (int)ParkurTuru.CopSeli), adim.Tur != AdimTuru.Final);
 
         private void Uygula(bool gece, bool renkVer = true)
         {
