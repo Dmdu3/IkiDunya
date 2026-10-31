@@ -1,0 +1,50 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: bf4bffd9a6ed7664583286e810497eab, type: 3}
+  m_Name: AnimasyonAyarlari
+  m_EditorClassIdentifier: Assembly-CSharp::IkiDunya.Turtle.AnimasyonAyarlari
+  profiller:
+  - tur: 0
+    tamHiz: 1.2
+    siklik: 2.2
+    durgun: 0
+    ziplama: 0.025
+    yanaYatma: 7
+    oneYatma: 3
+    kivrilma: 0
+  - tur: 1
+    tamHiz: 2.5
+    siklik: 0.9
+    durgun: 0.35
+    ziplama: 0.06
+    yanaYatma: 5
+    oneYatma: 4
+    kivrilma: 0
+  - tur: 2
+    tamHiz: 1
+    siklik: 0.35
+    durgun: 1
+    ziplama: 0.4
+    yanaYatma: 12
+    oneYatma: 4
+    kivrilma: 0
+  - tur: 3
+    tamHiz: 2
+    siklik: 1.6
+    durgun: 0.4
+    ziplama: 0.02
+    yanaYatma: 0
+    oneYatma: 0
+    kivrilma: 12
+  kazmaEgimi: 8
+  kazmaSarsintisi: 6
+  sarsintiSonmesi: 10
