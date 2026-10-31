@@ -38,6 +38,14 @@ namespace IkiDunya.Hazards
         [SerializeField] private float tilkiAci = 60f;
         [SerializeField] private float tilkiBekleme = 2f;
 
+        [Header("Tilki ve yuva")]
+        [Tooltip("Tilki geldiği gece bu kadar gezdikten sonra kafessiz bir yuvayı (sonraki gecelerin yuvası) bozmaya gider (sn).")]
+        [SerializeField] private float tilkiYuvayaGitme = 25f;
+        [Tooltip("Yuvayı eşeleme süresi (sn); bu sırada görülebilir, oyuncu uyarıyı görür.")]
+        [SerializeField] private float tilkiEselemeSuresi = 4f;
+        [Tooltip("Bozulan yuvada kaybedilen yumurta oranı.")]
+        [Range(0f, 1f)] [SerializeField] private float tilkiYumurtaKaybi = 0.5f;
+
         public float YengecBekleme => Random.Range(yengecBeklemeEnAz, yengecBeklemeEnCok);
         public float YengecUyari => yengecUyari;
         public float YengecYaricap => yengecYaricap;
@@ -55,5 +63,8 @@ namespace IkiDunya.Hazards
         public float TilkiMenzil => tilkiMenzil;
         public float TilkiAci => tilkiAci;
         public float TilkiBekleme => tilkiBekleme;
+        public float TilkiYuvayaGitme => tilkiYuvayaGitme;
+        public float TilkiEselemeSuresi => tilkiEselemeSuresi;
+        public float TilkiYumurtaKaybi => tilkiYumurtaKaybi;
     }
 }

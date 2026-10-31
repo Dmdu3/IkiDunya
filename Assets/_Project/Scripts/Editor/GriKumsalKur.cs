@@ -340,6 +340,10 @@ namespace IkiDunya.Editor
             }
 
             KumSicakligi kumSicakligi = TermalKur();
+            // Dalga çizgisi kumul onarımı olan bölgede denize kayar.
+            var cizgi = dalgaCizgisi.gameObject.AddComponent<DalgaCizgisi>();
+            Bagla(cizgi, "kum", kumSicakligi);
+            Bagla(cizgi, "kumsal", Ayar<KumsalDurumu>("KumsalDurumu"));
             // Ay ışığı: denizin üstünde doğru yönü gösteren parlak yol
             GameObject ay = Kutu("AyYolu", dunya, new Vector3(-6f, -0.3f, -DenizDerinligi / 2f), new Vector3(3f, 0.01f, DenizDerinligi), ayYolu, "Default");
             Object.DestroyImmediate(ay.GetComponent<Collider>());
@@ -921,6 +925,15 @@ namespace IkiDunya.Editor
         {
             var so = new SerializedObject(hedef);
             so.FindProperty(alan).objectReferenceValue = deger;
+            so.ApplyModifiedPropertiesWithoutUndo();
+        }
+
+        internal static void DiziBagla(Object hedef, string alan, params Object[] degerler)
+        {
+            var so = new SerializedObject(hedef);
+            SerializedProperty dizi = so.FindProperty(alan);
+            dizi.arraySize = degerler.Length;
+            for (int i = 0; i < degerler.Length; i++) dizi.GetArrayElementAtIndex(i).objectReferenceValue = degerler[i];
             so.ApplyModifiedPropertiesWithoutUndo();
         }
     }

@@ -24,7 +24,7 @@ namespace IkiDunya.Editor
         private const float DenizUzunlugu = 200f;
         private const float DenizGenisligi = 60f;
 
-        private static Material su, taban, kaya, cayir, ag, misina, denizanasi, poset, tekne, avci, sicakSu, akinti, yosun, isaret, plastik, dalga;
+        private static Material su, taban, kaya, cayir, ag, misina, denizanasi, poset, tekne, avci, sicakSu, akinti, yosun, isaret, plastik, dalga, agKenari, tekneGolgesi, kopuk;
 
         [MenuItem("İki Dünya/Bölüm 1 sahnesini kur (deniz)")]
         public static void Bolum1Kur()
@@ -154,6 +154,9 @@ namespace IkiDunya.Editor
             isaret = GriKumsalKur.Malzeme("KontrolIsareti", new Color(1f, 0.85f, 0.2f));
             plastik = GriKumsalKur.Malzeme("ParlayanPlastik", new Color(1f, 1f, 0.7f), "Universal Render Pipeline/Unlit");
             dalga = GriKumsalKur.SaydamMalzeme("Dalga", new Color(0.9f, 0.95f, 1f, 0.6f));
+            agKenari = GriKumsalKur.Malzeme("AgKenari", new Color(0.7f, 1f, 1f), "Universal Render Pipeline/Unlit");
+            tekneGolgesi = GriKumsalKur.SaydamMalzeme("TekneGolgesi", new Color(0f, 0.02f, 0.05f, 0.55f));
+            kopuk = GriKumsalKur.SaydamMalzeme("PervaneKopugu", new Color(1f, 1f, 1f, 0.75f));
 
             // Su altı sisi
             RenderSettings.fog = true;
@@ -299,6 +302,20 @@ namespace IkiDunya.Editor
             var so = new SerializedObject(govde.AddComponent<TrashTrap>());
             so.FindProperty("tur").enumValueIndex = (int)TrashTrap.Turu.HayaletAg;
             so.ApplyModifiedPropertiesWithoutUndo();
+
+            // Kenarları hafif parlar: uzaktan seçilsin.
+            var kenarlar = new Renderer[4];
+            for (int i = 0; i < 4; i++)
+            {
+                bool yatay = i < 2;
+                Vector3 yer = yatay ? new Vector3(0f, i == 0 ? 1.5f : -1.5f, 0f) : new Vector3(i == 2 ? 2f : -2f, 0f, 0f);
+                Vector3 boy = yatay ? new Vector3(4.1f, 0.08f, 0.12f) : new Vector3(0.08f, 3.1f, 0.12f);
+                GameObject kenar = GriKumsalKur.Kutu($"Kenar_{i}", kok.transform, yer, boy, agKenari, "Trash");
+                Object.DestroyImmediate(kenar.GetComponent<Collider>());
+                kenar.isStatic = false;
+                kenarlar[i] = kenar.GetComponent<Renderer>();
+            }
+            ParildatKur(kok, new Color(0.7f, 1f, 1f), kenarlar);
             return GriKumsalKur.KalipKaydet(kok, $"{KalipKlasoru}/HayaletAg.prefab");
         }
 
@@ -315,7 +332,18 @@ namespace IkiDunya.Editor
             var so = new SerializedObject(govde.AddComponent<TrashTrap>());
             so.FindProperty("tur").enumValueIndex = (int)TrashTrap.Turu.Misina;
             so.ApplyModifiedPropertiesWithoutUndo();
+            ParildatKur(kok, new Color(0.95f, 0.95f, 0.8f), govde.GetComponent<Renderer>());
             return GriKumsalKur.KalipKaydet(kok, $"{KalipKlasoru}/Misina.prefab");
+        }
+
+        private static void ParildatKur(GameObject kok, Color renk, params Renderer[] parcalar)
+        {
+            var parilti = kok.AddComponent<Parilti>();
+            GriKumsalKur.Bagla(parilti, "ayarlar", GriKumsalKur.Ayar<DenizTehlikeAyarlari>("DenizTehlikeAyarlari"));
+            GriKumsalKur.DiziBagla(parilti, "parcalar", parcalar);
+            var so = new SerializedObject(parilti);
+            so.FindProperty("renk").colorValue = renk;
+            so.ApplyModifiedPropertiesWithoutUndo();
         }
 
         private static void TekneKur(string ad, float z, bool isikli, DenizTehlikeAyarlari tehlike, KumsalDurumu kumsal)
@@ -334,10 +362,25 @@ namespace IkiDunya.Editor
             ses.spatialBlend = 1f;
             ses.playOnAwake = true;
 
+            // Uyarı: suyun hemen altında teknenin önüne düşen gölge, arkasında titreyen pervane köpüğü
+            GameObject golge = GriKumsalKur.Kutu("Golge", kok.transform, new Vector3(0f, -0.5f, 0f), new Vector3(3f, 0.02f, 7f), tekneGolgesi, "Default");
+            Object.DestroyImmediate(golge.GetComponent<Collider>());
+            golge.isStatic = false;
+            var kopukler = new Object[3];
+            for (int i = 0; i < kopukler.Length; i++)
+            {
+                GameObject parca = GriKumsalKur.Kutu($"Kopuk_{i}", kok.transform, new Vector3(0f, -0.2f, -3f - i * 1.5f), new Vector3(1.5f + i * 0.5f, 0.05f, 1.2f), kopuk, "Default");
+                Object.DestroyImmediate(parca.GetComponent<Collider>());
+                parca.isStatic = false;
+                kopukler[i] = parca.transform;
+            }
+
             var bilesen = kok.AddComponent<Tekne>();
             GriKumsalKur.Bagla(bilesen, "ayarlar", tehlike);
             GriKumsalKur.Bagla(bilesen, "a", a);
             GriKumsalKur.Bagla(bilesen, "b", b);
+            GriKumsalKur.Bagla(bilesen, "golge", golge.transform);
+            GriKumsalKur.DiziBagla(bilesen, "kopukler", kopukler);
 
             if (!isikli) return;
             IsikAlaniKur(kok.transform, Vector3.down * 0.5f, 10f, 6f, kumsal);
