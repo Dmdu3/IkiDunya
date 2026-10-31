@@ -14,21 +14,23 @@ namespace IkiDunya.Camera
 
         private void OnEnable()
         {
-            ImleciKilitle(true);
+            Duraklatma.Degisti += DuraklatmaDegisti;
+            ImleciKilitle(!Duraklatma.Acik);
         }
 
         private void OnDisable()
         {
+            Duraklatma.Degisti -= DuraklatmaDegisti;
             ImleciKilitle(false);
         }
 
+        private void DuraklatmaDegisti(bool acik) => ImleciKilitle(!acik);
+
         private void Update()
         {
-            // Duraklatma menüsü gelene kadar Esc imleci serbest bırakır, tekrar Esc kilitler.
-            if (GameInput.DuraklatBasildi) ImleciKilitle(Cursor.lockState != CursorLockMode.Locked);
-            if (Cursor.lockState != CursorLockMode.Locked || govde == null) return;
+            if (Duraklatma.Acik || govde == null) return;
 
-            Vector2 bakis = GameInput.Bakis * ayarlar.Hassasiyet;
+            Vector2 bakis = GameInput.Bakis * ayarlar.Hassasiyet * OyunTercihleri.HassasiyetCarpani;
             govde.Rotate(0f, bakis.x, 0f, Space.World);
             egim = Mathf.Clamp(egim - bakis.y, -ayarlar.YukariSinir, -ayarlar.AsagiSinir);
             transform.localRotation = Quaternion.Euler(egim, 0f, 0f);

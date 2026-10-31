@@ -56,7 +56,7 @@ namespace IkiDunya.Editor
             Kaydet(sahne, KacisSahnesi);
         }
 
-        /// <summary>Oyunun Kumsal sahnesi (Bölüm 2–4): yuva gecesi, kaçış gecesi ve geçici insan turu; her biri kendi adımında açılır.</summary>
+        /// <summary>Oyunun Kumsal sahnesi (Bölüm 2–4 ve final): yuva gecesi, kaçış gecesi, geçici insan turu ve "30 yıl sonra"; her biri kendi adımında açılır.</summary>
         [MenuItem("İki Dünya/Kumsal sahnesini kur (oyun)")]
         public static void KumsalSahnesiKur()
         {
@@ -67,6 +67,7 @@ namespace IkiDunya.Editor
             YuvaKur(kumSicakligi, yuvaGrubu);
             KacisKur(kumSicakligi, Grup("KacisGecesiNesneleri", AdimTuru.KacisGecesi));
             InsanTuruKur(Grup("InsanTuruNesneleri", AdimTuru.InsanTuru));
+            MenuKur.FinalKur(Grup("FinalNesneleri", AdimTuru.Final), sahne, kaplumbaga, leke);
             PrefabUtility.InstantiatePrefab(AssetDatabase.LoadAssetAtPath<GameObject>(SistemlerKalibi));
             Kaydet(sahne, KumsalSahnesi);
         }

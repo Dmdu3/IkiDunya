@@ -6,6 +6,10 @@ ozet: Ekipçe alınan kararlar, tarih ve nedeniyle. En yeni en üstte. GDD'yi de
 
 | Tarih | Karar | Neden | Kim |
 |---|---|---|---|
+| 2026-10-31 | Oyuncu metinleri `MetinTablosu` asset'inden id ile; asset `docs/metinler.md`'den editör aracıyla doldurulur, eksik metin `[id]` görünür | Metin tek yerde (Yusuf'un dosyası), kod sadece id bilir; eksikler oyunda hemen fark edilir | Umut |
+| 2026-10-31 | Kayıt her adımın başında, kendiliğinden: adım sırası + `KumsalDurumu`; tek kayıt yuvası | Gece ortası kaydı karmaşık; adım başı yeterli ve ~2 saatlik oyun için tek yuva yeter | Umut |
+| 2026-10-31 | Akışa `Final` adımı (Kumsal sahnesinde); `KumsalDurumu`'na `TemizEnerji` ve `TemizEnerjiAyarla(var)` | GDD: "30 yıl sonra" sahnesi Temiz Enerji kartına göre iki hal | Umut |
+| 2026-10-31 | Yeni klasör `Scripts/UI/Menu` (Umut): ana menü, ayarlar, duraklatma | Ne kaplumbağa ekranı (`UI/Night`) ne yönetim ekranı (`UI/Management`) | Umut |
 | 2026-10-31 | Denizde yön bakılan yer (yukarı-aşağı dahil); anne Space basılı tutunca yüzeye çıkar, yüzeyde Space'e basınca dalar; yavrunun Space'i sadece daldırır | GDD'deki "Space: yüzeye çık / dal" (anne) ve "denizde dal" (yavru) birinci şahısta böyle oturuyor | Umut |
 | 2026-10-31 | Denizde ağ ve misinadan E'ye art arda basarak kurtulunur (kumsalda E basılı tutulur) | GDD tablosu: denizde "E'ye 8/10/6 kez bas", kumsalda "E'yi 2 sn basılı tut" | Umut |
 | 2026-10-31 | Kontrol noktasına girince enerji dolar (anne ve yavru) | GDD yavru için söylüyor; anne için de bir sonraki bölgeye temiz başlangıç | Umut |

@@ -36,7 +36,7 @@ Unity 6 · URP · 3D · PC
 | `Assets/_Project/Scripts/Turtle` | Anne ve yavru hareketi (kara, deniz), sürü, enerji, nefes, kazma | Umut |
 | `Assets/_Project/Scripts/Hazards` | Ağ, tekne, sıcak leke, çöp, avcılar, ışık, dalga | Umut |
 | `Assets/_Project/Scripts/Management` | İnsan kısmı: harita, turlar, gönüllüler, kaynaklar, kartlar, kanıtlar, olaylar | Toprak |
-| `Assets/_Project/Scripts/UI` | `Night/` kaplumbağa ekranı (Umut), `Management/` yönetim ekranı (Toprak) | Umut, Toprak |
+| `Assets/_Project/Scripts/UI` | `Night/` kaplumbağa ekranı, `Menu/` ana menü ve duraklatma (Umut); `Management/` yönetim ekranı (Toprak) | Umut, Toprak |
 | `Assets/_Project/Scripts/Editor` | Sahne kurulum araçları | Umut |
 | `Assets/_Project/ScriptableObjects` | `Cards`, `Events`, `VolunteerTasks` (Toprak); `Settings` (Umut + Toprak) | Toprak |
 | `Assets/_Project/Scenes/Levels` | `Menu`, `Bolum1_Donus`, `Kumsal` (Bölüm 2–4), `Bolum5_IlkYuzus` | Umut |
@@ -83,7 +83,7 @@ Bütün tuşlar tek bir dosyada: `Assets/_Project/Scripts/Core/GameInput.cs`. Ye
 | A / D sırayla | Kazma ve örtme | – |
 | W (kum altında) | – | Bir kat yukarı kaz |
 | T | Termal görünüm | Termal görünüm |
-| Esc | Duraklatma menüsü | Duraklatma menüsü |
+| Esc | Duraklatma menüsü (oyuna dön, ayarlar, ana menü) | Duraklatma menüsü |
 | Fare | Kaplumbağa bölümlerinde bakış (birinci şahıs); insan turunda harita, kart ve gönüllü seçimi | |
 | F1–F4 | (Geliştirici) Bölüm 1, Kumsal, Bölüm 5, Menü'ye geç | |
 

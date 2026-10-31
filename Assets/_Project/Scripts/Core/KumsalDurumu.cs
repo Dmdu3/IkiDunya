@@ -14,6 +14,7 @@ namespace IkiDunya.Core
         [SerializeField] private int denizdekiAg;
         [SerializeField] private int kumIsinmasi;
         [SerializeField] private bool isikYasagi;
+        [SerializeField] private bool temizEnerji;
         [SerializeField] private int denizeUlasanYavru;
 
         public event Action Degisti;
@@ -26,6 +27,8 @@ namespace IkiDunya.Core
         public int KumIsinmasi => kumIsinmasi;
         /// <summary>Işık Yasağı kartı: otel ve yol ışıkları geceleri kapalı.</summary>
         public bool IsikYasagi => isikYasagi;
+        /// <summary>Temiz Enerji kartı oynandı mı: kısa vadede etkisi yok, final sahnesi değişir.</summary>
+        public bool TemizEnerji => temizEnerji;
         public int DenizeUlasanYavru => denizeUlasanYavru;
 
         public Bolge BolgeAl(int bolge) => bolgeler[bolge];
@@ -61,6 +64,7 @@ namespace IkiDunya.Core
             denizdekiAg = 0;
             kumIsinmasi = 0;
             isikYasagi = false;
+            temizEnerji = false;
             denizeUlasanYavru = 0;
         }
 
@@ -99,6 +103,12 @@ namespace IkiDunya.Core
         public void IsikYasagiAyarla(bool var)
         {
             isikYasagi = var;
+            Degisti?.Invoke();
+        }
+
+        public void TemizEnerjiAyarla(bool var)
+        {
+            temizEnerji = var;
             Degisti?.Invoke();
         }
 

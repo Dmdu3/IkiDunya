@@ -16,6 +16,7 @@ Unity projesi reponun kökü. Bizim her şeyimiz `Assets/_Project/` altında. Ko
 | `Hazards/` | Umut | Ağ, tekne, sıcak leke, çöp, avcılar, ışık, dalga |
 | `Management/` | Toprak | Kumsal haritası, tur akışı, gönüllüler, kaynaklar, kartlar, kanıtlar, olaylar |
 | `UI/Night/` | Umut | Kaplumbağa bölümlerinin ekran göstergeleri |
+| `UI/Menu/` | Umut | Ana menü, ayarlar, duraklatma menüsü |
 | `UI/Management/` | Toprak | Harita ekranı, kart eli, olay penceresi |
 | `Editor/` | Umut | Sahne kurulum araçları |
 

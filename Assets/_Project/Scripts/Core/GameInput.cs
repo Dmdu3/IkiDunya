@@ -8,6 +8,9 @@ namespace IkiDunya.Core
     {
         private static InputActionMap harita;
 
+        /// <summary>Oyun duraklatılmamışsa (ve duraklatma bu karede kapanmadıysa) oyun girdileri okunur.</summary>
+        private static bool Oyunda => !Duraklatma.Acik && Time.frameCount != Duraklatma.KapanmaKaresi;
+
         private static InputAction hareket;
         private static InputAction bakis;
         private static InputAction hizli;
@@ -26,26 +29,26 @@ namespace IkiDunya.Core
         private static InputAction gelistiriciMenu;
 
         // Kaplumbağa bölümleri (birinci şahıs)
-        public static Vector2 Hareket => hareket.ReadValue<Vector2>();          // WASD
-        public static Vector2 Bakis => bakis.ReadValue<Vector2>();              // fare hareketi
-        public static bool HizliBasili => hizli.IsPressed();                    // Shift: anne hızlı, yavru sürüyü dağıtır
-        public static bool ZiplaDalBasildi => ziplaDal.WasPressedThisFrame();   // Space
-        public static bool ZiplaDalBasili => ziplaDal.IsPressed();              // Space basılı (denizde yüzeye çık)
-        public static bool EtkilesBasili => etkiles.IsPressed();                // E basılı tut
-        public static bool EtkilesBasildi => etkiles.WasPressedThisFrame();     // E bas (ağdan kurtul, ye)
-        public static bool KazSolBasildi => kazSol.WasPressedThisFrame();       // A (kazma sırası)
-        public static bool KazSagBasildi => kazSag.WasPressedThisFrame();       // D (kazma sırası)
-        public static bool KazYukariBasildi => kazYukari.WasPressedThisFrame(); // W (kum altında)
-        public static bool TermalBasildi => termal.WasPressedThisFrame();       // T
+        public static Vector2 Hareket => Oyunda ? hareket.ReadValue<Vector2>() : Vector2.zero;          // WASD
+        public static Vector2 Bakis => Oyunda ? bakis.ReadValue<Vector2>() : Vector2.zero;              // fare hareketi
+        public static bool HizliBasili => Oyunda ? hizli.IsPressed() : false;                    // Shift: anne hızlı, yavru sürüyü dağıtır
+        public static bool ZiplaDalBasildi => Oyunda ? ziplaDal.WasPressedThisFrame() : false;   // Space
+        public static bool ZiplaDalBasili => Oyunda ? ziplaDal.IsPressed() : false;              // Space basılı (denizde yüzeye çık)
+        public static bool EtkilesBasili => Oyunda ? etkiles.IsPressed() : false;                // E basılı tut
+        public static bool EtkilesBasildi => Oyunda ? etkiles.WasPressedThisFrame() : false;     // E bas (ağdan kurtul, ye)
+        public static bool KazSolBasildi => Oyunda ? kazSol.WasPressedThisFrame() : false;       // A (kazma sırası)
+        public static bool KazSagBasildi => Oyunda ? kazSag.WasPressedThisFrame() : false;       // D (kazma sırası)
+        public static bool KazYukariBasildi => Oyunda ? kazYukari.WasPressedThisFrame() : false; // W (kum altında)
+        public static bool TermalBasildi => Oyunda ? termal.WasPressedThisFrame() : false;       // T
 
         // Genel
         public static bool DuraklatBasildi => duraklat.WasPressedThisFrame();   // Esc
 
         // İnsan kısmı (yönetim ekranı)
         public static Vector2 IsaretciKonumu => isaretci.ReadValue<Vector2>();
-        public static bool TiklaBasildi => tikla.WasPressedThisFrame();
-        public static bool TiklaBirakildi => tikla.WasReleasedThisFrame();
-        public static bool TiklaBasili => tikla.IsPressed();
+        public static bool TiklaBasildi => Oyunda ? tikla.WasPressedThisFrame() : false;
+        public static bool TiklaBirakildi => Oyunda ? tikla.WasReleasedThisFrame() : false;
+        public static bool TiklaBasili => Oyunda ? tikla.IsPressed() : false;
 
         // Geliştirici (F1–F4)
         public static bool GelistiriciBolum1Basildi => gelistiriciBolum1.WasPressedThisFrame();

@@ -20,6 +20,14 @@ namespace IkiDunya.Core
         [SerializeField] private int bekleyisTurSayisi = 6;
         [SerializeField] private int bolum5OncesiTur = 1;
 
+        [Header("Geçiş")]
+        [Tooltip("Ekranın kararma ya da açılma süresi (sn).")]
+        [SerializeField] private float gecisSuresi = 0.6f;
+        [Tooltip("Yeni bölümün başlığının ekranda kalma süresi (sn).")]
+        [SerializeField] private float baslikSuresi = 2.5f;
+        [Tooltip("Oyuncunun gördüğü yazılar (İki Dünya → Metinleri aktar).")]
+        [SerializeField] private MetinTablosu metinler;
+
         [Header("Kumsal")]
         [SerializeField] private int bolgeSayisi = 8;
         [SerializeField] private int katmanEnFazla = 3;
@@ -27,6 +35,9 @@ namespace IkiDunya.Core
         [SerializeField] private KumsalBaslangici kumsalBaslangici;
 
         public string MenuSahnesi => menuSahnesi;
+        public float GecisSuresi => gecisSuresi;
+        public float BaslikSuresi => baslikSuresi;
+        public MetinTablosu Metinler => metinler;
         public int BolgeSayisi => bolgeSayisi;
         public int KatmanEnFazla => katmanEnFazla;
         public KumsalBaslangici KumsalBaslangici => kumsalBaslangici;
@@ -48,7 +59,7 @@ namespace IkiDunya.Core
             }
         }
 
-        /// <summary>Oyunun baştan sona adımları: Bölüm 1, yuva geceleri ve turlar, bekleyiş, kaçış geceleri ve turlar, Bölüm 5.</summary>
+        /// <summary>Oyunun baştan sona adımları: Bölüm 1, yuva geceleri ve turlar, bekleyiş, kaçış geceleri ve turlar, Bölüm 5, final.</summary>
         public List<Adim> AkisiKur()
         {
             var akis = new List<Adim>();
@@ -73,12 +84,14 @@ namespace IkiDunya.Core
             }
 
             akis.Add(new Adim(AdimTuru.IlkYuzus, 5, 0));
+            akis.Add(new Adim(AdimTuru.Final, 5, 0));
             return akis;
         }
     }
 
     /// <summary>Akıştaki bir adımın türü.</summary>
-    public enum AdimTuru { Donus, YuvaGecesi, InsanTuru, KacisGecesi, IlkYuzus }
+    /// <remarks>Sahnelerde sayı olarak saklanır: yeni tür hep sona eklenir.</remarks>
+    public enum AdimTuru { Donus, YuvaGecesi, InsanTuru, KacisGecesi, IlkYuzus, Final }
 
     /// <summary>Oyun akışında bir adım: türü, bölümü ve sırası (gece numarası ya da genel tur numarası).</summary>
     public readonly struct Adim
