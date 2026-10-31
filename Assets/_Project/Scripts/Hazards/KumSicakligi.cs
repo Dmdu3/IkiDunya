@@ -45,9 +45,12 @@ namespace IkiDunya.Hazards
         }
 
         /// <summary>Kumsal üstündeki bir noktanın dünya konumu (bölge ortası, kıyıdan uzaklık).</summary>
-        public Vector3 BolgeNoktasi(int bolge, float kiyidanUzaklik)
+        public Vector3 BolgeNoktasi(int bolge, float kiyidanUzaklik) => BolgeNoktasi(bolge, 0.5f, kiyidanUzaklik);
+
+        /// <summary>Bölgenin içinde soldan sağa oran (0–1) ve kıyıdan uzaklıkla bir nokta.</summary>
+        public Vector3 BolgeNoktasi(int bolge, float bolgeIcinde, float kiyidanUzaklik)
         {
-            float x = -uzunluk / 2f + BolgeGenisligi * (bolge + 0.5f);
+            float x = -uzunluk / 2f + BolgeGenisligi * (bolge + bolgeIcinde);
             return transform.TransformPoint(new Vector3(x, 0f, kiyidanUzaklik));
         }
 

@@ -23,10 +23,20 @@ namespace IkiDunya.Core
         [Header("Kumsal")]
         [SerializeField] private int bolgeSayisi = 8;
         [SerializeField] private int katmanEnFazla = 3;
+        [Tooltip("Yeni oyunda kumsalın ilk hali. Boşsa kumsal bomboş başlar.")]
+        [SerializeField] private KumsalBaslangici kumsalBaslangici;
 
         public string MenuSahnesi => menuSahnesi;
         public int BolgeSayisi => bolgeSayisi;
         public int KatmanEnFazla => katmanEnFazla;
+        public KumsalBaslangici KumsalBaslangici => kumsalBaslangici;
+
+        /// <summary>Kumsalı yeni oyunun ilk haline getirir.</summary>
+        public void KumsaliSifirla(KumsalDurumu kumsal)
+        {
+            if (kumsalBaslangici != null) kumsal.Sifirla(kumsalBaslangici, katmanEnFazla);
+            else kumsal.Sifirla(bolgeSayisi, katmanEnFazla);
+        }
 
         public string SahneAdi(AdimTuru tur)
         {

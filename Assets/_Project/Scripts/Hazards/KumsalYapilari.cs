@@ -4,42 +4,135 @@ using UnityEngine;
 
 namespace IkiDunya.Hazards
 {
-    /// <summary>Kumsalı KumsalDurumu'ndan kurar: gölgelikli bölgelere gölgelik, kayıp izlerinin yerine iz. Durum değişince yeniden kurar.</summary>
+    /// <summary>Kumsalı KumsalDurumu'ndan kurar: bölge bölge çöp, şezlong, ışık, insan, araç izi, gölgelik; kayıp izleri. Gece ortasında yapılar yeniden kurulmaz.</summary>
     public class KumsalYapilari : MonoBehaviour
     {
         [SerializeField] private KumsalDurumu kumsal;
         [SerializeField] private KumSicakligi kum;
-        [Tooltip("Structure layer'ında gölgelik kalıbı.")]
-        [SerializeField] private GameObject golgelikKalibi;
-        [Tooltip("Kayıp izinin kumdaki işareti.")]
-        [SerializeField] private GameObject kayipIziKalibi;
-        [Tooltip("Gölgeliğin bölge içinde deniz kenarından uzaklığı (metre).")]
-        [SerializeField] private float golgelikUzakligi = 20f;
 
-        private readonly List<GameObject> kurulan = new List<GameObject>();
+        [Header("Kalıplar")]
+        [SerializeField] private GameObject golgelikKalibi;
+        [SerializeField] private GameObject kayipIziKalibi;
+        [Tooltip("Anneyi takan çöp yığını.")]
+        [SerializeField] private GameObject copYiginiKalibi;
+        [Tooltip("Yavruyu takan ağ ya da halka.")]
+        [SerializeField] private GameObject agKalibi;
+        [Tooltip("Yavrunun etrafından dolaştığı şişe (labirent).")]
+        [SerializeField] private GameObject siseKalibi;
+        [SerializeField] private GameObject sezlongKalibi;
+        [SerializeField] private GameObject tekerlekIziKalibi;
+        [SerializeField] private GameObject isikKalibi;
+        [SerializeField] private Insan insanKalibi;
+        [Tooltip("İnsanların kurulduğu yer; sadece yuva gecesinde açık olan bir grubun içinde olmalı. Boşsa insan kurulmaz.")]
+        [SerializeField] private Transform insanKoku;
+
+        [Header("Yerleşim (deniz kenarından uzaklık, metre)")]
+        [SerializeField] private Vector2 copAraligi = new Vector2(8f, 30f);
+        [SerializeField] private Vector2 sezlongAraligi = new Vector2(10f, 26f);
+        [SerializeField] private Vector2 insanAraligi = new Vector2(14f, 30f);
+        [SerializeField] private float isikUzakligi = 34f;
+        [SerializeField] private float golgelikUzakligi = 20f;
+        [SerializeField] private float tekerlekIziUzakligi = 17f;
+
+        private readonly List<GameObject> yapilar = new List<GameObject>();
+        private readonly List<GameObject> izler = new List<GameObject>();
 
         private void OnEnable()
         {
-            kumsal.Degisti += Kur;
-            Kur();
+            kumsal.Degisti += Degisti;
+            OyunAkisi.AdimBasladi += AdimBasladi;
         }
 
         private void OnDisable()
         {
-            kumsal.Degisti -= Kur;
+            kumsal.Degisti -= Degisti;
+            OyunAkisi.AdimBasladi -= AdimBasladi;
         }
 
-        private void Kur()
+        private void Start()
         {
-            foreach (GameObject nesne in kurulan) Destroy(nesne);
-            kurulan.Clear();
+            YapilariKur();
+            IzleriKur();
+        }
 
+        private void AdimBasladi(Adim adim)
+        {
+            YapilariKur();
+            IzleriKur();
+        }
+
+        private void Degisti()
+        {
+            IzleriKur();
+            // Gece ortasında tuzaklar yeniden kurulursa içindeki yavru tekrar takılır; yapılar sadece insan turunda güncellenir.
+            if (!OyunAkisi.Var || (!OyunAkisi.MenudeMi && OyunAkisi.SuAnkiAdim.Tur == AdimTuru.InsanTuru)) YapilariKur();
+        }
+
+        private void YapilariKur()
+        {
+            Temizle(yapilar);
             for (int i = 0; i < kumsal.BolgeSayisi && i < kum.BolgeSayisi; i++)
-                if (kumsal.BolgeAl(i).Var(BolgeYapisi.Golgelik))
-                    kurulan.Add(Instantiate(golgelikKalibi, kum.BolgeNoktasi(i, golgelikUzakligi), kum.transform.rotation, transform));
+            {
+                Bolge bolge = kumsal.BolgeAl(i);
+                // Bölge başına sabit tohum: aynı durum her kurulumda aynı yerleşimi verir.
+                var rastgele = new System.Random(i * 7919 + 17);
 
+                if (bolge.Var(BolgeYapisi.Golgelik)) Koy(golgelikKalibi, kum.BolgeNoktasi(i, golgelikUzakligi), 0f);
+                if (bolge.Var(BolgeYapisi.AracIzi)) Koy(tekerlekIziKalibi, kum.BolgeNoktasi(i, tekerlekIziUzakligi), 0f);
+
+                for (int c = 0; c < bolge.Seviye(BolgeKatmani.Cop); c++)
+                {
+                    Koy(copYiginiKalibi, Nokta(rastgele, i, copAraligi), Aci(rastgele));
+                    Koy(agKalibi, Nokta(rastgele, i, copAraligi), Aci(rastgele));
+                    Koy(siseKalibi, Nokta(rastgele, i, copAraligi), 0f);
+                }
+
+                for (int s = 0; s < bolge.Seviye(BolgeKatmani.Sezlong); s++)
+                    Koy(sezlongKalibi, Nokta(rastgele, i, sezlongAraligi), Aci(rastgele));
+
+                int isikSayisi = bolge.Seviye(BolgeKatmani.Isik);
+                for (int k = 0; k < isikSayisi; k++)
+                    Koy(isikKalibi, kum.BolgeNoktasi(i, (k + 0.5f) / isikSayisi, isikUzakligi), 0f);
+
+                if (insanKoku == null) continue;
+                for (int n = 0; n < bolge.Seviye(BolgeKatmani.Insan); n++)
+                {
+                    float z = Mathf.Lerp(insanAraligi.x, insanAraligi.y, (float)rastgele.NextDouble());
+                    Vector3 a = kum.BolgeNoktasi(i, 0.1f, z);
+                    Vector3 b = kum.BolgeNoktasi(i, 0.9f, z);
+                    Insan insan = Instantiate(insanKalibi, a, Quaternion.LookRotation(b - a), insanKoku);
+                    insan.Kur(a, b);
+                    yapilar.Add(insan.gameObject);
+                }
+            }
+        }
+
+        private void IzleriKur()
+        {
+            Temizle(izler);
             foreach (KayipIzi iz in kumsal.KayipIzleri)
-                kurulan.Add(Instantiate(kayipIziKalibi, iz.Konum, Quaternion.identity, transform));
+                izler.Add(Instantiate(kayipIziKalibi, iz.Konum, Quaternion.identity, transform));
+        }
+
+        private void Koy(GameObject kalip, Vector3 yer, float aci)
+        {
+            if (kalip == null) return;
+            yapilar.Add(Instantiate(kalip, yer, kum.transform.rotation * Quaternion.Euler(0f, aci, 0f), transform));
+        }
+
+        private Vector3 Nokta(System.Random rastgele, int bolge, Vector2 aralik)
+        {
+            float z = Mathf.Lerp(aralik.x, aralik.y, (float)rastgele.NextDouble());
+            return kum.BolgeNoktasi(bolge, 0.1f + 0.8f * (float)rastgele.NextDouble(), z);
+        }
+
+        private static float Aci(System.Random rastgele) => (float)rastgele.NextDouble() * 360f;
+
+        private static void Temizle(List<GameObject> liste)
+        {
+            foreach (GameObject nesne in liste)
+                if (nesne != null) Destroy(nesne);
+            liste.Clear();
         }
     }
 }

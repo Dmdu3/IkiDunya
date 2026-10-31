@@ -19,6 +19,7 @@ namespace IkiDunya.Editor
         private const string KacisSahnesi = "Assets/_Project/Scenes/Prototypes/GriKacis.unity";
         private const string KumsalSahnesi = "Assets/_Project/Scenes/Levels/Kumsal.unity";
         private const string SistemlerKalibi = "Assets/_Project/Prefabs/Sistemler.prefab";
+        private const string KalipKlasoru = "Assets/_Project/Prefabs/Hazards";
         private const string MalzemeKlasoru = "Assets/_Project/Scenes/Prototypes/GriKumsal";
         private const string AyarKlasoru = "Assets/_Project/ScriptableObjects/Settings";
         private const string YavruKalibi = "Assets/_Project/Prefabs/Turtles/Yavru.prefab";
@@ -33,13 +34,14 @@ namespace IkiDunya.Editor
         private const float DalgaCizgisiZ = 6f;
         private const int BolgeSayisi = 8;
 
-        private static Material kum, kumKoyu, deniz, taban, beyaz, engel, cop, kaplumbaga, insan, leke, iz, koni, tilkiKonisi, golge, siper, tilki, termalSerit;
+        private static Material kum, kumKoyu, deniz, taban, beyaz, engel, cop, kaplumbaga, insan, leke, iz, koni, tilkiKonisi, golge, siper, tilki, termalSerit, ayYolu;
 
         [MenuItem("İki Dünya/Gri kutu kumsalı kur (yuva gecesi)")]
         public static void YuvaGecesiKur()
         {
             if (!SahneAc(YuvaSahnesi, out Scene sahne)) return;
-            KumSicakligi kumSicakligi = OrtakKur();
+            KumSicakligi kumSicakligi = OrtakKur(Bos("Insanlar", null));
+            DenemeKumsaliKur();
             YuvaKur(kumSicakligi, null);
             Kaydet(sahne, YuvaSahnesi);
         }
@@ -48,7 +50,8 @@ namespace IkiDunya.Editor
         public static void KacisGecesiKur()
         {
             if (!SahneAc(KacisSahnesi, out Scene sahne)) return;
-            KumSicakligi kumSicakligi = OrtakKur();
+            KumSicakligi kumSicakligi = OrtakKur(null);
+            DenemeKumsaliKur();
             KacisKur(kumSicakligi, null);
             Kaydet(sahne, KacisSahnesi);
         }
@@ -58,8 +61,10 @@ namespace IkiDunya.Editor
         public static void KumsalSahnesiKur()
         {
             if (!SahneAc(KumsalSahnesi, out Scene sahne)) return;
-            KumSicakligi kumSicakligi = OrtakKur();
-            YuvaKur(kumSicakligi, Grup("YuvaGecesiNesneleri", AdimTuru.YuvaGecesi));
+            Transform yuvaGrubu = Grup("YuvaGecesiNesneleri", AdimTuru.YuvaGecesi);
+            // İnsanlar kumsalın durumundan kurulur, sadece yuva gecesinde görünür.
+            KumSicakligi kumSicakligi = OrtakKur(Bos("Insanlar", yuvaGrubu));
+            YuvaKur(kumSicakligi, yuvaGrubu);
             KacisKur(kumSicakligi, Grup("KacisGecesiNesneleri", AdimTuru.KacisGecesi));
             InsanTuruKur(Grup("InsanTuruNesneleri", AdimTuru.InsanTuru));
             PrefabUtility.InstantiatePrefab(AssetDatabase.LoadAssetAtPath<GameObject>(SistemlerKalibi));
@@ -72,19 +77,7 @@ namespace IkiDunya.Editor
         {
             var kumsal = Ayar<KumsalDurumu>("KumsalDurumu");
 
-            // Engeller: şezlonglar (dolaşılır) ve çöp yığınları (takılır)
-            Transform engeller = Bos("Engeller", grup);
-            Kutu("Sezlong_0", engeller, new Vector3(-6f, 0.25f, 12f), new Vector3(0.7f, 0.5f, 2f), engel, "Obstacle");
-            Kutu("Sezlong_1", engeller, new Vector3(-4f, 0.25f, 12f), new Vector3(0.7f, 0.5f, 2f), engel, "Obstacle");
-            Kutu("Sezlong_2", engeller, new Vector3(5f, 0.25f, 18f), new Vector3(0.7f, 0.5f, 2f), engel, "Obstacle");
-            Tuzak("CopYigini_0", engeller, new Vector3(2f, 0.2f, 9f), new Vector3(1.2f, 0.4f, 1.2f), TrashTrap.Turu.CopYigini);
-            Tuzak("CopYigini_1", engeller, new Vector3(-10f, 0.2f, 20f), new Vector3(1.2f, 0.4f, 1.2f), TrashTrap.Turu.CopYigini);
-
-            // İnsanlar: biri telefon fenerli
-            Transform insanlar = Bos("Insanlar", grup);
-            InsanKur("Insan_0", insanlar, new Vector3(-22f, 0f, 26f), new Vector3(-6f, 0f, 26f), false);
-            InsanKur("Insan_1", insanlar, new Vector3(6f, 0f, 16f), new Vector3(22f, 0f, 16f), true);
-
+            // Şezlong, çöp ve insanlar KumsalYapilari ile kumsalın durumundan kurulur.
             var baslangic = new GameObject("AnneBaslangic").transform;
             baslangic.SetPositionAndRotation(new Vector3(0f, 0.1f, 1f), Quaternion.identity);
             GameObject anne = AnneKur(baslangic);
@@ -140,13 +133,8 @@ namespace IkiDunya.Editor
             for (int i = 0; i < lekeYerleri.Length; i++)
                 SicakLeke($"SicakLeke_{i}", lekeler, lekeYerleri[i], kacisAyarlari, gunDogumu, kumSicakligi, kumsal);
 
-            // Çöp: takan tuzaklar ve labirent (şişe dolaşılır, kum kalesi atlanır)
+            // Çöp, şişe ve tekerlek izi KumsalYapilari ile kumsalın durumundan kurulur; kum kalesi atlanır.
             Transform copler = Bos("Copler", grup);
-            Tuzak("Ag_0", copler, new Vector3(-2f, 0.01f, 14f), new Vector3(0.8f, 0.02f, 0.8f), TrashTrap.Turu.Ag);
-            Tuzak("Halka_0", copler, new Vector3(2.5f, 0.01f, 8f), new Vector3(0.5f, 0.02f, 0.5f), TrashTrap.Turu.Halka);
-            Tuzak("TekerlekIzi_0", copler, new Vector3(5f, 0.01f, 17f), new Vector3(6f, 0.02f, 0.5f), TrashTrap.Turu.TekerlekIzi);
-            Kutu("Sise_0", copler, new Vector3(-1f, 0.15f, 18f), new Vector3(0.15f, 0.3f, 0.15f), cop, "Trash");
-            Kutu("Sise_1", copler, new Vector3(1.2f, 0.15f, 15f), new Vector3(0.15f, 0.3f, 0.15f), cop, "Trash");
             Kutu("KumKalesi_0", copler, new Vector3(0f, 0.07f, 11f), new Vector3(1.5f, 0.14f, 0.5f), kumKoyu, "Trash");
 
             // Kumul gölgesi: tilkiden saklanılan siperler
@@ -160,7 +148,6 @@ namespace IkiDunya.Editor
             YengecKur("Yengec_1", avcilar, new Vector3(5f, 0f, 5f), avciAyarlari);
             MartiKur(avcilar, avciAyarlari);
             TilkiKur(avcilar, avciAyarlari, kumsal);
-            IsikKur("OtelIsigi", avcilar, new Vector3(18f, 0f, 24f), kacisAyarlari, kumsal);
 
             // Sürü ve gözü
             var yuva = new GameObject("VarsayilanYuva").transform;
@@ -240,6 +227,13 @@ namespace IkiDunya.Editor
                 return false;
 
             KatmanKurulumu.Kur();
+            // Yeni oyunun kumsalı başlangıç asset'inden kurulsun.
+            var oyunAyarlari = Ayar<OyunAyarlari>("OyunAyarlari");
+            if (oyunAyarlari.KumsalBaslangici == null)
+            {
+                Bagla(oyunAyarlari, "kumsalBaslangici", Ayar<KumsalBaslangici>("KumsalBaslangici"));
+                EditorUtility.SetDirty(oyunAyarlari);
+            }
             Klasor("Assets/_Project/Scenes/Prototypes", "GriKumsal");
             MalzemeleriHazirla();
 
@@ -275,10 +269,11 @@ namespace IkiDunya.Editor
             golge = SaydamMalzeme("Golge", new Color(0f, 0f, 0f, 0.5f));
             siper = Malzeme("Siper", new Color(0.62f, 0.56f, 0.42f));
             tilki = Malzeme("Tilki", new Color(0.85f, 0.45f, 0.15f));
+            ayYolu = Malzeme("AyYolu", new Color(0.85f, 0.9f, 1f), "Universal Render Pipeline/Unlit");
         }
 
         /// <summary>Kum, deniz, kumul, dalga çizgisi, bölgeler, kum sıcaklığı ve termal görünüm, kumsal yapıları.</summary>
-        private static KumSicakligi OrtakKur()
+        private static KumSicakligi OrtakKur(Transform insanKoku)
         {
             var dunya = new GameObject("Dunya").transform;
 
@@ -315,7 +310,11 @@ namespace IkiDunya.Editor
             }
 
             KumSicakligi kumSicakligi = TermalKur();
-            KumsalYapilariKur(kumSicakligi);
+            // Ay ışığı: denizin üstünde doğru yönü gösteren parlak yol
+            GameObject ay = Kutu("AyYolu", dunya, new Vector3(-6f, -0.54f, -DenizDerinligi / 2f), new Vector3(3f, 0.01f, DenizDerinligi), ayYolu, "Default");
+            Object.DestroyImmediate(ay.GetComponent<Collider>());
+
+            KumsalYapilariKur(kumSicakligi, insanKoku);
             return kumSicakligi;
         }
 
@@ -341,13 +340,30 @@ namespace IkiDunya.Editor
             return kumSicakligi;
         }
 
-        private static void KumsalYapilariKur(KumSicakligi kumSicakligi)
+        private static void KumsalYapilariKur(KumSicakligi kumSicakligi, Transform insanKoku)
         {
+            var kumsal = Ayar<KumsalDurumu>("KumsalDurumu");
             var yapilar = new GameObject("KumsalYapilari").AddComponent<KumsalYapilari>();
-            Bagla(yapilar, "kumsal", Ayar<KumsalDurumu>("KumsalDurumu"));
+            Bagla(yapilar, "kumsal", kumsal);
             Bagla(yapilar, "kum", kumSicakligi);
             Bagla(yapilar, "golgelikKalibi", GolgelikKalibiKur());
             Bagla(yapilar, "kayipIziKalibi", KayipIziKalibiKur());
+            Bagla(yapilar, "copYiginiKalibi", TuzakKalibi("CopYigini", new Vector3(1.2f, 0.4f, 1.2f), TrashTrap.Turu.CopYigini));
+            Bagla(yapilar, "agKalibi", TuzakKalibi("Ag", new Vector3(0.8f, 0.02f, 0.8f), TrashTrap.Turu.Ag));
+            Bagla(yapilar, "tekerlekIziKalibi", TuzakKalibi("TekerlekIzi", new Vector3(6f, 0.02f, 0.5f), TrashTrap.Turu.TekerlekIzi));
+            Bagla(yapilar, "siseKalibi", KutuKalibi("Sise", new Vector3(0.15f, 0.3f, 0.15f), cop, "Trash"));
+            Bagla(yapilar, "sezlongKalibi", KutuKalibi("Sezlong", new Vector3(0.7f, 0.5f, 2f), engel, "Obstacle"));
+            Bagla(yapilar, "isikKalibi", KalipKaydet(IsikKur("OtelIsigi", null, Vector3.zero, Ayar<KacisAyarlari>("KacisAyarlari"), kumsal), $"{KalipKlasoru}/OtelIsigi.prefab"));
+            Bagla(yapilar, "insanKalibi", InsanKalibiKur().GetComponent<Insan>());
+            Bagla(yapilar, "insanKoku", insanKoku);
+        }
+
+        /// <summary>Deneme sahnelerinde Play başında kumsalı ilk haline getiren nesne.</summary>
+        private static void DenemeKumsaliKur()
+        {
+            var deneme = new GameObject("DenemeKumsali").AddComponent<DenemeKumsali>();
+            Bagla(deneme, "ayarlar", Ayar<OyunAyarlari>("OyunAyarlari"));
+            Bagla(deneme, "kumsal", Ayar<KumsalDurumu>("KumsalDurumu"));
         }
 
         // ---- Yuva gecesi parçaları ----
@@ -374,9 +390,13 @@ namespace IkiDunya.Editor
             return anne;
         }
 
-        private static void Tuzak(string ad, Transform ebeveyn, Vector3 konum, Vector3 boyut, TrashTrap.Turu tur)
+        /// <summary>Takan çöp kalıbı: kök yerde, collider ve TrashTrap çocukta.</summary>
+        private static GameObject TuzakKalibi(string ad, Vector3 boyut, TrashTrap.Turu tur)
         {
-            GameObject tuzak = Kutu(ad, ebeveyn, konum, boyut, cop, "Trash");
+            var kok = new GameObject(ad);
+            kok.layer = LayerMask.NameToLayer("Trash");
+            GameObject tuzak = Kutu("Govde", kok.transform, new Vector3(0f, boyut.y / 2f, 0f), boyut, cop, "Trash");
+            tuzak.isStatic = false;
             var kutu = (BoxCollider)tuzak.GetComponent<Collider>();
             kutu.isTrigger = true;
             // Yassı tuzaklar da yavruyu içine alsın diye collider yukarı uzatılır.
@@ -389,38 +409,32 @@ namespace IkiDunya.Editor
             var so = new SerializedObject(bilesen);
             so.FindProperty("tur").enumValueIndex = (int)tur;
             so.ApplyModifiedPropertiesWithoutUndo();
+            return KalipKaydet(kok, $"{KalipKlasoru}/{ad}.prefab");
         }
 
-        private static void InsanKur(string ad, Transform ebeveyn, Vector3 a, Vector3 b, bool fenerli)
+        /// <summary>Tek kutudan engel kalıbı: kök yerde, kutu üstünde.</summary>
+        private static GameObject KutuKalibi(string ad, Vector3 boyut, Material malzeme, string katman)
+        {
+            var kok = new GameObject(ad);
+            kok.layer = LayerMask.NameToLayer(katman);
+            Kutu("Govde", kok.transform, new Vector3(0f, boyut.y / 2f, 0f), boyut, malzeme, katman).isStatic = false;
+            return KalipKaydet(kok, $"{KalipKlasoru}/{ad}.prefab");
+        }
+
+        private static GameObject InsanKalibiKur()
         {
             // Kök yerde durur; kapsül gövde tabanı yere değsin diye bir alt objede.
-            var kok = new GameObject(ad).transform;
-            kok.SetParent(ebeveyn, false);
-            kok.SetPositionAndRotation(a, Quaternion.LookRotation(b - a));
+            var kok = new GameObject("Insan");
             GameObject govde = GameObject.CreatePrimitive(PrimitiveType.Capsule);
             govde.name = "Govde";
-            govde.transform.SetParent(kok, false);
+            govde.transform.SetParent(kok.transform, false);
             govde.transform.localPosition = new Vector3(0f, 1f, 0f);
-            govde.transform.localRotation = Quaternion.identity;
             govde.GetComponent<Renderer>().sharedMaterial = insan;
 
-            var noktaA = new GameObject($"{ad}_A").transform;
-            noktaA.SetParent(ebeveyn, false);
-            noktaA.position = a;
-            var noktaB = new GameObject($"{ad}_B").transform;
-            noktaB.SetParent(ebeveyn, false);
-            noktaB.position = b;
-
-            var insanBileseni = kok.gameObject.AddComponent<Insan>();
+            var insanBileseni = kok.AddComponent<Insan>();
             Bagla(insanBileseni, "ayarlar", Ayar<InsanAyarlari>("InsanAyarlari"));
             Bagla(insanBileseni, "koniMalzemesi", koni);
-            var so = new SerializedObject(insanBileseni);
-            SerializedProperty noktalar = so.FindProperty("noktalar");
-            noktalar.arraySize = 2;
-            noktalar.GetArrayElementAtIndex(0).objectReferenceValue = noktaA;
-            noktalar.GetArrayElementAtIndex(1).objectReferenceValue = noktaB;
-            so.FindProperty("fenerli").boolValue = fenerli;
-            so.ApplyModifiedPropertiesWithoutUndo();
+            return KalipKaydet(kok, $"{KalipKlasoru}/Insan.prefab");
         }
 
         // ---- Kaçış parçaları ----
@@ -521,7 +535,7 @@ namespace IkiDunya.Editor
             so.ApplyModifiedPropertiesWithoutUndo();
         }
 
-        private static void IsikKur(string ad, Transform ebeveyn, Vector3 konum, KacisAyarlari ayarlar, KumsalDurumu kumsal)
+        private static GameObject IsikKur(string ad, Transform ebeveyn, Vector3 konum, KacisAyarlari ayarlar, KumsalDurumu kumsal)
         {
             var kok = Bos(ad, ebeveyn);
             kok.position = konum;
@@ -546,6 +560,7 @@ namespace IkiDunya.Editor
             Bagla(isik, "ayarlar", ayarlar);
             Bagla(isik, "kumsal", kumsal);
             Bagla(isik, "isik", lamba);
+            return kok.gameObject;
         }
 
         // ---- Sonuç paneli ----

@@ -6,6 +6,7 @@ ozet: Ekipçe alınan kararlar, tarih ve nedeniyle. En yeni en üstte. GDD'yi de
 
 | Tarih | Karar | Neden | Kim |
 |---|---|---|---|
+| 2026-10-31 | Kumsalın ilk hali `KumsalBaslangici` asset'inde (bölge bölge çöp, ışık, şezlong, insan, araç izi; denizdeki ağ); `KumsalDurumu.Sifirla(baslangic, katmanEnFazla)` | Kartlar (Temizlik, Şezlong Düzenlemesi, Işık Yasağı, Araç Yasağı) bir şeyi azaltabilsin diye kumsal dolu başlamalı; ilk hal sahnede değil, durumda | Umut |
 | 2026-10-31 | `KumsalDurumu`'na `IsikYasagi` ve `IsikYasagiAyarla(var)` | Işık Yasağı kartı otel ve yol ışıklarını kapatır; telefon feneri yasağa uymaz | Umut |
 | 2026-10-31 | Kaçışta öncü yavru takılmaz ve yönünü kaybetmez; kurtaran odur | Oyuncu öncüyü sürer; öncü takılırsa kurtaracak kimse kalmaz | Umut |
 | 2026-10-31 | Martı: dalış alanında 3 ya da daha çok yavru varsa 3, yoksa 1 yavru alır | GDD'deki "toplu sürüden 3, dağınıktan 1" kuralını sürünün o anki yayılmasından ölçmek | Umut |

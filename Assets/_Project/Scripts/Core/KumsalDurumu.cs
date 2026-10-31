@@ -33,6 +33,27 @@ namespace IkiDunya.Core
         /// <summary>Yeni oyunda kumsalı boşaltır. Oyun akışı çağırır.</summary>
         public void Sifirla(int bolgeSayisi, int katmanEnFazla)
         {
+            Bosalt(bolgeSayisi, katmanEnFazla);
+            Degisti?.Invoke();
+        }
+
+        /// <summary>Yeni oyunda kumsalı ilk haliyle kurar (çöp, ışık, şezlong, insan, araç izi, denizdeki ağ).</summary>
+        public void Sifirla(KumsalBaslangici baslangic, int katmanEnFazla)
+        {
+            Bosalt(baslangic.Bolgeler.Count, katmanEnFazla);
+            for (int i = 0; i < bolgeler.Count; i++)
+            {
+                KumsalBaslangici.BolgeBaslangici ilk = baslangic.Bolgeler[i];
+                foreach (BolgeKatmani katman in Enum.GetValues(typeof(BolgeKatmani)))
+                    bolgeler[i].KatmanEkle(katman, ilk.Seviye(katman));
+                if (ilk.AracIzi) bolgeler[i].YapiAyarla(BolgeYapisi.AracIzi, true);
+            }
+            denizdekiAg = baslangic.DenizdekiAg;
+            Degisti?.Invoke();
+        }
+
+        private void Bosalt(int bolgeSayisi, int katmanEnFazla)
+        {
             bolgeler.Clear();
             for (int i = 0; i < bolgeSayisi; i++) bolgeler.Add(new Bolge(katmanEnFazla));
             yuvalar.Clear();
@@ -41,7 +62,6 @@ namespace IkiDunya.Core
             kumIsinmasi = 0;
             isikYasagi = false;
             denizeUlasanYavru = 0;
-            Degisti?.Invoke();
         }
 
         // ---- Bölgeler (çoğunlukla insan kısmı) ----
