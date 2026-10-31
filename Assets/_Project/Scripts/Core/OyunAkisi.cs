@@ -101,16 +101,18 @@ namespace IkiDunya.Core
                 YeniOyun();
         }
 
-        /// <summary>Şu anki adım bitti (gece bitti, tur bitti); sıradakine geçilir. Son adımdan sonra kayıt silinir, menüye dönülür.</summary>
-        public static void AdimBitti()
+        /// <summary>Şu anki adım bitti (gece bitti, tur bitti); sıradakine geçilir. Son adımdan sonra kayıt silinir, menüye dönülür.
+        /// Geçiş sürerken kabul edilmez ve false döner; çağıran kendini bitmiş saymadan sonra tekrar dener.</summary>
+        public static bool AdimBitti()
         {
-            if (ornek == null || ornek.yukleniyor) return;
+            if (ornek == null || ornek.yukleniyor) return false;
             if (ornek.sira + 1 < ornek.akis.Count) ornek.AdimaGec(ornek.sira + 1);
             else
             {
                 Kayit.Sil();
                 MenuyeDon();
             }
+            return true;
         }
 
         public static void MenuyeDon()

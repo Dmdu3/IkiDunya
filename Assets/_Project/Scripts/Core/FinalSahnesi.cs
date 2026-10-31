@@ -61,8 +61,7 @@ namespace IkiDunya.Core
 
             // Kaplumbağa yürürken tıklama atlanmaz; sonra tıklayınca oyun biter.
             if (gecen < yuruyusSuresi || !GameInput.TiklaBasildi) return;
-            aktif = false;
-            OyunAkisi.AdimBitti();
+            if (OyunAkisi.AdimBitti()) aktif = false;
         }
     }
 }

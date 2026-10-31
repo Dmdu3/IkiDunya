@@ -42,8 +42,9 @@ namespace IkiDunya.Turtle
         {
             OyunAkisi.AdimBasladi -= AdimBasladi;
             Insan.Gordu -= InsanGordu;
-            anne.Enerji.Bitti -= EnerjiBitti;
-            kazma.YuvaTamamlandi -= YuvaTamamlandi;
+            // Sahne kapanırken anne bizden önce yok edilmiş olabilir.
+            if (anne != null) anne.Enerji.Bitti -= EnerjiBitti;
+            if (kazma != null) kazma.YuvaTamamlandi -= YuvaTamamlandi;
         }
 
         private void Start()
@@ -135,9 +136,10 @@ namespace IkiDunya.Turtle
 
         private void SonucuKapat()
         {
+            // Geçiş sürerken kabul edilmezse sonuç açık kalır, sonraki tıklamada tekrar denenir.
+            if (OyunAkisi.Var && !OyunAkisi.AdimBitti()) return;
             durum = Durum.Kapali;
             SonucKapandi?.Invoke();
-            if (OyunAkisi.Var) OyunAkisi.AdimBitti();
         }
     }
 }

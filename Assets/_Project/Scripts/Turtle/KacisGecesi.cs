@@ -68,10 +68,14 @@ namespace IkiDunya.Turtle
         private void OnDisable()
         {
             OyunAkisi.AdimBasladi -= AdimBasladi;
-            suru.YavruKaybedildi -= YavruKaybedildi;
-            suru.YavruKurtuldu -= YavruKurtuldu;
-            suru.Bitti -= GeceBitti;
-            gunDogumu.Bitti -= GunDogdu;
+            // Sahne kapanırken bunlar bizden önce yok edilmiş olabilir.
+            if (suru != null)
+            {
+                suru.YavruKaybedildi -= YavruKaybedildi;
+                suru.YavruKurtuldu -= YavruKurtuldu;
+                suru.Bitti -= GeceBitti;
+            }
+            if (gunDogumu != null) gunDogumu.Bitti -= GunDogdu;
         }
 
         private void Start()
@@ -208,9 +212,10 @@ namespace IkiDunya.Turtle
 
         private void SonucuKapat()
         {
+            // Geçiş sürerken kabul edilmezse sonuç açık kalır, sonraki tıklamada tekrar denenir.
+            if (OyunAkisi.Var && !OyunAkisi.AdimBitti()) return;
             SuAnki = Asama.Kapali;
             SonucKapandi?.Invoke();
-            if (OyunAkisi.Var) OyunAkisi.AdimBitti();
         }
     }
 }
