@@ -29,6 +29,15 @@ namespace IkiDunya.Core
 
         private Dictionary<string, string> sozluk;
 
+        /// <summary>Yüklenmiş tablo (OyunAyarlari üstünden yüklenir); bağlantısı kopmuş yazılar bunu kullanır.</summary>
+        public static MetinTablosu Yuklu { get; private set; }
+
+        private void OnEnable()
+        {
+            Yuklu = this;
+            sozluk = null;
+        }
+
         /// <summary>Id'nin metni; metinler.md'de henüz yoksa id'nin kendisi köşeli parantezle döner, eksik hemen görünür.</summary>
         public string Al(string id)
         {
