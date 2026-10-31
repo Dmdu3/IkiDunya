@@ -4,7 +4,7 @@ ozet: Mekanik tarafın durumu ve sistemlerin haritası. Bir sistem eklendikçe y
 
 # Durum
 
-Son güncelleme: 2026-11-01 — Alpha main'de, deneme listesi tamam (editörde 300+ FPS). Main'de: insan kısmı (yönetim ekranı, Faz 0–4). Dalda (`umut/kumsal-arazi`): Yusuf'un kumsal arazisi, stilize denizi ve objeleri kumsal sahnesine bağlandı. Unity'de henüz denenmedi.
+Son güncelleme: 2026-11-01 — Alpha main'de, deneme listesi tamam (editörde 300+ FPS). Main'de: insan kısmı (yönetim ekranı, Faz 0–4). Dallarda: `umut/kumsal-arazi` (Yusuf'un kumsalı), `umut/minigameler` (poşet sürüsü, çöp seli, çöp girdabı, Parkurlar menüsü). Unity'de henüz denenmedi.
 
 ## Sistem haritası
 
@@ -200,4 +200,14 @@ Henüz yok: kartların ve olay penceresinin görsel hali (Faz 9), arayüz sesler
 - Arazi varken kaçıştaki düz su şeridi görünmez (dalga logic'i aynı; görüntüyü Yusuf'un denizi veriyor).
 
 Henüz yok: Bölüm 1 ve 5 için deniz tabanı modeli; ağ, tekerlek izi, ışık direği, gölgelik, insan, tilki modelleri; arazi dosyalarının kalıcı klasöre (`Prefabs/Environment`, `Models/Kumsal`) taşınması (Yusuf, Unity içinden).
+
+## Minigame'ler (parkurlar)
+
+GDD: "Parkurlar". Sayılar `ScriptableObjects/Settings/ParkurAyarlari`'nda.
+- **Ortak (`Core/Parkur`):** `Baslat`, `Bitir`, `Birak`, `Bilgi`; süre oyun zamanıyla (duraklatmada durur), rekor ve açılma `PlayerPrefs`'te. `UI/Night/ParkurGostergesi` (Sistemler'de) sağ üstte süre/rekor/sayaç, bitince sonuç. Menüden: `OyunAkisi.ParkurOyna(tur)` kumsalı ilk haline getirir, parkurun sahnesini `AdimTuru.Parkur` adımıyla yükler (kayıt yazılmaz); bitince menüye döner. Ana menüde **Parkurlar** (`UI/Menu/ParkurlarPaneli`): bitirilen parkurlar rekoruyla, diğerleri kilitli.
+- **Poşet sürüsü (`Turtle/PosetSurusu`, Bölüm 1):** z −43…−17 alanı; anne girince başlar, akıntı soldan sağa denizanası/poşet kalıplarını taşır. 8 denizanası → biter; 3'lü kombo +12 enerji; enerji biterse, avlanırsa ya da alandan çıkarsa yarıda kalır. Menüden: alanın denize bakan ucundan.
+- **Çöp girdabı (`Hazards/Girdap`, Bölüm 5):** merkez (0, −4, −125); 24 m'de yakalar, döndürerek merkeze çeker; 9 m'deki dönen çöp halkasının 40°'lik boşluğunda çekim yok, oradan çıkan kurtulur. Menüden: girdabın kıyı tarafından.
+- **Çöp seli (`Turtle/CopSeli`, Bölüm 4):** 2. kaçış gecesinde (ya da menüden) açılır; 5 çukur sırayla su alır (7 sn periyot, yarısı dolu), sudaki yavru karaya itilir, 2,5 sn kalırsa kaybedilir (Su); 3 kasa gidip gelir ve iter; selin taşıdığı çöpler dekor. Koşu başlayınca başlar (`KacisGecesi.KosuBasladi`), en az bir yavru kurtulursa biter. Menüden: deneme yuvasından 12 yavruyla.
+- **Kurulum:** Bölüm 1, Bölüm 5 ve Kumsal sahnesini kur komutları minigame'leri yerleştirir; Menü ve duraklatmayı kur Parkurlar menüsünü ve göstergeyi kurar.
+- Yeni ipuçları: `ipucu_poset_surusu`, `ipucu_cop_seli`, `ipucu_girdap`. Yeni sesler: `Kombo`, `ParkurBitti`.
 

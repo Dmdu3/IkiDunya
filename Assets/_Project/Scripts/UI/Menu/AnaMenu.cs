@@ -4,7 +4,7 @@ using UnityEngine.UI;
 
 namespace IkiDunya.UI.Menu
 {
-    /// <summary>Ana menü: Yeni oyun, Devam et (kayıt varsa), Ayarlar, Çıkış.</summary>
+    /// <summary>Ana menü: Yeni oyun, Devam et (kayıt varsa), Parkurlar, Ayarlar, Çıkış.</summary>
     public class AnaMenu : MonoBehaviour
     {
         [SerializeField] private Button yeniOyun;
@@ -12,6 +12,8 @@ namespace IkiDunya.UI.Menu
         [SerializeField] private Button ayarlar;
         [SerializeField] private Button cikis;
         [SerializeField] private AyarlarPaneli ayarlarPaneli;
+        [SerializeField] private Button parkurlar;
+        [SerializeField] private ParkurlarPaneli parkurlarPaneli;
 
         private void Awake()
         {
@@ -19,6 +21,7 @@ namespace IkiDunya.UI.Menu
             devamEt.onClick.AddListener(OyunAkisi.DevamEt);
             ayarlar.onClick.AddListener(ayarlarPaneli.Ac);
             cikis.onClick.AddListener(Cik);
+            if (parkurlar != null && parkurlarPaneli != null) parkurlar.onClick.AddListener(parkurlarPaneli.Ac);
         }
 
         private void OnEnable()

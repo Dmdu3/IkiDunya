@@ -1,3 +1,4 @@
+using System;
 using UnityEngine;
 
 namespace IkiDunya.Hazards
@@ -17,10 +18,19 @@ namespace IkiDunya.Hazards
 
         public Turu Tur => tur;
 
+        /// <summary>Bir yiyecek yenince (poşet de "yenir"); parkurlar sayar.</summary>
+        public static event Action<Turu> Yendi;
+
+        [RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.SubsystemRegistration)]
+        private static void StatikleriSifirla() => Yendi = null;
+
+        /// <summary>Akıntıyla taşınan sürüdeki yiyeceğin yönü (poşet sürüsü kurar).</summary>
+        public void YonAyarla(Vector3 yeniYon) => yon = yeniYon;
+
         private void Awake()
         {
             ilkOlcek = transform.localScale;
-            zaman = Random.value * 10f;
+            zaman = UnityEngine.Random.value * 10f;
         }
 
         private void Update()
@@ -43,6 +53,7 @@ namespace IkiDunya.Hazards
         public Turu Ye()
         {
             gameObject.SetActive(false);
+            Yendi?.Invoke(tur);
             return tur;
         }
     }

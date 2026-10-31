@@ -53,6 +53,14 @@ Bütün kaplumbağa bölümleri aynı kamerada, aynı tuşlarla ve aynı enerji 
 | Tekne | Pervane sesi, suyun üstünde gölge | Yüzeyde çarparsa −25 enerji | Tekne geçene kadar derinde kal |
 | Sıcak su lekesi | Su titrer, renk koyulaşır | İçinde saniyede −3 enerji | Etrafından dolaş |
 
+### Minigame: Poşet sürüsü
+
+Son kontrol noktası ile kıyı arasında bir akıntı, denizanalarıyla poşetleri karışık bir sürü halinde yandan taşır. Anne acıkmıştır: sürünün içinden geçerken kasılarak ilerleyen denizanalarını seçip yer, düz süzülen poşetlerden kaçar. 8 denizanası yenince parkur biter.
+
+- Art arda 3 denizanası yemek kombo yapar: +12 enerji.
+- Poşet komboyu bozar ve her zamanki gibi 10 sn yarı hız verir.
+- Enerji biterse ya da alandan çıkılırsa parkur yarıda kalır; alana yeniden girince baştan başlar.
+
 **Bölüm sonu:** Su sığlaşır, kumsalın ışıkları görünür. Anne kıyıya ulaşınca Bölüm 2'nin ilk gecesi başlar.
 
 ## Bölüm 2 — Yuva geceleri (anne, kumsalda)
@@ -118,6 +126,14 @@ Otel, yol lambası ve telefon feneri sürüyü yan rüzgâr gibi kendine çeker.
 
 Son 5 metrede dalgalar gelip gider. Dalga çekilirken suya giren yavru kurtulur, dalga vururken giren geri savrulur.
 
+### Minigame: Çöp seli
+
+İkinci kaçış gecesi fırtınadan sonradır: dalga kumsala çöp taşımış, su yer yer yükselmiştir. Kıyı ile yuvalar arasındaki çukurlar sırayla su alıp boşalır; yollar açılıp kapanır. Selin taşıdığı kasalar kumsalda gidip gelir.
+
+- Su basmış çukurdaki yavru karaya itilir; 2,5 sn'den uzun kalırsa sürüklenip kaybedilir (Su izi bırakır).
+- Kasanın önündeki yavru itilir; zıplama (Space) ve dağılma (Shift) zamanlaması önemlidir.
+- Koşu başlayınca parkur başlar; gece en az bir yavru denize ulaşırsa biter.
+
 **Gecenin sonucu:** Kurtulan yavru sayısı ve dişi-erkek oranı gösterilir. Kaybedilen her yavru, kaybedildiği yerde nedenini taşıyan bir iz bırakır: Isı, Işık, Çöp, Avcı, Su. İnsan kısmı bu izleri okur.
 
 ## Bölüm 5 — İlk yüzüş (yavru, denizde)
@@ -137,7 +153,23 @@ Son 5 metrede dalgalar gelip gider. Dalga çekilirken suya giren yavru kurtulur,
 | Işıklı tekne | Suya vuran ışık | Kumsaldaki ışık gibi yavruyu çeker | Karşı yöne bastır, ışık alanından çık |
 | Hayalet ağ | Kenarları hafif parlar | Takılır, durur | E'ye 10 kez bas |
 
+### Minigame: Çöp girdabı
+
+Sığ sularla açık deniz arasında bir akıntı girdabı, poşet, şişe ve ağ parçalarını döndürür. Yavru yakalanınca girdap onu döndürerek merkezdeki parlayan plastik yığınına çeker. Çöpler girdabın çevresinde dönen bir halka oluşturur; halkanın bir yerinde boşluk vardır ve sadece orada çekim yoktur. Yavru boşluğun önüne gelmesini bekleyip oradan dışarı yüzer.
+
+- Çekim yavrunun yüzme hızından biraz güçlüdür; boşluk dışında kaçılmaz.
+- Halkadan dışarı çıkınca parkur biter.
+
 **Final:** Yavru yosun adasına ulaşınca yosunun arasına saklanır ve kamera uzaklaşır. Kısa bir "30 yıl sonra" sahnesiyle oyun biter.
+
+## Parkurlar (minigame'ler)
+
+Bölüm 1, 4 ve 5'teki minigame'ler hikâyenin içinde oynanır; ayrıca süreli birer parkurdur.
+
+- Parkur başlayınca ekranın köşesinde süre ve rekor görünür; bitince süre ve "yeni rekor" gösterilir.
+- Hikâyede bitirilen parkur ana menüde **Parkurlar** altında açılır ve oradan tek başına, istendiği kadar oynanır (kayıt değişmez; bitince menüye dönülür).
+- Rekorlar oyuncunun bilgisayarında saklanır.
+- İki dünyanın bağı aynıdır: insan kısmındaki kararlar (Temizlik, Hayalet Ağ Temizliği) kumsalın ve denizin çöp yoğunluğunu belirler; parkurlardaki kayıplar da kanıt bırakır.
 
 ## İnsan kısmı: yönetim
 

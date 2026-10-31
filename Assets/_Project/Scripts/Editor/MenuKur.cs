@@ -83,9 +83,11 @@ namespace IkiDunya.Editor
             Transform dugmeler = Liste("Dugmeler", tuval, new Vector2(0.38f, 0.2f), new Vector2(0.62f, 0.62f));
             Button yeni = Dugme(dugmeler, "menu_yeni_oyun", metinler);
             Button devam = Dugme(dugmeler, "menu_devam_et", metinler);
+            Button parkurlar = Dugme(dugmeler, "menu_parkurlar", metinler);
             Button ayarlar = Dugme(dugmeler, "menu_ayarlar", metinler);
             Button cikis = Dugme(dugmeler, "menu_cikis", metinler);
             AyarlarPaneli panel = AyarlarKur(tuval, dugmeler.gameObject, metinler);
+            ParkurlarPaneli parkurPaneli = ParkurlarKur(tuval, dugmeler.gameObject, metinler);
 
             var menu = tuval.gameObject.AddComponent<AnaMenu>();
             GriKumsalKur.Bagla(menu, "yeniOyun", yeni);
@@ -93,6 +95,8 @@ namespace IkiDunya.Editor
             GriKumsalKur.Bagla(menu, "ayarlar", ayarlar);
             GriKumsalKur.Bagla(menu, "cikis", cikis);
             GriKumsalKur.Bagla(menu, "ayarlarPaneli", panel);
+            GriKumsalKur.Bagla(menu, "parkurlar", parkurlar);
+            GriKumsalKur.Bagla(menu, "parkurlarPaneli", parkurPaneli);
 
             GriKumsalKur.Kaydet(sahne, MenuSahnesi);
         }
@@ -102,7 +106,7 @@ namespace IkiDunya.Editor
         {
             GameObject kok = PrefabUtility.LoadPrefabContents(SistemlerKalibi);
 
-            foreach (string eski in new[] { "EventSystem", "DuraklatmaMenusu", "IpucuArayuzu", "SesYoneticisi" })
+            foreach (string eski in new[] { "EventSystem", "DuraklatmaMenusu", "IpucuArayuzu", "SesYoneticisi", "ParkurArayuzu" })
             {
                 Transform mevcut = kok.transform.Find(eski);
                 if (mevcut != null) Object.DestroyImmediate(mevcut.gameObject);
@@ -135,6 +139,7 @@ namespace IkiDunya.Editor
             GriKumsalKur.Bagla(menu, "ayarlarPaneli", ayarlarPaneli);
 
             IpucuKur(kok.transform);
+            ParkurGostergesiKur(kok.transform);
             SesKur(kok.transform);
 
             // İnsan kısmının durumu da kayda girer.
@@ -218,6 +223,78 @@ namespace IkiDunya.Editor
             GriKumsalKur.Bagla(panel, "oncekiPanel", oncekiPanel);
             kutu.gameObject.SetActive(false);
             return panel;
+        }
+
+        /// <summary>Parkurlar paneli: her parkur için bir düğme (yazısı rekorla birlikte kodda kurulur) ve Geri.</summary>
+        private static ParkurlarPaneli ParkurlarKur(Transform ebeveyn, GameObject oncekiPanel, MetinTablosu metinler)
+        {
+            Transform kutu = Liste("ParkurlarPaneli", ebeveyn, new Vector2(0.3f, 0.2f), new Vector2(0.7f, 0.62f));
+            Yazi("ParkurlarYazisi", kutu, Vector2.zero, Vector2.zero, 30, "menu_parkurlar", metinler);
+            var dugmeler = new Object[System.Enum.GetValues(typeof(ParkurTuru)).Length];
+            for (int i = 0; i < dugmeler.Length; i++)
+            {
+                Button dugme = Dugme(kutu, Parkur.MetinId((ParkurTuru)i), metinler);
+                // Yazıyı panel kurar (ad + rekor); sabit metin bileşeni üstüne yazmasın.
+                Object.DestroyImmediate(dugme.GetComponentInChildren<MetinYazisi>());
+                dugmeler[i] = dugme;
+            }
+            Button geri = Dugme(kutu, "menu_geri", metinler);
+
+            var panel = kutu.gameObject.AddComponent<ParkurlarPaneli>();
+            GriKumsalKur.Bagla(panel, "metinler", metinler);
+            GriKumsalKur.DiziBagla(panel, "dugmeler", dugmeler);
+            GriKumsalKur.Bagla(panel, "geri", geri);
+            GriKumsalKur.Bagla(panel, "oncekiPanel", oncekiPanel);
+            kutu.gameObject.SetActive(false);
+            return panel;
+        }
+
+        /// <summary>Parkur süresi (sağ üst) ve sonucu (ortada) gösteren kutular.</summary>
+        private static void ParkurGostergesiKur(Transform kok)
+        {
+            Transform tuval = GriKumsalKur.TuvalKur("ParkurArayuzu", kok);
+            tuval.GetComponent<Canvas>().sortingOrder = 45;
+
+            GameObject sure = Kutucuk("Sure", tuval, new Vector2(0.68f, 0.86f), new Vector2(0.98f, 0.98f));
+            Text sureYazisi = KutuYazisi(sure.transform, new Vector2(0.03f, 0.5f), new Vector2(0.97f, 1f), 28);
+            Text bilgiYazisi = KutuYazisi(sure.transform, new Vector2(0.03f, 0f), new Vector2(0.97f, 0.5f), 24);
+            GameObject sonuc = Kutucuk("Sonuc", tuval, new Vector2(0.3f, 0.4f), new Vector2(0.7f, 0.65f));
+            Text sonucYazisi = KutuYazisi(sonuc.transform, new Vector2(0.05f, 0.05f), new Vector2(0.95f, 0.95f), 36);
+            sonucYazisi.alignment = TextAnchor.MiddleCenter;
+            sure.SetActive(false);
+            sonuc.SetActive(false);
+
+            var gosterge = tuval.gameObject.AddComponent<IkiDunya.UI.Night.ParkurGostergesi>();
+            GriKumsalKur.Bagla(gosterge, "ayarlar", GriKumsalKur.Ayar<OyunAyarlari>("OyunAyarlari"));
+            GriKumsalKur.Bagla(gosterge, "sureKutusu", sure);
+            GriKumsalKur.Bagla(gosterge, "sureYazisi", sureYazisi);
+            GriKumsalKur.Bagla(gosterge, "bilgiYazisi", bilgiYazisi);
+            GriKumsalKur.Bagla(gosterge, "sonucKutusu", sonuc);
+            GriKumsalKur.Bagla(gosterge, "sonucYazisi", sonucYazisi);
+        }
+
+        private static GameObject Kutucuk(string ad, Transform ebeveyn, Vector2 enAz, Vector2 enCok)
+        {
+            var kutu = new GameObject(ad, typeof(RectTransform), typeof(Image));
+            kutu.layer = LayerMask.NameToLayer("UI");
+            kutu.transform.SetParent(ebeveyn, false);
+            GriKumsalKur.Yasla((RectTransform)kutu.transform, enAz, enCok);
+            kutu.GetComponent<Image>().color = new Color(0f, 0f, 0f, 0.6f);
+            return kutu;
+        }
+
+        private static Text KutuYazisi(Transform ebeveyn, Vector2 enAz, Vector2 enCok, int boyut)
+        {
+            var nesne = new GameObject("Yazi", typeof(RectTransform), typeof(Text));
+            nesne.layer = LayerMask.NameToLayer("UI");
+            nesne.transform.SetParent(ebeveyn, false);
+            GriKumsalKur.Yasla((RectTransform)nesne.transform, enAz, enCok);
+            Text yazi = nesne.GetComponent<Text>();
+            yazi.font = Resources.GetBuiltinResource<Font>("LegacyRuntime.ttf");
+            yazi.fontSize = boyut;
+            yazi.alignment = TextAnchor.MiddleRight;
+            yazi.color = Color.white;
+            return yazi;
         }
 
         /// <summary>Bir satır: solda eylemin adı, sağda şu anki tuşu gösteren düğme.</summary>
