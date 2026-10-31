@@ -135,40 +135,55 @@ namespace IkiDunya.UI.Management
                 foreach (KartTanimi kart in tur.El)
                 {
                     KartTanimi k = kart;
-                    Dugme(kartDugmeleri, KartYazisi(k), tur.KartOynanabilir(k), tur.BekleyenKart == k, () => tur.KartSec(k));
+                    Dugme(kartDugmeleri, KartYazisi(k), tur.KartOynanabilir(k), tur.BekleyenKart == k, () => tur.KartSec(k), true);
                 }
         }
 
-        /// <summary>Ad ve bedel; tür, bakım, güçlü mü; açıklama; paydaş ve halk etkisi, koşulu.</summary>
+        // Açık zeminli düğmede okunan renkler.
+        private const string TurRengi = "#5a5a5a", AcilRengi = "#c0561b", ArtiRengi = "#2e7d32", EksiRengi = "#b03030";
+
+        /// <summary>Ad ve bedel; tür, bakım, güçlü mü; açıklama; paydaş ve halk etkisi, koşulu.
+        /// Satırlar boyla değil kalınlık ve renkle ayrılır: yazı düğmeye sığacak kadar küçülür (çok kartlı elde dar kalır).</summary>
         private string KartYazisi(KartTanimi k)
         {
             YonetimDurumu y = tur.Yonetim;
-            var sb = new StringBuilder($"{Al(k.Id)}  ({y.Bedel(k)})\n<size=16>{Al($"kart_turu_{k.Tur.ToString().ToLowerInvariant()}")}");
+            string turRengi = k.Tur == KartTuru.Acil ? AcilRengi : TurRengi;
+            var sb = new StringBuilder($"<b>{Al(k.Id)} ({y.Bedel(k)})</b>\n<color={turRengi}>{Al($"kart_turu_{k.Tur.ToString().ToLowerInvariant()}")}");
             if (k.Bakim > 0) sb.Append($" · {Al("kart_bakim")} {k.Bakim}");
-            if (y.Guclu(k)) sb.Append($" · <color=#7fd17f>{Al("kart_guclu")}</color>");
-            sb.Append($"</size>\n<size=18>{Al(k.Id + "_aciklama")}</size>");
+            sb.Append("</color>");
+            if (y.Guclu(k)) sb.Append($" · <color={ArtiRengi}>{Al("kart_guclu")}</color>");
+            sb.Append($"\n{Al(k.Id + "_aciklama")}");
 
             var etki = new StringBuilder();
-            if (k.DestekFarki != 0) etki.Append($"{Al("kart_halk")} {Isaretli(k.DestekFarki)}  ");
+            if (k.DestekFarki != 0) etki.Append(Fark(Al("kart_halk"), k.DestekFarki));
             foreach (Paydas p in System.Enum.GetValues(typeof(Paydas)))
-                if (k.PaydasFarki.Al(p) != 0) etki.Append($"{Al(PaydasId(p))} {Isaretli(k.PaydasFarki.Al(p))}  ");
+                if (k.PaydasFarki.Al(p) != 0) etki.Append(Fark(Al(PaydasId(p)), k.PaydasFarki.Al(p)));
             if (k.KosulVar)
             {
-                string renk = y.KosulTamam(k) ? "#cccccc" : "#ff7070";
+                string renk = y.KosulTamam(k) ? TurRengi : EksiRengi;
                 etki.Append($"<color={renk}>{Al(PaydasId(k.KosulPaydas))} {Isaretli(k.KosulEnAz)} {Al("kart_ister")}</color>");
             }
-            if (etki.Length > 0) sb.Append($"\n<size=16>{etki}</size>");
+            if (etki.Length > 0) sb.Append($"\n<b>{etki.ToString().TrimEnd()}</b>");
             return sb.ToString();
         }
 
+        private static string Fark(string ad, int sayi) => $"<color={(sayi > 0 ? ArtiRengi : EksiRengi)}>{ad} {Isaretli(sayi)}</color>  ";
         private static string PaydasId(Paydas p) => $"paydas_{p.ToString().ToLowerInvariant()}";
         private static string Isaretli(int sayi) => sayi > 0 ? $"+{sayi}" : sayi.ToString();
 
-        private void Dugme(Transform ebeveyn, string yazi, bool acik, bool secili, UnityEngine.Events.UnityAction tikla)
+        private void Dugme(Transform ebeveyn, string yazi, bool acik, bool secili, UnityEngine.Events.UnityAction tikla, bool sigdir = false)
         {
             Button dugme = Instantiate(dugmeKalibi, ebeveyn);
             dugme.gameObject.SetActive(true);
-            dugme.GetComponentInChildren<Text>().text = yazi;
+            Text metin = dugme.GetComponentInChildren<Text>();
+            metin.text = yazi;
+            if (sigdir)
+            {
+                // Kalıbın yazı boyu üst sınır; sığmazsa küçülür.
+                metin.resizeTextMaxSize = metin.fontSize;
+                metin.resizeTextMinSize = Mathf.Min(10, metin.fontSize);
+                metin.resizeTextForBestFit = true;
+            }
             dugme.interactable = acik;
             if (secili) dugme.GetComponent<Image>().color = new Color(1f, 0.85f, 0.4f);
             dugme.onClick.AddListener(tikla);
