@@ -23,6 +23,8 @@ namespace IkiDunya.Core
         public static bool Var => ornek != null;
         /// <summary>Devam edilebilecek bir kayıt var mı.</summary>
         public static bool KayitVar => Kayit.Var;
+        /// <summary>Ekran kararıp açılırken (sahne yükleniyor, bölüm başlığı) true; ipuçları bu sırada beklemeye alınır.</summary>
+        public static bool GecisSuruyor => ornek != null && ornek.yukleniyor;
 
         private static OyunAkisi ornek;
 
@@ -99,6 +101,7 @@ namespace IkiDunya.Core
         {
             if (ornek == null || ornek.yukleniyor) return;
             Kayit.Sil();
+            Ipucu.Sifirla();
             ornek.KumsaliSifirla();
             ornek.AdimaGec(0);
         }

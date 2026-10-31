@@ -25,6 +25,8 @@ namespace IkiDunya.Core
         [SerializeField] private float gecisSuresi = 0.6f;
         [Tooltip("Yeni bölümün başlığının ekranda kalma süresi (sn).")]
         [SerializeField] private float baslikSuresi = 2.5f;
+        [Tooltip("Bir ipucunun ekranda kaldığı süre (sn).")]
+        [SerializeField] private float ipucuSuresi = 6f;
         [Tooltip("Oyuncunun gördüğü yazılar (İki Dünya → Metinleri aktar).")]
         [SerializeField] private MetinTablosu metinler;
 
@@ -37,6 +39,7 @@ namespace IkiDunya.Core
         public string MenuSahnesi => menuSahnesi;
         public float GecisSuresi => gecisSuresi;
         public float BaslikSuresi => baslikSuresi;
+        public float IpucuSuresi => ipucuSuresi;
         public MetinTablosu Metinler => metinler;
         public int BolgeSayisi => bolgeSayisi;
         public int KatmanEnFazla => katmanEnFazla;

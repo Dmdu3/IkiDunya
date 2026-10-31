@@ -51,6 +51,13 @@ namespace IkiDunya.Turtle
             bitti = false;
             sonNokta = baslangic;
             yuzucu.Baslat(sonNokta.position, sonNokta.rotation);
+            // Bölüm 1 annenin denizi: besin ve nefes; Bölüm 5 yavrunun: dalga.
+            if (adim == AdimTuru.Donus)
+            {
+                Ipucu.Goster("ipucu_poset");
+                Ipucu.Goster("ipucu_nefes");
+            }
+            else Ipucu.Goster("ipucu_dalga");
         }
 
         /// <summary>GDD: enerji biterse ya da avcı yakalarsa son kontrol noktasından devam edilir.</summary>
@@ -67,6 +74,7 @@ namespace IkiDunya.Turtle
             if (!nokta.Son)
             {
                 sonNokta = nokta.transform;
+                Ses.Cal(SesTuru.KontrolNoktasi);
                 yuzucu.Enerji.Doldur(ayarlar.EnerjiEnFazla);
                 return;
             }

@@ -6,17 +6,20 @@ using UnityEngine.UI;
 
 namespace IkiDunya.UI.Night
 {
-    /// <summary>Gecenin sonu: yuva gecesinde yuvanın bandı ve yumurta sayısı, kaçışta kurtulan, kaybedilen, dişi ve erkek. Şimdilik sadece sayı ve renk; yazılar metinler.md'ye girince eklenecek.</summary>
+    /// <summary>Gecenin sonu: yuva gecesinde yuvanın bandı (renk ve adı) ve yumurta sayısı, kaçışta kurtulan, kaybedilen, dişi ve erkek. Başlık ve satır adları MetinYazisi ile metinler.md'den gelir.</summary>
     public class GeceSonucuPaneli : MonoBehaviour
     {
         [SerializeField] private YuvaGecesi yuvaGecesi;
         [SerializeField] private KacisGecesi kacisGecesi;
         [SerializeField] private TermalAyarlari termal;
+        [SerializeField] private MetinTablosu metinler;
 
         [Header("Yuva gecesi")]
         [SerializeField] private GameObject yuvaPaneli;
         [Tooltip("Yuvanın sıcaklık bandı rengi.")]
         [SerializeField] private Image yuvaBandi;
+        [Tooltip("Bandın adı (bant_mavi … bant_kirmizi); renk ayırt edemeyen oyuncu için.")]
+        [SerializeField] private Text bantAdi;
         [SerializeField] private Text yumurtaSayisi;
 
         [Header("Kaçış gecesi")]
@@ -59,6 +62,8 @@ namespace IkiDunya.UI.Night
         {
             if (yuva == null || yuvaPaneli == null) return;
             yuvaBandi.color = termal.Renk(yuva.Bant);
+            MetinTablosu tablo = metinler != null ? metinler : MetinTablosu.Yuklu;
+            if (bantAdi != null && tablo != null) bantAdi.text = tablo.Al($"bant_{yuva.Bant.ToString().ToLowerInvariant()}");
             yumurtaSayisi.text = yuva.Yumurta.ToString();
             yuvaPaneli.SetActive(true);
         }

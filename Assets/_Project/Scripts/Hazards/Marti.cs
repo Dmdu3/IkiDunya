@@ -52,6 +52,7 @@ namespace IkiDunya.Hazards
             golge.gameObject.SetActive(true);
             golgeVar = true;
             sayac = ayarlar.MartiUyari;
+            Ses.Cal(SesTuru.MartiUyari, golge.position);
         }
 
         private void Dal()

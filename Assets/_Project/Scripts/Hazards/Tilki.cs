@@ -58,6 +58,7 @@ namespace IkiDunya.Hazards
             yuvaDenendi = false;
             hedefYuva = -1;
             if (noktalar.Length > 0) transform.position = noktalar[0].position;
+            if (geldi) Ipucu.Goster("ipucu_tilki");
         }
 
         private bool CitVar()
@@ -83,6 +84,7 @@ namespace IkiDunya.Hazards
                     {
                         durum = Durum.Eseliyor;
                         eselemeKalan = ayarlar.TilkiEselemeSuresi;
+                        Ses.Cal(SesTuru.TilkiEseliyor, transform.position);
                     }
                     else Bak();
                     break;
@@ -119,6 +121,7 @@ namespace IkiDunya.Hazards
                 if (!GorusKonisi.Goruyor(transform, bulunan[i].bounds.center, ayarlar.TilkiMenzil, ayarlar.TilkiAci, gozYuksekligi, engelMaskesi)) continue;
                 av = aday;
                 durum = Durum.Kosuyor;
+                Ses.Cal(SesTuru.TilkiUyari, transform.position);
                 SuruyuKorkuttu?.Invoke(transform.position);
                 return;
             }

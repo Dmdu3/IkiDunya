@@ -617,42 +617,53 @@ namespace IkiDunya.Editor
             tuval.GetComponent<Canvas>().sortingOrder = 10;
             var panel = tuval.gameObject.AddComponent<GeceSonucuPaneli>();
             Bagla(panel, "termal", Ayar<TermalAyarlari>("TermalAyarlari"));
+            Bagla(panel, "metinler", Ayar<MetinTablosu>("MetinTablosu"));
 
             if (yuvaGecesi != null)
             {
                 Bagla(panel, "yuvaGecesi", yuvaGecesi);
-                RectTransform kutu = PanelKur("YuvaSonucu", tuval);
+                RectTransform kutu = PanelKur("YuvaSonucu", tuval, "sonuc_yuva_baslik");
                 Bagla(panel, "yuvaPaneli", kutu.gameObject);
+                // 1. satır: bandın rengi ve adı; 2. satır: yumurta sayısı
                 Bagla(panel, "yuvaBandi", RenkKaresi(kutu, 0, Color.white));
-                Bagla(panel, "yumurtaSayisi", SayiYazisi(kutu, 0));
+                SatirAdi(kutu, 0, "sonuc_bant");
+                Bagla(panel, "bantAdi", SayiYazisi(kutu, 0, 32));
+                SatirAdi(kutu, 1, "sonuc_yumurta");
+                Bagla(panel, "yumurtaSayisi", SayiYazisi(kutu, 1, 48));
             }
 
             if (kacisGecesi != null)
             {
                 Bagla(panel, "kacisGecesi", kacisGecesi);
-                RectTransform kutu = PanelKur("KacisSonucu", tuval);
+                RectTransform kutu = PanelKur("KacisSonucu", tuval, "sonuc_kacis_baslik");
                 Bagla(panel, "kacisPaneli", kutu.gameObject);
                 Color[] renkler = { new Color(0.4f, 0.8f, 0.45f), new Color(0.85f, 0.25f, 0.2f), new Color(1f, 0.55f, 0.75f), new Color(0.4f, 0.65f, 1f) };
                 string[] alanlar = { "kurtulan", "kaybedilen", "disi", "erkek" };
                 for (int i = 0; i < alanlar.Length; i++)
                 {
                     RenkKaresi(kutu, i, renkler[i]);
-                    Bagla(panel, alanlar[i], SayiYazisi(kutu, i));
+                    SatirAdi(kutu, i, $"sonuc_{alanlar[i]}");
+                    Bagla(panel, alanlar[i], SayiYazisi(kutu, i, 48));
                 }
             }
         }
 
-        private static RectTransform PanelKur(string ad, Transform tuval)
+        /// <summary>Panel: üstte başlık, altta "devam etmek için…" satırı; aradaki satırlar renk, ad, sayı.</summary>
+        private static RectTransform PanelKur(string ad, Transform tuval, string baslikId)
         {
             var panel = new GameObject(ad, typeof(RectTransform), typeof(Image));
             panel.layer = LayerMask.NameToLayer("UI");
             panel.transform.SetParent(tuval, false);
             var rect = (RectTransform)panel.transform;
-            Yasla(rect, new Vector2(0.4f, 0.3f), new Vector2(0.6f, 0.7f));
+            Yasla(rect, new Vector2(0.33f, 0.22f), new Vector2(0.67f, 0.78f));
             panel.GetComponent<Image>().color = new Color(0f, 0f, 0f, 0.75f);
+            PanelYazisi(rect, "Baslik", new Vector2(0.05f, 0.86f), new Vector2(0.95f, 0.98f), 40, TextAnchor.MiddleCenter, baslikId);
+            PanelYazisi(rect, "Devam", new Vector2(0.05f, 0.02f), new Vector2(0.95f, 0.1f), 24, TextAnchor.MiddleCenter, "sonuc_devam");
             panel.SetActive(false);
             return rect;
         }
+
+        private static float SatirUstu(int satir) => 0.82f - satir * 0.17f;
 
         /// <summary>Panelde i. satırın solundaki renkli kare.</summary>
         private static Image RenkKaresi(RectTransform panel, int satir, Color renk)
@@ -660,26 +671,53 @@ namespace IkiDunya.Editor
             var kare = new GameObject($"Renk_{satir}", typeof(RectTransform), typeof(Image));
             kare.layer = LayerMask.NameToLayer("UI");
             kare.transform.SetParent(panel, false);
-            float ust = 0.9f - satir * 0.2f;
-            Yasla((RectTransform)kare.transform, new Vector2(0.15f, ust - 0.12f), new Vector2(0.35f, ust));
+            float ust = SatirUstu(satir);
+            Yasla((RectTransform)kare.transform, new Vector2(0.05f, ust - 0.11f), new Vector2(0.13f, ust - 0.02f));
             var resim = kare.GetComponent<Image>();
             resim.color = renk;
             return resim;
         }
 
-        /// <summary>Panelde i. satırın sağındaki sayı.</summary>
-        private static Text SayiYazisi(RectTransform panel, int satir)
+        /// <summary>Panelde i. satırın adı (metinler.md'den).</summary>
+        private static void SatirAdi(RectTransform panel, int satir, string id)
+        {
+            float ust = SatirUstu(satir);
+            PanelYazisi(panel, $"Ad_{satir}", new Vector2(0.17f, ust - 0.13f), new Vector2(0.6f, ust), 30, TextAnchor.MiddleLeft, id);
+        }
+
+        /// <summary>Panelde i. satırın sağındaki sayı (ya da bant adı).</summary>
+        private static Text SayiYazisi(RectTransform panel, int satir, int boyut)
         {
             var nesne = new GameObject($"Sayi_{satir}", typeof(RectTransform), typeof(Text));
             nesne.layer = LayerMask.NameToLayer("UI");
             nesne.transform.SetParent(panel, false);
-            float ust = 0.9f - satir * 0.2f;
-            Yasla((RectTransform)nesne.transform, new Vector2(0.45f, ust - 0.14f), new Vector2(0.9f, ust + 0.02f));
+            float ust = SatirUstu(satir);
+            Yasla((RectTransform)nesne.transform, new Vector2(0.6f, ust - 0.14f), new Vector2(0.95f, ust + 0.01f));
             var yazi = nesne.GetComponent<Text>();
             yazi.font = Resources.GetBuiltinResource<Font>("LegacyRuntime.ttf");
-            yazi.fontSize = 48;
-            yazi.alignment = TextAnchor.MiddleLeft;
+            yazi.fontSize = boyut;
+            yazi.alignment = TextAnchor.MiddleRight;
             yazi.color = Color.white;
+            return yazi;
+        }
+
+        /// <summary>Metin tablosundan id ile dolan sabit yazı.</summary>
+        internal static Text PanelYazisi(RectTransform panel, string ad, Vector2 enAz, Vector2 enCok, int boyut, TextAnchor hiza, string id)
+        {
+            var nesne = new GameObject(ad, typeof(RectTransform), typeof(Text));
+            nesne.layer = LayerMask.NameToLayer("UI");
+            nesne.transform.SetParent(panel, false);
+            Yasla((RectTransform)nesne.transform, enAz, enCok);
+            var yazi = nesne.GetComponent<Text>();
+            yazi.font = Resources.GetBuiltinResource<Font>("LegacyRuntime.ttf");
+            yazi.fontSize = boyut;
+            yazi.alignment = hiza;
+            yazi.color = Color.white;
+            var metin = nesne.AddComponent<MetinYazisi>();
+            Bagla(metin, "tablo", Ayar<MetinTablosu>("MetinTablosu"));
+            var so = new SerializedObject(metin);
+            so.FindProperty("id").stringValue = id;
+            so.ApplyModifiedPropertiesWithoutUndo();
             return yazi;
         }
 

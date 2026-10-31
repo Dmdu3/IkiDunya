@@ -3,6 +3,7 @@ using System.IO;
 using System.Text.RegularExpressions;
 using IkiDunya.Core;
 using IkiDunya.UI.Menu;
+using IkiDunya.UI.Night;
 using UnityEditor;
 using UnityEngine;
 using UnityEngine.EventSystems;
@@ -12,7 +13,7 @@ using UnityEngine.UI;
 
 namespace IkiDunya.Editor
 {
-    /// <summary>Ana menü sahnesini, Sistemler'e duraklatma menüsünü ve EventSystem'i kurar; docs/metinler.md'yi metin tablosuna aktarır.</summary>
+    /// <summary>Ana menü sahnesini, Sistemler'e duraklatma menüsünü, ipucu kutusunu, ses yöneticisini ve EventSystem'i kurar; docs/metinler.md'yi metin tablosuna aktarır.</summary>
     public static class MenuKur
     {
         private const string MenuSahnesi = "Assets/_Project/Scenes/Levels/Menu.unity";
@@ -81,12 +82,12 @@ namespace IkiDunya.Editor
             GriKumsalKur.Kaydet(sahne, MenuSahnesi);
         }
 
-        /// <summary>Sistemler kalıbına EventSystem ve duraklatma menüsü ekler, deneme panelini çıkarır.</summary>
+        /// <summary>Sistemler kalıbına EventSystem, duraklatma menüsü, ipucu kutusu ve ses yöneticisi ekler, deneme panelini çıkarır.</summary>
         private static void SistemlereEkle(MetinTablosu metinler)
         {
             GameObject kok = PrefabUtility.LoadPrefabContents(SistemlerKalibi);
 
-            foreach (string eski in new[] { "EventSystem", "DuraklatmaMenusu" })
+            foreach (string eski in new[] { "EventSystem", "DuraklatmaMenusu", "IpucuArayuzu", "SesYoneticisi" })
             {
                 Transform mevcut = kok.transform.Find(eski);
                 if (mevcut != null) Object.DestroyImmediate(mevcut.gameObject);
@@ -118,8 +119,52 @@ namespace IkiDunya.Editor
             GriKumsalKur.Bagla(menu, "anaMenu", anaMenu);
             GriKumsalKur.Bagla(menu, "ayarlarPaneli", ayarlarPaneli);
 
+            IpucuKur(kok.transform);
+            SesKur(kok.transform);
+
             PrefabUtility.SaveAsPrefabAsset(kok, SistemlerKalibi);
             PrefabUtility.UnloadPrefabContents(kok);
+        }
+
+        /// <summary>Ekranın altında ipucu kutusu (duraklatmanın altında, oyunun üstünde).</summary>
+        private static void IpucuKur(Transform kok)
+        {
+            Transform tuval = GriKumsalKur.TuvalKur("IpucuArayuzu", kok);
+            tuval.GetComponent<Canvas>().sortingOrder = 40;
+            var kutu = new GameObject("Kutu", typeof(RectTransform), typeof(Image));
+            kutu.layer = LayerMask.NameToLayer("UI");
+            kutu.transform.SetParent(tuval, false);
+            GriKumsalKur.Yasla((RectTransform)kutu.transform, new Vector2(0.25f, 0.14f), new Vector2(0.75f, 0.24f));
+            kutu.GetComponent<Image>().color = new Color(0f, 0f, 0f, 0.65f);
+
+            var yaziNesnesi = new GameObject("Yazi", typeof(RectTransform), typeof(Text));
+            yaziNesnesi.layer = LayerMask.NameToLayer("UI");
+            yaziNesnesi.transform.SetParent(kutu.transform, false);
+            GriKumsalKur.Yasla((RectTransform)yaziNesnesi.transform, new Vector2(0.03f, 0.05f), new Vector2(0.97f, 0.95f));
+            Text yazi = yaziNesnesi.GetComponent<Text>();
+            yazi.font = Resources.GetBuiltinResource<Font>("LegacyRuntime.ttf");
+            yazi.fontSize = 30;
+            yazi.alignment = TextAnchor.MiddleCenter;
+            yazi.color = Color.white;
+            kutu.SetActive(false);
+
+            var panel = tuval.gameObject.AddComponent<IpucuPaneli>();
+            GriKumsalKur.Bagla(panel, "ayarlar", GriKumsalKur.Ayar<OyunAyarlari>("OyunAyarlari"));
+            GriKumsalKur.Bagla(panel, "kutu", kutu);
+            GriKumsalKur.Bagla(panel, "yazi", yazi);
+        }
+
+        /// <summary>Ses yöneticisi ve ses yuvaları: SesAyarlari'nda her ses türü ve her adım için boş yuva açılır; Abdü klipleri oraya sürükler.</summary>
+        private static void SesKur(Transform kok)
+        {
+            var ayarlar = GriKumsalKur.Ayar<SesAyarlari>("SesAyarlari");
+            ayarlar.EksikYuvalariEkle();
+            EditorUtility.SetDirty(ayarlar);
+            AssetDatabase.SaveAssets();
+
+            var nesne = new GameObject("SesYoneticisi");
+            nesne.transform.SetParent(kok, false);
+            GriKumsalKur.Bagla(nesne.AddComponent<SesYoneticisi>(), "ayarlar", ayarlar);
         }
 
         // Ayarlardaki tuş satırları: metin id'si, GameInput eylemi, bağlama sırası (Hareket: 1 ileri, 2 geri, 3 sol, 4 sağ).

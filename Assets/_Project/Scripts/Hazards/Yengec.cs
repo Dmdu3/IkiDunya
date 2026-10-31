@@ -40,6 +40,7 @@ namespace IkiDunya.Hazards
             {
                 uyariyor = true;
                 sayac = ayarlar.YengecUyari;
+                Ses.Cal(SesTuru.YengecUyari, transform.position);
                 return;
             }
 
