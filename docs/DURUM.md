@@ -44,10 +44,10 @@ Son güncelleme: 2026-11-01 — Alpha main'de, deneme listesi tamam (editörde 3
 | Ses: olaylar, ortam sesi, müzik | `Core` | `Ses`, `SesYoneticisi`, `SesAyarlari` | Umut | Yapılıyor (klipler Abdü'de) |
 | Kumsal haritası ve tur akışı | `Management`, `UI/Management` | `InsanTuru`, `HaritaSecici`, `YuvaHaritasi`, `YonetimArayuzu` | Toprak | Yapılıyor |
 | Kaynaklar (bütçe, gönüllü, halk desteği, bakım), rapor, kayıt | `Management` | `YonetimDurumu`, `YonetimAyarlari`; `Core/IOyunVerisi` | Toprak | Yapılıyor |
-| Paydaşlar (Otel, Belediye, Balıkçılar) | `Management` | `Paydas`, `YonetimDurumu`, `YonetimAyarlari` | Toprak | Yapılıyor (Unity'de denenmedi) |
+| Paydaşlar (Otel, Belediye, Balıkçılar) | `Management` | `Paydas`, `YonetimDurumu`, `YonetimAyarlari` | Toprak | Yapılıyor (Unity'de bir turda denendi, 2026-11-01) |
 | Gönüllüler ve görevler | `Management` | `GorevTanimi`, `Etkiler` | Toprak | Yapılıyor |
-| Kartlar (5 tür, 27 kart; Acil kartlar uyarıyla ele gelir) | `Management` | `KartTanimi`, `Etkiler`, `InsanTuru` | Toprak | Yapılıyor (Unity'de denenmedi) |
-| Kanıtlar (ikinci kanıt güçlendirir), olaylar (16, zincir, paydaş tepkisi), uyarılar, tur sonu simülasyonu, avcı riski | `Management` | `OlayTanimi`, `Etkiler` | Toprak | Yapılıyor (Unity'de denenmedi) |
+| Kartlar (5 tür, 27 kart; Acil kartlar uyarıyla ele gelir) | `Management` | `KartTanimi`, `Etkiler`, `InsanTuru` | Toprak | Yapılıyor (Unity'de bir turda denendi: hedefsiz, bölge hedefli, vazgeçme, koşullu, 2026-11-01) |
+| Kanıtlar (ikinci kanıt güçlendirir), olaylar (16, zincir, paydaş tepkisi), uyarılar, tur sonu simülasyonu, avcı riski | `Management` | `OlayTanimi`, `Etkiler` | Toprak | Yapılıyor (bir olay ve tur sonu denendi; zincir, uyarı, güçlenme denenmedi) |
 | İnsan kısmı içeriği (kart, görev, olay asset'leri) | `Management/Editor` | `InsanIcerigiKur` (İki Dünya → İnsan kısmı içeriğini kur) | Toprak | Yapılıyor |
 
 Durum değerleri: Planlandı · Yapılıyor · Oynanabilir · Bitti.
@@ -183,7 +183,7 @@ Toprak'ın onayıyla Umut yazdı (2026-11-01); kodu artık Toprak sürdürür. S
 1. **Rapor:** gelir, denize ulaşan yavru, geçen turun sonunda olanlar (çöp birikti, yuva bozuldu), uyarının sonucu, bu tur açılan kanıtlar.
 2. **Gönüllüler:** görev seç, haritada bölge ya da yuva seç (her atama bir gönüllü). Temizlik çöp −1, devriye o tur ve gece insan yok, kafes yuvaya tilki giremez, gölge ve sulama yuva o tur ve gece 1 bant serin, bilgilendirme destek +1. Gönüllü: 4 + her 10 yavruya 1 (en fazla 10) + çağrı − okul.
 3. **Kartlar:** havuzdan 4 kart; bütçe yettiğince oynanır, hedefli kartta haritada seçilir (aynı karta tekrar tıklamak vazgeçer). Oynanmayanlar havuza döner; kalıcı yasaklar ve Temiz Enerji bir kez oynanır.
-4. **Olay:** rastgele (art arda aynısı gelmez); iki seçenek ya da uyarı (Tamam). Destek 3'ün altındaysa otel ve festivalde kabul kapalı; bütçe yetmeyen seçenek kapalı.
+4. **Olay:** rastgele (art arda aynısı gelmez); iki seçenek ya da uyarı (Tamam). Seçenek düğmesinde kaynak etkisi yazar (bütçe, halk, paydaş, gelecek turun gönüllüsü). Destek 3'ün altındaysa otel ve festivalde kabul kapalı; bütçe yetmeyen seçenek kapalı.
 5. **Tur sonu:** her bölgede %30 çöp +1; kafessiz ve çıkmamış her yuvaya %20 (Tilki Çiti varsa %10) avcı: yumurtanın %30'u gider, Avcı izi. Sonuçlar gelecek turun raporunda. Sonra akış ilerler.
 
 **Kanıtlar.** Isı → Gölgelik 1 ucuz; Işık → Işık Yasağı; Çöp → Araç Yasağı, Şezlong Düzenlemesi; Avcı → Tilki Çiti; Su → Yuva Taşıma. Saha Araştırması açılmamış bir kanıtı rastgele açar.

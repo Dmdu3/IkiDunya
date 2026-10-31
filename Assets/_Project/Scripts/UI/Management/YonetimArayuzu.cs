@@ -176,9 +176,7 @@ namespace IkiDunya.UI.Management
             sb.Append($"\n{Al(k.Id + "_aciklama")}");
 
             var etki = new StringBuilder();
-            if (k.DestekFarki != 0) etki.Append(Fark(Al("kart_halk"), k.DestekFarki));
-            foreach (Paydas p in System.Enum.GetValues(typeof(Paydas)))
-                if (k.PaydasFarki.Al(p) != 0) etki.Append(Fark(Al(PaydasId(p)), k.PaydasFarki.Al(p)));
+            HalkVePaydas(etki, k.DestekFarki, k.PaydasFarki);
             if (k.KosulVar)
             {
                 string renk = y.KosulTamam(k) ? TurRengi : EksiRengi;
@@ -186,6 +184,13 @@ namespace IkiDunya.UI.Management
             }
             if (etki.Length > 0) sb.Append($"\n<b>{etki.ToString().TrimEnd()}</b>");
             return sb.ToString();
+        }
+
+        private void HalkVePaydas(StringBuilder etki, int destek, PaydasFarki paydas)
+        {
+            if (destek != 0) etki.Append(Fark(Al("kart_halk"), destek));
+            foreach (Paydas p in System.Enum.GetValues(typeof(Paydas)))
+                if (paydas.Al(p) != 0) etki.Append(Fark(Al(PaydasId(p)), paydas.Al(p)));
         }
 
         private static string Fark(string ad, int sayi) => $"<color={(sayi > 0 ? ArtiRengi : EksiRengi)}>{ad} {Isaretli(sayi)}</color>  ";
@@ -217,11 +222,22 @@ namespace IkiDunya.UI.Management
             OlayTanimi olay = tur.Olay;
             if (olay == null) return;
             olayYazisi.text = Al(olay.Id);
-            aDugmesi.GetComponentInChildren<Text>().text = olay.Uyari ? Al("olay_tamam") : Al(olay.Id + "_a");
+            aDugmesi.GetComponentInChildren<Text>().text = olay.Uyari ? Al("olay_tamam") : SecenekYazisi(olay, true);
             aDugmesi.interactable = tur.SecenekAcik(true);
             bDugmesi.gameObject.SetActive(!olay.Uyari);
-            bDugmesi.GetComponentInChildren<Text>().text = Al(olay.Id + "_b");
+            bDugmesi.GetComponentInChildren<Text>().text = SecenekYazisi(olay, false);
             bDugmesi.interactable = tur.SecenekAcik(false);
+        }
+
+        /// <summary>Seçenek ve altında kaynak etkisi (kartlardaki gibi): bütçe, halk, paydaşlar, gelecek turun gönüllüsü. Kumsala etkisi seçenek metninde anlatılır.</summary>
+        private string SecenekYazisi(OlayTanimi olay, bool a)
+        {
+            var etki = new StringBuilder();
+            if (olay.Butce(a) != 0) etki.Append(Fark(Al("yonetim_butce"), olay.Butce(a)));
+            HalkVePaydas(etki, olay.Destek(a), olay.Paydaslar(a));
+            if (olay.Gonullu(a) != 0) etki.Append(Fark(Al("yonetim_gonullu"), olay.Gonullu(a)));
+            string ad = Al(olay.Id + (a ? "_a" : "_b"));
+            return etki.Length > 0 ? $"{ad}\n<b>{etki.ToString().TrimEnd()}</b>" : ad;
         }
 
         private void YuvaListesi()
