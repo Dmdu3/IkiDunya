@@ -73,6 +73,9 @@ namespace IkiDunya.Editor
 
             if (!GriKumsalKur.SahneAc(MenuSahnesi, out Scene sahne)) return;
             var kamera = new GameObject("Kamera").AddComponent<UnityEngine.Camera>();
+            // Menüde de bir kulak olsun (menü müziği, "no audio listener" uyarısı).
+            kamera.gameObject.AddComponent<AudioListener>();
+            kamera.gameObject.AddComponent<TekKulak>();
             kamera.clearFlags = CameraClearFlags.SolidColor;
             kamera.backgroundColor = new Color(0.05f, 0.12f, 0.18f);
             kamera.gameObject.tag = "MainCamera";
@@ -419,9 +422,9 @@ namespace IkiDunya.Editor
                 if (kok.TryGetComponent(out Light isik) && isik.type == LightType.Directional) gunes = isik;
 
             var kamera = new GameObject("FinalKamerasi").AddComponent<UnityEngine.Camera>();
+            kamera.gameObject.AddComponent<TekKulak>();
             kamera.transform.SetParent(grup, false);
             kamera.transform.SetPositionAndRotation(new Vector3(6f, 3f, 14f), Quaternion.LookRotation(new Vector3(-6f, -2.5f, -12f)));
-            kamera.gameObject.AddComponent<AudioListener>();
 
             // Yetişkin kaplumbağa: Yusuf'un caretta'sı (yoksa gri küre); denizden kumsala yürür.
             Transform kaplumbaga = GriKumsalKur.Bos("YetiskinKaplumbaga", grup);

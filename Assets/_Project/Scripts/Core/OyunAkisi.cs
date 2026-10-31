@@ -54,6 +54,8 @@ namespace IkiDunya.Core
         {
             if (ornek != null)
             {
+                // Sahnenin kendi Sistemler kopyası: hemen kapanır (EventSystem ve kulak iki tane olmasın), sonra silinir.
+                gameObject.SetActive(false);
                 Destroy(gameObject);
                 return;
             }
