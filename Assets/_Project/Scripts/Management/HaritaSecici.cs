@@ -16,6 +16,8 @@ namespace IkiDunya.Management
         [SerializeField] private Transform vurgu;
         [Tooltip("Tıklanan noktaya bu kadar yakın yuva seçilir (metre).")]
         [SerializeField] private float yuvaSecmeMesafesi = 5f;
+        [Tooltip("Vurgunun kumsalın üstünde durduğu yükseklik (metre); tepeden bakılır, kumulların üstünde kalsın.")]
+        [SerializeField] private float vurguYuksekligi = 6f;
 
         /// <summary>İmlecin altındaki bölge; kumsal dışındaysa -1.</summary>
         public int Ustundeki { get; private set; } = -1;
@@ -37,7 +39,8 @@ namespace IkiDunya.Management
                 vurgu.gameObject.SetActive(Ustundeki >= 0);
                 if (Ustundeki >= 0)
                 {
-                    vurgu.position = kum.BolgeNoktasi(Ustundeki, kum.Derinlik / 2f) + kum.transform.up * 0.05f;
+                    Vector3 orta = kum.transform.TransformPoint(new Vector3(-kum.Uzunluk / 2f + kum.BolgeGenisligi * (Ustundeki + 0.5f), vurguYuksekligi, kum.Derinlik / 2f));
+                    vurgu.position = orta;
                     vurgu.rotation = kum.transform.rotation;
                     vurgu.localScale = new Vector3(kum.BolgeGenisligi, vurgu.localScale.y, kum.Derinlik);
                 }
@@ -54,9 +57,15 @@ namespace IkiDunya.Management
         {
             nokta = Vector3.zero;
             Ray isin = kamera.ScreenPointToRay(GameInput.IsaretciKonumu);
-            var duzlem = new Plane(kum.transform.up, kum.transform.position);
-            if (!duzlem.Raycast(isin, out float uzaklik)) return false;
-            nokta = isin.GetPoint(uzaklik);
+            // Önce zemine (kumsal arazisi engebeli olabilir), olmazsa kumsalın düzlemine.
+            if (Physics.Raycast(isin, out RaycastHit carpan, kamera.farClipPlane, LayerMask.GetMask("Ground"), QueryTriggerInteraction.Ignore))
+                nokta = carpan.point;
+            else
+            {
+                var duzlem = new Plane(kum.transform.up, kum.transform.position);
+                if (!duzlem.Raycast(isin, out float uzaklik)) return false;
+                nokta = isin.GetPoint(uzaklik);
+            }
             Vector3 yerel = kum.transform.InverseTransformPoint(nokta);
             return Mathf.Abs(yerel.x) <= kum.Uzunluk / 2f && yerel.z >= 0f && yerel.z <= kum.Derinlik;
         }

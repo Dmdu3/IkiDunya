@@ -1,4 +1,5 @@
 using System;
+using IkiDunya.Core;
 using UnityEngine;
 
 namespace IkiDunya.Hazards
@@ -74,6 +75,7 @@ namespace IkiDunya.Hazards
             Vector3 yon = fark.normalized;
             transform.rotation = Quaternion.RotateTowards(transform.rotation, Quaternion.LookRotation(yon), 180f * Time.deltaTime);
             transform.position += yon * Mathf.Min(ayarlar.YurumeHizi * Time.deltaTime, fark.magnitude);
+            transform.position = Zemin.Oturt(transform.position);
         }
 
         private void Bak()
