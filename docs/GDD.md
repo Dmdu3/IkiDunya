@@ -207,7 +207,7 @@ Kumsal yukarıdan, bölgelere ayrılmış halde görünür (örneğin 8 bölge).
 2. **Gönüllüleri ata:** Her gönüllü haritada bir bölgeye ve bir göreve sürüklenir.
 3. **Kart oyna:** Bütçe yettiği kadar kart oynanır.
 4. **Olay:** Bir olay gelir, iki seçenekten biri seçilir.
-5. **Tur biter:** Simülasyon ilerler: çöp birikir, sıcaklık hava durumuna göre değişir, korunmayan yuvalara avcı gelebilir.
+5. **Tur biter:** Simülasyon ilerler: geçen turun uyarısı gerçekleşir (sıcak dalgası, fırtına), çöp birikir (şezlong ve insan çoksa daha hızlı), korunmayan yuvalara avcı gelebilir. Haritada her yuvanın avcı riski görünür.
 
 ### Gönüllü görevleri
 
@@ -225,55 +225,106 @@ Oyun 4 gönüllüyle başlar. Denize ulaşan her 10 yavru için 1 gönüllü dah
 
 | Kaynak | Başlangıç | Nasıl değişir |
 | --- | --- | --- |
-| Bütçe | 6 | Her tur +3; halk desteği 7 ve üstüyse +5. Kartlara harcanır |
-| Gönüllü | 4 | Kurtarılan yavrularla artar |
-| Halk desteği | 4 (0–10) | Bilgilendirme ve olay seçimleriyle değişir. 3'ün altına düşerse otel ve belediye olaylarında olumlu seçenek kapanır |
+| Bütçe | 6 | Her tur +3; halk desteği 7 ve üstüyse +5. Otel dostsa +1, Belediye küsse −1. Bakımlı kartların bakımı gelirden düşer. Kartlara harcanır |
+| Gönüllü | 4 | Kurtarılan yavrularla artar; Gönüllü Çağrısı ve bazı olaylar gelecek tur için ekler ya da meşgul eder |
+| Halk desteği | 4 (0–10) | Bilgilendirme, kartlar ve olay seçimleriyle değişir. 3'ün altına düşerse otel ve belediye olaylarında olumlu seçenek kapanır |
+
+### Paydaşlar
+
+Kumsalın üç paydaşı var: **Otel**, **Belediye**, **Balıkçılar**. Her biriyle ilişki −3 ile +3 arasıdır, başta 0. Kartlar ve olay seçimleri ilişkiyi değiştirir; kumsalı korumak çoğu zaman birini kızdırır. +2 ve üstü **dost**, −2 ve altı **küs** sayılır.
+
+| Paydaş | Dostsa | Küsse |
+| --- | --- | --- |
+| Otel | Her tur +1 bütçe (sponsorluk) | "Otel ışıkları" olayı havuza girer |
+| Belediye | Politika kartları 1 ucuz | Her tur gelir −1; "Ödenek kesintisi" olayı havuza girer |
+| Balıkçılar | Hayalet Ağ Temizliği iki kat temizler | "Denize atılan ağlar" olayı havuza girer |
+
+Bazı kartlar bir paydaşla en az belli bir ilişki ister (ör. Koruma Alanı: Belediye +2); ilişki yetmezse kart elde görünür ama oynanamaz.
 
 ## İnsan kısmı: kartlar, kanıtlar, olaylar
 
-Gönüllüler günlük işi yapar; kalıcı ve büyük değişiklikler kartlarla yapılır. Her tur havuzdan 4 kart gösterilir, oyuncu bütçesi yettiğince oynar. Oynanmayan kartlar havuza döner.
+Gönüllüler günlük işi yapar; kalıcı ve büyük değişiklikler kartlarla yapılır. Her tur havuzdan 5 kart gösterilir, oyuncu bütçesi yettiğince oynar. Oynanmayan kartlar havuza döner. Bir uyarı gelmişse, o uyarının Acil kartları bu 5 karta ek olarak ele gelir.
+
+Kart oynamak üç şeyi tartmaktır: bütçe (bugün ve bakım olarak her tur), paydaş ilişkisi ve zamanlama (uyarı, gece, kanıt).
+
+### Kart türleri
+
+| Tür | Kural |
+| --- | --- |
+| Altyapı | Haritaya konur, kalıcıdır. Bazılarının her tur bakımı var |
+| Kampanya | Anında ya da o gece etki eder; tekrar oynanabilir |
+| Politika | Kalıcı karar, bir kez oynanır; çoğu bir paydaşı kızdırır ya da bir paydaşın desteğini ister |
+| Acil | Sadece uyarı gelmişken ele gelir; uyarı tur sonunda gerçekleşmeden önce oynanır |
+| Araştırma | Bilgi ve kanıt; başka kartları açar, ucuzlatır ve güçlendirir |
 
 ### Kartlar
 
-| Kart | Bedel | Etki | Açılma |
-| --- | --- | --- | --- |
-| Gölgelik | 2 | Seçilen bölgede kum 1 bant serinler, kalıcı | Baştan |
-| Temizlik Kampanyası | 2 | Bir turda 3 bölgenin çöpü 1 kademe azalır | Baştan |
-| Kumul Onarımı | 3 | Dalga çizgisi 4 m geri çekilir | Baştan |
-| Yuva Taşıma | 2 | Bir yuva güvenli ve serin bir bölgeye taşınır | Su kanıtı |
-| Işık Yasağı | 3 | Otel ve yol ışıkları geceleri kapalı, kalıcı | Işık kanıtı |
-| Araç Yasağı | 1 | Tekerlek izleri oluşmaz | Çöp kanıtı |
-| Şezlong Düzenlemesi | 2 | Şezlonglar her akşam toplanır; engeller yarıya iner | Çöp kanıtı |
-| Tilki Çiti | 3 | Kumsalın kenarına çit; tilki gelme ihtimali yarıya iner | Avcı kanıtı |
-| Hayalet Ağ Temizliği | 3 | Bölüm 5'te denizdeki ağ ve misina azalır | Baştan |
-| Gönüllü Çağrısı | 1 | O tur +2 gönüllü | Baştan |
-| Saha Araştırması | 1 | Henüz bulunmamış bir kanıtı açar | Baştan |
-| Temiz Enerji | 4 | Kısa vadede etki yok; sonraki sıcak dalgaları daha zayıf gelir ve final sahnesi değişir | Baştan |
+| Kart | Tür | Bedel | Etki | Paydaş | Açılma |
+| --- | --- | --- | --- | --- | --- |
+| Gölgelik | Altyapı | 2 | Seçilen bölgede kum 1 bant serinler, kalıcı | — | Baştan (Isı kanıtı 1 ucuzlatır) |
+| Kumul Onarımı | Altyapı | 3 | Seçilen bölgede dalga çizgisi geri çekilir | — | Baştan |
+| Tilki Çiti | Altyapı | 3 | Kumsalın kenarına çit; tilki gelme ihtimali yarıya iner | — | Avcı kanıtı |
+| Kaplumbağa Dostu Aydınlatma | Altyapı | 2 | Seçilen bölgede ışık 2 kademe azalır, kalıcı | — | Baştan (Işık kanıtı 1 ucuzlatır) |
+| Gözcü Kulübesi | Altyapı | 3, bakım 1 | Seçilen bölgede her gece devriye var | — | Baştan |
+| Kuluçkahane | Altyapı | 5 | Bütün yuvalar seçilen bölgeye taşınır ve kafeslenir; bir kez. Bütün yumurtalar tek yerde: o bölgenin sıcaklığı ve dalgası hepsini etkiler | Halk +1 | Baştan |
+| Temizlik Kampanyası | Kampanya | 2 | En kirli 3 bölgenin çöpü 1 kademe azalır (ikinci Çöp kanıtıyla 4 bölge) | — | Baştan |
+| Yuva Taşıma | Kampanya | 2 | Bir yuva güvenli ve serin bir bölgeye taşınır | — | Su kanıtı |
+| Hayalet Ağ Temizliği | Kampanya | 3 | Bölüm 5'te denizdeki ağ ve misina azalır (Balıkçılar dostsa iki kat) | Balıkçılar +1 | Baştan |
+| Gönüllü Çağrısı | Kampanya | 1 | Gelecek tur +2 gönüllü | — | Baştan |
+| Plaj Tabelaları | Kampanya | 1 | Bu gece bütün bölgelerde insan 1 kademe azalır (ikinci Işık kanıtıyla 2) | — | Baştan |
+| Bağış Kampanyası | Kampanya | 0 | Bütçe + halk desteğinin yarısı; halk desteği −1 | — | Baştan |
+| Basın Bülteni | Kampanya | 1 | Halk desteği + açılmış kanıt türü sayısı (en az 1) | Otel −1 | Baştan |
+| Belediye Lobisi | Kampanya | 2 | Belediyeyle görüşme | Belediye +1 | Baştan |
+| Işık Yasağı | Politika | 3 | Otel ve yol ışıkları geceleri kapalı | Otel −2; Belediye 0 ister | Işık kanıtı |
+| Araç Yasağı | Politika | 1 | Tekerlek izleri oluşmaz | Balıkçılar −1 | Çöp kanıtı |
+| Şezlong Düzenlemesi | Politika | 2 | Şezlonglar her akşam toplanır; engeller yarıya iner | Otel −1 | Çöp kanıtı |
+| Koruma Alanı | Politika | 4, bakım 1 | Seçilen bölgede şezlong, insan, ışık ve araç izi kalkar; otel ve festival oraya bir daha giremez | Otel −2; Belediye +2 ister | Baştan |
+| Otel Ortaklığı | Politika | 2 | Otel ışıklarını kaplumbağa dostu yapar: bütün bölgelerde ışık 1 azalır; karşılığında bir bölgeye 1 şezlong sırası | Otel +2 | Baştan |
+| Balıkçı Kooperatifi | Politika | 3 | Ağ değişimine ortak olunur; denizdeki ağ azalır | Balıkçılar +2 | Baştan |
+| Temiz Enerji | Politika | 4 | Kısa vadede etki yok; sonraki sıcak dalgaları daha zayıf gelir ve final sahnesi değişir | Halk +1 | Baştan |
+| Kum Torbası Seddi | Acil | 2 | Seçilen bölgede fırtına yuvaları basmaz (o gece de sürer) | — | Fırtına uyarısında |
+| Yuva Tahliyesi | Acil | 3 | Dalga çizgisi altındaki bütün yuvalar serin ve güvenli yere taşınır | — | Fırtına uyarısında |
+| Acil Sulama | Acil | 2 | Bütün yuvalar bu tur ve o gece 1 bant serinler (ikinci Isı kanıtıyla 2) | — | Sıcak dalgası uyarısında |
+| Saha Araştırması | Araştırma | 1 | Henüz bulunmamış bir kanıtı açar | — | Baştan |
+| Dron Taraması | Araştırma | 2 | Haritadaki açılmamış bütün kayıp izlerinin kanıtı açılır | — | Baştan |
+| Üniversite Ortaklığı | Araştırma | 3 | Bundan sonra her tur 1 kart fazla gelir; bir kez | — | Baştan |
 
 ### Kanıtlar
 
-Kanıtlar kaplumbağa bölümlerindeki kayıplardan doğar. Kayıp izine tıklanınca kanıt açılır; kanıt ilgili kartı havuza ekler ya da 1 ucuzlatır. Kanıt eksikliği oyunu kilitlemez; "Baştan" kartlar her zaman havuzdadır.
+Kanıtlar kaplumbağa bölümlerindeki kayıplardan doğar. Kayıp izine tıklanınca kanıt açılır; kanıt ilgili kartı havuza ekler ya da 1 ucuzlatır. Aynı türden ikinci kanıt, o kanıta bağlı kartı güçlendirir. Kanıt eksikliği oyunu kilitlemez; "Baştan" kartlar her zaman havuzdadır.
 
-| Kanıt | Hangi kayıptan | Ne açar |
-| --- | --- | --- |
-| Isı | Sıcak kumda ya da kırmızı yuvada kayıp | Gölgelik 1 ucuzlar |
-| Işık | Işığa kapılıp yönünü kaybeden yavru | Işık Yasağı |
-| Çöp | Ağa, halkaya, tekerlek izine takılan yavru | Araç Yasağı, Şezlong Düzenlemesi |
-| Avcı | Tilkinin bozduğu yuva, tilkiye yakalanan sürü | Tilki Çiti |
-| Su | Fırtınada basan yuva | Yuva Taşıma |
+| Kanıt | Hangi kayıptan | Ne açar | İkinci kanıt |
+| --- | --- | --- | --- |
+| Isı | Sıcak kumda ya da kırmızı yuvada kayıp | Gölgelik 1 ucuzlar | Acil Sulama 2 bant |
+| Işık | Işığa kapılıp yönünü kaybeden yavru | Işık Yasağı; Kaplumbağa Dostu Aydınlatma 1 ucuzlar | Plaj Tabelaları 2 kademe |
+| Çöp | Ağa, halkaya, tekerlek izine takılan yavru | Araç Yasağı, Şezlong Düzenlemesi | Temizlik Kampanyası 4 bölge |
+| Avcı | Tilkinin bozduğu yuva, tilkiye yakalanan sürü | Tilki Çiti | — |
+| Su | Fırtınada basan yuva | Yuva Taşıma | — |
 
 ### Olaylar
 
-Her tur bir olay gelir. Bazılarının bir tur önceden uyarısı vardır.
+Her tur bir olay gelir. Seçimler bütçeyi, halk desteğini ve paydaşları değiştirir; bazı seçimler sıradaki turun olayını belirler (zincir). Paydaş küsse onun tepki olayı havuza girer.
 
-| Olay | Seçenek A | Seçenek B |
-| --- | --- | --- |
-| Otel yeni şezlong sırası istiyor | Kabul: bütçe +3, bir bölge engelle dolar | Red: bütçe değişmez, halk desteği −1 |
-| Belediye kumsalda festival yapmak istiyor | Kabul: halk desteği +2, bir gece kumsal ışık ve insanla dolar | Red: halk desteği −1 |
-| Balıkçılar ağ değişimi için destek istiyor | Destekle: bütçe −2, denizde ağ azalır | Reddet: değişiklik yok |
-| Sıcak dalgası uyarısı | Bilgi: gelecek tur bütün kum 1 bant ısınacak | — |
-| Fırtına uyarısı | Bilgi: gelecek tur dalga çizgisi altındaki yuvaların yarısı su alacak | — |
-| Okul ziyareti | Kabul: bir gönüllü bir tur meşgul, halk desteği +2 | Red: değişiklik yok |
+**Uyarılar:** Sıcak dalgası ve fırtına bir tur önceden haber verilir ve *sonraki turun sonunda* gerçekleşir. Arada bir tam tur hazırlık vardır: gönüllüler (gölge ve sulama, kafes), kartlar ve uyarının Acil kartları. Ekranın üstünde bekleyen uyarı yazar.
+
+| Olay | Seçenek A | Seçenek B | Ne zaman |
+| --- | --- | --- | --- |
+| Otel yeni şezlong sırası istiyor | Kabul: bütçe +3, Otel +1, bir bölge şezlongla dolar | Red: Otel −1 | Her zaman (A halk desteği ister) |
+| Otel kumsala bar açmak istiyor | Kabul: bütçe +4, Otel +1, bir bölgede ışık ve insan kalıcı +1 | Red: Otel −2 | Zincir: şezlongu kabul ettiysen |
+| Belediye kumsalda festival yapmak istiyor | Kabul: halk desteği +2, Belediye +1, bir gece bir bölge ışık ve insanla dolar | Red: Belediye −1 | Her zaman (A halk desteği ister) |
+| Festivalden sonra kumsal çöp dolu | Gönüllüler temizler: gelecek tur 2 gönüllü meşgul | Bırak: en kalabalık 3 bölgeye çöp +1 | Zincir: festivali kabul ettiysen |
+| Balıkçılar ağ değişimi için destek istiyor | Destekle: bütçe −2, Balıkçılar +2, denizde ağ azalır | Reddet: Balıkçılar −1 | Her zaman |
+| Balıkçılar denizden hayalet ağ getirdi | Sergile: halk desteği +2 | Geri dönüşüme sat: bütçe +2 | Zincir: balıkçıları desteklediysen |
+| Sıcak dalgası uyarısı | Bilgi: gelecek turun sonunda bütün kum 1 bant ısınır | — | Her zaman |
+| Fırtına uyarısı | Bilgi: gelecek turun sonunda dalga çizgisi altındaki yuvaların yarısı su alır | — | Her zaman |
+| Okul ziyareti | Kabul: gelecek tur bir gönüllü meşgul, halk desteği +2 | Red: değişiklik yok | Her zaman |
+| Gazeteci kayıp yuvaları soruyor | Açık konuş: halk desteği +2, Otel −1, Belediye −1 | Sessiz kal: Belediye +1, halk desteği −1 | Her zaman |
+| Turistler kumsala köpek getiriyor | Yasak tabelası: bütçe −1, Otel −1 | İzin ver: bu tur yuvalara avcı gelme ihtimali iki kat | Her zaman |
+| Bir bağışçı adının kumsala yazılmasını istiyor | Kabul: bütçe +5, Otel +1, halk desteği −1 | Red: değişiklik yok | Her zaman |
+| Üniversite stajyer göndermek istiyor | Kabul: bütçe −1, gelecek tur +2 gönüllü | Red: değişiklik yok | 4. turdan sonra |
+| Otel inadına bütün ışıklarını açtı | Şikâyet et: bütçe −2, Belediye +1 | Bekle: iki tur bütün bölgelerde ışık +1 | Otel küsken |
+| Belediye ödeneği kesmek istiyor | Toplantıya git: gelecek tur bir gönüllü meşgul, Belediye +1 | Kabul et: bütçe −3 | Belediye küsken |
+| Balıkçılar eski ağları denize attı | Temizlik ekibi: bütçe −2 | Bırak: denizdeki ağ artar, Balıkçılar +1 | Balıkçılar küsken |
 
 ## İki tarafın bağlantısı
 
@@ -284,12 +335,13 @@ Kaplumbağa kısmında kaybedilen her yavru insan kısmında bir kanıta, insan 
 | Temizlik, Temizlik Kampanyası | Kaçış labirenti seyrek, ağ ve halka az |
 | Araç Yasağı | Tekerlek izi yok |
 | Şezlong Düzenlemesi | Yuva gecesinde ve kaçışta engeller yarı yarıya |
-| Işık Yasağı, gece devriyesi | Işık çekimi zayıf ya da yok; anneyi ürküten insan yok |
-| Yuva kafesi, Tilki Çiti | Tilki o yuvaya giremez ya da hiç gelmez |
+| Işık Yasağı, Kaplumbağa Dostu Aydınlatma, Otel Ortaklığı, gece devriyesi, Gözcü Kulübesi, Plaj Tabelaları | Işık çekimi zayıf ya da yok; anneyi ürküten insan az ya da yok |
+| Yuva kafesi, Tilki Çiti, Kuluçkahane | Tilki o yuvaya giremez ya da hiç gelmez |
 | Gölgelik, gölge ve sulama | Yuvanın kumu serin; kaçışta sıcak lekeler küçük |
-| Kumul Onarımı, Yuva Taşıma | Fırtına yuvayı basmaz; yuva gecesinde kazılabilecek alan büyük |
-| Hayalet Ağ Temizliği, balıkçılara destek | Bölüm 5'te denizde daha az ağ ve misina |
-| Otel şezlongunu kabul, festival | Sonraki gecede daha çok engel, ışık ve insan |
+| Kumul Onarımı, Yuva Taşıma, Kum Torbası Seddi, Yuva Tahliyesi | Fırtına yuvayı basmaz; yuva gecesinde kazılabilecek alan büyük |
+| Hayalet Ağ Temizliği, Balıkçı Kooperatifi, balıkçılara destek | Bölüm 5'te denizde daha az ağ ve misina; denize atılan ağlar artırır |
+| Otel şezlongunu ve barını kabul, festival, otelin ışıkları | Sonraki gecede daha çok engel, ışık ve insan |
+| Koruma Alanı | O bölgede engel, ışık, insan ve araç izi yok |
 | Temiz Enerji | Kısa vadede hiçbir şey; sonraki sıcak dalgaları zayıf, final sahnesi farklı |
 
 ### Ters yön: kaplumbağadan insana
