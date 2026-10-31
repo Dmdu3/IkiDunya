@@ -16,7 +16,8 @@ MonoBehaviour:
   lekeBaslangicOlcegi: 1
   lekeSonOlcegi: 2.5
   golgelikLekeCarpani: 0.5
-  sicakLekeHasari: 30
+  sicakLekeHasari: 15
   dalgaBolgesi: 5
-  dalgaPeriyodu: 6
-  savrulmaMesafesi: 2
+  dalgaPeriyodu: 8
+  savrulmaMesafesi: 1
+  isikCekimGucu: 0.8
