@@ -30,7 +30,7 @@ Transform:
   m_ConstrainProportionsScale: 0
   m_Children:
   - {fileID: 6333859995524225075}
-  - {fileID: 1422038576625448985}
+  - {fileID: 7485449114186980265}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &8265315050633831746
@@ -159,7 +159,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::IkiDunya.Hazards.TrashTrap
   tur: 0
---- !u!1001 &1456529583377752050
+--- !u!1001 &6947665757498899522
 PrefabInstance:
   m_ObjectHideFlags: 0
   serializedVersion: 2
@@ -256,8 +256,8 @@ PrefabInstance:
     m_AddedGameObjects: []
     m_AddedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 053e9ddcf6661e248b67cad2d7c73120, type: 3}
---- !u!4 &1422038576625448985 stripped
+--- !u!4 &7485449114186980265 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: -8679921383154817045, guid: 053e9ddcf6661e248b67cad2d7c73120, type: 3}
-  m_PrefabInstance: {fileID: 1456529583377752050}
+  m_PrefabInstance: {fileID: 6947665757498899522}
   m_PrefabAsset: {fileID: 0}

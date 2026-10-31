@@ -17,6 +17,15 @@ EditorBuildSettings:
   - enabled: 1
     path: Assets/_Project/Scenes/Levels/Bolum5_IlkYuzus.unity
     guid: d24af8f4ef28fcc43a0c7cb8c05b9d56
+  - enabled: 1
+    path: Assets/_Project/Scenes/Levels/Parkur_PosetSurusu.unity
+    guid: d3031dd6977e65e44a2361f5876123ce
+  - enabled: 1
+    path: Assets/_Project/Scenes/Levels/Parkur_CopSeli.unity
+    guid: 45b743dd7db1baf4ebbc7d8c791295eb
+  - enabled: 1
+    path: Assets/_Project/Scenes/Levels/Parkur_CopGirdabi.unity
+    guid: 105999c39e61a6f449b8a5d01a7d6bfa
   m_configObjects:
     com.unity.input.settings.actions: {fileID: -944628639613478452, guid: 052faaac586de48259a63d0c4782560b, type: 3}
   m_UseUCBPForAssetBundles: 0

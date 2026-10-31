@@ -29,7 +29,7 @@ Transform:
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
-  - {fileID: 801593915377077308}
+  - {fileID: 6306635591573807861}
   m_Father: {fileID: 7207076088833328579}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &7114611966992186282
@@ -116,7 +116,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: dd2fc6d4def97674ea8ebf3b3b01822d, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::IkiDunya.Turtle.Yavru
---- !u!1001 &4441712839565138209
+--- !u!1001 &7007139809608054760
 PrefabInstance:
   m_ObjectHideFlags: 0
   serializedVersion: 2
@@ -185,8 +185,8 @@ PrefabInstance:
     m_AddedGameObjects: []
     m_AddedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 4f34768761e03e1419e7bb9e35cb8b49, type: 3}
---- !u!4 &801593915377077308 stripped
+--- !u!4 &6306635591573807861 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 3944017615918732573, guid: 4f34768761e03e1419e7bb9e35cb8b49, type: 3}
-  m_PrefabInstance: {fileID: 4441712839565138209}
+  m_PrefabInstance: {fileID: 7007139809608054760}
   m_PrefabAsset: {fileID: 0}
