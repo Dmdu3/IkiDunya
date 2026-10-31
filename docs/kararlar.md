@@ -7,6 +7,8 @@ ozet: Ekipçe alınan kararlar, tarih ve nedeniyle. En yeni en üstte. GDD'yi de
 | Tarih | Karar | Neden | Kim |
 |---|---|---|---|
 | 2026-10-31 | Görsel tarz: Sword of the Sea'den esinlenen renk paleti (`docs/palet.md`), yumuşak gölgelendirme | Kırmızı Kaplumbağa, Wavetale ve ikisinin harmanı da Blender'da aynı sahneyle denendi; sıcak kum ve yeşim deniz kumsal-deniz temasına en iyi oturan | Yusuf |
+| 2026-11-01 | Metinlerin ilk taslağını Umut yazdı (`docs/metinler.md`); Yusuf gözden geçirir ve değiştirir | Oyun her yerde `[id]` gösteriyordu; kullanıcı kararı | Umut |
+| 2026-11-01 | Animasyonlar iskelet olmadan kodla (`Salinim`): kökün hızına göre görünüşün yer ve dönüş salınımı; birinci şahısta oyuncunun kendi gövdesi kameraya görünmez (sadece gölge) | Yusuf'un modelleri riglenmemiş; kamera kafanın içinde kalıyordu | Umut |
 | 2026-11-01 | `Management/` ve `UI/Management/` kodu Toprak'a geri geçti; Toprak hem yazar hem dengeler | İnsan kısmının kodu ve dengesi tek kişide | Toprak |
 | 2026-10-31 | Termal bantlar renk + desenle ayırt edilir; tuşlar ayarlardan atanabilir | Erişilebilirlik (Faz 10): renk körlüğü, farklı klavyeler | Umut |
 | 2026-10-31 | Editörde `KumsalDurumu` Play bitince eski haline döner | Play'deki durum asset'e yazılıp git'te sürekli değişmiş görünüyordu (pull'ları da kilitliyordu) | Umut |

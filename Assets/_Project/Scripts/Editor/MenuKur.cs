@@ -3,6 +3,7 @@ using System.IO;
 using System.Text.RegularExpressions;
 using IkiDunya.Core;
 using IkiDunya.Management;
+using IkiDunya.Turtle;
 using IkiDunya.UI.Menu;
 using IkiDunya.UI.Night;
 using UnityEditor;
@@ -425,7 +426,9 @@ namespace IkiDunya.Editor
             // Yetişkin kaplumbağa: Yusuf'un caretta'sı (yoksa gri küre); denizden kumsala yürür.
             Transform kaplumbaga = GriKumsalKur.Bos("YetiskinKaplumbaga", grup);
             kaplumbaga.position = new Vector3(0f, 0f, -4f);
-            if (GriKumsalKur.ModelYerlestir(kaplumbaga, "Anne_Caretta", Vector3.zero, 1.5f) == null)
+            GameObject yetiskinModeli = GriKumsalKur.ModelYerlestir(kaplumbaga, "Anne_Caretta", Vector3.zero, 1.5f);
+            if (yetiskinModeli != null) GriKumsalKur.SalinimEkle(kaplumbaga.gameObject, yetiskinModeli.transform, SalinimTuru.Kara);
+            else
             {
                 GameObject kure = GameObject.CreatePrimitive(PrimitiveType.Sphere);
                 Object.DestroyImmediate(kure.GetComponent<Collider>());

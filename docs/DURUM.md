@@ -4,7 +4,7 @@ ozet: Mekanik tarafın durumu ve sistemlerin haritası. Bir sistem eklendikçe y
 
 # Durum
 
-Son güncelleme: 2026-11-01 — Alpha main'de, deneme listesi tamam (editörde 300+ FPS). Main'de: insan kısmı (yönetim ekranı, Faz 0–4). Main'de: Yusuf'un kumsalı (#40). Dalda: `umut/minigame-sahneleri` (minigame'ler zorunlu ve kendi sahnelerinde; Yusuf'un canlıları). Unity'de henüz denenmedi.
+Son güncelleme: 2026-11-01 — Alpha main'de, deneme listesi tamam (editörde 300+ FPS). Main'de: insan kısmı (yönetim ekranı, Faz 0–4). Main'de: Yusuf'un kumsalı (#40). Main'de: minigame sahneleri ve Yusuf'un canlıları (#43, #45). Dalda (`umut/metin-animasyon-kamera`): bütün metinlerin ilk taslağı, kodla animasyon, birinci şahısta kendi gövdesi gizli. Unity'de henüz denenmedi.
 
 ## Sistem haritası
 
@@ -218,3 +218,10 @@ GDD: "Parkurlar" ve bölümlerdeki "Minigame" başlıkları. Sayılar `Scriptabl
 ## Canlılar (Yusuf'un modelleri)
 
 `Sandbox/Yusuf/Canlilar` (ya da `Models/Canlilar`): kurulum komutları modeli bulursa gri kutunun yerine koyar; boyu oyundaki gövdeye göre ölçeklenir (en uzun kenar), tabanı yere oturur, collider ve layer oynanış kalıbında kalır. Anne (kara ve deniz, final), yavru (kumsal ve deniz; ters dönen yavruda model çevrilir), yengeç (deliğin yanında), martı, tilki (eşelerken sallanan gövde), avcı balık, insan.
+
+## Animasyon ve birinci şahıs
+
+- **Kodla animasyon (`Turtle/Salinim`, `AnimasyonAyarlari`):** modeller iskeletsiz; kök hareket ettikçe görünüş (model ya da gri gövde) türüne göre salınır: **Kara** (anne, yavru, tilki, insan, final kaplumbağası: her adımda kalkar, iki yana yatar), **Deniz** (yüzücüler: yavaş dalgalanma, dururken de), **Kuş** (martı: süzülme), **Balık** (avcı balık: sağa-sola kıvrılma). Anne kazarken geriye yatar, her A/D vuruşunda sarsılır. Sayılar `ScriptableObjects/Settings/AnimasyonAyarlari`'nda. Kurulum komutları ekler.
+- **Birinci şahıs:** `BirinciSahisKamera` kendi gövdesinin modelini kameraya görünmez yapar, gölgesi kalır (kafanın içinden bakma, göze giren kabuk olmaz). Öncü yavru değişince eski öncü yeniden görünür.
+- **Metinler:** `docs/metinler.md`'de kodun kullandığı bütün id'lerin ilk taslağı (Umut; Yusuf gözden geçirecek). **Metinleri aktar** (ya da Menü ve duraklatmayı kur) ile oyuna girer.
+

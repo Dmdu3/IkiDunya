@@ -367,7 +367,8 @@ namespace IkiDunya.Editor
             nesne.AddComponent<Enerji>();
             var yuzucu = nesne.AddComponent<DenizHareketi>();
 
-            GriKumsalKur.Govde(nesne.transform, Vector3.zero, govdeOlcegi, model);
+            Transform gorunus = GriKumsalKur.Govde(nesne.transform, Vector3.zero, govdeOlcegi, model);
+            GriKumsalKur.SalinimEkle(nesne, gorunus, SalinimTuru.Deniz);
             BirinciSahisKamera goz = GriKumsalKur.KameraKur(nesne.transform, gozYeri, nesne.transform);
             GriKumsalKur.Bagla(goz.gameObject.AddComponent<SuAltiGorunumu>(), "ayarlar", GriKumsalKur.Ayar<OrtamAyarlari>("OrtamAyarlari"));
             GriKumsalKur.Bagla(goz, "ayarlar", AyarAdla<KameraAyarlari>("DenizKameraAyarlari", so =>
@@ -599,7 +600,9 @@ namespace IkiDunya.Editor
             var kok = new GameObject("AvciBalik");
             kok.layer = LayerMask.NameToLayer("Predator");
             kok.transform.position = yer;
-            if (GriKumsalKur.ModelYerlestir(kok.transform, "Avci_Balik", new Vector3(0f, -0.4f, 0f), 2f) == null)
+            GameObject balikModeli = GriKumsalKur.ModelYerlestir(kok.transform, "Avci_Balik", new Vector3(0f, -0.4f, 0f), 2f);
+            if (balikModeli != null) GriKumsalKur.SalinimEkle(kok, balikModeli.transform, SalinimTuru.Balik);
+            else
             {
                 GameObject govde = GriKumsalKur.Kutu("Govde", kok.transform, Vector3.zero, new Vector3(0.6f, 0.8f, 2f), avci, "Predator");
                 Object.DestroyImmediate(govde.GetComponent<Collider>());
