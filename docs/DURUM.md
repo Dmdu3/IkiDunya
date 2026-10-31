@@ -4,7 +4,7 @@ ozet: Mekanik tarafın durumu ve sistemlerin haritası. Bir sistem eklendikçe y
 
 # Durum
 
-Son güncelleme: 2026-10-31 — Faz 3 tamamlanıyor: iki gece Kumsal sahnesinde akışa bağlandı (geçici insan turuyla); kaçışta çöp, E ile kurtarma, zıplama, avcılar (yengeç, martı, tilki), ışık; gecenin sonuç paneli. Unity'de henüz denenmedi.
+Son güncelleme: 2026-10-31 — Faz 5'in kalanı (kumsal durumdan) ve Faz 6 (deniz bölümleri: Bölüm 1 ve 5) yazıldı; Unity'de henüz denenmedi.
 
 ## Sistem haritası
 
@@ -21,7 +21,10 @@ Son güncelleme: 2026-10-31 — Faz 3 tamamlanıyor: iki gece Kumsal sahnesinde 
 | Adıma göre sahne parçaları, geçici insan turu | `Core` | `AdimNesneleri`, `GeciciInsanTuru` | Umut | Yapılıyor (insan turu geçici) |
 | Gece göstergeleri (enerji, kazma, kumdan çıkış, gün doğumu, kurtarma) ve sonuç paneli | `UI/Night` | `EnerjiCubugu`, `Cubuk`, `KazmaGostergesi`, `KacisGostergesi`, `GeceSonucuPaneli` | Umut | Yapılıyor (yazısız) |
 | Gri kutu kumsal ve layer kurulumu | `Editor` | `GriKumsalKur`, `KatmanKurulumu` | Umut | Yapılıyor |
-| Deniz hareketi, nefes | `Turtle` | — | Umut | Planlandı |
+| Deniz hareketi, nefes, besin, ağdan kurtulma | `Turtle` | `DenizHareketi`, `DenizAyarlari` (anne, yavru) | Umut | Yapılıyor |
+| Deniz bölümü: kontrol noktaları, final | `Turtle` | `DenizBolumu`, `KontrolNoktasi` | Umut | Yapılıyor |
+| Deniz tehlikeleri | `Hazards` | `Akinti`, `Yiyecek`, `Tekne`, `AvciBalik`, `DenizDalgasi`, `DenizYapilari`, `HazardZone` (sıcak su), `DenizTehlikeAyarlari`; `Core/IYuzucu` | Umut | Yapılıyor |
+| Deniz göstergeleri | `UI/Night` | `DenizGostergesi` | Umut | Yapılıyor |
 | Kum sıcaklığı ve termal görünüm (T) | `Hazards` | `KumSicakligi`, `TermalGorunum`, `TermalAyarlari` | Umut | Yapılıyor |
 | Çöp yığını (anne takılır) | `Hazards` | `TrashTrap` | Umut | Yapılıyor |
 | İnsanlar ve görüş konisi | `Hazards` | `Insan`, `InsanAyarlari` | Umut | Yapılıyor |
@@ -64,6 +67,7 @@ Bütçe, gönüllü ve halk desteği `KumsalDurumu`'nda değil; insan kısmını
 - **İki Dünya → Layer'ları kur:** README'deki layer'ları boş yuvalara ekler.
 - **İki Dünya → Gri kutu kumsalı kur (yuva gecesi):** `Scenes/Prototypes/GriKumsal.unity` — kumsal, termal görünüm, şezlong, çöp yığını, 2 insan (biri fenerli), anne (hareket, kazma), yuva gecesi, enerji ve kazma çubuğu.
 - **İki Dünya → Kumsal sahnesini kur (oyun):** `Scenes/Levels/Kumsal.unity` — iki gecenin hepsi ve geçici insan turu; her grup (`YuvaGecesiNesneleri`, `KacisGecesiNesneleri`, `InsanTuruNesneleri`) sadece kendi adımında açılır. `Sistemler` prefab'ı da konur.
+- **İki Dünya → Bölüm 1 sahnesini kur (deniz)** ve **Bölüm 5 sahnesini kur (deniz):** `Scenes/Levels/Bolum1_Donus` ve `Bolum5_IlkYuzus` sahnelerini gri kutu olarak baştan kurar (deniz, taban basamakları, kontrol noktaları, tehlikeler, göstergeler, `Sistemler`).
 - **İki Dünya → Gri kutu kaçışı kur:** `Scenes/Prototypes/GriKacis.unity` — kumsal, sıcak kum lekeleri, dalga, gün doğumu, sürü, kaçış gecesi, kumdan çıkış paneli ve gün doğumu çubuğu.
 - İki araç da eksik ayar asset'lerini `ScriptableObjects/Settings`'te, `Yavru`, `Golgelik`, `KayipIzi` kalıplarını `Prefabs/` altında oluşturur. Deneme sahnelerinde akış yoktur; gece kendiliğinden başlar.
 
@@ -88,6 +92,14 @@ Bütçe, gönüllü ve halk desteği `KumsalDurumu`'nda değil; insan kısmını
 **Geçici insan turu.** Kumsala tepeden bakılır; tıklayınca bir hafta geçer (`BirHaftaGecti`) ve tur biter. Toprak'ın yönetim ekranı gelince kaldırılacak.
 
 Henüz yok: ay ışığının yönü göstermesi (görsel), tilkinin yuvayı bozması, öncünün de takılabilmesi.
+
+## Deniz bölümleri
+
+**Yüzme (`DenizHareketi`).** Birinci şahıs: W/S/A/D baktığın yöne (yukarı-aşağı dahil), Shift hızlı (3 kat enerji). Space: yüzeydeyken kısa dalış; anne su altında Space basılı tutunca yüzeye çıkar, yavrunun Space'i sadece daldırır. Akıntı sürükler, akıntıya karşı yüzmek 2 kat enerji. Anne: 60 sn nefes, biterse yavaşlar, yüzeyde dolar. Yavru: nefes yok, enerji sürekli azalır (çılgın yüzüş), sadece kontrol noktalarında dolar. E: önündeki besini yer (denizanası +15 enerji, poşet 10 sn yarı hız); ağa ya da misinaya takılınca E'ye art arda basılır (anne ağ 8, yavru ağ 10, misina 6), sonra 5 sn yavaş. Parlayan plastik ve ışıklı tekne çeker, plastiğe değmek 5 sn yavaşlatır. Sıcak su lekesi saniyede 3 enerji alır. Tekne yüzeydekine çarpar (−25). Avcı balık gizli olmayanı kovalar; deniz çayırı ve kaya arası (`Cover`) korur.
+
+**Bölüm (`DenizBolumu`).** Kontrol noktasına girince enerji dolar ve oradan devam edilir; enerji biterse ya da avcı yakalarsa son noktaya dönülür. Bölüm 1 kıyıda biter; Bölüm 5 yosun adasında, kamera uzaklaşarak biter. Bölüm 5'in dalga hattında dalgalar ara ara kıyıya gelir; yüzeye yakın yakalanan yavru savrulur, altından dalan geçer. Bölüm 5'teki ağ ve misina sayısı `KumsalDurumu.DenizdekiAg` seviyesinden (Hayalet Ağ Temizliği azaltır).
+
+Henüz yok: "30 yıl sonra" sahnesi (Faz 7), pervane sesi klibi (Abdü), suyun titremesi ve gölgeler gibi görsel uyarılar.
 
 ## Oyun akışı
 
