@@ -3,7 +3,22 @@ guid: 02fc0b69a57824d4eaa67244cdaccb49
 ModelImporter:
   serializedVersion: 24300
   internalIDToNameTable: []
-  externalObjects: {}
+  externalObjects:
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: DenizCayiri
+    second: {fileID: 2100000, guid: 5b080829d21e4c845ad751e47201e8e9, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: DenizObjeleri
+    second: {fileID: 2100000, guid: 6841b64a2c808984ba994ef81e6df990, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: DenizTabani_Zemin
+    second: {fileID: 2100000, guid: b3d286b74a7b0c0409c1aec81d16cf1f, type: 2}
   materials:
     materialImportMode: 2
     materialName: 0

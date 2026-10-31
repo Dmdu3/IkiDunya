@@ -1,6 +1,6 @@
 # Deniz tabanı (Bölüm 1, Bölüm 5, Poşet sürüsü, Çöp girdabı)
 
-Akdeniz tabanı: kum, kayalık şev, oyun alanının dışında kayalık yamaçlar, mercan kayalıkları (gorgonya, kırmızı mercan, taş mercan, sarı sünger, pembe kabuklu algler) ve Posidonia çayırı. Blender betiğiyle üretildi; Unity'de henüz denenmedi.
+Akdeniz tabanı: kum, kayalık şev, oyun alanının dışında kayalık yamaçlar, mercan kayalıkları (gorgonya, kırmızı mercan, taş mercan, sarı sünger, pembe kabuklu algler) ve Posidonia çayırı. Blender betiğiyle üretildi. Unity'de malzemeler ve prefab'lar kuruldu; henüz bir sahnede denenmedi.
 
 ![önizleme](Kaynak~/onizleme.png)
 
@@ -14,6 +14,9 @@ Akdeniz tabanı: kum, kayalık şev, oyun alanının dışında kayalık yamaçl
 | `DenizTabani_Renk.png` | Taban rengi (1024×2048) | Bütün tabana bir kez yayılır |
 | `DenizObjeleri_Renk.png` | Renk atlası (256×256, 8 sütun) | Kaya, kabuk, gorgonya, kırmızı mercan, taş mercan, sünger, posidonia, çakıl |
 | `Kaynak~/` | Üretim betiği, `.blend`, önizleme | Unity bu klasörü görmez |
+| `DenizTabani.prefab` | Bütün taban | Sahneye (0,0,0)'a konur |
+| `Kaya_1..3.prefab`, `DenizCayiri_6x10/6x8/8x8.prefab` | Tek parçalar | Pivot tabanın ortası |
+| `DenizTabani_Zemin.mat`, `DenizObjeleri.mat`, `DenizCayiri.mat` | Malzemeler | Aşağıdaki kuruluma göre |
 
 Üçgen: zemin 282 bin, süs kayaları 46 bin, mercanlar 266 bin, çayır alanı başına 15–20 bin.
 
@@ -25,6 +28,8 @@ Kıyı z = 0, deniz −z, su yüzeyi y = 0. Taban: z −50'ye kadar kıyıdan in
 - Kıyı ucu `KumsalArazi` deniz sahnesine y +0,55'e konursa onun kumunun 0,12–0,35 m altında kalır; arazi konmazsa taban kıyıya kadar kendi başına uzanır.
 
 ## Unity'de kurulum
+
+Aşağıdakiler yapıldı (2026-11-01); modeller yeniden üretilirse içe aktarma ayarları korunur, prefab'lar kendiliğinden güncellenir.
 
 1. **Malzemeler** (URP/Lit, bu klasörde):
    - `DenizTabani_Zemin`: Base Map `DenizTabani_Renk`, Smoothness 0,08. Detail Normal Map `KumsalArazi/Kum_Dalgacik_N`, ölçek 0,25, Detail tiling **47 × 84** (Kumsal_Zemin gibi 3 m'de bir dalgacık).
