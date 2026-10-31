@@ -6,6 +6,9 @@ ozet: Ekipçe alınan kararlar, tarih ve nedeniyle. En yeni en üstte. GDD'yi de
 
 | Tarih | Karar | Neden | Kim |
 |---|---|---|---|
+| 2026-10-31 | Denizde yön bakılan yer (yukarı-aşağı dahil); anne Space basılı tutunca yüzeye çıkar, yüzeyde Space'e basınca dalar; yavrunun Space'i sadece daldırır | GDD'deki "Space: yüzeye çık / dal" (anne) ve "denizde dal" (yavru) birinci şahısta böyle oturuyor | Umut |
+| 2026-10-31 | Denizde ağ ve misinadan E'ye art arda basarak kurtulunur (kumsalda E basılı tutulur) | GDD tablosu: denizde "E'ye 8/10/6 kez bas", kumsalda "E'yi 2 sn basılı tut" | Umut |
+| 2026-10-31 | Kontrol noktasına girince enerji dolar (anne ve yavru) | GDD yavru için söylüyor; anne için de bir sonraki bölgeye temiz başlangıç | Umut |
 | 2026-10-31 | Kumsalın ilk hali `KumsalBaslangici` asset'inde (bölge bölge çöp, ışık, şezlong, insan, araç izi; denizdeki ağ); `KumsalDurumu.Sifirla(baslangic, katmanEnFazla)` | Kartlar (Temizlik, Şezlong Düzenlemesi, Işık Yasağı, Araç Yasağı) bir şeyi azaltabilsin diye kumsal dolu başlamalı; ilk hal sahnede değil, durumda | Umut |
 | 2026-10-31 | `KumsalDurumu`'na `IsikYasagi` ve `IsikYasagiAyarla(var)` | Işık Yasağı kartı otel ve yol ışıklarını kapatır; telefon feneri yasağa uymaz | Umut |
 | 2026-10-31 | Kaçışta öncü yavru takılmaz ve yönünü kaybetmez; kurtaran odur | Oyuncu öncüyü sürer; öncü takılırsa kurtaracak kimse kalmaz | Umut |

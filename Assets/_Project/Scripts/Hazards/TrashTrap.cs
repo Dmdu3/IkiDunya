@@ -6,7 +6,7 @@ namespace IkiDunya.Hazards
     [RequireComponent(typeof(Collider))]
     public class TrashTrap : MonoBehaviour
     {
-        public enum Turu { CopYigini, Ag, Halka, TekerlekIzi }
+        public enum Turu { CopYigini, Ag, Halka, TekerlekIzi, HayaletAg, Misina, Plastik }
 
         [SerializeField] private Turu tur = Turu.CopYigini;
 

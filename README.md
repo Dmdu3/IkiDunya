@@ -79,7 +79,7 @@ Bütün tuşlar tek bir dosyada: `Assets/_Project/Scripts/Core/GameInput.cs`. Ye
 | WASD | Hareket (karada W/S ve fare; A/D kazmaya ayrılmış) | Hareket (sürüde öncü yavru) |
 | Shift | Hızlı hareket (3 kat enerji) | Kumsalda sürüyü dağıt, bırakınca toplan |
 | Space | Denizde yüzeye çık / dal | Kumsalda atla, denizde dal |
-| E (basılı) | Ye, ağdan kurtul | Takılan ya da ters dönen yavruyu kurtar |
+| E | Ye (bas), ağdan kurtul (art arda bas) | Kumsalda takılan ya da ters dönen yavruyu kurtar (basılı tut); denizde ağdan kurtul (art arda bas) |
 | A / D sırayla | Kazma ve örtme | – |
 | W (kum altında) | – | Bir kat yukarı kaz |
 | T | Termal görünüm | Termal görünüm |
