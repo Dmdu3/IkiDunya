@@ -1,11 +1,12 @@
 using System;
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 
 namespace IkiDunya.Core
 {
-    /// <summary>Oyunun adım adım akışı ve bölüm geçişi. Her oyun sahnesinde bir tane durur; ilki sahneler arasında yaşar.</summary>
+    /// <summary>Oyunun adım adım akışı, bölüm geçişi (kararma, bölüm başlığı) ve kayıt. Her oyun sahnesinde bir tane durur; ilki sahneler arasında yaşar.</summary>
     public class OyunAkisi : MonoBehaviour
     {
         [SerializeField] private OyunAyarlari ayarlar;
@@ -20,12 +21,15 @@ namespace IkiDunya.Core
         public static bool MenudeMi => ornek == null || ornek.sira < 0;
         /// <summary>Sahnede oyun akışı var mı. Deneme sahnelerinde yoktur; gece kendi kendine başlar. Awake'te kurulur, Start'larda güvenle okunur.</summary>
         public static bool Var => ornek != null;
+        /// <summary>Devam edilebilecek bir kayıt var mı.</summary>
+        public static bool KayitVar => Kayit.Var;
 
         private static OyunAkisi ornek;
 
         private List<Adim> akis;
         private int sira = -1;
         private bool yukleniyor;
+        private Gecis gecis;
 
         [RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.SubsystemRegistration)]
         private static void StatikleriSifirla()
@@ -52,6 +56,7 @@ namespace IkiDunya.Core
             ornek = this;
             DontDestroyOnLoad(gameObject);
             akis = ayarlar.AkisiKur();
+            gecis = Gecis.Kur(transform);
         }
 
         private void Start()
@@ -77,27 +82,41 @@ namespace IkiDunya.Core
 
         // ---- Diğer sistemlerin çağırdığı metotlar ----
 
-        /// <summary>Menüden yeni oyun: kumsal sıfırlanır, Bölüm 1 başlar.</summary>
+        /// <summary>Menüden yeni oyun: eski kayıt silinir, kumsal sıfırlanır, Bölüm 1 başlar.</summary>
         public static void YeniOyun()
         {
-            if (ornek == null) return;
+            if (ornek == null || ornek.yukleniyor) return;
+            Kayit.Sil();
             ornek.KumsaliSifirla();
             ornek.AdimaGec(0);
         }
 
-        /// <summary>Şu anki adım bitti (gece bitti, tur bitti); sıradakine geçilir.</summary>
+        /// <summary>Menüden devam: kayıtlı kumsal ve adımdan sürer; kayıt yoksa yeni oyun.</summary>
+        public static void DevamEt()
+        {
+            if (ornek == null || ornek.yukleniyor) return;
+            if (Kayit.Yukle(ornek.kumsal, out int kayitliSira) && kayitliSira >= 0 && kayitliSira < ornek.akis.Count)
+                ornek.AdimaGec(kayitliSira);
+            else
+                YeniOyun();
+        }
+
+        /// <summary>Şu anki adım bitti (gece bitti, tur bitti); sıradakine geçilir. Son adımdan sonra kayıt silinir, menüye dönülür.</summary>
         public static void AdimBitti()
         {
             if (ornek == null || ornek.yukleniyor) return;
             if (ornek.sira + 1 < ornek.akis.Count) ornek.AdimaGec(ornek.sira + 1);
-            else MenuyeDon();
+            else
+            {
+                Kayit.Sil();
+                MenuyeDon();
+            }
         }
 
         public static void MenuyeDon()
         {
-            if (ornek == null) return;
-            ornek.sira = -1;
-            ornek.SahneYukle(ornek.ayarlar.MenuSahnesi, () => MenuyeDonuldu?.Invoke());
+            if (ornek == null || ornek.yukleniyor) return;
+            ornek.StartCoroutine(ornek.Gec(-1));
         }
 
         // ---- İç işler ----
@@ -128,33 +147,41 @@ namespace IkiDunya.Core
             AdimaGec(bulunan);
         }
 
-        private void AdimaGec(int yeniSira)
-        {
-            string oncekiSahne = sira >= 0 ? ayarlar.SahneAdi(akis[sira].Tur) : ayarlar.MenuSahnesi;
-            sira = yeniSira;
-            SuAnkiAdim = akis[sira];
-            string sahne = ayarlar.SahneAdi(SuAnkiAdim.Tur);
+        private void AdimaGec(int yeniSira) => StartCoroutine(Gec(yeniSira));
 
-            // Aynı sahnede kalınıyorsa (ör. kumsalda gece → insan turu) yükleme yok.
-            if (sahne == oncekiSahne && SceneManager.GetActiveScene().name == sahne)
-                AdimBasladi?.Invoke(SuAnkiAdim);
-            else
-                SahneYukle(sahne, () => AdimBasladi?.Invoke(SuAnkiAdim));
-        }
-
-        private void SahneYukle(string sahne, Action yuklenince)
+        /// <summary>Ekran kararır, adım (ve gerekirse sahne) değişir, kayıt yazılır, yeni bölümse başlığı görünür, ekran açılır. -1 menü demektir.</summary>
+        private IEnumerator Gec(int yeniSira)
         {
             yukleniyor = true;
+            Duraklatma.Kapat();
+            int oncekiBolum = sira >= 0 ? akis[sira].Bolum : 0;
+            yield return gecis.Solustur(1f, ayarlar.GecisSuresi);
 
-            void Yuklendi(Scene yuklenen, LoadSceneMode mod)
+            sira = yeniSira;
+            string sahne = sira >= 0 ? ayarlar.SahneAdi(akis[sira].Tur) : ayarlar.MenuSahnesi;
+            if (sira >= 0)
             {
-                SceneManager.sceneLoaded -= Yuklendi;
-                yukleniyor = false;
-                yuklenince();
+                SuAnkiAdim = akis[sira];
+                Kayit.Kaydet(sira, kumsal);
             }
 
-            SceneManager.sceneLoaded += Yuklendi;
-            SceneManager.LoadScene(sahne);
+            // Aynı sahnede kalınıyorsa (ör. kumsalda gece → insan turu) yükleme yok.
+            if (SceneManager.GetActiveScene().name != sahne)
+            {
+                AsyncOperation yukleme = SceneManager.LoadSceneAsync(sahne);
+                while (!yukleme.isDone) yield return null;
+            }
+
+            if (sira < 0) MenuyeDonuldu?.Invoke();
+            else
+            {
+                AdimBasladi?.Invoke(SuAnkiAdim);
+                if (SuAnkiAdim.Bolum != oncekiBolum && ayarlar.Metinler != null)
+                    yield return gecis.BaslikGoster(ayarlar.Metinler.Al($"bolum{SuAnkiAdim.Bolum}_giris"), ayarlar.BaslikSuresi);
+            }
+
+            yield return gecis.Solustur(0f, ayarlar.GecisSuresi);
+            yukleniyor = false;
         }
 
         private void KumsaliSifirla()

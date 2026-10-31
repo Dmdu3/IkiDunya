@@ -4,7 +4,7 @@ ozet: Mekanik tarafın durumu ve sistemlerin haritası. Bir sistem eklendikçe y
 
 # Durum
 
-Son güncelleme: 2026-10-31 — Faz 5'in kalanı (kumsal durumdan) ve Faz 6 (deniz bölümleri: Bölüm 1 ve 5) yazıldı; Unity'de henüz denenmedi.
+Son güncelleme: 2026-10-31 — Faz 7: ana menü, ayarlar, duraklatma, kayıt ve devam, kararmalı geçiş ve bölüm başlığı, "30 yıl sonra" finali yazıldı; Unity'de henüz denenmedi.
 
 ## Sistem haritası
 
@@ -13,7 +13,12 @@ Son güncelleme: 2026-10-31 — Faz 5'in kalanı (kumsal durumdan) ve Faz 6 (den
 | Oyun akışı ve bölüm geçişi | `Core` | `OyunAkisi`, `OyunAyarlari` | Umut | Yapılıyor |
 | Kumsal durumu (ortak durum) | `Core` | `KumsalDurumu` | Umut | Yapılıyor (taslak) |
 | Tuşlar | `Core` | `GameInput` | Umut | Yapılıyor |
-| Kayıt | `Core` | — | Umut | Planlandı |
+| Kayıt ve devam etme | `Core` | `Kayit` | Umut | Yapılıyor |
+| Geçiş ve bölüm başlığı | `Core` | `Gecis` (OyunAkisi kurar) | Umut | Yapılıyor |
+| Duraklatma ve oyuncu ayarları | `Core` | `Duraklatma`, `OyunTercihleri` | Umut | Yapılıyor |
+| Oyuncu metinleri | `Core` | `MetinTablosu` (docs/metinler.md'den) | Umut | Yapılıyor |
+| Ana menü, ayarlar, duraklatma menüsü | `UI/Menu` | `AnaMenu`, `AyarlarPaneli`, `DuraklatmaMenusu`, `MetinYazisi` | Umut | Yapılıyor |
+| Final: "30 yıl sonra" | `Core` | `FinalSahnesi` | Umut | Yapılıyor |
 | Kameralar (hayvan kısmı birinci şahıs, insan kısmı yönetim ekranı) | `Camera` | `BirinciSahisKamera`, `KameraAyarlari` | Umut | Yapılıyor |
 | Anne (kara): hareket, enerji, kazma | `Turtle` | `AnneKara`, `AnneKazma`, `AnneAyarlari`, `Enerji` | Umut | Yapılıyor |
 | Yuva gecesi: denemeler, yuva sonucu | `Turtle` | `YuvaGecesi` | Umut | Yapılıyor |
@@ -55,6 +60,7 @@ Durum değerleri: Planlandı · Yapılıyor · Oynanabilir · Bitti.
 | Yapılar (var/yok) | `Golgelik`, `KumulOnarimi`, `TilkiCiti`, `AracIzi` | | |
 | Denizdeki ağ | `DenizdekiAg` | `DenizdekiAgDegistir(fark)` | İnsan kısmı |
 | Işık yasağı (otel ve yol ışıkları kapalı) | `IsikYasagi` | `IsikYasagiAyarla(var)` | İnsan kısmı (Işık Yasağı kartı) |
+| Temiz Enerji oynandı mı (final değişir) | `TemizEnerji` | `TemizEnerjiAyarla(var)` | İnsan kısmı (Temiz Enerji kartı) |
 | Kum ısınması (bütün kum kaç bant ısındı) | `KumIsinmasi` | `KumIsinmasiDegistir(fark)` | İnsan kısmı (sıcak dalgası olayı) |
 | Yuvalar | `Yuvalar` (bölge, konum, bant, dalga altında mı, yumurta, çıkışa kalan hafta, kafesli) | `YuvaEkle` (yuva gecesi), `YuvaKafesle`, `YuvaTasi`, `YuvaYumurtaKaybet`, `BirHaftaGecti` | Ekleme kaplumbağa, gerisi insan kısmı |
 | Kayıp izleri | `KayipIzleri` (bölge, konum, neden, kanıt açıldı mı) | `KayipIziEkle` (gece), `KanitAc` (insan turu) | İkisi |
@@ -68,6 +74,8 @@ Bütçe, gönüllü ve halk desteği `KumsalDurumu`'nda değil; insan kısmını
 - **İki Dünya → Gri kutu kumsalı kur (yuva gecesi):** `Scenes/Prototypes/GriKumsal.unity` — kumsal, termal görünüm, şezlong, çöp yığını, 2 insan (biri fenerli), anne (hareket, kazma), yuva gecesi, enerji ve kazma çubuğu.
 - **İki Dünya → Kumsal sahnesini kur (oyun):** `Scenes/Levels/Kumsal.unity` — iki gecenin hepsi ve geçici insan turu; her grup (`YuvaGecesiNesneleri`, `KacisGecesiNesneleri`, `InsanTuruNesneleri`) sadece kendi adımında açılır. `Sistemler` prefab'ı da konur.
 - **İki Dünya → Bölüm 1 sahnesini kur (deniz)** ve **Bölüm 5 sahnesini kur (deniz):** `Scenes/Levels/Bolum1_Donus` ve `Bolum5_IlkYuzus` sahnelerini gri kutu olarak baştan kurar (deniz, taban basamakları, kontrol noktaları, tehlikeler, göstergeler, `Sistemler`).
+- **İki Dünya → Menü ve duraklatmayı kur:** `Menu` sahnesini (başlık, Yeni oyun, Devam et, Ayarlar, Çıkış) kurar; `Sistemler` kalıbına EventSystem ve duraklatma menüsü ekler, deneme panelini (`AkisDeneme`) çıkarır; önce metinleri aktarır.
+- **İki Dünya → Metinleri aktar:** `docs/metinler.md`'deki tablolardan `MetinTablosu` asset'ini doldurur. Metinler.md değişince yeniden çalıştırılır. Eksik metin oyunda `[id]` olarak görünür.
 - **İki Dünya → Gri kutu kaçışı kur:** `Scenes/Prototypes/GriKacis.unity` — kumsal, sıcak kum lekeleri, dalga, gün doğumu, sürü, kaçış gecesi, kumdan çıkış paneli ve gün doğumu çubuğu.
 - İki araç da eksik ayar asset'lerini `ScriptableObjects/Settings`'te, `Yavru`, `Golgelik`, `KayipIzi` kalıplarını `Prefabs/` altında oluşturur. Deneme sahnelerinde akış yoktur; gece kendiliğinden başlar.
 
@@ -101,9 +109,17 @@ Henüz yok: ay ışığının yönü göstermesi (görsel), tilkinin yuvayı boz
 
 Henüz yok: "30 yıl sonra" sahnesi (Faz 7), pervane sesi klibi (Abdü), suyun titremesi ve gölgeler gibi görsel uyarılar.
 
+## Menü, kayıt, final (Faz 7)
+
+**Akış.** Adımlar arasında ekran kararır; yeni bölüme girilince karanlıkta `bolumN_giris` metni görünür (Bölüm 3 dahil). Her adımın başında kayıt yazılır (`Kayit`: adım sırası + `KumsalDurumu`'nun JSON'u, `persistentDataPath/kayit.json`). Ana menüde "Devam et" kayıtlı adımdan sürer; "Yeni oyun" kaydı siler. Son adım (final) bitince kayıt silinir, menüye dönülür.
+
+**Duraklatma.** Esc oyun sırasında duraklatma menüsünü açar (zaman durur, imleç serbest). Duraklatma açıkken ve kapandığı karede `GameInput` oyun girdilerini vermez, böylece menüye tıklamak oyuna geçmez. Ayarlar (ses, fare hassasiyeti) bu bilgisayarda `PlayerPrefs`'te.
+
+**Final.** Bölüm 5'ten sonra `Final` adımı (Kumsal sahnesi, `FinalNesneleri`): büyümüş dişi kaplumbağa denizden kumsala yürür; Temiz Enerji oynandıysa güneş serin renkte, oynanmadıysa kızgın ve kumda sıcak izler. Ekranda `final_30_yil` ve denize ulaşan yavru sayısı. Yürüyüş bitince tıklayınca oyun biter.
+
 ## Oyun akışı
 
-`OyunAkisi` her oyun sahnesinde durur (ilki sahneler arasında yaşar). Adımlar `OyunAyarlari.AkisiKur()` ile GDD'deki sıradan kurulur: Bölüm 1 → 3 yuva gecesi (aralarında 1'er tur) → 6 bekleyiş turu → 3 kaçış gecesi (her birinden sonra 1 tur) → Bölüm 5; toplam 11 tur. Sistemler `OyunAkisi.AdimBasladi` event'ini dinler, adımları bitince `OyunAkisi.AdimBitti()` der. Kumsal sahnesinde gece ve tur arasında sahne yeniden yüklenmez. Bir oyun sahnesinde doğrudan Play'e basılırsa akış o sahnenin ilk adımından başlar. F1–F4 sadece geliştirici sürümünde çalışır.
+`OyunAkisi` her oyun sahnesinde durur (ilki sahneler arasında yaşar). Adımlar `OyunAyarlari.AkisiKur()` ile GDD'deki sıradan kurulur: Bölüm 1 → 3 yuva gecesi (aralarında 1'er tur) → 6 bekleyiş turu → 3 kaçış gecesi (her birinden sonra 1 tur) → Bölüm 5 → final; toplam 11 tur. Sistemler `OyunAkisi.AdimBasladi` event'ini dinler, adımları bitince `OyunAkisi.AdimBitti()` der. Kumsal sahnesinde gece ve tur arasında sahne yeniden yüklenmez. Bir oyun sahnesinde doğrudan Play'e basılırsa akış o sahnenin ilk adımından başlar. F1–F4 sadece geliştirici sürümünde çalışır.
 
 ## Bilinen sorunlar
 
