@@ -21,6 +21,9 @@ MonoBehaviour:
   gecelerArasiTur: 1
   bekleyisTurSayisi: 6
   bolum5OncesiTur: 1
+  gecisSuresi: 0.6
+  baslikSuresi: 2.5
+  metinler: {fileID: 11400000, guid: 31d8e9dd20aab384c8f1e1e79f74f96a, type: 2}
   bolgeSayisi: 8
   katmanEnFazla: 3
   kumsalBaslangici: {fileID: 11400000, guid: bcddf03781138074ba7dfe5132731473, type: 2}
