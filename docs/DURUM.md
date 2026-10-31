@@ -4,7 +4,7 @@ ozet: Mekanik tarafın durumu ve sistemlerin haritası. Bir sistem eklendikçe y
 
 # Durum
 
-Son güncelleme: 2026-11-01 — Alpha main'de, deneme listesi tamam (editörde 300+ FPS). Main'de: insan kısmı (yönetim ekranı, Faz 0–4). Dallarda: `umut/kumsal-arazi` (Yusuf'un kumsalı), `umut/minigameler` (poşet sürüsü, çöp seli, çöp girdabı, Parkurlar menüsü). Unity'de henüz denenmedi.
+Son güncelleme: 2026-11-01 — Alpha main'de, deneme listesi tamam (editörde 300+ FPS). Main'de: insan kısmı (yönetim ekranı, Faz 0–4). Main'de: Yusuf'un kumsalı (#40). Dalda: `umut/minigameler` (poşet sürüsü, çöp seli, çöp girdabı, Parkurlar menüsü). Unity'de henüz denenmedi.
 
 ## Sistem haritası
 
