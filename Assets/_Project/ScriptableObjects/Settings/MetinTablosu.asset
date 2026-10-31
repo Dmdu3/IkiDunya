@@ -1,0 +1,93 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: e6a94b5ebb6a92f4ba478cb2a999aed1, type: 3}
+  m_Name: MetinTablosu
+  m_EditorClassIdentifier: Assembly-CSharp::IkiDunya.Core.MetinTablosu
+  satirlar:
+  - id: kart_golgelik
+    metin: "G\xF6lgelik"
+  - id: kart_temizlik
+    metin: "Temizlik Kampanyas\u0131"
+  - id: kart_kumul
+    metin: "Kumul Onar\u0131m\u0131"
+  - id: kart_yuva_tasima
+    metin: "Yuva Ta\u015F\u0131ma"
+  - id: kart_isik
+    metin: "I\u015F\u0131k Yasa\u011F\u0131"
+  - id: kart_arac
+    metin: "Ara\xE7 Yasa\u011F\u0131"
+  - id: kart_sezlong
+    metin: "\u015Eezlong D\xFCzenlemesi"
+  - id: kart_tilki_citi
+    metin: "Tilki \xC7iti"
+  - id: kart_ag_temizligi
+    metin: "Hayalet A\u011F Temizli\u011Fi"
+  - id: kart_gonullu_cagrisi
+    metin: "G\xF6n\xFCll\xFC \xC7a\u011Fr\u0131s\u0131"
+  - id: kart_saha_arastirmasi
+    metin: "Saha Ara\u015Ft\u0131rmas\u0131"
+  - id: kart_temiz_enerji
+    metin: Temiz Enerji
+  - id: gorev_temizlik
+    metin: Temizlik
+  - id: gorev_devriye
+    metin: Gece devriyesi
+  - id: gorev_kafes
+    metin: Yuva kafesi
+  - id: gorev_golge
+    metin: "G\xF6lge ve sulama"
+  - id: gorev_bilgilendirme
+    metin: Bilgilendirme
+  - id: kanit_isi
+    metin: "Is\u0131"
+  - id: kanit_isik
+    metin: "I\u015F\u0131k"
+  - id: kanit_cop
+    metin: "\xC7\xF6p"
+  - id: kanit_avci
+    metin: "Avc\u0131"
+  - id: kanit_su
+    metin: Su
+  - id: olay_otel
+    metin: 
+  - id: olay_festival
+    metin: 
+  - id: olay_balikci
+    metin: 
+  - id: olay_sicak_dalga
+    metin: 
+  - id: olay_firtina
+    metin: 
+  - id: olay_okul
+    metin: 
+  - id: bolum1_giris
+    metin: 
+  - id: bolum2_giris
+    metin: 
+  - id: bolum3_giris
+    metin: 
+  - id: bolum4_giris
+    metin: 
+  - id: bolum5_giris
+    metin: 
+  - id: ipucu_poset
+    metin: 
+  - id: ipucu_termal
+    metin: 
+  - id: ipucu_kazma
+    metin: 
+  - id: ipucu_suru
+    metin: 
+  - id: ipucu_tilki
+    metin: 
+  - id: final_30_yil
+    metin: 
