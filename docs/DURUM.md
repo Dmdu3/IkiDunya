@@ -39,7 +39,7 @@ Son güncelleme: 2026-10-31 — Faz 7: ana menü, ayarlar, duraklatma, kayıt ve
 | Kaçışta çöp (ağ, halka, tekerlek izi) | `Hazards` | `TrashTrap` | Umut | Yapılıyor |
 | Avcılar | `Hazards` | `Yengec`, `Marti`, `Tilki`, `AvciAyarlari`, `Cover`; `Core/IAvlanabilir` | Umut | Yapılıyor |
 | Işık kaynakları | `Hazards` | `IsikKaynagi` | Umut | Yapılıyor |
-| Kayıp izleri | `Turtle`, `Hazards` | `KacisGecesi` yazar, `KumsalYapilari` gösterir | Umut | Yapılıyor |
+| Kayıp izleri | `Turtle`, `Hazards` | `KacisGecesi` yazar, `KumsalYapilari` kumda gösterir, `KayipIziHaritasi` insan turunda simge + kanıt | Umut | Yapılıyor |
 | Kumsal haritası ve tur akışı | `Management` | — | Toprak | Planlandı |
 | Gönüllüler ve görevler | `Management` | — | Toprak | Planlandı |
 | Kartlar | `Management` | `CardDefinition` | Toprak | Planlandı |
@@ -49,7 +49,7 @@ Durum değerleri: Planlandı · Yapılıyor · Oynanabilir · Bitti.
 
 ## `KumsalDurumu` sözleşmesi
 
-> Faz 0'da Umut ve Toprak birlikte doldurur: alanlar, açık metotlar, event'ler.
+> Tam sözleşme, kart/görev/olay → metot eşlemesiyle: [`docs/kumsal-durumu.md`](kumsal-durumu.md). Aşağıdaki tablo özet.
 
 **Taslak (Umut, Toprak'ın onayı bekleniyor).** `KumsalDurumu` bir ScriptableObject asset'i; kullanan her script ona `[SerializeField]` ile bağlanır. Yeni oyunda `OyunAkisi` sıfırlar. Her değişiklikten sonra `Degisti` event'i gelir.
 

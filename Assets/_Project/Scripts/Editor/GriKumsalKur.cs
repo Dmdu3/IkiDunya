@@ -211,8 +211,15 @@ namespace IkiDunya.Editor
             var kamera = new GameObject("YonetimKamerasi");
             kamera.transform.SetParent(grup, false);
             kamera.transform.SetPositionAndRotation(new Vector3(0f, 55f, KumsalDerinligi / 2f), Quaternion.Euler(90f, 0f, 0f));
-            kamera.AddComponent<UnityEngine.Camera>();
+            var kameraBileseni = kamera.AddComponent<UnityEngine.Camera>();
             kamera.AddComponent<AudioListener>();
+
+            // Kayıp izleri: kanıt renginde simgeler, tıklayınca kanıt açılır
+            var harita = Bos("KayipIziHaritasi", grup).gameObject.AddComponent<KayipIziHaritasi>();
+            Bagla(harita, "kumsal", Ayar<KumsalDurumu>("KumsalDurumu"));
+            Bagla(harita, "ayarlar", Ayar<HaritaAyarlari>("HaritaAyarlari"));
+            Bagla(harita, "kamera", kameraBileseni);
+            Bagla(harita, "simgeMalzemesi", termalSerit);
 
             var tur = new GameObject("GeciciInsanTuru").AddComponent<GeciciInsanTuru>();
             Bagla(tur, "kumsal", Ayar<KumsalDurumu>("KumsalDurumu"));

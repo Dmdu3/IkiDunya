@@ -94,7 +94,8 @@ namespace IkiDunya.Hazards
                 for (int k = 0; k < isikSayisi; k++)
                     Koy(isikKalibi, kum.BolgeNoktasi(i, (k + 0.5f) / isikSayisi, isikUzakligi), 0f);
 
-                if (insanKoku == null) continue;
+                // Gece devriyesi olan bölgede insan ve fener olmaz.
+                if (insanKoku == null || bolge.Var(BolgeYapisi.Devriye)) continue;
                 for (int n = 0; n < bolge.Seviye(BolgeKatmani.Insan); n++)
                 {
                     float z = Mathf.Lerp(insanAraligi.x, insanAraligi.y, (float)rastgele.NextDouble());

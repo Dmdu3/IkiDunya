@@ -16,8 +16,11 @@ namespace IkiDunya.Core
         [SerializeField] private bool isikYasagi;
         [SerializeField] private bool temizEnerji;
         [SerializeField] private int denizeUlasanYavru;
+        [SerializeField] private List<GeciciEtki> geciciEtkiler = new List<GeciciEtki>();
 
         public event Action Degisti;
+        /// <summary>İnsan kısmında bir kayıp izine tıklanıp kanıt açıldığında; kartı açacak olan insan kısmı dinler.</summary>
+        public event Action<KayipIzi> KanitAcildi;
 
         public int BolgeSayisi => bolgeler.Count;
         public IReadOnlyList<Yuva> Yuvalar => yuvalar;
@@ -66,6 +69,7 @@ namespace IkiDunya.Core
             isikYasagi = false;
             temizEnerji = false;
             denizeUlasanYavru = 0;
+            geciciEtkiler.Clear();
         }
 
         // ---- Bölgeler (çoğunlukla insan kısmı) ----
@@ -140,11 +144,79 @@ namespace IkiDunya.Core
             Degisti?.Invoke();
         }
 
-        /// <summary>İnsan turu sonunda bütün yuvaların çıkışına bir hafta yaklaşır.</summary>
+        /// <summary>Yuvanın sıcaklığını kalıcı olarak bant bant değiştirir (ör. yuva taşındıktan sonra yeni yerin farkı).</summary>
+        public void YuvaBantDegistir(int yuva, int fark)
+        {
+            yuvalar[yuva].BantFarki += fark;
+            Degisti?.Invoke();
+        }
+
+        /// <summary>İnsan turu sonunda: bütün yuvaların çıkışına bir hafta yaklaşır, süreli etkilerin süresi azalır, biten geri alınır.</summary>
         public void BirHaftaGecti()
         {
             foreach (var yuva in yuvalar) yuva.CikisinaHafta = Mathf.Max(0, yuva.CikisinaHafta - 1);
+            for (int i = geciciEtkiler.Count - 1; i >= 0; i--)
+            {
+                GeciciEtki etki = geciciEtkiler[i];
+                if (--etki.KalanTur > 0) continue;
+                Uygula(etki, -1);
+                geciciEtkiler.RemoveAt(i);
+            }
             Degisti?.Invoke();
+        }
+
+        // ---- Süreli etkiler: "o tur", "bir gece" ----
+        // Süre tur sayısıdır; 1 = sıradaki BirHaftaGecti'de geri alınır, yani bu turun ardından gelen gece boyunca sürer.
+
+        /// <summary>Bir bölgenin katmanını süreli değiştirir (ör. festival: bir gece ışık ve insan).</summary>
+        public void GeciciKatman(int bolge, BolgeKatmani katman, int fark, int tur)
+        {
+            // Sınırda kırpılırsa geri alınacak olan, gerçekten uygulanan fark.
+            int once = bolgeler[bolge].Seviye(katman);
+            bolgeler[bolge].KatmanEkle(katman, fark);
+            Ekle(new GeciciEtki(GeciciEtki.Turu.Katman, bolge, (int)katman, bolgeler[bolge].Seviye(katman) - once, tur), false);
+        }
+
+        /// <summary>Bir bölgeye süreli yapı koyar (ör. gece devriyesi). Yapı zaten varsa süresi sonunda kalkmaz.</summary>
+        public void GeciciYapi(int bolge, BolgeYapisi yapi, int tur)
+        {
+            if (bolgeler[bolge].Var(yapi)) return;
+            Ekle(new GeciciEtki(GeciciEtki.Turu.Yapi, bolge, (int)yapi, 1, tur), true);
+        }
+
+        /// <summary>Bütün kumu süreli ısıtır (ör. sıcak dalgası: gelecek tur 1 bant).</summary>
+        public void GeciciKumIsinmasi(int fark, int tur) =>
+            Ekle(new GeciciEtki(GeciciEtki.Turu.KumIsinmasi, -1, 0, fark, tur), true);
+
+        /// <summary>Bir yuvanın sıcaklığını süreli değiştirir (ör. gölge ve sulama: o tur 1 bant serin).</summary>
+        public void GeciciYuvaBant(int yuva, int fark, int tur) =>
+            Ekle(new GeciciEtki(GeciciEtki.Turu.YuvaBant, yuva, 0, fark, tur), true);
+
+        private void Ekle(GeciciEtki etki, bool uygula)
+        {
+            if (uygula) Uygula(etki, 1);
+            geciciEtkiler.Add(etki);
+            Degisti?.Invoke();
+        }
+
+        /// <summary>Etkiyi uygular (yon 1) ya da geri alır (yon -1).</summary>
+        private void Uygula(GeciciEtki etki, int yon)
+        {
+            switch (etki.Tur)
+            {
+                case GeciciEtki.Turu.Katman:
+                    bolgeler[etki.Hedef].KatmanEkle((BolgeKatmani)etki.Alt, etki.Fark * yon);
+                    break;
+                case GeciciEtki.Turu.Yapi:
+                    bolgeler[etki.Hedef].YapiAyarla((BolgeYapisi)etki.Alt, yon > 0);
+                    break;
+                case GeciciEtki.Turu.KumIsinmasi:
+                    kumIsinmasi += etki.Fark * yon;
+                    break;
+                case GeciciEtki.Turu.YuvaBant:
+                    if (etki.Hedef < yuvalar.Count) yuvalar[etki.Hedef].BantFarki += etki.Fark * yon;
+                    break;
+            }
         }
 
         // ---- Kaplumbağadan insana ----
@@ -157,7 +229,9 @@ namespace IkiDunya.Core
 
         public void KanitAc(int iz)
         {
+            if (kayipIzleri[iz].KanitAcildi) return;
             kayipIzleri[iz].KanitAcildi = true;
+            KanitAcildi?.Invoke(kayipIzleri[iz]);
             Degisti?.Invoke();
         }
 
@@ -172,13 +246,47 @@ namespace IkiDunya.Core
     public enum BolgeKatmani { Cop, Isik, Sezlong, Insan }
 
     /// <summary>Bölgede var ya da yok olan yapılar ve izler.</summary>
-    public enum BolgeYapisi { Golgelik, KumulOnarimi, TilkiCiti, AracIzi }
+    /// <remarks>Kayıtta sayı olarak saklanır: yeni yapı hep sona eklenir.</remarks>
+    public enum BolgeYapisi { Golgelik, KumulOnarimi, TilkiCiti, AracIzi, Devriye }
 
     /// <summary>Termal görünümdeki kum sıcaklığı bandı.</summary>
     public enum SicaklikBandi { Mavi, Yesil, Turuncu, Kirmizi }
 
     /// <summary>Yavrunun kaybedilme nedeni; kanıtı belirler.</summary>
     public enum KayipNedeni { SicakKum, Cop, Ag, Isik, Yengec, Marti, Tilki, Dalga }
+
+    /// <summary>Kayıp izinden açılan kanıt (GDD: İnsan kısmı, Kanıtlar).</summary>
+    public enum KanitTuru { Isi, Isik, Cop, Avci, Su }
+
+    /// <summary>"O tur", "bir gece" süren etki; süresi bitince BirHaftaGecti geri alır.</summary>
+    [Serializable]
+    public class GeciciEtki
+    {
+        public enum Turu { Katman, Yapi, KumIsinmasi, YuvaBant }
+
+        [SerializeField] private Turu tur;
+        [Tooltip("Bölge ya da yuva sırası.")]
+        [SerializeField] private int hedef;
+        [Tooltip("Katman ya da yapı (enum sırası).")]
+        [SerializeField] private int alt;
+        [SerializeField] private int fark;
+        [SerializeField] private int kalanTur;
+
+        public GeciciEtki(Turu tur, int hedef, int alt, int fark, int kalanTur)
+        {
+            this.tur = tur;
+            this.hedef = hedef;
+            this.alt = alt;
+            this.fark = fark;
+            this.kalanTur = kalanTur;
+        }
+
+        public Turu Tur => tur;
+        public int Hedef => hedef;
+        public int Alt => alt;
+        public int Fark => fark;
+        public int KalanTur { get => kalanTur; internal set => kalanTur = value; }
+    }
 
     /// <summary>Kumsalın bir bölgesi.</summary>
     [Serializable]
@@ -220,6 +328,7 @@ namespace IkiDunya.Core
         [SerializeField] private int yumurta;
         [SerializeField] private int cikisinaHafta;
         [SerializeField] private bool kafesli;
+        [SerializeField] private int bantFarki;
 
         public Yuva(int bolge, Vector3 konum, SicaklikBandi bant, bool dalgaAltinda, int yumurta, int cikisinaHafta)
         {
@@ -233,7 +342,10 @@ namespace IkiDunya.Core
 
         public int Bolge => bolge;
         public Vector3 Konum => konum;
-        public SicaklikBandi Bant => bant;
+        /// <summary>Kazıldığı bant ve sonradan gelen farklar (gölge, sulama, sıcak dalgası); kaçış gecesi bunu okur.</summary>
+        public SicaklikBandi Bant => (SicaklikBandi)Mathf.Clamp((int)bant + bantFarki, (int)SicaklikBandi.Mavi, (int)SicaklikBandi.Kirmizi);
+        public SicaklikBandi KazildigiBant => bant;
+        public int BantFarki { get => bantFarki; internal set => bantFarki = value; }
         public bool DalgaAltinda => dalgaAltinda;
         public int Yumurta { get => yumurta; internal set => yumurta = value; }
         public int CikisinaHafta { get => cikisinaHafta; internal set => cikisinaHafta = value; }
@@ -266,6 +378,23 @@ namespace IkiDunya.Core
         public int Bolge => bolge;
         public Vector3 Konum => konum;
         public KayipNedeni Neden => neden;
+
+        /// <summary>Bu izden açılacak kanıt (GDD: Isı, Işık, Çöp, Avcı, Su).</summary>
+        public KanitTuru Kanit
+        {
+            get
+            {
+                switch (neden)
+                {
+                    case KayipNedeni.SicakKum: return KanitTuru.Isi;
+                    case KayipNedeni.Isik: return KanitTuru.Isik;
+                    case KayipNedeni.Cop:
+                    case KayipNedeni.Ag: return KanitTuru.Cop;
+                    case KayipNedeni.Dalga: return KanitTuru.Su;
+                    default: return KanitTuru.Avci;
+                }
+            }
+        }
         public bool KanitAcildi { get => kanitAcildi; internal set => kanitAcildi = value; }
     }
 }
