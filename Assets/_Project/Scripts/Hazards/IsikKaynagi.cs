@@ -13,6 +13,8 @@ namespace IkiDunya.Hazards
         [SerializeField] private bool yasaklanabilir = true;
         [Tooltip("Görünen ışık (isteğe bağlı).")]
         [SerializeField] private Light isik;
+        [Tooltip("Kumdaki ışık halkası (isteğe bağlı); ışıkla birlikte söner.")]
+        [SerializeField] private GameObject halka;
 
         public bool Acik => !(yasaklanabilir && kumsal.IsikYasagi);
 
@@ -27,6 +29,7 @@ namespace IkiDunya.Hazards
         private void Guncelle()
         {
             if (isik != null) isik.enabled = Acik;
+            if (halka != null) halka.SetActive(Acik);
         }
 
         /// <summary>Bu noktadaki yavruya uygulanan çekim hızı (yatay).</summary>

@@ -1,0 +1,48 @@
+using UnityEngine;
+
+namespace IkiDunya.Core
+{
+    /// <summary>Kumsal sahnesinde gece ile gündüz arası: kaplumbağa gecelerinde ay ışığı ve koyu gökyüzü, insan turunda ve finalde gündüz.</summary>
+    public class OrtamIsigi : MonoBehaviour
+    {
+        [SerializeField] private OrtamAyarlari ayarlar;
+        [Tooltip("Sahnenin yönlü ışığı (gece ay, gündüz güneş).")]
+        [SerializeField] private Light isik;
+        [Tooltip("Gökyüzü rengi verilecek kameralar.")]
+        [SerializeField] private UnityEngine.Camera[] kameralar;
+        [Tooltip("Akışın olmadığı deneme sahnesinde gece mi başlasın.")]
+        [SerializeField] private bool akisYoksaGece = true;
+
+        private void OnEnable() => OyunAkisi.AdimBasladi += AdimBasladi;
+        private void OnDisable() => OyunAkisi.AdimBasladi -= AdimBasladi;
+
+        private void Start()
+        {
+            if (!OyunAkisi.Var) Uygula(akisYoksaGece);
+        }
+
+        // Finalde güneşin rengini FinalSahnesi verir (Temiz Enerji'ye göre); burada dokunulmaz.
+        private void AdimBasladi(Adim adim) =>
+            Uygula(adim.Tur == AdimTuru.YuvaGecesi || adim.Tur == AdimTuru.KacisGecesi, adim.Tur != AdimTuru.Final);
+
+        private void Uygula(bool gece, bool renkVer = true)
+        {
+            if (renkVer) isik.color = gece ? ayarlar.GeceIsigi : ayarlar.GunduzIsigi;
+            isik.intensity = gece ? ayarlar.GeceIsikGucu : ayarlar.GunduzIsikGucu;
+            RenderSettings.ambientMode = UnityEngine.Rendering.AmbientMode.Flat;
+            RenderSettings.ambientLight = gece ? ayarlar.GeceOrtamIsigi : ayarlar.GunduzOrtamIsigi;
+            RenderSettings.fog = gece;
+            RenderSettings.fogMode = FogMode.ExponentialSquared;
+            RenderSettings.fogColor = ayarlar.GeceGokyuzu;
+            RenderSettings.fogDensity = ayarlar.GeceSis;
+
+            Color gok = gece ? ayarlar.GeceGokyuzu : ayarlar.GunduzGokyuzu;
+            foreach (UnityEngine.Camera kamera in kameralar)
+            {
+                if (kamera == null) continue;
+                kamera.clearFlags = CameraClearFlags.SolidColor;
+                kamera.backgroundColor = gok;
+            }
+        }
+    }
+}

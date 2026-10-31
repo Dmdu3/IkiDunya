@@ -137,6 +137,8 @@ namespace IkiDunya.Editor
         private static void Hazirla()
         {
             su = GriKumsalKur.SaydamMalzeme("SuYuzeyi", new Color(0.2f, 0.45f, 0.6f, 0.6f));
+            // Su altından da görünsün: iki yüzlü
+            su.SetFloat("_Cull", 0f);
             taban = GriKumsalKur.Malzeme("DenizTabani", new Color(0.55f, 0.5f, 0.4f));
             kaya = GriKumsalKur.Malzeme("Kaya", new Color(0.35f, 0.35f, 0.38f));
             cayir = GriKumsalKur.SaydamMalzeme("DenizCayiri", new Color(0.2f, 0.6f, 0.3f, 0.5f));
@@ -160,8 +162,7 @@ namespace IkiDunya.Editor
             RenderSettings.fogColor = new Color(0.1f, 0.35f, 0.45f);
 
             var deniz = new GameObject("Deniz").transform;
-            GameObject yuzey = GriKumsalKur.Kutu("SuYuzeyi", deniz, new Vector3(0f, -0.05f, -DenizUzunlugu / 2f), new Vector3(DenizGenisligi, 0.1f, DenizUzunlugu), su, "Water");
-            Object.DestroyImmediate(yuzey.GetComponent<Collider>());
+            GriKumsalKur.SuYuzeyiKur("SuYuzeyi", deniz, new Vector3(0f, 0f, -DenizUzunlugu / 2f), new Vector2(DenizGenisligi, DenizUzunlugu), su);
 
             // Taban üç basamak: açık deniz, sığ kıyı suları, kumsalın önü; kıyıda kumsal
             GriKumsalKur.Kutu("AcikDeniz", deniz, new Vector3(0f, -15.5f, -160f), new Vector3(DenizGenisligi, 1f, 80f), taban, "Ground");
@@ -190,6 +191,7 @@ namespace IkiDunya.Editor
 
             GriKumsalKur.Govde(nesne.transform, Vector3.zero, govdeOlcegi);
             BirinciSahisKamera goz = GriKumsalKur.KameraKur(nesne.transform, gozYeri, nesne.transform);
+            GriKumsalKur.Bagla(goz.gameObject.AddComponent<SuAltiGorunumu>(), "ayarlar", GriKumsalKur.Ayar<OrtamAyarlari>("OrtamAyarlari"));
             GriKumsalKur.Bagla(goz, "ayarlar", AyarAdla<KameraAyarlari>("DenizKameraAyarlari", so =>
             {
                 so.FindProperty("asagiSinir").floatValue = -75f;

@@ -26,6 +26,14 @@ namespace IkiDunya.Hazards
         [Tooltip("Kumul onarımı olan bölgede dalga çizgisinin denize doğru çekildiği mesafe (GDD: 4 m).")]
         [SerializeField] private float kumulOnarimiGeriCekilme = 4f;
 
+        [Header("Görünüm")]
+        [Tooltip("Termal şeritlerin saydamlığı (0 görünmez – 1 kumu tamamen örter).")]
+        [Range(0f, 1f)] [SerializeField] private float seritOpakligi = 0.65f;
+        [Tooltip("Desenin bir tekrarı kaç metre (renk ayırt edemeyenler için her bandın ayrı deseni var).")]
+        [SerializeField] private float desenBoyu = 2f;
+
+        public float SeritOpakligi => seritOpakligi;
+        public float DesenBoyu => desenBoyu;
         public float[] BantSinirlari => bantSinirlari;
         public float KumulOnarimiGeriCekilme => kumulOnarimiGeriCekilme;
         public int GolgelikSerinletme => golgelikSerinletme;
