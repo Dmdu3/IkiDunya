@@ -36,6 +36,25 @@ namespace IkiDunya.Core
 
         public Bolge BolgeAl(int bolge) => bolgeler[bolge];
 
+#if UNITY_EDITOR
+        // Editörde Play sırasındaki değişiklikler asset'e yazılmasın (git'te sürekli değişmiş görünmesin):
+        // Play başında hal saklanır, Play bitince geri yüklenir.
+        private string playOncesi;
+
+        private void OnEnable() => UnityEditor.EditorApplication.playModeStateChanged += OynatmaDegisti;
+        private void OnDisable() => UnityEditor.EditorApplication.playModeStateChanged -= OynatmaDegisti;
+
+        private void OynatmaDegisti(UnityEditor.PlayModeStateChange durum)
+        {
+            if (durum == UnityEditor.PlayModeStateChange.ExitingEditMode) playOncesi = JsonUtility.ToJson(this);
+            else if (durum == UnityEditor.PlayModeStateChange.EnteredEditMode && playOncesi != null)
+            {
+                JsonUtility.FromJsonOverwrite(playOncesi, this);
+                playOncesi = null;
+            }
+        }
+#endif
+
         /// <summary>Yeni oyunda kumsalı boşaltır. Oyun akışı çağırır.</summary>
         public void Sifirla(int bolgeSayisi, int katmanEnFazla)
         {

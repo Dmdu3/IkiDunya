@@ -6,6 +6,8 @@ ozet: Ekipçe alınan kararlar, tarih ve nedeniyle. En yeni en üstte. GDD'yi de
 
 | Tarih | Karar | Neden | Kim |
 |---|---|---|---|
+| 2026-10-31 | Termal bantlar renk + desenle ayırt edilir; tuşlar ayarlardan atanabilir | Erişilebilirlik (Faz 10): renk körlüğü, farklı klavyeler | Umut |
+| 2026-10-31 | Editörde `KumsalDurumu` Play bitince eski haline döner | Play'deki durum asset'e yazılıp git'te sürekli değişmiş görünüyordu (pull'ları da kilitliyordu) | Umut |
 | 2026-10-31 | `KumsalDurumu`'na süreli etkiler (`GeciciKatman`, `GeciciYapi`, `GeciciKumIsinmasi`, `GeciciYuvaBant`; `BirHaftaGecti` geri alır), `YuvaBantDegistir`, `BolgeYapisi.Devriye`, `KanitTuru` ve `KanitAcildi` event'i; tam sözleşme `docs/kumsal-durumu.md` | GDD'deki "o tur" ve "bir gece" süren görev ve olaylar (devriye, gölge ve sulama, festival, sıcak dalgası) kumsala geri alınabilir biçimde yansısın; Toprak onaylayacak | Umut |
 | 2026-10-31 | Geçici insan turunda tıklama kayıp izi simgelerine (kanıt), tur sonu Space'e | Kanıt toplamak tıklama ister; turu yanlışlıkla bitirmesin | Umut |
 | 2026-10-31 | Oyuncu metinleri `MetinTablosu` asset'inden id ile; asset `docs/metinler.md`'den editör aracıyla doldurulur, eksik metin `[id]` görünür | Metin tek yerde (Yusuf'un dosyası), kod sadece id bilir; eksikler oyunda hemen fark edilir | Umut |

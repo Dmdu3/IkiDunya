@@ -36,6 +36,7 @@ namespace IkiDunya.Core
         private static InputAction gelistiriciKumsal;
         private static InputAction gelistiriciBolum5;
         private static InputAction gelistiriciMenu;
+        private static InputAction gelistiriciPerformans;
 
         // Kaplumbağa bölümleri (birinci şahıs)
         public static Vector2 Hareket => Oyunda ? hareket.ReadValue<Vector2>() : Vector2.zero;          // WASD
@@ -59,11 +60,12 @@ namespace IkiDunya.Core
         public static bool TiklaBirakildi => Oyunda ? tikla.WasReleasedThisFrame() : false;
         public static bool TiklaBasili => Oyunda ? tikla.IsPressed() : false;
 
-        // Geliştirici (F1–F4)
+        // Geliştirici (F1–F5)
         public static bool GelistiriciBolum1Basildi => gelistiriciBolum1.WasPressedThisFrame();
         public static bool GelistiriciKumsalBasildi => gelistiriciKumsal.WasPressedThisFrame();
         public static bool GelistiriciBolum5Basildi => gelistiriciBolum5.WasPressedThisFrame();
         public static bool GelistiriciMenuBasildi => gelistiriciMenu.WasPressedThisFrame();
+        public static bool GelistiriciPerformansBasildi => gelistiriciPerformans.WasPressedThisFrame();
 
         [RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.BeforeSceneLoad)]
         private static void Kur()
@@ -95,6 +97,7 @@ namespace IkiDunya.Core
             gelistiriciKumsal = harita.AddAction("GelistiriciKumsal", InputActionType.Button, "<Keyboard>/f2");
             gelistiriciBolum5 = harita.AddAction("GelistiriciBolum5", InputActionType.Button, "<Keyboard>/f3");
             gelistiriciMenu = harita.AddAction("GelistiriciMenu", InputActionType.Button, "<Keyboard>/f4");
+            gelistiriciPerformans = harita.AddAction("GelistiriciPerformans", InputActionType.Button, "<Keyboard>/f5");
 
             // Oyuncunun ayarlardan atadığı tuşlar
             string kayitli = PlayerPrefs.GetString(TuslarAnahtari, "");

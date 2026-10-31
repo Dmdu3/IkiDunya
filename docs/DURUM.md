@@ -4,7 +4,7 @@ ozet: Mekanik tarafın durumu ve sistemlerin haritası. Bir sistem eklendikçe y
 
 # Durum
 
-Son güncelleme: 2026-10-31 — Faz 7: ana menü, ayarlar, duraklatma, kayıt ve devam, kararmalı geçiş ve bölüm başlığı, "30 yıl sonra" finali yazıldı; Unity'de henüz denenmedi.
+Son güncelleme: 2026-10-31 — Alpha main'de (baştan sona oynanıyor). Dalda: KumsalDurumu sözleşmesi tamam (`docs/kumsal-durumu.md`), kayıp izleri haritada, gece/gündüz ve su görünümü, tuş atama, termal desen, FPS göstergesi. Unity'de henüz denenmedi.
 
 ## Sistem haritası
 
@@ -120,6 +120,16 @@ Henüz yok: "30 yıl sonra" sahnesi (Faz 7), pervane sesi klibi (Abdü), suyun t
 ## Oyun akışı
 
 `OyunAkisi` her oyun sahnesinde durur (ilki sahneler arasında yaşar). Adımlar `OyunAyarlari.AkisiKur()` ile GDD'deki sıradan kurulur: Bölüm 1 → 3 yuva gecesi (aralarında 1'er tur) → 6 bekleyiş turu → 3 kaçış gecesi (her birinden sonra 1 tur) → Bölüm 5 → final; toplam 11 tur. Sistemler `OyunAkisi.AdimBasladi` event'ini dinler, adımları bitince `OyunAkisi.AdimBitti()` der. Kumsal sahnesinde gece ve tur arasında sahne yeniden yüklenmez. Bir oyun sahnesinde doğrudan Play'e basılırsa akış o sahnenin ilk adımından başlar. F1–F4 sadece geliştirici sürümünde çalışır.
+
+## Görünüm ve erişilebilirlik
+
+- **Gece ve gündüz (`OrtamIsigi`, `OrtamAyarlari`):** kumsalda yuva ve kaçış gecelerinde ay ışığı, koyu gökyüzü ve sis; insan turunda gündüz; finalde güneşin rengini `FinalSahnesi` verir. Ay ışığı denizin üstünde soluk bir yol.
+- **Su (`SuDalgalanmasi`, `SuAltiGorunumu`):** su yüzeyi dalga dalga oynar (iki yüzlü malzeme, alttan da görünür); denizde göz suya girince sis koyu ve yoğun olur.
+- **Işık halkası:** otel ışığının kumda çekim alanı kadar sarı bir halkası var; Işık Yasağı ile söner.
+- **Termal görünüm:** şeritler yarı saydam; her bandın ayrı deseni var (Mavi yatay çizgi, Yeşil nokta, Turuncu çapraz, Kırmızı dama), renk ayırt edemeyenler için.
+- **Tuş atama:** Ayarlar'da 11 eylemin tuşu değiştirilir (`TusSatiri`), `PlayerPrefs`'te saklanır, "varsayılan" ile geri döner.
+- **Geliştirici:** F5 kare hızı (FPS) göstergesi.
+- **Editör:** `KumsalDurumu` asset'i Play bitince Play öncesi haline döner; Play'deki yuvalar ve izler git'e değişiklik olarak düşmez.
 
 ## Bilinen sorunlar
 

@@ -30,6 +30,8 @@ namespace IkiDunya.Core
         private int sira = -1;
         private bool yukleniyor;
         private Gecis gecis;
+        private bool performansGoster;
+        private float ortalamaKare = 1f / 60f;
 
         [RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.SubsystemRegistration)]
         private static void StatikleriSifirla()
@@ -72,12 +74,22 @@ namespace IkiDunya.Core
 
         private void Update()
         {
-            if (ornek != this || !Debug.isDebugBuild || yukleniyor) return;
+            if (ornek != this || !Debug.isDebugBuild) return;
+            if (GameInput.GelistiriciPerformansBasildi) performansGoster = !performansGoster;
+            if (performansGoster) ortalamaKare = Mathf.Lerp(ortalamaKare, Time.unscaledDeltaTime, 0.05f);
+            if (yukleniyor) return;
 
             if (GameInput.GelistiriciBolum1Basildi) IlkAdimaGec(AdimTuru.Donus);
             else if (GameInput.GelistiriciKumsalBasildi) IlkAdimaGec(AdimTuru.YuvaGecesi);
             else if (GameInput.GelistiriciBolum5Basildi) IlkAdimaGec(AdimTuru.IlkYuzus);
             else if (GameInput.GelistiriciMenuBasildi) MenuyeDon();
+        }
+
+        /// <summary>Geliştirici sürümünde F5: sol üstte kare hızı (FPS) ve kare süresi; performans kontrolü için.</summary>
+        private void OnGUI()
+        {
+            if (!performansGoster) return;
+            GUI.Label(new Rect(10f, 10f, 260f, 24f), $"{1f / ortalamaKare:0} FPS · {ortalamaKare * 1000f:0.0} ms");
         }
 
         // ---- Diğer sistemlerin çağırdığı metotlar ----
