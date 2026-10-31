@@ -44,6 +44,7 @@ GameObject:
   - component: {fileID: 2580482417760246382}
   - component: {fileID: 185904396725328860}
   - component: {fileID: 456658867981907100}
+  - component: {fileID: 2474077975284254519}
   m_Layer: 14
   m_Name: Yavru
   m_TagString: Untagged
@@ -116,6 +117,22 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: dd2fc6d4def97674ea8ebf3b3b01822d, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::IkiDunya.Turtle.Yavru
+--- !u!114 &2474077975284254519
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7114611966992186282}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: cfe6a2c10fd4ac54686e676bb2814090, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::IkiDunya.Turtle.Salinim
+  ayarlar: {fileID: 11400000, guid: d80c712c84e0d674c8b8e8019b601d70, type: 2}
+  tur: 0
+  gorunus: {fileID: 6306635591573807861}
+  kazma: {fileID: 0}
 --- !u!1001 &7007139809608054760
 PrefabInstance:
   m_ObjectHideFlags: 0
