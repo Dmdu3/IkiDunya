@@ -677,7 +677,8 @@ namespace IkiDunya.Editor
             Bagla(anne.AddComponent<AnneKara>(), "ayarlar", anneAyarlari);
             Bagla(anne.AddComponent<AnneKazma>(), "ayarlar", anneAyarlari);
 
-            Govde(anne.transform, new Vector3(0f, 0.2f, 0f), new Vector3(0.9f, 0.35f, 1.1f), "Anne_Caretta");
+            Transform anneGorunusu = Govde(anne.transform, new Vector3(0f, 0.2f, 0f), new Vector3(0.9f, 0.35f, 1.1f), "Anne_Caretta");
+            SalinimEkle(anne, anneGorunusu, SalinimTuru.Kara, anne.GetComponent<AnneKazma>());
             KameraKur(anne.transform, new Vector3(0f, 0.35f, 0.6f), anne.transform);
             return anne;
         }
@@ -725,7 +726,14 @@ namespace IkiDunya.Editor
             govde.transform.localPosition = new Vector3(0f, 1f, 0f);
             govde.GetComponent<Renderer>().sharedMaterial = insan;
 
-            ModelEkle(kok, "Insan");
+            // Yusuf'un insanı varsa kapsül gizlenir; yürürken sallanan, ya model ya kapsül.
+            Transform insanGorunusu = govde.transform;
+            if (ModelBul("Insan") != null)
+            {
+                govde.GetComponent<Renderer>().enabled = false;
+                insanGorunusu = ModelYerlestir(kok.transform, "Insan", Vector3.zero, 0f).transform;
+            }
+            SalinimEkle(kok, insanGorunusu, SalinimTuru.Kara);
 
             var insanBileseni = kok.AddComponent<Insan>();
             Bagla(insanBileseni, "ayarlar", Ayar<InsanAyarlari>("InsanAyarlari"));
@@ -803,7 +811,8 @@ namespace IkiDunya.Editor
             renderer.sharedMaterial = golge;
             renderer.shadowCastingMode = ShadowCastingMode.Off;
 
-            ModelYerlestir(kok, "Marti", Vector3.zero, 0.9f);
+            GameObject martiModeli = ModelYerlestir(kok, "Marti", Vector3.zero, 0.9f);
+            if (martiModeli != null) SalinimEkle(kok.gameObject, martiModeli.transform, SalinimTuru.Kus);
 
             var marti = kok.gameObject.AddComponent<Marti>();
             Bagla(marti, "ayarlar", ayarlar);
@@ -822,12 +831,14 @@ namespace IkiDunya.Editor
             // Gövde boş bir kök: içinde gri kutu ya da Yusuf'un modeli; tilki eşelerken bu sallanır.
             GameObject govde = Bos("Govde", kok).gameObject;
             govde.layer = LayerMask.NameToLayer("Predator");
-            if (ModelYerlestir(govde.transform, "Tilki", Vector3.zero, 0.9f) == null)
+            GameObject tilkiGorunusu = ModelYerlestir(govde.transform, "Tilki", Vector3.zero, 0.9f);
+            if (tilkiGorunusu == null)
             {
-                GameObject kutu = Kutu("Gri", govde.transform, new Vector3(0f, 0.2f, 0f), new Vector3(0.3f, 0.35f, 0.8f), tilki, "Predator");
-                Object.DestroyImmediate(kutu.GetComponent<Collider>());
-                kutu.isStatic = false;
+                tilkiGorunusu = Kutu("Gri", govde.transform, new Vector3(0f, 0.2f, 0f), new Vector3(0.3f, 0.35f, 0.8f), tilki, "Predator");
+                Object.DestroyImmediate(tilkiGorunusu.GetComponent<Collider>());
+                tilkiGorunusu.isStatic = false;
             }
+            SalinimEkle(kok.gameObject, tilkiGorunusu.transform, SalinimTuru.Kara);
 
             var bilesen = kok.gameObject.AddComponent<Tilki>();
             Bagla(bilesen, "ayarlar", ayarlar);
@@ -1008,7 +1019,8 @@ namespace IkiDunya.Editor
             kontrol.skinWidth = 0.01f;
             yavru.AddComponent<Enerji>();
             yavru.AddComponent<Yavru>();
-            Govde(yavru.transform, new Vector3(0f, 0.04f, 0f), new Vector3(0.16f, 0.06f, 0.2f), "Yavru_Caretta");
+            Transform yavruGorunusu = Govde(yavru.transform, new Vector3(0f, 0.04f, 0f), new Vector3(0.16f, 0.06f, 0.2f), "Yavru_Caretta");
+            SalinimEkle(yavru, yavruGorunusu, SalinimTuru.Kara);
             return KalipKaydet(yavru, YavruKalibi);
         }
 
@@ -1081,14 +1093,18 @@ namespace IkiDunya.Editor
         // ---- Küçük yardımcılar ----
 
         /// <summary>Kaplumbağanın görünen gövdesi: "Kabuk" (ilk çocuk; yavru ters dönünce bu çevrilir). Model verilir ve bulunursa Yusuf'un modeli (boyu gövdenin uzunluğuna göre), yoksa gri küre.</summary>
-        internal static void Govde(Transform ebeveyn, Vector3 konum, Vector3 olcek, string model = null)
+        internal static Transform Govde(Transform ebeveyn, Vector3 konum, Vector3 olcek, string model = null)
         {
             var kabuk = new GameObject("Kabuk").transform;
             kabuk.gameObject.layer = ebeveyn.gameObject.layer;
             kabuk.SetParent(ebeveyn, false);
             kabuk.SetSiblingIndex(0);
             kabuk.localPosition = konum;
-            if (model != null && ModelYerlestir(kabuk, model, new Vector3(0f, -olcek.y / 2f, 0f), Mathf.Max(olcek.x, olcek.z)) != null) return;
+            if (model != null)
+            {
+                GameObject gorunus = ModelYerlestir(kabuk, model, new Vector3(0f, -olcek.y / 2f, 0f), Mathf.Max(olcek.x, olcek.z));
+                if (gorunus != null) return gorunus.transform;
+            }
 
             GameObject kure = GameObject.CreatePrimitive(PrimitiveType.Sphere);
             kure.name = "Gri";
@@ -1097,6 +1113,20 @@ namespace IkiDunya.Editor
             kure.transform.SetParent(kabuk, false);
             kure.transform.localScale = olcek;
             kure.GetComponent<Renderer>().sharedMaterial = kaplumbaga;
+            return kure.transform;
+        }
+
+        /// <summary>Köke kodla animasyon ekler: kök hareket ettikçe görünüş türüne göre sallanır (kazma verilirse kazarken eğilir).</summary>
+        internal static void SalinimEkle(GameObject kok, Transform gorunus, SalinimTuru tur, AnneKazma kazma = null)
+        {
+            if (gorunus == null) return;
+            var salinim = kok.AddComponent<Salinim>();
+            Bagla(salinim, "ayarlar", Ayar<AnimasyonAyarlari>("AnimasyonAyarlari"));
+            Bagla(salinim, "gorunus", gorunus);
+            if (kazma != null) Bagla(salinim, "kazma", kazma);
+            var so = new SerializedObject(salinim);
+            so.FindProperty("tur").enumValueIndex = (int)tur;
+            so.ApplyModifiedPropertiesWithoutUndo();
         }
 
         internal static BirinciSahisKamera KameraKur(Transform ebeveyn, Vector3 konum, Transform govde)

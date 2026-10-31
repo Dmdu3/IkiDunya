@@ -15,79 +15,350 @@ MonoBehaviour:
   satirlar:
   - id: kart_golgelik
     metin: "G\xF6lgelik"
+  - id: kart_golgelik_aciklama
+    metin: "Se\xE7ti\u011Fin b\xF6lgeye g\xF6lgelik kur. Kum bir bant serinler, kal\u0131c\u0131."
   - id: kart_temizlik
     metin: "Temizlik Kampanyas\u0131"
+  - id: kart_temizlik_aciklama
+    metin: "En kirli \xFC\xE7 b\xF6lgede \xE7\xF6p bir kademe azal\u0131r."
   - id: kart_kumul
     metin: "Kumul Onar\u0131m\u0131"
+  - id: kart_kumul_aciklama
+    metin: "Se\xE7ti\u011Fin b\xF6lgede kumulu onar; dalga \xE7izgisi denize \xE7ekilir."
   - id: kart_yuva_tasima
     metin: "Yuva Ta\u015F\u0131ma"
+  - id: kart_yuva_tasima_aciklama
+    metin: "Bir yuvay\u0131 g\xFCvenli ve serin bir yere ta\u015F\u0131."
   - id: kart_isik
     metin: "I\u015F\u0131k Yasa\u011F\u0131"
+  - id: kart_isik_aciklama
+    metin: "Otel ve yol \u0131\u015F\u0131klar\u0131 geceleri kapan\u0131r, kal\u0131c\u0131."
   - id: kart_arac
     metin: "Ara\xE7 Yasa\u011F\u0131"
+  - id: kart_arac_aciklama
+    metin: "Kumsala ara\xE7 girmez; tekerlek izleri kaybolur."
   - id: kart_sezlong
     metin: "\u015Eezlong D\xFCzenlemesi"
+  - id: kart_sezlong_aciklama
+    metin: "\u015Eezlonglar her ak\u015Fam toplan\u0131r; engeller yar\u0131ya iner."
   - id: kart_tilki_citi
     metin: "Tilki \xC7iti"
+  - id: kart_tilki_citi_aciklama
+    metin: "Kumsal\u0131n kenar\u0131na \xE7it; tilki daha seyrek gelir."
   - id: kart_ag_temizligi
     metin: "Hayalet A\u011F Temizli\u011Fi"
+  - id: kart_ag_temizligi_aciklama
+    metin: "Denizdeki sahipsiz a\u011Flar ve misinalar toplan\u0131r."
   - id: kart_gonullu_cagrisi
     metin: "G\xF6n\xFCll\xFC \xC7a\u011Fr\u0131s\u0131"
+  - id: kart_gonullu_cagrisi_aciklama
+    metin: "Bu tur iki g\xF6n\xFCll\xFC daha gelir."
   - id: kart_saha_arastirmasi
     metin: "Saha Ara\u015Ft\u0131rmas\u0131"
+  - id: kart_saha_arastirmasi_aciklama
+    metin: "Hen\xFCz bulunmam\u0131\u015F bir kan\u0131t\u0131 ortaya \xE7\u0131kar\u0131r."
   - id: kart_temiz_enerji
     metin: Temiz Enerji
+  - id: kart_temiz_enerji_aciklama
+    metin: "Bug\xFCn bir \u015Fey de\u011Fi\u015Ftirmez. Y\u0131llar sonra fark yarat\u0131r."
   - id: gorev_temizlik
     metin: Temizlik
+  - id: gorev_temizlik_aciklama
+    metin: "Bir b\xF6lgenin \xE7\xF6p\xFC bir kademe azal\u0131r."
   - id: gorev_devriye
     metin: Gece devriyesi
+  - id: gorev_devriye_aciklama
+    metin: "Bu gece o b\xF6lgede insan ve fener olmaz."
   - id: gorev_kafes
     metin: Yuva kafesi
+  - id: gorev_kafes_aciklama
+    metin: "Yuvaya tilki giremez, kal\u0131c\u0131."
   - id: gorev_golge
     metin: "G\xF6lge ve sulama"
+  - id: gorev_golge_aciklama
+    metin: "Yuvan\u0131n kumu bu tur ve gece serin kal\u0131r."
   - id: gorev_bilgilendirme
     metin: Bilgilendirme
+  - id: gorev_bilgilendirme_aciklama
+    metin: "Halk\u0131 bilgilendir; halk deste\u011Fi artar."
   - id: kanit_isi
-    metin: "Is\u0131"
+    metin: "Kan\u0131t: Is\u0131"
+  - id: kanit_isi_not
+    metin: "Yavrular s\u0131cak kumda t\xFCkendi. G\xF6lge, kumu serinletir."
   - id: kanit_isik
-    metin: "I\u015F\u0131k"
+    metin: "Kan\u0131t: I\u015F\u0131k"
+  - id: kanit_isik_not
+    metin: "Yavrular \u0131\u015F\u0131\u011Fa d\xF6nd\xFC, denizi kaybetti. I\u015F\u0131klar
+      s\xF6nd\xFCr\xFClebilir."
   - id: kanit_cop
-    metin: "\xC7\xF6p"
+    metin: "Kan\u0131t: \xC7\xF6p"
+  - id: kanit_cop_not
+    metin: "Yavrular a\u011Fa, halkaya, tekerlek izine tak\u0131ld\u0131. Ara\xE7lar
+      ve \u015Fezlonglar d\xFCzenlenebilir."
   - id: kanit_avci
-    metin: "Avc\u0131"
+    metin: "Kan\u0131t: Avc\u0131"
+  - id: kanit_avci_not
+    metin: "Bir tilki yuvay\u0131 ya da s\xFCr\xFCy\xFC buldu. \xC7it onu uzak tutar."
   - id: kanit_su
-    metin: Su
+    metin: "Kan\u0131t: Su"
+  - id: kanit_su_not
+    metin: "Deniz yuvay\u0131 bast\u0131. Yuvalar ta\u015F\u0131nabilir."
   - id: olay_otel
-    metin: 
+    metin: "Otel kumsala yeni bir \u015Fezlong s\u0131ras\u0131 koymak istiyor."
+  - id: olay_otel_a
+    metin: "Kabul et (b\xFCt\xE7e artar)"
+  - id: olay_otel_b
+    metin: "Reddet (halk deste\u011Fi d\xFC\u015Fer)"
   - id: olay_festival
-    metin: 
+    metin: "Belediye kumsalda bir gece festivali d\xFCzenlemek istiyor."
+  - id: olay_festival_a
+    metin: Kabul et (destek artar)
+  - id: olay_festival_b
+    metin: Reddet
   - id: olay_balikci
-    metin: 
+    metin: "Bal\u0131k\xE7\u0131lar, a\u011Flar\u0131n\u0131 kaplumba\u011Fa dostu
+      a\u011Flarla de\u011Fi\u015Ftirmek i\xE7in destek istiyor."
+  - id: olay_balikci_a
+    metin: "Destekle (b\xFCt\xE7e azal\u0131r)"
+  - id: olay_balikci_b
+    metin: "\u015Eimdi de\u011Fil"
   - id: olay_sicak_dalga
-    metin: 
+    metin: "Hava tahmini: gelecek hafta s\u0131cak dalgas\u0131. Kum \u0131s\u0131nacak."
   - id: olay_firtina
-    metin: 
+    metin: "Hava tahmini: gelecek hafta f\u0131rt\u0131na. Dalga \xE7izgisinin alt\u0131ndaki
+      yuvalar su alabilir."
   - id: olay_okul
-    metin: 
+    metin: "Bir okul, kumsala ziyaret d\xFCzenlemek istiyor."
+  - id: olay_okul_a
+    metin: "Kabul et (bir g\xF6n\xFCll\xFC me\u015Fgul)"
+  - id: olay_okul_b
+    metin: Reddet
+  - id: olay_tamam
+    metin: Tamam
   - id: bolum1_giris
-    metin: 
+    metin: "D\xF6n\xFC\u015F. Do\u011Fdu\u011Fu kumsal onu \xE7a\u011F\u0131r\u0131yor."
   - id: bolum2_giris
-    metin: 
+    metin: "Yuva geceleri. Kumu iyi se\xE7."
   - id: bolum3_giris
-    metin: 
+    metin: "Bekleyi\u015F. Kumun alt\u0131nda yeni hayatlar b\xFCy\xFCyor."
   - id: bolum4_giris
-    metin: 
+    metin: "Ka\xE7\u0131\u015F. G\xFCn do\u011Fmadan denize."
   - id: bolum5_giris
-    metin: 
+    metin: "\u0130lk y\xFCz\xFC\u015F. U\xE7suz bucaks\u0131z mavi."
   - id: ipucu_poset
-    metin: 
+    metin: "Denizanas\u0131 kas\u0131larak y\xFCzer, po\u015Fet d\xFCz s\xFCz\xFCl\xFCr.
+      Yak\u0131ndan bak, E ile ye."
+  - id: ipucu_nefes
+    metin: "Nefesin azal\u0131yor. Space'i bas\u0131l\u0131 tutup y\xFCzeye \xE7\u0131k;
+      y\xFCzeyde teknelere dikkat et."
+  - id: ipucu_ag
+    metin: "A\u011Fa tak\u0131ld\u0131n! E'ye art arda bas."
+  - id: ipucu_dalga
+    metin: "Dalga gelirken Space ile alt\u0131ndan dal."
   - id: ipucu_termal
-    metin: 
+    metin: "T: termal g\xF6r\xFCn\xFCm. Kumun s\u0131cakl\u0131\u011F\u0131n\u0131
+      g\xF6r; \xE7ok s\u0131cak ya da \xE7ok serin yerden ka\xE7\u0131n."
   - id: ipucu_kazma
-    metin: 
+    metin: "Dur ve A ile D'ye s\u0131rayla basarak kaz. Yumurtlad\u0131ktan sonra
+      ayn\u0131 \u015Fekilde \xF6rt."
+  - id: ipucu_kumdan_cikis
+    metin: "W ile yukar\u0131 kaz. Kum serinlemeden \xE7\u0131kma, ama \xE7ok da
+      bekleme."
   - id: ipucu_suru
-    metin: 
+    metin: "\xD6nc\xFC sensin; s\xFCr\xFC seni izler. Shift ile da\u011F\u0131l,
+      Space ile z\u0131pla."
+  - id: ipucu_takili
+    metin: "Bir yavru tak\u0131ld\u0131 ya da ters d\xF6nd\xFC. Yan\u0131na git,
+      E'yi bas\u0131l\u0131 tut."
   - id: ipucu_tilki
-    metin: 
+    metin: "Tilki kumsal\u0131n kenar\u0131nda. \xD6n\xFCndeki g\xF6r\xFC\u015F alan\u0131ndan
+      uzak dur, kumul g\xF6lgesinde ilerle."
+  - id: ipucu_kanit
+    metin: "Haritadaki renkli izlere t\u0131kla: her biri bir kan\u0131t."
+  - id: ipucu_gonullu
+    metin: "Bir g\xF6rev se\xE7, sonra haritada b\xF6lgeye ya da yuvaya t\u0131kla."
+  - id: ipucu_kart
+    metin: "B\xFCt\xE7en yetti\u011Fince kart oyna. B\xF6lge ya da yuva isteyen kartta
+      haritaya t\u0131kla."
+  - id: ipucu_poset_surusu
+    metin: "Ak\u0131nt\u0131 bir s\xFCr\xFC ta\u015F\u0131yor. Denizanalar\u0131n\u0131
+      ye, po\u015Fetlerden ka\xE7. Yeterince yiyince \xF6n\xFCndeki ak\u0131nt\u0131
+      a\xE7\u0131l\u0131r."
+  - id: ipucu_girdap
+    metin: "Girdaba kap\u0131ld\u0131n! Halkan\u0131n bo\u015Flu\u011Funu yakala;
+      parlak \u015Famand\u0131ralar yolu g\xF6sterir."
+  - id: ipucu_cop_seli
+    metin: "Ufukta k\xF6p\xFCk g\xF6r\xFCrsen dalga geliyor: kum tepesine \xE7\u0131k.
+      Su \xE7ekilince denize ko\u015F."
   - id: final_30_yil
-    metin: 
+    metin: "30 y\u0131l sonra"
+  - id: final_kurtarilan
+    metin: "Denize ula\u015Fan yavru"
+  - id: oyun_adi
+    metin: "\u0130ki D\xFCnya, Tek Ya\u015Fam"
+  - id: menu_yeni_oyun
+    metin: Yeni oyun
+  - id: menu_devam_et
+    metin: Devam et
+  - id: menu_parkurlar
+    metin: Parkurlar
+  - id: menu_ayarlar
+    metin: Ayarlar
+  - id: menu_cikis
+    metin: "\xC7\u0131k\u0131\u015F"
+  - id: menu_oyuna_don
+    metin: "Oyuna d\xF6n"
+  - id: menu_ana_menu
+    metin: "Ana men\xFC"
+  - id: menu_geri
+    metin: Geri
+  - id: menu_varsayilan
+    metin: "Varsay\u0131lan tu\u015Flar"
+  - id: ayar_ses
+    metin: Ses
+  - id: ayar_fare
+    metin: Fare hassasiyeti
+  - id: ayar_tuslar
+    metin: "Tu\u015Flar"
+  - id: tus_ileri
+    metin: "\u0130leri"
+  - id: tus_geri
+    metin: Geri
+  - id: tus_sol
+    metin: Sol
+  - id: tus_sag
+    metin: "Sa\u011F"
+  - id: tus_hizli
+    metin: "H\u0131zl\u0131 / da\u011F\u0131l"
+  - id: tus_zipla
+    metin: "Z\u0131pla / dal"
+  - id: tus_etkiles
+    metin: "Etkile\u015F / kurtar"
+  - id: tus_termal
+    metin: "Termal g\xF6r\xFCn\xFCm"
+  - id: tus_kaz_sol
+    metin: Kaz (sol)
+  - id: tus_kaz_sag
+    metin: "Kaz (sa\u011F)"
+  - id: tus_kaz_yukari
+    metin: "Yukar\u0131 kaz"
+  - id: sonuc_yuva_baslik
+    metin: "Yuva kaz\u0131ld\u0131"
+  - id: sonuc_kacis_baslik
+    metin: Gece bitti
+  - id: sonuc_bant
+    metin: Kum
+  - id: sonuc_yumurta
+    metin: Yumurta
+  - id: sonuc_kurtulan
+    metin: "Denize ula\u015Fan"
+  - id: sonuc_kaybedilen
+    metin: Kaybedilen
+  - id: sonuc_disi
+    metin: "Di\u015Fi"
+  - id: sonuc_erkek
+    metin: Erkek
+  - id: sonuc_devam
+    metin: "Devam etmek i\xE7in t\u0131kla ya da Space'e bas"
+  - id: bant_mavi
+    metin: Serin
+  - id: bant_yesil
+    metin: "Il\u0131k"
+  - id: bant_turuncu
+    metin: "S\u0131cak"
+  - id: bant_kirmizi
+    metin: "\xC7ok s\u0131cak"
+  - id: yonetim_tur
+    metin: Hafta
+  - id: yonetim_butce
+    metin: "B\xFCt\xE7e"
+  - id: yonetim_gonullu
+    metin: "G\xF6n\xFCll\xFC"
+  - id: yonetim_destek
+    metin: "Halk deste\u011Fi"
+  - id: yonetim_ileri
+    metin: "\u0130leri"
+  - id: asama_rapor
+    metin: Rapor
+  - id: asama_gonulluler
+    metin: "G\xF6n\xFCll\xFCler"
+  - id: asama_kartlar
+    metin: Kartlar
+  - id: asama_olay
+    metin: Olay
+  - id: rapor_gelir
+    metin: "Gelen b\xFCt\xE7e"
+  - id: rapor_denize_ulasan
+    metin: "Denize ula\u015Fan yavru"
+  - id: rapor_cop_birikti
+    metin: "\xC7\xF6p\xFC artan b\xF6lge"
+  - id: rapor_yuva_bozuldu
+    metin: "Avc\u0131n\u0131n bozdu\u011Fu yuva"
+  - id: rapor_sicak_dalga
+    metin: "S\u0131cak dalgas\u0131 geldi; kum \u0131s\u0131nd\u0131"
+  - id: rapor_sicak_dalga_zayif
+    metin: "S\u0131cak dalgas\u0131 beklenenden zay\u0131f ge\xE7ti"
+  - id: rapor_firtina
+    metin: "F\u0131rt\u0131nada su alan yuva"
+  - id: rapor_sakin
+    metin: "Sakin bir hafta ge\xE7ti."
+  - id: hedef_bolge_sec
+    metin: "Haritada bir b\xF6lge se\xE7"
+  - id: hedef_yuva_sec
+    metin: "Haritada bir yuva se\xE7"
+  - id: yuva
+    metin: Yuva
+  - id: yuva_yumurta
+    metin: yumurta
+  - id: yuva_hafta
+    metin: "\xE7\u0131kmaya hafta"
+  - id: yuva_kafesli
+    metin: kafesli
+  - id: bolge
+    metin: "B\xF6lge"
+  - id: katman_cop
+    metin: "\xC7\xF6p"
+  - id: katman_isik
+    metin: "I\u015F\u0131k"
+  - id: katman_sezlong
+    metin: "\u015Eezlong"
+  - id: katman_insan
+    metin: "\u0130nsan"
+  - id: yapi_golgelik
+    metin: "G\xF6lgelik var"
+  - id: yapi_kumulonarimi
+    metin: "Kumul onar\u0131ld\u0131"
+  - id: yapi_tilkiciti
+    metin: "Tilki \xE7iti var"
+  - id: yapi_aracizi
+    metin: Tekerlek izi var
+  - id: yapi_devriye
+    metin: Gece devriyesi var
+  - id: parkur_poset_surusu
+    metin: "Po\u015Fet s\xFCr\xFCs\xFC"
+  - id: parkur_cop_seli
+    metin: "\xC7\xF6p seli"
+  - id: parkur_cop_girdabi
+    metin: "\xC7\xF6p girdab\u0131"
+  - id: parkur_sure
+    metin: "S\xFCre"
+  - id: parkur_rekor
+    metin: Rekor
+  - id: parkur_bitti
+    metin: Bitti
+  - id: parkur_yeni_rekor
+    metin: Yeni rekor!
+  - id: parkur_kilitli
+    metin: (kilitli)
+  - id: parkur_poset_asama_1
+    metin: "Sakin su: denizanas\u0131"
+  - id: parkur_poset_asama_2
+    metin: "Yo\u011Fun su: denizanas\u0131"
+  - id: parkur_poset_asama_3
+    metin: "Karanl\u0131k su: denizanas\u0131"
+  - id: parkur_poset_kiyiya
+    metin: "Ak\u0131nt\u0131 a\xE7\u0131ld\u0131, k\u0131y\u0131ya y\xFCz!"
+  - id: parkur_girdap_halka
+    metin: Halka
+  - id: parkur_sel_kurtulan
+    metin: "Denize ula\u015Fan"

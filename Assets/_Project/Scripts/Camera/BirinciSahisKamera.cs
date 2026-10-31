@@ -3,7 +3,8 @@ using UnityEngine;
 
 namespace IkiDunya.Camera
 {
-    /// <summary>Kaplumbağanın gözünden bakış: fare sağa-sola gövdeyi döndürür, yukarı-aşağı sadece kamerayı eğer.</summary>
+    /// <summary>Kaplumbağanın gözünden bakış: fare sağa-sola gövdeyi döndürür, yukarı-aşağı sadece kamerayı eğer.
+    /// Gövdenin kendi modeli göze girmesin diye görünmez olur (gölgesi kalır); gövde değişince (öncü yavru) eskisi yeniden görünür.</summary>
     public class BirinciSahisKamera : MonoBehaviour
     {
         [SerializeField] private KameraAyarlari ayarlar;
@@ -11,6 +12,9 @@ namespace IkiDunya.Camera
         [SerializeField] private Transform govde;
 
         private float egim;
+        private Transform gizlenen;
+
+        private void Start() => KendiniGizle(govde);
 
         private void OnEnable()
         {
@@ -41,6 +45,23 @@ namespace IkiDunya.Camera
         {
             govde = yeniGovde;
             egim = 0f;
+            KendiniGizle(govde);
+        }
+
+        /// <summary>Gözün ait olduğu gövdenin modeli kameraya görünmez, sadece gölgesini düşürür; önceki gövde yeniden görünür.</summary>
+        private void KendiniGizle(Transform yeni)
+        {
+            if (gizlenen == yeni) return;
+            Golge(gizlenen, false);
+            gizlenen = yeni;
+            Golge(gizlenen, true);
+        }
+
+        private static void Golge(Transform kok, bool sadeceGolge)
+        {
+            if (kok == null) return;
+            foreach (Renderer r in kok.GetComponentsInChildren<Renderer>(true))
+                r.shadowCastingMode = sadeceGolge ? UnityEngine.Rendering.ShadowCastingMode.ShadowsOnly : UnityEngine.Rendering.ShadowCastingMode.On;
         }
 
         private static void ImleciKilitle(bool kilitle)

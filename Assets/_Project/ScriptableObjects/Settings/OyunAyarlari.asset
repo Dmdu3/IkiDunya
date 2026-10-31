@@ -16,11 +16,15 @@ MonoBehaviour:
   bolum1Sahnesi: Bolum1_Donus
   kumsalSahnesi: Kumsal
   bolum5Sahnesi: Bolum5_IlkYuzus
+  posetSurusuSahnesi: Parkur_PosetSurusu
+  copSeliSahnesi: Parkur_CopSeli
+  copGirdabiSahnesi: Parkur_CopGirdabi
   yuvaGecesiSayisi: 3
   kacisGecesiSayisi: 3
   gecelerArasiTur: 1
   bekleyisTurSayisi: 6
   bolum5OncesiTur: 1
+  selGecesi: 2
   gecisSuresi: 0.6
   baslikSuresi: 2.5
   ipucuSuresi: 6

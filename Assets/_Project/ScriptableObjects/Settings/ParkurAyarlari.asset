@@ -1,0 +1,62 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 819506c4a15da1d49a7cfee0e8f6a0f4, type: 3}
+  m_Name: ParkurAyarlari
+  m_EditorClassIdentifier: Assembly-CSharp::IkiDunya.Hazards.ParkurAyarlari
+  posetAsamalari:
+  - hedef: 5
+    dogmaAraligi: 0.7
+    posetOrani: 0.4
+    akisHizi: 1.4
+    karanlik: 0
+  - hedef: 6
+    dogmaAraligi: 0.45
+    posetOrani: 0.55
+    akisHizi: 2
+    karanlik: 0
+  - hedef: 7
+    dogmaAraligi: 0.5
+    posetOrani: 0.6
+    akisHizi: 1.7
+    karanlik: 0.85
+  posetEnerjiKaybi: 2.5
+  komboEsigi: 3
+  komboEnerjisi: 12
+  posetEnFazla: 50
+  halkaYaricaplari:
+  - 5
+  - 10
+  - 15
+  halkaHizlari:
+  - 28
+  - -20
+  - 14
+  halkaCopSayilari: 04000000070000000a000000
+  cikisAcisi: 45
+  girdapDonme: 1.5
+  girdapCekim: 0.5
+  carpmaMesafesi: 1.3
+  carpmaHasari: 8
+  carpmaSavrulma: 2.5
+  carpmaBekleme: 1
+  selUyari: 3
+  selYukselme: 2.5
+  selBekleme: 2.5
+  selCekilme: 3
+  selSakin: 4.5
+  selIlkErisim: 14
+  selErisimArtisi: 4
+  selEnFazlaErisim: 40
+  selBogulma: 2
+  selItme: 2
+  selSuresi: 150
+  kasaItme: 1.2

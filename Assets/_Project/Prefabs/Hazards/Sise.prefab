@@ -30,7 +30,7 @@ Transform:
   m_ConstrainProportionsScale: 0
   m_Children:
   - {fileID: 5808210515412907737}
-  - {fileID: 711667291770887185}
+  - {fileID: 2386491159251724363}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &8291894024896414105
@@ -145,7 +145,7 @@ MeshRenderer:
   m_SortingOrder: 0
   m_MaskInteraction: 0
   m_AdditionalVertexStreams: {fileID: 0}
---- !u!1001 &1038889903367781370
+--- !u!1001 &2779913312340692896
 PrefabInstance:
   m_ObjectHideFlags: 0
   serializedVersion: 2
@@ -206,8 +206,8 @@ PrefabInstance:
     m_AddedGameObjects: []
     m_AddedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 52413bec0f8a7264cb91ff072a7370c5, type: 3}
---- !u!4 &711667291770887185 stripped
+--- !u!4 &2386491159251724363 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: -8679921383154817045, guid: 52413bec0f8a7264cb91ff072a7370c5, type: 3}
-  m_PrefabInstance: {fileID: 1038889903367781370}
+  m_PrefabInstance: {fileID: 2779913312340692896}
   m_PrefabAsset: {fileID: 0}
