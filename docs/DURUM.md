@@ -230,3 +230,13 @@ GDD: "Parkurlar" ve bölümlerdeki "Minigame" başlıkları. Sayılar `Scriptabl
 - **Birinci şahıs:** `BirinciSahisKamera` kendi gövdesinin modelini kameraya görünmez yapar, gölgesi kalır (kafanın içinden bakma, göze giren kabuk olmaz). Öncü yavru değişince eski öncü yeniden görünür.
 - **Metinler:** `docs/metinler.md`'de kodun kullandığı bütün id'lerin ilk taslağı (Umut; Yusuf gözden geçirecek). **Metinleri aktar** (ya da Menü ve duraklatmayı kur) ile oyuna girer.
 
+## Modeller (2026-11-01 eklemeleri) ve uyarılar
+
+Kurulum komutları şunları bulursa gri kutunun yerine koyar (önce `Assets/_Project/Models/...`, yoksa Sandbox):
+- **Deniz tabanı** (`Sandbox/Yusuf/DenizTabani/DenizTabani.prefab`): Bölüm 1, Bölüm 5 ve deniz parkurlarında üç gri basamağın yerine (ölçüler aynı, collider'lı). Bölüm 5'teki kayalar `Kaya_1..3`, deniz çayırı görüntüsü `DenizCayiri_6x10/6x8/8x8` (saklanmayı yine `Cover` kutusu yapar). *Yusuf'un dalı (`claude/admiring-meitner-b9crj2`) birleşince devreye girer.*
+- **İnsanlar:** `Insan`, `Insan_02`, `Insan_03` üç ayrı kalıp; `KumsalYapilari.insanKaliplari`'ndan bölgeye göre biri seçilir.
+- **Tekne:** `Sandbox/Tekne/BalikciTeknesi_Gorsel` (Abdü), gri tekne kutusunun yerine. Pervane animasyonu kalıpta değil, sonra bağlanacak.
+- **Yiyecek:** kök yeme alanı (tetikleyici küre), görünüş çocukta: denizanası `Sandbox/Denizanasi/Denizanasi` (Abdü; `Denizanasi.controller` ile kasılır), poşet `KumsalObjeleri/Poset`.
+
+Uyarılar: kameralardaki kulak `Core/TekKulak` ile tek (açılan kamera alır); menü kamerasında da kulak var. Sahnenin kendi `Sistemler` kopyası Awake'te hemen kapanır (iki EventSystem uyarısı).
+

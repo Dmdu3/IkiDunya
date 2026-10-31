@@ -19,6 +19,7 @@ namespace IkiDunya.Editor
         private const string AyarKlasoru = "Assets/_Project/ScriptableObjects/Settings";
         private const string KalipKlasoru = "Assets/_Project/Prefabs/Hazards";
         private const string SistemlerKalibi = "Assets/_Project/Prefabs/Sistemler.prefab";
+        private const string DenizanasiDenetleyicisi = "Assets/Sandbox/Denizanasi/Denizanasi.controller";
         private const string PosetSurusuSahnesi = "Assets/_Project/Scenes/Levels/Parkur_PosetSurusu.unity";
         private const string CopGirdabiSahnesi = "Assets/_Project/Scenes/Levels/Parkur_CopGirdabi.unity";
 
@@ -96,7 +97,12 @@ namespace IkiDunya.Editor
 
             // Sığ sular: kayalar ve deniz çayırı (avcı balıktan saklanılır)
             Vector3[] kayalar = { new Vector3(-8f, -5f, -50f), new Vector3(9f, -4.5f, -65f), new Vector3(-3f, -5f, -85f), new Vector3(12f, -5f, -100f) };
-            foreach (Vector3 yer in kayalar) GriKumsalKur.Kutu("Kaya", null, yer, new Vector3(3f, 3f, 3f), kaya, "Ground");
+            for (int i = 0; i < kayalar.Length; i++)
+            {
+                // Yusuf'un kayası (pivot tabanın ortası, ~3 m, collider'lı); yoksa gri küp.
+                if (GriKumsalKur.KalibiKoy($"Kaya_{i % 3 + 1}", null, kayalar[i] + Vector3.down * 1.5f) == null)
+                    GriKumsalKur.Kutu("Kaya", null, kayalar[i], new Vector3(3f, 3f, 3f), kaya, "Ground");
+            }
             CayirKur(new Vector3(6f, -5f, -60f), new Vector3(6f, 2.5f, 10f));
             CayirKur(new Vector3(-10f, -5f, -80f), new Vector3(6f, 2.5f, 8f));
             CayirKur(new Vector3(4f, -5f, -95f), new Vector3(8f, 2.5f, 8f));
@@ -290,7 +296,9 @@ namespace IkiDunya.Editor
         private static Yiyecek YiyecekKalibi(Yiyecek.Turu tur, DenizTehlikeAyarlari tehlike, Material malzeme)
         {
             GameObject nesne = YiyecekKur(tur, Vector3.zero, tehlike);
-            if (malzeme != null) nesne.GetComponent<Renderer>().sharedMaterial = malzeme;
+            // Gri küreyse karanlık aşama için ışıklı malzeme; model varsa kendi malzemesi kalır.
+            Transform gri = nesne.transform.Find("Gri");
+            if (malzeme != null && gri != null) gri.GetComponent<Renderer>().sharedMaterial = malzeme;
             string ad = malzeme != null ? $"{tur}Parkur" : tur.ToString();
             return GriKumsalKur.KalipKaydet(nesne, $"{KalipKlasoru}/{ad}.prefab").GetComponent<Yiyecek>();
         }
@@ -342,11 +350,14 @@ namespace IkiDunya.Editor
             var deniz = new GameObject("Deniz").transform;
             GriKumsalKur.SuYuzeyiKur("SuYuzeyi", deniz, new Vector3(0f, 0f, -DenizUzunlugu / 2f), new Vector2(DenizGenisligi, DenizUzunlugu), su);
 
-            // Taban üç basamak: açık deniz, sığ kıyı suları, kumsalın önü; kıyıda kumsal
-            GriKumsalKur.Kutu("AcikDeniz", deniz, new Vector3(0f, -15.5f, -160f), new Vector3(DenizGenisligi, 1f, 80f), taban, "Ground");
-            GriKumsalKur.Kutu("SigSular", deniz, new Vector3(0f, -6.5f, -85f), new Vector3(DenizGenisligi, 1f, 70f), taban, "Ground");
-            GriKumsalKur.Kutu("KumsalOnu", deniz, new Vector3(0f, -3f, -25f), new Vector3(DenizGenisligi, 1f, 50f), taban, "Ground");
-            GriKumsalKur.Kutu("Kumsal", deniz, new Vector3(0f, 0f, 15f), new Vector3(DenizGenisligi, 1f, 30f), taban, "Ground");
+            // Taban: Yusuf'un deniz tabanı varsa o (aynı ölçüler: sığ düzlük y −6, açık deniz y −15, kayalık şev, mercanlar, çayır); yoksa üç gri basamak.
+            if (GriKumsalKur.KalibiKoy("DenizTabani", deniz, Vector3.zero) == null)
+            {
+                GriKumsalKur.Kutu("AcikDeniz", deniz, new Vector3(0f, -15.5f, -160f), new Vector3(DenizGenisligi, 1f, 80f), taban, "Ground");
+                GriKumsalKur.Kutu("SigSular", deniz, new Vector3(0f, -6.5f, -85f), new Vector3(DenizGenisligi, 1f, 70f), taban, "Ground");
+                GriKumsalKur.Kutu("KumsalOnu", deniz, new Vector3(0f, -3f, -25f), new Vector3(DenizGenisligi, 1f, 50f), taban, "Ground");
+                GriKumsalKur.Kutu("Kumsal", deniz, new Vector3(0f, 0f, 15f), new Vector3(DenizGenisligi, 1f, 30f), taban, "Ground");
+            }
 
             // Görünmez duvarlar
             foreach (float x in new[] { -DenizGenisligi / 2f, DenizGenisligi / 2f })
@@ -464,12 +475,24 @@ namespace IkiDunya.Editor
 
         private static GameObject YiyecekKur(Yiyecek.Turu tur, Vector3 yer, DenizTehlikeAyarlari tehlike)
         {
-            GameObject nesne = GameObject.CreatePrimitive(PrimitiveType.Sphere);
-            nesne.name = tur.ToString();
+            // Kök: yeme alanı (tetikleyici küre) ve Yiyecek; görünüş çocukta (Abdü'nün denizanası, Yusuf'un poşeti ya da gri küre).
+            var nesne = new GameObject(tur.ToString());
             nesne.transform.position = yer;
-            nesne.transform.localScale = tur == Yiyecek.Turu.Denizanasi ? new Vector3(0.6f, 0.45f, 0.6f) : new Vector3(0.6f, 0.4f, 0.5f);
-            nesne.GetComponent<Collider>().isTrigger = true;
-            nesne.GetComponent<Renderer>().sharedMaterial = tur == Yiyecek.Turu.Denizanasi ? denizanasi : poset;
+            var alan = nesne.AddComponent<SphereCollider>();
+            alan.isTrigger = true;
+            alan.radius = 0.3f;
+            bool denizanasiMi = tur == Yiyecek.Turu.Denizanasi;
+            GameObject model = GriKumsalKur.ModelYerlestir(nesne.transform, denizanasiMi ? "Denizanasi" : "Poset", new Vector3(0f, -0.25f, 0f), 0.6f);
+            if (model != null && denizanasiMi) GriKumsalKur.AnimasyonBagla(model, DenizanasiDenetleyicisi);
+            if (model == null)
+            {
+                GameObject kure = GameObject.CreatePrimitive(PrimitiveType.Sphere);
+                kure.name = "Gri";
+                Object.DestroyImmediate(kure.GetComponent<Collider>());
+                kure.transform.SetParent(nesne.transform, false);
+                kure.transform.localScale = denizanasiMi ? new Vector3(0.6f, 0.45f, 0.6f) : new Vector3(0.6f, 0.4f, 0.5f);
+                kure.GetComponent<Renderer>().sharedMaterial = denizanasiMi ? denizanasi : poset;
+            }
             var yiyecek = nesne.AddComponent<Yiyecek>();
             var so = new SerializedObject(yiyecek);
             so.FindProperty("tur").enumValueIndex = (int)tur;
@@ -538,9 +561,13 @@ namespace IkiDunya.Editor
             Transform b = Nokta($"{ad}_B", new Vector3(DenizGenisligi / 2f - 2f, 0.3f, z), Quaternion.identity);
             var kok = new GameObject(ad);
             kok.transform.position = a.position;
-            GameObject govde = GriKumsalKur.Kutu("Govde", kok.transform, Vector3.zero, new Vector3(2f, 0.8f, 5f), tekne, "Default");
-            Object.DestroyImmediate(govde.GetComponent<Collider>());
-            govde.isStatic = false;
+            // Balıkçı teknesi modeli (varsa); yoksa gri kutu.
+            if (GriKumsalKur.ModelYerlestir(kok.transform, "BalikciTeknesi_Gorsel", new Vector3(0f, -0.4f, 0f), 5f) == null)
+            {
+                GameObject govde = GriKumsalKur.Kutu("Govde", kok.transform, Vector3.zero, new Vector3(2f, 0.8f, 5f), tekne, "Default");
+                Object.DestroyImmediate(govde.GetComponent<Collider>());
+                govde.isStatic = false;
+            }
 
             // Pervane sesi: klip Abdü'den gelecek
             var ses = kok.AddComponent<AudioSource>();
@@ -593,6 +620,9 @@ namespace IkiDunya.Editor
             GameObject alan = GriKumsalKur.Kutu("DenizCayiri", null, yer, boyut, cayir, "Cover");
             alan.GetComponent<Collider>().isTrigger = true;
             alan.AddComponent<Cover>();
+            // Görünüş Yusuf'un çayırı (alanın boyunda, pivot tabanın ortası); saklanmayı kutu yapmaya devam eder.
+            if (GriKumsalKur.KalibiKoy($"DenizCayiri_{boyut.x:0}x{boyut.z:0}", null, yer + Vector3.down * boyut.y / 2f) != null)
+                alan.GetComponent<Renderer>().enabled = false;
         }
 
         private static void AvciKur(Vector3 yer, DenizTehlikeAyarlari tehlike)

@@ -23,6 +23,8 @@ namespace IkiDunya.Hazards
         [SerializeField] private GameObject tekerlekIziKalibi;
         [SerializeField] private GameObject isikKalibi;
         [SerializeField] private Insan insanKalibi;
+        [Tooltip("Farklı görünüşlü insanlar; doluysa her insan bunlardan biri (bölgeye göre sabit).")]
+        [SerializeField] private Insan[] insanKaliplari = new Insan[0];
         [Tooltip("İnsanların kurulduğu yer; sadece yuva gecesinde açık olan bir grubun içinde olmalı. Boşsa insan kurulmaz.")]
         [SerializeField] private Transform insanKoku;
 
@@ -101,7 +103,8 @@ namespace IkiDunya.Hazards
                     float z = Mathf.Lerp(insanAraligi.x, insanAraligi.y, (float)rastgele.NextDouble());
                     Vector3 a = kum.BolgeNoktasi(i, 0.1f, z);
                     Vector3 b = kum.BolgeNoktasi(i, 0.9f, z);
-                    Insan insan = Instantiate(insanKalibi, a, Quaternion.LookRotation(b - a), insanKoku);
+                    Insan kalip = insanKaliplari.Length > 0 ? insanKaliplari[rastgele.Next(insanKaliplari.Length)] : insanKalibi;
+                    Insan insan = Instantiate(kalip, a, Quaternion.LookRotation(b - a), insanKoku);
                     insan.Kur(a, b);
                     yapilar.Add(insan.gameObject);
                 }

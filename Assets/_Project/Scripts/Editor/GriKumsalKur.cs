@@ -31,8 +31,9 @@ namespace IkiDunya.Editor
         private static readonly string[] AraziKaliplari = { "Assets/_Project/Prefabs/Environment/KumsalArazi.prefab", "Assets/Sandbox/Yusuf/KumsalArazi/KumsalArazi.prefab" };
         private static readonly string[] ModelKlasorleri =
         {
-            "Assets/_Project/Models/Kumsal", "Assets/_Project/Models/Canlilar",
-            "Assets/Sandbox/Yusuf/KumsalObjeleri", "Assets/Sandbox/Yusuf/Canlilar",
+            "Assets/_Project/Models/Kumsal", "Assets/_Project/Models/Canlilar", "Assets/_Project/Models/Deniz",
+            "Assets/Sandbox/Yusuf/KumsalObjeleri", "Assets/Sandbox/Yusuf/Canlilar", "Assets/Sandbox/Yusuf/DenizTabani",
+            "Assets/Sandbox/Tekne", "Assets/Sandbox/Denizanasi",
         };
         // Kumsal arazisi yoksa deniz yüzeyi (gri kutu); arazide denizin kendi yüksekliği okunur.
         private const float GriSuSeviyesi = -0.55f;
@@ -352,6 +353,7 @@ namespace IkiDunya.Editor
             kamera.transform.SetPositionAndRotation(new Vector3(0f, 55f, KumsalDerinligi / 2f), Quaternion.Euler(90f, 0f, 0f));
             var kameraBileseni = kamera.AddComponent<UnityEngine.Camera>();
             kamera.AddComponent<AudioListener>();
+            kamera.AddComponent<TekKulak>();
 
             // Kayıp izleri: kanıt renginde simgeler, tıklayınca kanıt açılır
             var harita = Bos("KayipIziHaritasi", grup).gameObject.AddComponent<KayipIziHaritasi>();
@@ -561,6 +563,27 @@ namespace IkiDunya.Editor
             return null;
         }
 
+        /// <summary>Hazır kalıbı (collider'ı ve layer'ıyla, ör. deniz tabanı, kaya) olduğu gibi koyar; kalıbın kendi dönüşü korunur. Yoksa null.</summary>
+        internal static GameObject KalibiKoy(string model, Transform ebeveyn, Vector3 konum)
+        {
+            GameObject kaynak = ModelBul(model);
+            if (kaynak == null) return null;
+            var nesne = (GameObject)PrefabUtility.InstantiatePrefab(kaynak);
+            nesne.transform.SetParent(ebeveyn, true);
+            nesne.transform.position = konum;
+            return nesne;
+        }
+
+        /// <summary>Modele animasyon denetleyicisi bağlar (ör. denizanasının kasılması); denetleyici yoksa dokunmaz.</summary>
+        internal static void AnimasyonBagla(GameObject model, string denetleyiciYolu)
+        {
+            var denetleyici = AssetDatabase.LoadAssetAtPath<RuntimeAnimatorController>(denetleyiciYolu);
+            if (model == null || denetleyici == null) return;
+            Animator animator = model.GetComponentInChildren<Animator>();
+            if (animator == null) animator = model.AddComponent<Animator>();
+            animator.runtimeAnimatorController = denetleyici;
+        }
+
         /// <summary>Kalıba Yusuf'un modelini ekler (varsa) ve gri kutunun görüntüsünü gizler; collider ve oynanış aynı kalır.</summary>
         private static void ModelEkle(GameObject kok, string model)
         {
@@ -646,7 +669,10 @@ namespace IkiDunya.Editor
             Bagla(yapilar, "siseKalibi", KutuKalibi("Sise", new Vector3(0.15f, 0.3f, 0.15f), cop, "Trash", "Sise"));
             Bagla(yapilar, "sezlongKalibi", KutuKalibi("Sezlong", new Vector3(0.7f, 0.5f, 2f), engel, "Obstacle", "Sezlong"));
             Bagla(yapilar, "isikKalibi", KalipKaydet(IsikKur("OtelIsigi", null, Vector3.zero, Ayar<KacisAyarlari>("KacisAyarlari"), kumsal), $"{KalipKlasoru}/OtelIsigi.prefab"));
-            Bagla(yapilar, "insanKalibi", InsanKalibiKur().GetComponent<Insan>());
+            // Üç ayrı insan (Yusuf'un modelleri); kumsalda karışık görünür.
+            Insan insan1 = InsanKalibiKur("Insan", "Insan");
+            Bagla(yapilar, "insanKalibi", insan1);
+            DiziBagla(yapilar, "insanKaliplari", insan1, InsanKalibiKur("Insan_02", "Insan_02"), InsanKalibiKur("Insan_03", "Insan_03"));
             Bagla(yapilar, "insanKoku", insanKoku);
         }
 
@@ -716,10 +742,10 @@ namespace IkiDunya.Editor
             return KalipKaydet(kok, $"{KalipKlasoru}/{ad}.prefab");
         }
 
-        private static GameObject InsanKalibiKur()
+        private static Insan InsanKalibiKur(string ad, string model)
         {
             // Kök yerde durur; kapsül gövde tabanı yere değsin diye bir alt objede.
-            var kok = new GameObject("Insan");
+            var kok = new GameObject(ad);
             GameObject govde = GameObject.CreatePrimitive(PrimitiveType.Capsule);
             govde.name = "Govde";
             govde.transform.SetParent(kok.transform, false);
@@ -728,17 +754,17 @@ namespace IkiDunya.Editor
 
             // Yusuf'un insanı varsa kapsül gizlenir; yürürken sallanan, ya model ya kapsül.
             Transform insanGorunusu = govde.transform;
-            if (ModelBul("Insan") != null)
+            if (ModelBul(model) != null)
             {
                 govde.GetComponent<Renderer>().enabled = false;
-                insanGorunusu = ModelYerlestir(kok.transform, "Insan", Vector3.zero, 0f).transform;
+                insanGorunusu = ModelYerlestir(kok.transform, model, Vector3.zero, 0f).transform;
             }
             SalinimEkle(kok, insanGorunusu, SalinimTuru.Kara);
 
             var insanBileseni = kok.AddComponent<Insan>();
             Bagla(insanBileseni, "ayarlar", Ayar<InsanAyarlari>("InsanAyarlari"));
             Bagla(insanBileseni, "koniMalzemesi", koni);
-            return KalipKaydet(kok, $"{KalipKlasoru}/Insan.prefab");
+            return KalipKaydet(kok, $"{KalipKlasoru}/{ad}.prefab").GetComponent<Insan>();
         }
 
         // ---- Kaçış parçaları ----
@@ -1137,6 +1163,7 @@ namespace IkiDunya.Editor
             goz.tag = "MainCamera";
             goz.AddComponent<UnityEngine.Camera>().nearClipPlane = 0.03f;
             goz.AddComponent<AudioListener>();
+            goz.AddComponent<TekKulak>();
             var bakis = goz.AddComponent<BirinciSahisKamera>();
             Bagla(bakis, "ayarlar", Ayar<KameraAyarlari>("KameraAyarlari"));
             if (govde != null) Bagla(bakis, "govde", govde);
