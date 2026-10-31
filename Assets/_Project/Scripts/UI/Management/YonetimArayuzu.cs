@@ -82,8 +82,13 @@ namespace IkiDunya.UI.Management
 
             YonetimDurumu y = tur.Yonetim;
             KumsalDurumu k = tur.Kumsal;
-            ustBilgi.text = $"{Al("yonetim_tur")} {y.Tur}     {Al("yonetim_butce")} {y.Butce}     " +
-                            $"{Al("yonetim_gonullu")} {y.BosGonullu(k)}/{y.Gonullu(k)}     {Al("yonetim_destek")} {y.Destek}/{y.Ayarlar.DestekEnFazla}";
+            var ust = new StringBuilder($"{Al("yonetim_tur")} {y.Tur}     {Al("yonetim_butce")} {y.Butce}");
+            if (y.Bakim > 0) ust.Append($" (−{y.Bakim} {Al("kart_bakim")})");
+            ust.Append($"     {Al("yonetim_gonullu")} {y.BosGonullu(k)}/{y.Gonullu(k)}     {Al("yonetim_destek")} {y.Destek}/{y.Ayarlar.DestekEnFazla}\n");
+            foreach (Paydas p in System.Enum.GetValues(typeof(Paydas)))
+                ust.Append($"{Al(PaydasId(p))} {Isaretli(y.Iliski(p))}     ");
+            if (y.UyariVar) ust.Append($"<color=#ff9a3c>{Al($"uyari_{y.AktifUyari.ToString().ToLowerInvariant()}")}</color>");
+            ustBilgi.text = ust.ToString();
             asamaBasligi.text = Al($"asama_{tur.SuAnki.ToString().ToLowerInvariant()}");
 
             raporPaneli.SetActive(tur.SuAnki == InsanTuru.Asama.Rapor);
@@ -130,10 +135,34 @@ namespace IkiDunya.UI.Management
                 foreach (KartTanimi kart in tur.El)
                 {
                     KartTanimi k = kart;
-                    Dugme(kartDugmeleri, $"{Al(k.Id)}  ({tur.Yonetim.Bedel(k)})\n<size=18>{Al(k.Id + "_aciklama")}</size>",
-                        tur.KartOynanabilir(k), tur.BekleyenKart == k, () => tur.KartSec(k));
+                    Dugme(kartDugmeleri, KartYazisi(k), tur.KartOynanabilir(k), tur.BekleyenKart == k, () => tur.KartSec(k));
                 }
         }
+
+        /// <summary>Ad ve bedel; tür, bakım, güçlü mü; açıklama; paydaş ve halk etkisi, koşulu.</summary>
+        private string KartYazisi(KartTanimi k)
+        {
+            YonetimDurumu y = tur.Yonetim;
+            var sb = new StringBuilder($"{Al(k.Id)}  ({y.Bedel(k)})\n<size=16>{Al($"kart_turu_{k.Tur.ToString().ToLowerInvariant()}")}");
+            if (k.Bakim > 0) sb.Append($" · {Al("kart_bakim")} {k.Bakim}");
+            if (y.Guclu(k)) sb.Append($" · <color=#7fd17f>{Al("kart_guclu")}</color>");
+            sb.Append($"</size>\n<size=18>{Al(k.Id + "_aciklama")}</size>");
+
+            var etki = new StringBuilder();
+            if (k.DestekFarki != 0) etki.Append($"{Al("kart_halk")} {Isaretli(k.DestekFarki)}  ");
+            foreach (Paydas p in System.Enum.GetValues(typeof(Paydas)))
+                if (k.PaydasFarki.Al(p) != 0) etki.Append($"{Al(PaydasId(p))} {Isaretli(k.PaydasFarki.Al(p))}  ");
+            if (k.KosulVar)
+            {
+                string renk = y.KosulTamam(k) ? "#cccccc" : "#ff7070";
+                etki.Append($"<color={renk}>{Al(PaydasId(k.KosulPaydas))} {Isaretli(k.KosulEnAz)} {Al("kart_ister")}</color>");
+            }
+            if (etki.Length > 0) sb.Append($"\n<size=16>{etki}</size>");
+            return sb.ToString();
+        }
+
+        private static string PaydasId(Paydas p) => $"paydas_{p.ToString().ToLowerInvariant()}";
+        private static string Isaretli(int sayi) => sayi > 0 ? $"+{sayi}" : sayi.ToString();
 
         private void Dugme(Transform ebeveyn, string yazi, bool acik, bool secili, UnityEngine.Events.UnityAction tikla)
         {
@@ -167,6 +196,8 @@ namespace IkiDunya.UI.Management
                 Yuva y = yuvalar[i];
                 sb.Append($"{Al("yuva")} {i + 1}: {Al($"bant_{y.Bant.ToString().ToLowerInvariant()}")} · {Al("yuva_yumurta")} {y.Yumurta} · {Al("yuva_hafta")} {y.CikisinaHafta}");
                 if (y.Kafesli) sb.Append($" · {Al("yuva_kafesli")}");
+                float risk = tur.AvciRiski(i);
+                if (risk > 0f) sb.Append($" · {Al("yuva_avci_riski")} %{Mathf.RoundToInt(risk * 100f)}");
                 sb.AppendLine();
             }
             yuvaListesi.text = sb.ToString();
@@ -182,6 +213,7 @@ namespace IkiDunya.UI.Management
             }
             Bolge b = tur.Kumsal.BolgeAl(i);
             var sb = new StringBuilder($"{Al("bolge")} {i + 1}\n");
+            if (tur.Yonetim.Korunuyor(i)) sb.AppendLine(Al("bolge_korunuyor"));
             foreach (BolgeKatmani katman in System.Enum.GetValues(typeof(BolgeKatmani)))
                 sb.AppendLine($"{Al($"katman_{katman.ToString().ToLowerInvariant()}")}: {b.Seviye(katman)}");
             foreach (BolgeYapisi yapi in System.Enum.GetValues(typeof(BolgeYapisi)))

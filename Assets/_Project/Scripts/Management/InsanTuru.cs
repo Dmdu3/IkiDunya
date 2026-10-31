@@ -7,7 +7,7 @@ using UnityEngine;
 namespace IkiDunya.Management
 {
     /// <summary>Bir insan turu (GDD: Bir turun akışı): rapor → gönüllüleri ata → kart oyna → olay → tur biter (simülasyon) ve akış ilerler.
-    /// Tur başında bir hafta geçer (KumsalDurumu.BirHaftaGecti), gelir gelir, geçen turun uyarısı gerçekleşir.</summary>
+    /// Tur başında bir hafta geçer (KumsalDurumu.BirHaftaGecti) ve gelir gelir; geçen turun uyarısı bu turun sonunda gerçekleşir, arada hazırlanılır.</summary>
     public class InsanTuru : MonoBehaviour
     {
         public enum Asama { Kapali, Rapor, Gonulluler, Kartlar, Olay, Bitiyor }
@@ -66,7 +66,6 @@ namespace IkiDunya.Management
             baslangicKaresi = Time.frameCount;
             kumsal.BirHaftaGecti();
             yonetim.TurBasla(kumsal);
-            etkiler.UyariyiUygula();
             el.Clear();
             Olay = null;
             OlaySecildi = false;
@@ -137,13 +136,19 @@ namespace IkiDunya.Management
 
         // ---- Kartlar ----
 
+        /// <summary>Havuzdan rastgele el (Üniversite Ortaklığı fazladan verir); uyarı varken o uyarının Acil kartları ek olarak gelir.</summary>
         private void ElDagit()
         {
             el.Clear();
             var havuz = new List<KartTanimi>();
             foreach (KartTanimi kart in yonetim.Ayarlar.Kartlar)
-                if (kart != null && yonetim.Havuzda(kart)) havuz.Add(kart);
-            for (int i = 0; i < yonetim.Ayarlar.EldekiKart && havuz.Count > 0; i++)
+            {
+                if (kart == null || !yonetim.Havuzda(kart)) continue;
+                if (kart.Tur == KartTuru.Acil) el.Add(kart);
+                else havuz.Add(kart);
+            }
+            int adet = yonetim.Ayarlar.EldekiKart + yonetim.EkKart;
+            for (int i = 0; i < adet && havuz.Count > 0; i++)
             {
                 int sec = UnityEngine.Random.Range(0, havuz.Count);
                 el.Add(havuz[sec]);
@@ -152,8 +157,11 @@ namespace IkiDunya.Management
         }
 
         public bool KartOynanabilir(KartTanimi kart) =>
-            SuAnki == Asama.Kartlar && el.Contains(kart) && yonetim.Butce >= yonetim.Bedel(kart)
+            SuAnki == Asama.Kartlar && el.Contains(kart) && yonetim.Butce >= yonetim.Bedel(kart) && yonetim.KosulTamam(kart)
             && (kart.Hedef != Hedef.Yuva || kumsal.Yuvalar.Count > 0);
+
+        /// <summary>Yuvaya bu tur sonunda avcı gelme ihtimali (0–1); arayüz gösterir.</summary>
+        public float AvciRiski(int yuva) => etkiler.AvciRiski(yuva);
 
         public void KartSec(KartTanimi kart)
         {
@@ -189,9 +197,23 @@ namespace IkiDunya.Management
                 OlaySecildi = true;
                 return;
             }
-            // Aynı olay art arda gelmesin.
-            int sira = UnityEngine.Random.Range(0, olaylar.Count);
-            if (olaylar.Count > 1 && sira == yonetim.SonOlay) sira = (sira + 1) % olaylar.Count;
+            // Geçen turun seçimi bu turun olayını belirlediyse o gelir (zincir).
+            int sira = yonetim.Zincir;
+            if (sira < 0 || sira >= olaylar.Count || olaylar[sira] == null)
+            {
+                // Koşulu sağlayanlardan (paydaş küs, en az tur); aynı olay art arda gelmesin.
+                var uygun = new List<int>();
+                for (int i = 0; i < olaylar.Count; i++)
+                    if (olaylar[i] != null && etkiler.OlayUygun(olaylar[i]) && i != yonetim.SonOlay) uygun.Add(i);
+                if (uygun.Count == 0 && yonetim.SonOlay >= 0 && yonetim.SonOlay < olaylar.Count) uygun.Add(yonetim.SonOlay);
+                if (uygun.Count == 0)
+                {
+                    OlaySecildi = true;
+                    return;
+                }
+                sira = uygun[UnityEngine.Random.Range(0, uygun.Count)];
+            }
+            yonetim.ZincirAyarla(-1);
             yonetim.OlayGeldi(sira);
             Olay = olaylar[sira];
         }

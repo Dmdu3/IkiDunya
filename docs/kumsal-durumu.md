@@ -53,15 +53,27 @@ Süre tur sayısıdır. `1` = sıradaki `BirHaftaGecti()`'de, yani bir sonraki t
 | Kart | Çağrı |
 |---|---|
 | Gölgelik | `YapiKoy(bolge, Golgelik)` (kum 1 bant serin, kaçışta lekeler yarı boy) |
-| Temizlik Kampanyası | 3 bölge için `KatmanDegistir(bolge, Cop, -1)` |
+| Temizlik Kampanyası | 3 bölge (ikinci Çöp kanıtıyla 4) için `KatmanDegistir(bolge, Cop, -1)` |
 | Kumul Onarımı | `YapiKoy(bolge, KumulOnarimi)` (dalga çizgisi 4 m denize çekilir) |
 | Yuva Taşıma | `YuvaTasi(...)`; yeni yerin bandı farklıysa `YuvaBantDegistir` |
 | Işık Yasağı | `IsikYasagiAyarla(true)` (otel ve yol ışıkları söner) |
 | Araç Yasağı | Bütün bölgeler için `YapiKaldir(bolge, AracIzi)` |
 | Şezlong Düzenlemesi | Bölgelerde `KatmanDegistir(bolge, Sezlong, -n)` (yarıya) |
 | Tilki Çiti | `YapiKoy(bolge, TilkiCiti)` (kenardaki bir bölge yeter; tilki ihtimali yarıya iner) |
-| Hayalet Ağ Temizliği | `DenizdekiAgDegistir(-1)` |
+| Hayalet Ağ Temizliği | `DenizdekiAgDegistir(-1)` (Balıkçılar dostsa -2) |
 | Temiz Enerji | `TemizEnerjiAyarla(true)` (final sahnesi değişir) |
+| Kaplumbağa Dostu Aydınlatma | `KatmanDegistir(bolge, Isik, -2)` |
+| Gözcü Kulübesi | `YapiKoy(bolge, Devriye)` (kalıcı devriye) |
+| Kuluçkahane | Yumurtalı her yuva için `YuvaTasi(...)` (seçilen bölgede yan yana), `YuvaBantDegistir`, `YuvaKafesle` |
+| Plaj Tabelaları | Bütün bölgeler için `GeciciKatman(bolge, Insan, -1, 1)` |
+| Koruma Alanı | Bölgede `KatmanDegistir` ile Sezlong, Insan, Isik 0; `YapiKaldir(bolge, AracIzi)`; otel ve festival oraya bir daha gelmez (insan kısmı seçer) |
+| Otel Ortaklığı | Bütün bölgelerde `KatmanDegistir(bolge, Isik, -1)`, bir bölgede `KatmanDegistir(bolge, Sezlong, +1)` |
+| Balıkçı Kooperatifi | `DenizdekiAgDegistir(-1)` |
+| Kum Torbası Seddi | `GeciciYapi(bolge, KumulOnarimi, 1)` |
+| Yuva Tahliyesi | Dalga altındaki her yuva için `YuvaTasi(...)` ve `YuvaBantDegistir` |
+| Acil Sulama | Yumurtalı her yuva için `GeciciYuvaBant(yuva, -1, 1)` |
+| Dron Taraması | Açılmamış her iz için `KanitAc(iz)` |
+| Bağış Kampanyası, Basın Bülteni, Belediye Lobisi, Üniversite Ortaklığı | Kumsala dokunmaz (insan kısmının kendi verisi) |
 | Gönüllü Çağrısı, Saha Araştırması | Kumsala dokunmaz (insan kısmının kendi verisi) |
 
 ## Gönüllü görevleri → metot
@@ -78,16 +90,20 @@ Süre tur sayısıdır. `1` = sıradaki `BirHaftaGecti()`'de, yani bir sonraki t
 
 | Olay | Çağrı |
 |---|---|
-| Otel şezlongu (kabul) | `KatmanDegistir(bolge, Sezlong, +3)` |
+| Otel şezlongu (kabul) | `KatmanDegistir(bolge, Sezlong, +3)` (koruma alanı olmayan bir bölge) |
 | Festival (kabul) | `GeciciKatman(bolge, Isik, +2, 1)` ve `GeciciKatman(bolge, Insan, +2, 1)` (bir gece) |
 | Balıkçılara destek | `DenizdekiAgDegistir(-1)` |
-| Sıcak dalgası | Uyarıdan sonraki tur `GeciciKumIsinmasi(+1, 1)`; Temiz Enerji varsa etki zayıf (insan kısmı karar verir) |
-| Fırtına | Dalga altındaki her yuva için `YuvaYumurtaKaybet(yuva, Yumurta / 2)` ve bir Su izi: `KayipIziEkle(new KayipIzi(bolge, konum, KayipNedeni.Dalga))` |
-| Okul ziyareti | Kumsala dokunmaz |
+| Sıcak dalgası | Uyarıdan sonraki turun sonunda `GeciciKumIsinmasi(+1, 1)` (gelen gece sürer); Temiz Enerji varsa etki zayıf (insan kısmı karar verir) |
+| Fırtına | Uyarıdan sonraki turun sonunda dalga altındaki (Kumul Onarımı ve Kum Torbası çizgiyi geri çeker) her yuva için `YuvaYumurtaKaybet(yuva, Yumurta / 2)` ve bir Su izi: `KayipIziEkle(new KayipIzi(bolge, konum, KayipNedeni.Dalga))` |
+| Otel barı (kabul) | `KatmanDegistir(bolge, Isik, +1)` ve `KatmanDegistir(bolge, Insan, +1)` (kalıcı) |
+| Festival çöpü (bırak) | En kalabalık 3 bölgede `KatmanDegistir(bolge, Cop, +1)` |
+| Otel ışıkları (bekle) | Bütün bölgelerde `GeciciKatman(bolge, Isik, +1, 2)` |
+| Denize atılan ağlar (bırak) | `DenizdekiAgDegistir(+1)` |
+| Okul, gazeteci, köpek, bağışçı, üniversite, ödenek kesintisi, ağ getiren balıkçılar | Kumsala dokunmaz (köpek: o tur avcı ihtimali insan kısmında artar) |
 
 ## Tur sonu simülasyonu (insan kısmı)
 GDD: "çöp birikir, sıcaklık hava durumuna göre değişir, korunmayan yuvalara avcı gelebilir." Önerilen:
-- Çöp birikimi: rastgele bölgelerde `KatmanDegistir(bolge, Cop, +1)`.
+- Çöp birikimi: rastgele bölgelerde `KatmanDegistir(bolge, Cop, +1)`; ihtimal bölgedeki şezlong ve insanla artar.
 - Korunmayan yuva: `Kafesli` değilse ve bölgede `TilkiCiti` yoksa ihtimalle `YuvaYumurtaKaybet` ve bir Avcı izi (`KayipNedeni.Tilki`).
 - `BirHaftaGecti()` turun sonunda değil, sıradaki turun başında (süreli etkiler gece boyunca sürsün diye).
 
