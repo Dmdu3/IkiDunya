@@ -48,7 +48,8 @@ namespace IkiDunya.Core
         private void OnDisable()
         {
             OyunAkisi.AdimBasladi -= AdimBasladi;
-            gunes.color = gunesinIlkRengi;
+            // Sahne kapanırken güneş bizden önce yok edilmiş olabilir.
+            if (gunes != null) gunes.color = gunesinIlkRengi;
         }
 
         private void AdimBasladi(Adim adim) => aktif = adim.Tur == AdimTuru.Final;

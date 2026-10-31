@@ -27,8 +27,11 @@ namespace IkiDunya.Core
 
         private void Uygula(bool gece, bool renkVer = true)
         {
-            if (renkVer) isik.color = gece ? ayarlar.GeceIsigi : ayarlar.GunduzIsigi;
-            isik.intensity = gece ? ayarlar.GeceIsikGucu : ayarlar.GunduzIsikGucu;
+            if (isik != null)
+            {
+                if (renkVer) isik.color = gece ? ayarlar.GeceIsigi : ayarlar.GunduzIsigi;
+                isik.intensity = gece ? ayarlar.GeceIsikGucu : ayarlar.GunduzIsikGucu;
+            }
             RenderSettings.ambientMode = UnityEngine.Rendering.AmbientMode.Flat;
             RenderSettings.ambientLight = gece ? ayarlar.GeceOrtamIsigi : ayarlar.GunduzOrtamIsigi;
             RenderSettings.fog = gece;
