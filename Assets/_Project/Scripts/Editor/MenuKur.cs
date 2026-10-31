@@ -150,19 +150,28 @@ namespace IkiDunya.Editor
             var dizi = kutu.GetComponent<VerticalLayoutGroup>();
             dizi.spacing = 16f;
             dizi.childAlignment = TextAnchor.MiddleCenter;
-            dizi.childControlHeight = false;
+            dizi.childControlWidth = true;
+            dizi.childControlHeight = true;
+            dizi.childForceExpandWidth = true;
             dizi.childForceExpandHeight = false;
             return kutu.transform;
         }
 
+        /// <summary>Elle kurulan düğme: arka plan, Button ve çocukta eski tip Text (Unity sürümüne göre hazır düğme başka yazı bileşeni kurabiliyor).</summary>
         private static Button Dugme(Transform ebeveyn, string id, MetinTablosu metinler)
         {
-            GameObject dugme = DefaultControls.CreateButton(new DefaultControls.Resources());
-            dugme.name = id;
-            dugme.layer = LayerMask.NameToLayer("UI");
+            int ui = LayerMask.NameToLayer("UI");
+            var dugme = new GameObject(id, typeof(RectTransform), typeof(Image), typeof(Button), typeof(LayoutElement));
+            dugme.layer = ui;
             dugme.transform.SetParent(ebeveyn, false);
-            ((RectTransform)dugme.transform).sizeDelta = new Vector2(0f, 64f);
-            Text yazi = dugme.GetComponentInChildren<Text>();
+            dugme.GetComponent<Image>().color = new Color(0.92f, 0.9f, 0.85f);
+            dugme.GetComponent<LayoutElement>().preferredHeight = 64f;
+
+            var yaziNesnesi = new GameObject("Yazi", typeof(RectTransform), typeof(Text));
+            yaziNesnesi.layer = ui;
+            yaziNesnesi.transform.SetParent(dugme.transform, false);
+            GriKumsalKur.Yasla((RectTransform)yaziNesnesi.transform, Vector2.zero, Vector2.one);
+            Text yazi = yaziNesnesi.GetComponent<Text>();
             YaziAyarla(yazi, 30, id, metinler);
             yazi.color = new Color(0.1f, 0.1f, 0.1f);
             return dugme.GetComponent<Button>();
@@ -173,7 +182,7 @@ namespace IkiDunya.Editor
             GameObject nesne = DefaultControls.CreateSlider(new DefaultControls.Resources());
             nesne.layer = LayerMask.NameToLayer("UI");
             nesne.transform.SetParent(ebeveyn, false);
-            ((RectTransform)nesne.transform).sizeDelta = new Vector2(0f, 30f);
+            nesne.AddComponent<LayoutElement>().preferredHeight = 30f;
             var kaydirici = nesne.GetComponent<Slider>();
             kaydirici.minValue = enAz;
             kaydirici.maxValue = enCok;
@@ -186,7 +195,7 @@ namespace IkiDunya.Editor
             nesne.layer = LayerMask.NameToLayer("UI");
             nesne.transform.SetParent(ebeveyn, false);
             if (enCok != Vector2.zero) GriKumsalKur.Yasla((RectTransform)nesne.transform, enAz, enCok);
-            else ((RectTransform)nesne.transform).sizeDelta = new Vector2(0f, boyut * 1.5f);
+            else nesne.AddComponent<LayoutElement>().preferredHeight = boyut * 1.5f;
             Text yazi = nesne.GetComponent<Text>();
             YaziAyarla(yazi, boyut, id, metinler);
             yazi.color = Color.white;

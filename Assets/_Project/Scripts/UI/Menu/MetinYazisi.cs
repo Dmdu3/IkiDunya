@@ -13,7 +13,14 @@ namespace IkiDunya.UI.Menu
 
         private void OnEnable()
         {
-            GetComponent<Text>().text = tablo.Al(id);
+            MetinTablosu kullanilan = tablo != null ? tablo : MetinTablosu.Yuklu;
+            var yazi = GetComponent<Text>();
+            if (kullanilan == null || yazi == null)
+            {
+                Debug.LogWarning($"MetinYazisi: '{name}' için metin tablosu ya da Text yok (İki Dünya → Menü ve duraklatmayı kur).", this);
+                return;
+            }
+            yazi.text = kullanilan.Al(id);
         }
     }
 }
