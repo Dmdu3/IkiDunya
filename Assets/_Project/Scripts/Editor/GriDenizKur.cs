@@ -19,6 +19,8 @@ namespace IkiDunya.Editor
         private const string AyarKlasoru = "Assets/_Project/ScriptableObjects/Settings";
         private const string KalipKlasoru = "Assets/_Project/Prefabs/Hazards";
         private const string SistemlerKalibi = "Assets/_Project/Prefabs/Sistemler.prefab";
+        private const string PosetSurusuSahnesi = "Assets/_Project/Scenes/Levels/Parkur_PosetSurusu.unity";
+        private const string CopGirdabiSahnesi = "Assets/_Project/Scenes/Levels/Parkur_CopGirdabi.unity";
 
         // Gri kutu ölçüleri (metre). Kıyı z = 0, deniz -z yönünde; su yüzeyi y = 0.
         private const float DenizUzunlugu = 200f;
@@ -35,12 +37,13 @@ namespace IkiDunya.Editor
             var ayarlar = AyarAdla<DenizAyarlari>("AnneDenizAyarlari", null);
 
             Quaternion kiyiya = Quaternion.identity;
-            DenizHareketi anne = YuzucuKur("Anne", ayarlar, tehlike, new Vector3(0.9f, 0.35f, 1.1f), 0.45f, new Vector3(0f, 0.15f, 0.5f));
+            DenizHareketi anne = YuzucuKur("Anne", ayarlar, tehlike, new Vector3(0.9f, 0.35f, 1.1f), 0.45f, new Vector3(0f, 0.15f, 0.5f), "Anne_Caretta");
             Transform baslangic = Nokta("Baslangic", new Vector3(0f, -3f, -195f), kiyiya);
 
             Kontrol("KontrolNoktasi_1", -120f, kiyiya, false);
             Kontrol("KontrolNoktasi_2", -50f, kiyiya, false);
-            Kontrol("Kiyi", -4f, kiyiya, true);
+            // Akıntı kapısı: anne kapılır, poşet sürüsü parkuru gelir (Bölüm 1 burada biter).
+            Kontrol("AkintiKapisi", -30f, kiyiya, false, true);
 
             // Akıntılar: biri kıyıya doğru (yardım eder), biri tersine, biri yana
             AkintiKur(new Vector3(-15f, -6f, -160f), new Vector3(20f, 12f, 40f), 0f, tehlike);
@@ -60,10 +63,7 @@ namespace IkiDunya.Editor
             SicakSuKur(new Vector3(-12f, -5f, -125f), 5f, tehlike);
             SicakSuKur(new Vector3(10f, -2f, -40f), 4f, tehlike);
 
-            // Minigame: poşet sürüsü, son kontrol noktası ile kıyı arasında
-            Transform posetBaslangici = PosetSurusuKur(anne, tehlike);
-
-            BolumKur(AdimTuru.Donus, ayarlar, anne, baslangic, false, ParkurTuru.PosetSurusu, posetBaslangici);
+            BolumKur(AdimTuru.Donus, ayarlar, anne, baslangic, false, null);
             GriKumsalKur.Kaydet(sahne, Bolum1Sahnesi);
         }
 
@@ -74,19 +74,10 @@ namespace IkiDunya.Editor
             Hazirla();
             var tehlike = GriKumsalKur.Ayar<DenizTehlikeAyarlari>("DenizTehlikeAyarlari");
             var kumsal = GriKumsalKur.Ayar<KumsalDurumu>("KumsalDurumu");
-            var ayarlar = AyarAdla<DenizAyarlari>("YavruDenizAyarlari", so =>
-            {
-                // GDD Bölüm 5: çılgın yüzüş (saniyede 0,5 enerji, yemek yok), nefes yok, ağ 10 basış, Space sadece daldırır.
-                so.FindProperty("yuzmeHizi").floatValue = 2.5f;
-                so.FindProperty("hareketEnerjisi").floatValue = 0f;
-                so.FindProperty("surekliEnerji").floatValue = 0.5f;
-                so.FindProperty("nefesSuresi").floatValue = 0f;
-                so.FindProperty("agBasisi").intValue = 10;
-                so.FindProperty("spaceSadeceDalar").boolValue = true;
-            });
+            DenizAyarlari ayarlar = YavruDenizAyarlari();
 
             Quaternion denize = Quaternion.Euler(0f, 180f, 0f);
-            DenizHareketi yavru = YuzucuKur("Yavru", ayarlar, tehlike, new Vector3(0.16f, 0.06f, 0.2f), 0.12f, new Vector3(0f, 0.05f, 0.15f));
+            DenizHareketi yavru = YuzucuKur("Yavru", ayarlar, tehlike, new Vector3(0.16f, 0.06f, 0.2f), 0.12f, new Vector3(0f, 0.05f, 0.15f), "Yavru_Caretta");
             Transform baslangic = Nokta("Baslangic", new Vector3(0f, -0.5f, -3f), denize);
 
             // Dalga hattı: kıyıya gelen dalgaların altından dalınır
@@ -98,7 +89,7 @@ namespace IkiDunya.Editor
             GriKumsalKur.Bagla(dalgaKok, "tepe", tepe.transform);
 
             Kontrol("KontrolNoktasi_1", -30f, denize, false);
-            Kontrol("KontrolNoktasi_2", -110f, denize, false);
+            Kontrol("GirdapKapisi", -110f, denize, false, true);
             GameObject ada = GriKumsalKur.Kutu("YosunAdasi", null, new Vector3(0f, 0f, -195f), new Vector3(12f, 0.6f, 12f), yosun, "Default");
             Object.DestroyImmediate(ada.GetComponent<Collider>());
             Kontrol("YosunAdasi_Son", -195f, denize, true);
@@ -131,12 +122,189 @@ namespace IkiDunya.Editor
             PlastikKur(new Vector3(4f, -4f, -170f), tehlike, kumsal);
             TekneKur("IsikliTekne", -150f, true, tehlike, kumsal);
 
-            // Minigame: çöp girdabı, sığ sularla açık deniz arasında
-            Transform girdapBaslangici = GirdapKur(new Vector3(0f, -4f, -125f), denize);
+            // Girdaba kapılma: Bölüm 5'in ilk parçası burada biter, çöp girdabı parkuru gelir; sonra açık denizden devam.
+            Transform devam = Nokta("Devam", new Vector3(0f, -4f, -118f), denize);
 
-            BolumKur(AdimTuru.IlkYuzus, ayarlar, yavru, baslangic, true, ParkurTuru.CopGirdabi, girdapBaslangici);
+            BolumKur(AdimTuru.IlkYuzus, ayarlar, yavru, baslangic, true, devam);
             GriKumsalKur.Kaydet(sahne, Bolum5Sahnesi);
         }
+
+        // ---- Parkurlar (minigame sahneleri) ----
+
+        /// <summary>Poşet sürüsü parkuru: anne kıyıya doğru 3 aşamalı bir akıntı koridorundan geçer (sakin, yoğun ve misinalı, karanlık). Aşama sonlarında akıntı duvarı.</summary>
+        [MenuItem("İki Dünya/Parkur: Poşet sürüsü sahnesini kur")]
+        public static void PosetSurusuKur()
+        {
+            if (!GriKumsalKur.SahneAc(PosetSurusuSahnesi, out Scene sahne)) return;
+            Hazirla();
+            var tehlike = GriKumsalKur.Ayar<DenizTehlikeAyarlari>("DenizTehlikeAyarlari");
+            var parkur = GriKumsalKur.Ayar<ParkurAyarlari>("ParkurAyarlari");
+            var ayarlar = AyarAdla<DenizAyarlari>("AnneDenizAyarlari", null);
+            DenizHareketi anne = YuzucuKur("Anne", ayarlar, tehlike, new Vector3(0.9f, 0.35f, 1.1f), 0.45f, new Vector3(0f, 0.15f, 0.5f), "Anne_Caretta");
+
+            // Aşamalar kıyıya doğru (+z): açık deniz, sığ sular, kumsalın önü. Her birinin alanı, başlangıcı, sonunda duvar.
+            float[] asamaOrtasi = { -167f, -117f, -67f };
+            float[] asamaYuksekligi = { -7f, -3.5f, -3f };
+            float[] asamaKalinligi = { 10f, 4f, 3.5f };
+            int sayi = asamaOrtasi.Length;
+            var alanlar = new Object[sayi];
+            var baslangiclar = new Object[sayi];
+            var duvarlar = new Object[sayi];
+            for (int i = 0; i < sayi; i++)
+            {
+                GameObject alan = GriKumsalKur.Kutu($"Asama_{i + 1}", null, new Vector3(0f, asamaYuksekligi[i], asamaOrtasi[i]), Vector3.one, akinti, "Default");
+                Object.DestroyImmediate(alan.GetComponent<MeshRenderer>());
+                alan.isStatic = false;
+                var kutu = (BoxCollider)alan.GetComponent<Collider>();
+                kutu.isTrigger = true;
+                kutu.size = new Vector3(26f, asamaKalinligi[i], 44f);
+                alanlar[i] = kutu;
+                baslangiclar[i] = Nokta($"Asama_{i + 1}_Baslangic", new Vector3(0f, asamaYuksekligi[i], asamaOrtasi[i] - 24f), Quaternion.identity);
+
+                // Akıntı duvarı: hedef olunca açılır; görünür perde ve geçilmez collider.
+                GameObject duvar = GriKumsalKur.Kutu($"AkintiDuvari_{i + 1}", null, new Vector3(0f, -8f, asamaOrtasi[i] + 24.5f), new Vector3(DenizGenisligi, 20f, 1f), akinti, "Obstacle");
+                duvar.isStatic = false;
+                duvarlar[i] = duvar;
+            }
+
+            // Yoğun aşamada misinalar, karanlık aşamada hayalet ağ
+            Vector3[] misinalar = { new Vector3(-6f, -3f, -125f), new Vector3(7f, -4f, -112f), new Vector3(0f, -2.5f, -100f) };
+            foreach (Vector3 yer in misinalar) Object.Instantiate(MisinaKalibi(), yer, Quaternion.Euler(0f, 90f, 0f));
+            Object.Instantiate(HayaletAgKalibi(), new Vector3(-8f, -3f, -70f), Quaternion.Euler(0f, 20f, 0f));
+            Object.Instantiate(HayaletAgKalibi(), new Vector3(9f, -3f, -58f), Quaternion.Euler(0f, -30f, 0f));
+
+            var kok = new GameObject("PosetSurusu");
+            var surusu = kok.AddComponent<PosetSurusu>();
+            GriKumsalKur.Bagla(surusu, "ayarlar", parkur);
+            GriKumsalKur.Bagla(surusu, "yuzucu", anne);
+            GriKumsalKur.Bagla(surusu, "denizanasiKalibi", YiyecekKalibi(Yiyecek.Turu.Denizanasi, tehlike, null));
+            // Poşet ışıktan etkilenir: karanlık aşamada görünmez olur (denizanası ışıksız malzemeyle parlar).
+            GriKumsalKur.Bagla(surusu, "posetKalibi", YiyecekKalibi(Yiyecek.Turu.Poset, tehlike,
+                GriKumsalKur.Malzeme("PosetParkur", new Color(0.9f, 0.9f, 0.88f))));
+            GriKumsalKur.DiziBagla(surusu, "alanlar", alanlar);
+            GriKumsalKur.DiziBagla(surusu, "baslangiclar", baslangiclar);
+            GriKumsalKur.DiziBagla(surusu, "duvarlar", duvarlar);
+            GriKumsalKur.Bagla(surusu, "bitis", Nokta("Bitis", new Vector3(0f, -3f, -38f), Quaternion.identity));
+            GriKumsalKur.Bagla(surusu, "gunes", GunesBul(sahne));
+
+            anne.transform.SetPositionAndRotation(((Transform)baslangiclar[0]).position, Quaternion.identity);
+            PrefabUtility.InstantiatePrefab(AssetDatabase.LoadAssetAtPath<GameObject>(SistemlerKalibi));
+            GriKumsalKur.Kaydet(sahne, PosetSurusuSahnesi);
+        }
+
+        /// <summary>Çöp girdabı parkuru: yavru girdabın merkezinde; iç içe 3 dönen çöp halkası, her birinde bir boşluk (parlak şamandıralarla işaretli), halkalarda çarpan ağır çöpler.</summary>
+        [MenuItem("İki Dünya/Parkur: Çöp girdabı sahnesini kur")]
+        public static void CopGirdabiKur()
+        {
+            if (!GriKumsalKur.SahneAc(CopGirdabiSahnesi, out Scene sahne)) return;
+            Hazirla();
+            var tehlike = GriKumsalKur.Ayar<DenizTehlikeAyarlari>("DenizTehlikeAyarlari");
+            var parkur = GriKumsalKur.Ayar<ParkurAyarlari>("ParkurAyarlari");
+            DenizHareketi yavru = YuzucuKur("Yavru", YavruDenizAyarlari(), tehlike, new Vector3(0.16f, 0.06f, 0.2f), 0.12f, new Vector3(0f, 0.05f, 0.15f), "Yavru_Caretta");
+
+            var merkezNoktasi = new Vector3(0f, -6f, -150f);
+            Transform merkez = Nokta("Merkez", merkezNoktasi, Quaternion.identity);
+            GameObject yigin = GriKumsalKur.Kutu("ParlayanYigin", null, merkezNoktasi + Vector3.down * 2.5f, new Vector3(2.5f, 1.5f, 2.5f), plastik, "Default");
+            Object.DestroyImmediate(yigin.GetComponent<Collider>());
+
+            var halkalar = new Object[parkur.HalkaSayisi];
+            for (int h = 0; h < parkur.HalkaSayisi; h++)
+                halkalar[h] = HalkaKur(h, merkezNoktasi, parkur);
+
+            var kok = new GameObject("CopGirdabi");
+            var girdap = kok.AddComponent<CopGirdabi>();
+            GriKumsalKur.Bagla(girdap, "ayarlar", parkur);
+            GriKumsalKur.Bagla(girdap, "yuzucu", yavru);
+            GriKumsalKur.Bagla(girdap, "merkez", merkez);
+            GriKumsalKur.DiziBagla(girdap, "halkalar", halkalar);
+
+            yavru.transform.SetPositionAndRotation(merkezNoktasi, Quaternion.identity);
+            PrefabUtility.InstantiatePrefab(AssetDatabase.LoadAssetAtPath<GameObject>(SistemlerKalibi));
+            GriKumsalKur.Kaydet(sahne, CopGirdabiSahnesi);
+        }
+
+        /// <summary>Bir çöp halkası: boşluk ileri yönde (açı 0); çevresinde dikey bir çöp duvarı, oyuncunun yüksekliğinde çarpan ağır çöpler, boşluğun iki yanında parlak şamandıralar.</summary>
+        private static Transform HalkaKur(int h, Vector3 merkez, ParkurAyarlari parkur)
+        {
+            Transform halka = GriKumsalKur.Bos($"Halka_{h + 1}", null);
+            halka.position = merkez;
+            // Her halka farklı açıda başlasın.
+            halka.rotation = Quaternion.Euler(0f, h * 137f, 0f);
+            float yaricap = parkur.HalkaYaricapi(h);
+            float yarimBosluk = parkur.CikisAcisi / 2f;
+            float adim = Mathf.Max(6f, 360f / (yaricap * 2.2f));
+            string[] hafifler = { "Poset", "Sise", "Samandira" };
+            int k = 0;
+            for (float aci = yarimBosluk + adim / 2f; aci < 360f - yarimBosluk; aci += adim, k++)
+                for (int kat = -2; kat <= 2; kat++)
+                {
+                    if (kat == 0) continue;
+                    Vector3 yer = Quaternion.Euler(0f, aci, 0f) * Vector3.forward * yaricap + Vector3.up * kat * 2.2f;
+                    Transform parca = GriKumsalKur.Bos($"Cop_{k}_{kat}", halka);
+                    parca.localPosition = yer;
+                    parca.localRotation = Quaternion.Euler(aci * 3f, aci, kat * 40f);
+                    if (GriKumsalKur.ModelYerlestir(parca, hafifler[(k + kat + 2) % hafifler.Length], Vector3.zero, 0.8f) != null) continue;
+                    GameObject kutu = GriKumsalKur.Kutu("Gri", parca, Vector3.zero, new Vector3(0.8f, 0.8f, 0.3f), girdapCopu, "Default");
+                    Object.DestroyImmediate(kutu.GetComponent<Collider>());
+                    kutu.isStatic = false;
+                }
+
+            // Ağır çöpler: oyuncunun yüksekliğinde, dönerken çarpar.
+            int agir = parkur.HalkaCopSayisi(h);
+            for (int i = 0; i < agir; i++)
+            {
+                float aci = yarimBosluk + 10f + (360f - 2f * yarimBosluk - 20f) * (i + 0.5f) / agir;
+                Transform parca = GriKumsalKur.Bos($"AgirCop_{i}", halka);
+                parca.localPosition = Quaternion.Euler(0f, aci, 0f) * Vector3.forward * yaricap;
+                if (GriKumsalKur.ModelYerlestir(parca, "Kutu", Vector3.down * 0.6f, 1.4f) != null) continue;
+                GameObject varil = GameObject.CreatePrimitive(PrimitiveType.Cylinder);
+                varil.name = "Varil";
+                Object.DestroyImmediate(varil.GetComponent<Collider>());
+                varil.transform.SetParent(parca, false);
+                varil.transform.localScale = new Vector3(0.9f, 0.7f, 0.9f);
+                varil.GetComponent<Renderer>().sharedMaterial = tekne;
+            }
+
+            // Boşluğun iki yanında, her yükseklikte parlak şamandıralar: boşluk uzaktan görünsün.
+            foreach (float kenar in new[] { -yarimBosluk, yarimBosluk })
+                for (int kat = -2; kat <= 2; kat++)
+                {
+                    GameObject isik = GameObject.CreatePrimitive(PrimitiveType.Sphere);
+                    isik.name = "BoslukIsareti";
+                    Object.DestroyImmediate(isik.GetComponent<Collider>());
+                    isik.transform.SetParent(halka, false);
+                    isik.transform.localPosition = Quaternion.Euler(0f, kenar, 0f) * Vector3.forward * yaricap + Vector3.up * kat * 2.2f;
+                    isik.transform.localScale = Vector3.one * 0.5f;
+                    isik.GetComponent<Renderer>().sharedMaterial = isaret;
+                }
+            return halka;
+        }
+
+        private static Light GunesBul(Scene sahne)
+        {
+            foreach (GameObject kok in sahne.GetRootGameObjects())
+                if (kok.TryGetComponent(out Light isik) && isik.type == LightType.Directional) return isik;
+            return null;
+        }
+
+        private static Yiyecek YiyecekKalibi(Yiyecek.Turu tur, DenizTehlikeAyarlari tehlike, Material malzeme)
+        {
+            GameObject nesne = YiyecekKur(tur, Vector3.zero, tehlike);
+            if (malzeme != null) nesne.GetComponent<Renderer>().sharedMaterial = malzeme;
+            string ad = malzeme != null ? $"{tur}Parkur" : tur.ToString();
+            return GriKumsalKur.KalipKaydet(nesne, $"{KalipKlasoru}/{ad}.prefab").GetComponent<Yiyecek>();
+        }
+
+        /// <summary>Bölüm 5 yavrusunun deniz ayarları (GDD: çılgın yüzüş, nefes yok, ağ 10 basış, Space sadece daldırır).</summary>
+        private static DenizAyarlari YavruDenizAyarlari() => AyarAdla<DenizAyarlari>("YavruDenizAyarlari", so =>
+        {
+            so.FindProperty("yuzmeHizi").floatValue = 2.5f;
+            so.FindProperty("hareketEnerjisi").floatValue = 0f;
+            so.FindProperty("surekliEnerji").floatValue = 0.5f;
+            so.FindProperty("nefesSuresi").floatValue = 0f;
+            so.FindProperty("agBasisi").intValue = 10;
+            so.FindProperty("spaceSadeceDalar").boolValue = true;
+        });
 
         // ---- Ortak ----
 
@@ -186,7 +354,7 @@ namespace IkiDunya.Editor
             Object.DestroyImmediate(GriKumsalKur.Kutu("Duvar", deniz, new Vector3(0f, -10f, -DenizUzunlugu - 1f), new Vector3(DenizGenisligi, 40f, 1f), su, "Default").GetComponent<MeshRenderer>());
         }
 
-        private static DenizHareketi YuzucuKur(string ad, DenizAyarlari ayarlar, DenizTehlikeAyarlari tehlike, Vector3 govdeOlcegi, float yaricap, Vector3 gozYeri)
+        internal static DenizHareketi YuzucuKur(string ad, DenizAyarlari ayarlar, DenizTehlikeAyarlari tehlike, Vector3 govdeOlcegi, float yaricap, Vector3 gozYeri, string model = null)
         {
             var nesne = new GameObject(ad);
             nesne.layer = LayerMask.NameToLayer("Turtle");
@@ -199,7 +367,7 @@ namespace IkiDunya.Editor
             nesne.AddComponent<Enerji>();
             var yuzucu = nesne.AddComponent<DenizHareketi>();
 
-            GriKumsalKur.Govde(nesne.transform, Vector3.zero, govdeOlcegi);
+            GriKumsalKur.Govde(nesne.transform, Vector3.zero, govdeOlcegi, model);
             BirinciSahisKamera goz = GriKumsalKur.KameraKur(nesne.transform, gozYeri, nesne.transform);
             GriKumsalKur.Bagla(goz.gameObject.AddComponent<SuAltiGorunumu>(), "ayarlar", GriKumsalKur.Ayar<OrtamAyarlari>("OrtamAyarlari"));
             GriKumsalKur.Bagla(goz, "ayarlar", AyarAdla<KameraAyarlari>("DenizKameraAyarlari", so =>
@@ -227,7 +395,7 @@ namespace IkiDunya.Editor
             return yuzucu;
         }
 
-        private static void BolumKur(AdimTuru adim, DenizAyarlari ayarlar, DenizHareketi yuzucu, Transform baslangic, bool final, ParkurTuru parkur, Transform parkurBaslangici)
+        private static void BolumKur(AdimTuru adim, DenizAyarlari ayarlar, DenizHareketi yuzucu, Transform baslangic, bool final, Transform devamBaslangici)
         {
             yuzucu.transform.SetPositionAndRotation(baslangic.position, baslangic.rotation);
             var bolum = new GameObject("DenizBolumu").AddComponent<DenizBolumu>();
@@ -238,10 +406,7 @@ namespace IkiDunya.Editor
             GriKumsalKur.Bagla(bolum, "ayarlar", ayarlar);
             GriKumsalKur.Bagla(bolum, "yuzucu", yuzucu);
             GriKumsalKur.Bagla(bolum, "baslangic", baslangic);
-            GriKumsalKur.Bagla(bolum, "parkurBaslangici", parkurBaslangici);
-            var parkurSo = new SerializedObject(bolum);
-            parkurSo.FindProperty("parkur").enumValueIndex = (int)parkur;
-            parkurSo.ApplyModifiedPropertiesWithoutUndo();
+            GriKumsalKur.Bagla(bolum, "devamBaslangici", devamBaslangici);
             PrefabUtility.InstantiatePrefab(AssetDatabase.LoadAssetAtPath<GameObject>(SistemlerKalibi));
         }
 
@@ -253,7 +418,7 @@ namespace IkiDunya.Editor
         }
 
         /// <summary>Kıyıya paralel, denizi boydan boya kesen tetikleyici; yüzeyde sarı şamandıra.</summary>
-        private static void Kontrol(string ad, float z, Quaternion yon, bool son)
+        private static void Kontrol(string ad, float z, Quaternion yon, bool son, bool kapi = false)
         {
             GameObject alan = GriKumsalKur.Kutu(ad, null, new Vector3(0f, -10f, z), new Vector3(DenizGenisligi, 40f, 4f), isaret, "Default");
             alan.transform.rotation = yon;
@@ -262,7 +427,15 @@ namespace IkiDunya.Editor
             var nokta = alan.AddComponent<KontrolNoktasi>();
             var so = new SerializedObject(nokta);
             so.FindProperty("son").boolValue = son;
+            so.FindProperty("kapi").boolValue = kapi;
             so.ApplyModifiedPropertiesWithoutUndo();
+
+            // Kapı uzaktan görünsün: denizi boydan boya kesen dönen akıntı perdesi.
+            if (kapi)
+            {
+                GameObject perde = GriKumsalKur.Kutu($"{ad}_Perde", null, new Vector3(0f, -6f, z), new Vector3(DenizGenisligi, 12f, 1.5f), akinti, "Default");
+                Object.DestroyImmediate(perde.GetComponent<Collider>());
+            }
 
             GameObject samandira = GameObject.CreatePrimitive(PrimitiveType.Cylinder);
             samandira.name = "Samandira";
@@ -286,61 +459,6 @@ namespace IkiDunya.Editor
                 GameObject ok = GriKumsalKur.Kutu("Ok", alan.transform, new Vector3(i * 0.3f, 0f, 0f), new Vector3(0.02f, 0.02f, 0.3f), akinti, "Default");
                 Object.DestroyImmediate(ok.GetComponent<Collider>());
             }
-        }
-
-        /// <summary>Poşet sürüsü alanı (z −43…−17): akıntı soldan sağa denizanası ve poşet taşır. Menüden oynanınca anne alanın denize bakan ucundan başlar.</summary>
-        private static Transform PosetSurusuKur(DenizHareketi anne, DenizTehlikeAyarlari tehlike)
-        {
-            GameObject alan = GriKumsalKur.Kutu("PosetSurusu", null, new Vector3(0f, -3.5f, -30f), Vector3.one, akinti, "Default");
-            alan.isStatic = false;
-            Object.DestroyImmediate(alan.GetComponent<MeshRenderer>());
-            var kutu = (BoxCollider)alan.GetComponent<Collider>();
-            kutu.isTrigger = true;
-            // Ölçek yerine collider boyutu: doğan yiyecekler alanın çocuğu, ölçeklenmesin.
-            kutu.size = new Vector3(36f, 7f, 26f);
-
-            var suru = alan.AddComponent<PosetSurusu>();
-            GriKumsalKur.Bagla(suru, "ayarlar", GriKumsalKur.Ayar<ParkurAyarlari>("ParkurAyarlari"));
-            GriKumsalKur.Bagla(suru, "yuzucu", anne);
-            GriKumsalKur.Bagla(suru, "denizanasiKalibi", YiyecekKalibi(Yiyecek.Turu.Denizanasi, tehlike));
-            GriKumsalKur.Bagla(suru, "posetKalibi", YiyecekKalibi(Yiyecek.Turu.Poset, tehlike));
-            return Nokta("PosetSurusu_Baslangic", new Vector3(0f, -3f, -46f), Quaternion.identity);
-        }
-
-        private static Yiyecek YiyecekKalibi(Yiyecek.Turu tur, DenizTehlikeAyarlari tehlike)
-        {
-            GameObject nesne = YiyecekKur(tur, Vector3.zero, tehlike);
-            return GriKumsalKur.KalipKaydet(nesne, $"{KalipKlasoru}/{tur}.prefab").GetComponent<Yiyecek>();
-        }
-
-        /// <summary>Çöp girdabı: merkezde parlayan plastik, çevresinde boşluklu dönen çöp halkası. Menüden oynanınca yavru girdabın kıyı tarafından başlar.</summary>
-        private static Transform GirdapKur(Vector3 merkez, Quaternion denize)
-        {
-            var ayarlar = GriKumsalKur.Ayar<ParkurAyarlari>("ParkurAyarlari");
-            var kok = new GameObject("CopGirdabi");
-            kok.transform.position = merkez;
-            var halka = GriKumsalKur.Bos("Halka", kok.transform);
-            float yaricap = ayarlar.GirdapHalkaYaricapi;
-            float bosluk = ayarlar.CikisAcisi;
-            // Halkanın boşluğu ileri yönde (açı 0); parçalar geri kalan çevreye.
-            for (float aci = bosluk / 2f + 6f; aci < 360f - bosluk / 2f - 3f; aci += 12f)
-            {
-                Vector3 yon = Quaternion.Euler(0f, aci, 0f) * Vector3.forward;
-                GameObject parca = GriKumsalKur.Kutu("Cop", halka, yon * yaricap + Vector3.up * Mathf.Sin(aci) * 0.8f,
-                    new Vector3(1.2f, 1.2f + (aci % 3f), 0.6f), girdapCopu, "Default");
-                parca.transform.localRotation = Quaternion.LookRotation(yon) * Quaternion.Euler(aci, 0f, aci * 0.5f);
-                parca.isStatic = false;
-                Object.DestroyImmediate(parca.GetComponent<Collider>());
-            }
-            // Merkezde dönen parlak plastik yığını
-            GameObject yigin = GriKumsalKur.Kutu("ParlayanYigin", halka, Vector3.zero, new Vector3(2.5f, 1.5f, 2.5f), plastik, "Default");
-            yigin.isStatic = false;
-            Object.DestroyImmediate(yigin.GetComponent<Collider>());
-
-            var girdap = kok.AddComponent<Girdap>();
-            GriKumsalKur.Bagla(girdap, "ayarlar", ayarlar);
-            GriKumsalKur.Bagla(girdap, "halka", halka);
-            return Nokta("CopGirdabi_Baslangic", merkez + new Vector3(0f, 2f, ayarlar.GirdapCekimYaricapi + 2f), denize);
         }
 
         private static GameObject YiyecekKur(Yiyecek.Turu tur, Vector3 yer, DenizTehlikeAyarlari tehlike)
@@ -481,9 +599,12 @@ namespace IkiDunya.Editor
             var kok = new GameObject("AvciBalik");
             kok.layer = LayerMask.NameToLayer("Predator");
             kok.transform.position = yer;
-            GameObject govde = GriKumsalKur.Kutu("Govde", kok.transform, Vector3.zero, new Vector3(0.6f, 0.8f, 2f), avci, "Predator");
-            Object.DestroyImmediate(govde.GetComponent<Collider>());
-            govde.isStatic = false;
+            if (GriKumsalKur.ModelYerlestir(kok.transform, "Avci_Balik", new Vector3(0f, -0.4f, 0f), 2f) == null)
+            {
+                GameObject govde = GriKumsalKur.Kutu("Govde", kok.transform, Vector3.zero, new Vector3(0.6f, 0.8f, 2f), avci, "Predator");
+                Object.DestroyImmediate(govde.GetComponent<Collider>());
+                govde.isStatic = false;
+            }
             GriKumsalKur.Bagla(kok.AddComponent<AvciBalik>(), "ayarlar", tehlike);
         }
 
