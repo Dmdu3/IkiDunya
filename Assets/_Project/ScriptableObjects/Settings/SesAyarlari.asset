@@ -1,0 +1,90 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: b50597acc2436b244b9075a50f3a8b95, type: 3}
+  m_Name: SesAyarlari
+  m_EditorClassIdentifier: Assembly-CSharp::IkiDunya.Core.SesAyarlari
+  efektler:
+  - tur: 0
+    klipler: []
+    duzey: 1
+  - tur: 1
+    klipler: []
+    duzey: 1
+  - tur: 2
+    klipler: []
+    duzey: 1
+  - tur: 3
+    klipler: []
+    duzey: 1
+  - tur: 4
+    klipler: []
+    duzey: 1
+  - tur: 5
+    klipler: []
+    duzey: 1
+  - tur: 6
+    klipler: []
+    duzey: 1
+  - tur: 7
+    klipler: []
+    duzey: 1
+  - tur: 8
+    klipler: []
+    duzey: 1
+  - tur: 9
+    klipler: []
+    duzey: 1
+  - tur: 10
+    klipler: []
+    duzey: 1
+  - tur: 11
+    klipler: []
+    duzey: 1
+  - tur: 12
+    klipler: []
+    duzey: 1
+  - tur: 13
+    klipler: []
+    duzey: 1
+  - tur: 14
+    klipler: []
+    duzey: 1
+  - tur: 15
+    klipler: []
+    duzey: 1
+  - tur: 16
+    klipler: []
+    duzey: 1
+  adimSesleri:
+  - adim: 0
+    ortam: {fileID: 0}
+    muzik: {fileID: 0}
+  - adim: 1
+    ortam: {fileID: 0}
+    muzik: {fileID: 0}
+  - adim: 2
+    ortam: {fileID: 0}
+    muzik: {fileID: 0}
+  - adim: 3
+    ortam: {fileID: 0}
+    muzik: {fileID: 0}
+  - adim: 4
+    ortam: {fileID: 0}
+    muzik: {fileID: 0}
+  - adim: 5
+    ortam: {fileID: 0}
+    muzik: {fileID: 0}
+  menuMuzigi: {fileID: 0}
+  ortamDuzeyi: 0.6
+  muzikDuzeyi: 0.4
+  gecisSuresi: 1.5
+  duyulmaMesafesi: 30
