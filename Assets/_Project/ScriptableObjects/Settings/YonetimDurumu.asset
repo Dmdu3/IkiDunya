@@ -1,0 +1,29 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 5909f84e2ea999846afe301bb4ef70ac, type: 3}
+  m_Name: YonetimDurumu
+  m_EditorClassIdentifier: Assembly-CSharp::IkiDunya.Management.YonetimDurumu
+  ayarlar: {fileID: 11400000, guid: 883c1f7b946353a4d83f62c070671489, type: 2}
+  tur: 0
+  butce: 0
+  destek: 0
+  ekGonullu: 0
+  mesgulGonullu: 0
+  sonrakiMesgul: 0
+  kullanilanGonullu: 0
+  sayilanYavru: 0
+  kanitlar: 
+  oynananTekKartlar: []
+  bekleyenUyari: -1
+  sonOlay: -1
+  rapor: []
+  sonrakiRapor: []

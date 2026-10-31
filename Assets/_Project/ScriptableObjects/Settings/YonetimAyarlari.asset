@@ -1,0 +1,60 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: e1e8bac9da48ed64ea39eb34c630b073, type: 3}
+  m_Name: YonetimAyarlari
+  m_EditorClassIdentifier: Assembly-CSharp::IkiDunya.Management.YonetimAyarlari
+  baslangicButce: 6
+  turButcesi: 3
+  yuksekDestekEsigi: 7
+  yuksekDestekButcesi: 5
+  baslangicGonullu: 4
+  yavruBasinaGonullu: 10
+  gonulluEnFazla: 10
+  baslangicDestek: 4
+  destekEnFazla: 10
+  dusukDestekEsigi: 3
+  eldekiKart: 4
+  tasimaUzakligi: 12
+  otelSezlongu: 3
+  festivalArtisi: 2
+  firtinaKaybi: 0.5
+  temizEnerjiKorumasi: 0.5
+  copBirikimi: 0.3
+  avciIhtimali: 0.2
+  avciYumurtaKaybi: 0.3
+  citCarpani: 0.5
+  kartlar:
+  - {fileID: 11400000, guid: 8a578e50bebf111428905ed2a7d97f4b, type: 2}
+  - {fileID: 11400000, guid: ff9b5753d0e30cf4db9f56b5aad6ed57, type: 2}
+  - {fileID: 11400000, guid: 8b122664b49906946ba089720f38a2ac, type: 2}
+  - {fileID: 11400000, guid: 3e2714f21310b8a4a9b7e0311444c557, type: 2}
+  - {fileID: 11400000, guid: 75ed7b1a6c3fbfd44b2ce4ce28508454, type: 2}
+  - {fileID: 11400000, guid: de1fcc25a6e68d04a8afdc796b227545, type: 2}
+  - {fileID: 11400000, guid: 77e3905befb7bd0499a653b9ecee98fb, type: 2}
+  - {fileID: 11400000, guid: 5b56c36baacd8bb428c69b79b2a87a4f, type: 2}
+  - {fileID: 11400000, guid: 945e907e372a8384c80c1a2d76c40917, type: 2}
+  - {fileID: 11400000, guid: 9b3e507d2e15ea342a601683f9fc2a54, type: 2}
+  - {fileID: 11400000, guid: be986c8367ab5ab41a6ad12534bd613d, type: 2}
+  - {fileID: 11400000, guid: 82e04033697c2c04bab00cde2a0615bc, type: 2}
+  gorevler:
+  - {fileID: 11400000, guid: 0c1068d550ad4964c9b5a199b7140f3a, type: 2}
+  - {fileID: 11400000, guid: fc38931d3208d7344827cea80782af41, type: 2}
+  - {fileID: 11400000, guid: 079f1c6aa0a2c9d4ebaca59a2ce70152, type: 2}
+  - {fileID: 11400000, guid: ce8d162b17b156a40a90bb1c33122d99, type: 2}
+  - {fileID: 11400000, guid: e20febd77e4d8d542a23d2f2b8e40676, type: 2}
+  olaylar:
+  - {fileID: 11400000, guid: 3bbdb903fa279874082564e224c582ed, type: 2}
+  - {fileID: 11400000, guid: d0e4585139cd07e4a8c41c5208e091b3, type: 2}
+  - {fileID: 11400000, guid: 1c8fd426ba543024a9b2396c903f77ed, type: 2}
+  - {fileID: 11400000, guid: b93597653afaed044ad4cae1fb4e897a, type: 2}
+  - {fileID: 11400000, guid: ccdca7ef9fc2a604cb0360312d57df1a, type: 2}
+  - {fileID: 11400000, guid: 8aea8dddfb8f5b64fbdad79075273a2e, type: 2}
