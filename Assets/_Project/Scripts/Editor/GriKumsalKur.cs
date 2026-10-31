@@ -715,7 +715,8 @@ namespace IkiDunya.Editor
 
         internal static Transform TuvalKur(string ad, Transform grup)
         {
-            var tuval = new GameObject(ad, typeof(Canvas), typeof(CanvasScaler));
+            // GraphicRaycaster olmadan düğmeler tıklanmaz.
+            var tuval = new GameObject(ad, typeof(Canvas), typeof(CanvasScaler), typeof(GraphicRaycaster));
             tuval.layer = LayerMask.NameToLayer("UI");
             tuval.transform.SetParent(grup, false);
             tuval.GetComponent<Canvas>().renderMode = RenderMode.ScreenSpaceOverlay;
