@@ -18,6 +18,9 @@ namespace IkiDunya.UI.Management
         [SerializeField] private MetinTablosu metinler;
         [SerializeField] private GameObject kok;
 
+        private YonetimDurumu yonetim;
+        private KumsalDurumu kumsal;
+
         [Header("Üst ve sol")]
         [SerializeField] private Text ustBilgi;
         [SerializeField] private Text asamaBasligi;
@@ -48,9 +51,12 @@ namespace IkiDunya.UI.Management
 
         private void OnEnable()
         {
+            // Yönetim ve kumsal durumu asset'tir, sahneler arasında yaşar: kapanırken çıkabilmek için saklanır.
+            yonetim = tur.Yonetim;
+            kumsal = tur.Kumsal;
             tur.Degisti += Yenile;
-            tur.Yonetim.Degisti += Yenile;
-            tur.Kumsal.Degisti += Yenile;
+            yonetim.Degisti += Yenile;
+            kumsal.Degisti += Yenile;
             GameInput.BaglamalarDegisti += Yenile;
             ileriDugmesi.onClick.AddListener(tur.Ilerle);
             aDugmesi.onClick.AddListener(() => tur.Sec(true));
@@ -61,13 +67,13 @@ namespace IkiDunya.UI.Management
         private void OnDisable()
         {
             GameInput.BaglamalarDegisti -= Yenile;
-            if (tur == null) return;
-            tur.Degisti -= Yenile;
-            tur.Yonetim.Degisti -= Yenile;
-            tur.Kumsal.Degisti -= Yenile;
-            ileriDugmesi.onClick.RemoveAllListeners();
-            aDugmesi.onClick.RemoveAllListeners();
-            bDugmesi.onClick.RemoveAllListeners();
+            // Sahne kapanırken tur bizden önce silinmiş olabilir; asset'lerden yine de çıkılır, yoksa silinmiş ekran güncellenmeye çalışır.
+            if (yonetim != null) yonetim.Degisti -= Yenile;
+            if (kumsal != null) kumsal.Degisti -= Yenile;
+            if (tur != null) tur.Degisti -= Yenile;
+            if (ileriDugmesi != null) ileriDugmesi.onClick.RemoveAllListeners();
+            if (aDugmesi != null) aDugmesi.onClick.RemoveAllListeners();
+            if (bDugmesi != null) bDugmesi.onClick.RemoveAllListeners();
         }
 
         private void Update()
@@ -80,6 +86,8 @@ namespace IkiDunya.UI.Management
 
         private void Yenile()
         {
+            // Sahne kapanırken gelen son bildirim: ekran ya da tur silinmişse dokunma.
+            if (this == null || kok == null || tur == null) return;
             bool acik = tur.SuAnki != InsanTuru.Asama.Kapali && tur.SuAnki != InsanTuru.Asama.Bitiyor;
             kok.SetActive(acik);
             if (!acik) return;
