@@ -2,7 +2,7 @@ using UnityEngine;
 
 namespace IkiDunya.Core
 {
-    /// <summary>Geçici insan turu: Toprak'ın yönetim ekranı gelene kadar kumsal üstten görünür, tıklayınca bir hafta geçer ve tur biter.</summary>
+    /// <summary>Geçici insan turu: Toprak'ın yönetim ekranı gelene kadar kumsal üstten görünür, tıklayınca (ya da Space) bir hafta geçer ve tur biter.</summary>
     public class GeciciInsanTuru : MonoBehaviour
     {
         [SerializeField] private KumsalDurumu kumsal;
@@ -22,10 +22,12 @@ namespace IkiDunya.Core
 
         private void Update()
         {
-            if (!aktif || Time.frameCount == baslangicKaresi || !GameInput.TiklaBasildi) return;
+            if (!aktif || Time.frameCount == baslangicKaresi) return;
+            if (!GameInput.TiklaBasildi && !GameInput.ZiplaDalBasildi) return;
+            // Ekran kararıp açılırken gelen tıklama sayılmaz; tur bitmiş sayılmaz.
+            if (!OyunAkisi.AdimBitti()) return;
             aktif = false;
             kumsal.BirHaftaGecti();
-            OyunAkisi.AdimBitti();
         }
     }
 }

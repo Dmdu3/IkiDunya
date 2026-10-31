@@ -30,6 +30,8 @@ namespace IkiDunya.Turtle
         {
             OyunAkisi.AdimBasladi -= AdimBasladi;
             KontrolNoktasi.Ulasildi -= Ulasildi;
+            // Sahne kapanırken yüzücü bizden önce yok edilmiş olabilir.
+            if (yuzucu == null) return;
             yuzucu.Enerji.Bitti -= YenidenBasla;
             yuzucu.Yakalandi -= YenidenBasla;
         }

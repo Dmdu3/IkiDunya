@@ -2,6 +2,7 @@ using IkiDunya.Camera;
 using IkiDunya.Core;
 using IkiDunya.Hazards;
 using IkiDunya.Turtle;
+using IkiDunya.UI.Menu;
 using IkiDunya.UI.Night;
 using UnityEditor;
 using UnityEditor.SceneManagement;
@@ -215,6 +216,23 @@ namespace IkiDunya.Editor
 
             var tur = new GameObject("GeciciInsanTuru").AddComponent<GeciciInsanTuru>();
             Bagla(tur, "kumsal", Ayar<KumsalDurumu>("KumsalDurumu"));
+
+            // Ne yapılacağını söyleyen satır (insan_turu_gecici): "tıkla, bir hafta geçsin"
+            Transform tuval = TuvalKur("InsanTuruArayuzu", grup);
+            var ipucu = new GameObject("Ipucu", typeof(RectTransform), typeof(Text));
+            ipucu.layer = LayerMask.NameToLayer("UI");
+            ipucu.transform.SetParent(tuval, false);
+            Yasla((RectTransform)ipucu.transform, new Vector2(0.1f, 0.04f), new Vector2(0.9f, 0.12f));
+            Text yazi = ipucu.GetComponent<Text>();
+            yazi.font = Resources.GetBuiltinResource<Font>("LegacyRuntime.ttf");
+            yazi.fontSize = 36;
+            yazi.alignment = TextAnchor.MiddleCenter;
+            yazi.color = Color.white;
+            var metin = ipucu.AddComponent<MetinYazisi>();
+            Bagla(metin, "tablo", Ayar<MetinTablosu>("MetinTablosu"));
+            var so = new SerializedObject(metin);
+            so.FindProperty("id").stringValue = "insan_turu_gecici";
+            so.ApplyModifiedPropertiesWithoutUndo();
         }
 
         // ---- Ortak ----
