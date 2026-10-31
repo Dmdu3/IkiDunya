@@ -2,6 +2,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Text.RegularExpressions;
 using IkiDunya.Core;
+using IkiDunya.Management;
 using IkiDunya.UI.Menu;
 using IkiDunya.UI.Night;
 using UnityEditor;
@@ -29,13 +30,27 @@ namespace IkiDunya.Editor
             var idBicimi = new Regex("^[a-z0-9_]+$");
 
             // Her tablo satırı: | id | metin (ya da ad) | ... ; başlık ve ayraç satırları atlanır.
+            // Sonraki sütunlar başlığına göre ek id olur: Açıklama → id_aciklama, Not → id_not, Seçenek A/B → id_a / id_b.
+            var ekler = new Dictionary<string, string> { { "Açıklama", "_aciklama" }, { "Not", "_not" }, { "Seçenek A", "_a" }, { "Seçenek B", "_b" } };
+            string[] baslik = new string[0];
             foreach (string satir in File.ReadAllLines(yol))
             {
                 string[] hucreler = satir.Split('|');
                 if (hucreler.Length < 4) continue;
                 string id = hucreler[1].Trim();
-                if (id == "id" || !idBicimi.IsMatch(id)) continue;
+                if (id == "id")
+                {
+                    baslik = hucreler;
+                    continue;
+                }
+                if (!idBicimi.IsMatch(id)) continue;
                 satirlar.Add(new MetinTablosu.Satir(id, hucreler[2].Trim()));
+                for (int i = 3; i < hucreler.Length - 1 && i < baslik.Length; i++)
+                {
+                    string metin = hucreler[i].Trim();
+                    if (metin.Length == 0 || metin == "—" || !ekler.TryGetValue(baslik[i].Trim(), out string ek)) continue;
+                    satirlar.Add(new MetinTablosu.Satir(id + ek, metin));
+                }
             }
 
             tablo.Yaz(satirlar);
@@ -121,6 +136,12 @@ namespace IkiDunya.Editor
 
             IpucuKur(kok.transform);
             SesKur(kok.transform);
+
+            // İnsan kısmının durumu da kayda girer.
+            YonetimDurumu yonetim = YonetimKur.IcerikKur();
+            OyunAkisi akis = kok.GetComponent<OyunAkisi>();
+            if (akis != null) GriKumsalKur.DiziBagla(akis, "ekVeriler", yonetim);
+            else Debug.LogWarning("MenuKur: Sistemler'de OyunAkisi yok; YonetimDurumu kayda bağlanamadı.");
 
             PrefabUtility.SaveAsPrefabAsset(kok, SistemlerKalibi);
             PrefabUtility.UnloadPrefabContents(kok);

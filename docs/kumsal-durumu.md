@@ -6,7 +6,7 @@ ozet: İki tarafın sözleşmesi. İnsan kısmı (Toprak) kumsalı sadece bu met
 
 Kod: `Assets/_Project/Scripts/Core/KumsalDurumu.cs`. Asset: `ScriptableObjects/Settings/KumsalDurumu.asset` (kullanan her script `[SerializeField]` ile bağlanır). Her değişiklikten sonra `Degisti` event'i gelir. Yeni oyunda kumsal `KumsalBaslangici` asset'inden kurulur.
 
-> [!soru] Toprak'ın onayı bekleniyor. Eksik ya da fazla bir şey varsa bu dosyada PR ile değiştirin, `docs/kararlar.md`'ye bir satır.
+> Toprak'ın onayıyla insan kısmını da Umut yazdı (`Management/`, 2026-11-01); kod bu sözleşmeye uyar. Değişiklik bu dosyada PR ile, `docs/kararlar.md`'ye bir satır.
 
 ## Okunanlar
 
@@ -36,10 +36,10 @@ Kod: `Assets/_Project/Scripts/Core/KumsalDurumu.cs`. Asset: `ScriptableObjects/S
 | `YuvaYumurtaKaybet(yuva, adet)` | Fırtına, tilki |
 | `YuvaBantDegistir(yuva, fark)` | Yuvanın sıcaklığını kalıcı değiştirir (ör. taşınınca) |
 | `KanitAc(iz)` | İzi açılmış yapar, `KanitAcildi(iz)` event'ini atar |
-| `BirHaftaGecti()` | **Tur sonunda insan kısmı çağırır.** Yuvaların çıkışına bir hafta yaklaşır; süreli etkiler azalır, biten geri alınır |
+| `BirHaftaGecti()` | **Her insan turunun başında insan kısmı çağırır** (geceden bu yana bir hafta geçti). Yuvaların çıkışına bir hafta yaklaşır; süreli etkiler azalır, biten geri alınır |
 
 ### Süreli ("o tur", "bir gece")
-Süre tur sayısıdır. `1` = sıradaki `BirHaftaGecti()`'de geri alınır; yani bu turun ardından gelen gece boyunca sürer.
+Süre tur sayısıdır. `1` = sıradaki `BirHaftaGecti()`'de, yani bir sonraki turun başında geri alınır; bu tur ve ardından gelen gece boyunca sürer.
 
 | Metot | Ne yapar |
 |---|---|
@@ -89,7 +89,7 @@ Süre tur sayısıdır. `1` = sıradaki `BirHaftaGecti()`'de geri alınır; yani
 GDD: "çöp birikir, sıcaklık hava durumuna göre değişir, korunmayan yuvalara avcı gelebilir." Önerilen:
 - Çöp birikimi: rastgele bölgelerde `KatmanDegistir(bolge, Cop, +1)`.
 - Korunmayan yuva: `Kafesli` değilse ve bölgede `TilkiCiti` yoksa ihtimalle `YuvaYumurtaKaybet` ve bir Avcı izi (`KayipNedeni.Tilki`).
-- En sonda `BirHaftaGecti()`.
+- `BirHaftaGecti()` turun sonunda değil, sıradaki turun başında (süreli etkiler gece boyunca sürsün diye).
 
 ## Kanıtlar
 İz simgesine tıklanınca `KanitAc(iz)` çağrılır ve `KanitAcildi(iz)` event'i gelir; `iz.Kanit` hangi kartın açılacağını ya da ucuzlayacağını söyler (GDD tablosu). Şimdilik simgeleri geçici insan turu gösteriyor (`KayipIziHaritasi`); yönetim ekranı aynı event'i dinler.

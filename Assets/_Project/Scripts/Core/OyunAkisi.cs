@@ -11,6 +11,8 @@ namespace IkiDunya.Core
     {
         [SerializeField] private OyunAyarlari ayarlar;
         [SerializeField] private KumsalDurumu kumsal;
+        [Tooltip("Kumsal dışında kayda giren veriler (ör. Management/YonetimDurumu); IOyunVerisi olmalı.")]
+        [SerializeField] private ScriptableObject[] ekVeriler = new ScriptableObject[0];
 
         /// <summary>Yeni adım başladığında; sahne yüklendiyse sahnedeki objeler OnEnable'da abone olmuş olur.</summary>
         public static event Action<Adim> AdimBasladi;
@@ -29,6 +31,7 @@ namespace IkiDunya.Core
         private static OyunAkisi ornek;
 
         private List<Adim> akis;
+        private readonly List<IOyunVerisi> veriler = new List<IOyunVerisi>();
         private int sira = -1;
         private bool yukleniyor;
         private Gecis gecis;
@@ -60,6 +63,11 @@ namespace IkiDunya.Core
             ornek = this;
             DontDestroyOnLoad(gameObject);
             akis = ayarlar.AkisiKur();
+            foreach (ScriptableObject ek in ekVeriler)
+            {
+                if (ek is IOyunVerisi veri) veriler.Add(veri);
+                else if (ek != null) Debug.LogError($"OyunAkisi: '{ek.name}' IOyunVerisi değil, kayda girmez.", this);
+            }
             gecis = Gecis.Kur(transform);
         }
 
@@ -110,7 +118,7 @@ namespace IkiDunya.Core
         public static void DevamEt()
         {
             if (ornek == null || ornek.yukleniyor) return;
-            if (Kayit.Yukle(ornek.kumsal, out int kayitliSira) && kayitliSira >= 0 && kayitliSira < ornek.akis.Count)
+            if (Kayit.Yukle(ornek.kumsal, ornek.veriler, out int kayitliSira) && kayitliSira >= 0 && kayitliSira < ornek.akis.Count)
                 ornek.AdimaGec(kayitliSira);
             else
                 YeniOyun();
@@ -179,7 +187,7 @@ namespace IkiDunya.Core
             if (sira >= 0)
             {
                 SuAnkiAdim = akis[sira];
-                Kayit.Kaydet(sira, kumsal);
+                Kayit.Kaydet(sira, kumsal, veriler);
             }
 
             // Aynı sahnede kalınıyorsa (ör. kumsalda gece → insan turu) yükleme yok.
@@ -204,6 +212,7 @@ namespace IkiDunya.Core
         private void KumsaliSifirla()
         {
             ayarlar.KumsaliSifirla(kumsal);
+            foreach (IOyunVerisi veri in veriler) veri.YeniOyun();
         }
     }
 }

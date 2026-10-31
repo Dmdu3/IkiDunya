@@ -59,7 +59,7 @@ namespace IkiDunya.Editor
             Kaydet(sahne, KacisSahnesi);
         }
 
-        /// <summary>Oyunun Kumsal sahnesi (Bölüm 2–4 ve final): yuva gecesi, kaçış gecesi, geçici insan turu ve "30 yıl sonra"; her biri kendi adımında açılır.</summary>
+        /// <summary>Oyunun Kumsal sahnesi (Bölüm 2–4 ve final): yuva gecesi, kaçış gecesi, insan turu (yönetim ekranı) ve "30 yıl sonra"; her biri kendi adımında açılır.</summary>
         [MenuItem("İki Dünya/Kumsal sahnesini kur (oyun)")]
         public static void KumsalSahnesiKur()
         {
@@ -69,7 +69,7 @@ namespace IkiDunya.Editor
             KumSicakligi kumSicakligi = OrtakKur(Bos("Insanlar", yuvaGrubu));
             YuvaKur(kumSicakligi, yuvaGrubu);
             KacisKur(kumSicakligi, Grup("KacisGecesiNesneleri", AdimTuru.KacisGecesi));
-            InsanTuruKur(Grup("InsanTuruNesneleri", AdimTuru.InsanTuru));
+            InsanTuruKur(kumSicakligi, Grup("InsanTuruNesneleri", AdimTuru.InsanTuru));
             MenuKur.FinalKur(Grup("FinalNesneleri", AdimTuru.Final), sahne, kaplumbaga, leke);
             PrefabUtility.InstantiatePrefab(AssetDatabase.LoadAssetAtPath<GameObject>(SistemlerKalibi));
             OrtamKur(sahne);
@@ -206,11 +206,11 @@ namespace IkiDunya.Editor
             SonucPaneliKur(null, gece);
         }
 
-        // ---- Geçici insan turu ----
+        // ---- İnsan turu ----
 
-        private static void InsanTuruKur(Transform grup)
+        private static void InsanTuruKur(KumSicakligi kumSicakligi, Transform grup)
         {
-            // Kumsala tepeden bakan kamera; yönetim ekranı gelene kadar.
+            // Kumsala tepeden bakan kamera: yönetim ekranının haritası.
             var kamera = new GameObject("YonetimKamerasi");
             kamera.transform.SetParent(grup, false);
             kamera.transform.SetPositionAndRotation(new Vector3(0f, 55f, KumsalDerinligi / 2f), Quaternion.Euler(90f, 0f, 0f));
@@ -224,25 +224,8 @@ namespace IkiDunya.Editor
             Bagla(harita, "kamera", kameraBileseni);
             Bagla(harita, "simgeMalzemesi", termalSerit);
 
-            var tur = new GameObject("GeciciInsanTuru").AddComponent<GeciciInsanTuru>();
-            Bagla(tur, "kumsal", Ayar<KumsalDurumu>("KumsalDurumu"));
-
-            // Ne yapılacağını söyleyen satır (insan_turu_gecici): "tıkla, bir hafta geçsin"
-            Transform tuval = TuvalKur("InsanTuruArayuzu", grup);
-            var ipucu = new GameObject("Ipucu", typeof(RectTransform), typeof(Text));
-            ipucu.layer = LayerMask.NameToLayer("UI");
-            ipucu.transform.SetParent(tuval, false);
-            Yasla((RectTransform)ipucu.transform, new Vector2(0.1f, 0.04f), new Vector2(0.9f, 0.12f));
-            Text yazi = ipucu.GetComponent<Text>();
-            yazi.font = Resources.GetBuiltinResource<Font>("LegacyRuntime.ttf");
-            yazi.fontSize = 36;
-            yazi.alignment = TextAnchor.MiddleCenter;
-            yazi.color = Color.white;
-            var metin = ipucu.AddComponent<MetinYazisi>();
-            Bagla(metin, "tablo", Ayar<MetinTablosu>("MetinTablosu"));
-            var so = new SerializedObject(metin);
-            so.FindProperty("id").stringValue = "insan_turu_gecici";
-            so.ApplyModifiedPropertiesWithoutUndo();
+            // Yönetim ekranı: harita seçimi, yuva simgeleri, tur akışı, arayüz
+            YonetimKur.SahneyeKur(grup, kameraBileseni, kumSicakligi, termalSerit);
         }
 
         // ---- Ortak ----

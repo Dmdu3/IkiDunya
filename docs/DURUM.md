@@ -4,7 +4,7 @@ ozet: Mekanik tarafın durumu ve sistemlerin haritası. Bir sistem eklendikçe y
 
 # Durum
 
-Son güncelleme: 2026-11-01 — Alpha main'de, deneme listesi tamam (editörde 300+ FPS). Dallarda (`umut/oynanis-eksikleri`, üstünde `umut/ipucu-ses`): tilki yuvayı bozar, öncü de takılır, kumul onarımında dalga çizgisi kayar, denizde tekne gölgesi/köpük ve parlayan ağ; ipuçları, sonuç panelinde yazılar, ses yuvaları (SesAyarlari). Unity'de henüz denenmedi.
+Son güncelleme: 2026-11-01 — Alpha main'de, deneme listesi tamam (editörde 300+ FPS). Dalda (`umut/yonetim-ekrani`): insan kısmı (yönetim ekranı, Faz 0–4) Umut tarafından; geçici insan turu kalktı. Unity'de henüz denenmedi.
 
 ## Sistem haritası
 
@@ -23,7 +23,7 @@ Son güncelleme: 2026-11-01 — Alpha main'de, deneme listesi tamam (editörde 3
 | Anne (kara): hareket, enerji, kazma | `Turtle` | `AnneKara`, `AnneKazma`, `AnneAyarlari`, `Enerji` | Umut | Yapılıyor |
 | Yuva gecesi: denemeler, yuva sonucu | `Turtle` | `YuvaGecesi` | Umut | Yapılıyor |
 | Kaçış gecesi: kumdan çıkış, koşu, kurtarma | `Turtle` | `KacisGecesi`, `Suru`, `Yavru`, `YavruAyarlari` | Umut | Yapılıyor |
-| Adıma göre sahne parçaları, geçici insan turu | `Core` | `AdimNesneleri`, `GeciciInsanTuru` | Umut | Yapılıyor (insan turu geçici) |
+| Adıma göre sahne parçaları | `Core` | `AdimNesneleri` | Umut | Yapılıyor |
 | Gece göstergeleri (enerji, kazma, kumdan çıkış, gün doğumu, kurtarma) ve sonuç paneli | `UI/Night` | `EnerjiCubugu`, `Cubuk`, `KazmaGostergesi`, `KacisGostergesi`, `GeceSonucuPaneli` | Umut | Yapılıyor (yazısız) |
 | Gri kutu kumsal ve layer kurulumu | `Editor` | `GriKumsalKur`, `KatmanKurulumu` | Umut | Yapılıyor |
 | Deniz hareketi, nefes, besin, ağdan kurtulma | `Turtle` | `DenizHareketi`, `DenizAyarlari` (anne, yavru) | Umut | Yapılıyor |
@@ -42,10 +42,11 @@ Son güncelleme: 2026-11-01 — Alpha main'de, deneme listesi tamam (editörde 3
 | Kayıp izleri | `Turtle`, `Hazards` | `KacisGecesi` yazar, `KumsalYapilari` kumda gösterir, `KayipIziHaritasi` insan turunda simge + kanıt | Umut | Yapılıyor |
 | İpuçları (ilk karşılaşmada bir kez) | `Core`, `UI/Night` | `Ipucu`, `IpucuPaneli` | Umut | Yapılıyor (yazılar Yusuf'ta) |
 | Ses: olaylar, ortam sesi, müzik | `Core` | `Ses`, `SesYoneticisi`, `SesAyarlari` | Umut | Yapılıyor (klipler Abdü'de) |
-| Kumsal haritası ve tur akışı | `Management` | — | Toprak | Planlandı |
-| Gönüllüler ve görevler | `Management` | — | Toprak | Planlandı |
-| Kartlar | `Management` | `CardDefinition` | Toprak | Planlandı |
-| Kanıtlar ve olaylar | `Management` | — | Toprak | Planlandı |
+| Kumsal haritası ve tur akışı | `Management`, `UI/Management` | `InsanTuru`, `HaritaSecici`, `YuvaHaritasi`, `YonetimArayuzu` | Umut | Yapılıyor |
+| Kaynaklar (bütçe, gönüllü, halk desteği), rapor, kayıt | `Management` | `YonetimDurumu`, `YonetimAyarlari`; `Core/IOyunVerisi` | Umut | Yapılıyor |
+| Gönüllüler ve görevler | `Management` | `GorevTanimi`, `Etkiler` | Umut | Yapılıyor |
+| Kartlar | `Management` | `KartTanimi`, `Etkiler` | Umut | Yapılıyor |
+| Kanıtlar, olaylar, tur sonu simülasyonu | `Management` | `OlayTanimi`, `Etkiler` | Umut | Yapılıyor |
 
 Durum değerleri: Planlandı · Yapılıyor · Oynanabilir · Bitti.
 
@@ -68,7 +69,7 @@ Durum değerleri: Planlandı · Yapılıyor · Oynanabilir · Bitti.
 | Kayıp izleri | `KayipIzleri` (bölge, konum, neden, kanıt açıldı mı) | `KayipIziEkle` (gece), `KanitAc` (insan turu) | İkisi |
 | Denize ulaşan yavru | `DenizeUlasanYavru` | `DenizeUlasti(adet)` | Kaplumbağa |
 
-Bütçe, gönüllü ve halk desteği `KumsalDurumu`'nda değil; insan kısmının kendi verisi.
+Bütçe, gönüllü ve halk desteği `KumsalDurumu`'nda değil; insan kısmının kendi verisi (`YonetimDurumu`, kayda `IOyunVerisi` olarak girer).
 
 ## Araçlar
 
@@ -99,7 +100,7 @@ Bütçe, gönüllü ve halk desteği `KumsalDurumu`'nda değil; insan kısmını
 
 **Gecenin sonu.** Yuva gecesi yuvanın bandını (renk ve adı) ve yumurta sayısını, kaçış kurtulan, kaybedilen, dişi ve erkek sayısını gösterir (dişi oranı yuvanın bandından). Başlık, satır adları ve "devam" satırı metin id'leriyle (`sonuc_*`, `bant_*`). Tıklayınca ya da Space'le akış ilerler.
 
-**Geçici insan turu.** Kumsala tepeden bakılır; tıklayınca bir hafta geçer (`BirHaftaGecti`) ve tur biter. Toprak'ın yönetim ekranı gelince kaldırılacak.
+**İnsan turu.** Geçici tur kalktı; yerine yönetim ekranı geldi (aşağıda "İnsan kısmı").
 
 Henüz yok: yok (animasyonlar modeller gelince).
 
@@ -166,4 +167,25 @@ Henüz yok: pervane sesi klibi (Abdü).
 | Yeme, AgdanKurtulma, KontrolNoktasi, DalgaVurdu | Denizde |
 | Pervane | Tekne (döngü) |
 | Ipucu | İpucu kutusu açılınca |
+
+## İnsan kısmı (yönetim ekranı)
+
+Toprak'ın onayıyla Umut yazdı (2026-11-01). Sayılar GDD'den; kâğıt prototip atlandı, denge `ScriptableObjects/Settings/YonetimAyarlari`'nda ayarlanır. **Kumsal sahnesini kur (oyun)** 12 kart (`ScriptableObjects/Cards`), 5 görev (`VolunteerTasks`), 6 olay (`Events`) asset'ini GDD değerleriyle yazar ve ekranı kurar; **Menü ve duraklatmayı kur** `YonetimDurumu`'nu kayda bağlar.
+
+**Ekran.** Kumsala tepeden bakılır (kumsalın kendisi harita: çöp, şezlong, ışık, gölgelik, araç izi sahnede görünür; T termal bantları açar). İmlecin altındaki bölge vurgulanır, solda katmanları ve yapıları yazar; yuvalar haritada bandının renginde simge (kafesliyse halkalı), solda listede bant, yumurta ve çıkışa kalan hafta. Kayıp izleri kanıt renginde; tıklanınca kanıt açılır. Üstte tur, bütçe, boş/toplam gönüllü, halk desteği ve aşama.
+
+**Bir tur (`InsanTuru`).** Tur başında: bir hafta geçer (`BirHaftaGecti`), gelir gelir (ilk tur hariç +3, destek 7+ ise +5), geçen turun uyarısı gerçekleşir (sıcak dalgası: bu tur ve gelen gece kum +1 bant, Temiz Enerji varsa %50 ihtimalle hiç; fırtına: dalga altındaki her yuva yumurtasının yarısını kaybeder, Su izi bırakır). Sonra İleri düğmesi ya da Space ile:
+1. **Rapor:** gelir, denize ulaşan yavru, geçen turun sonunda olanlar (çöp birikti, yuva bozuldu), uyarının sonucu, bu tur açılan kanıtlar.
+2. **Gönüllüler:** görev seç, haritada bölge ya da yuva seç (her atama bir gönüllü). Temizlik çöp −1, devriye o tur ve gece insan yok, kafes yuvaya tilki giremez, gölge ve sulama yuva o tur ve gece 1 bant serin, bilgilendirme destek +1. Gönüllü: 4 + her 10 yavruya 1 (en fazla 10) + çağrı − okul.
+3. **Kartlar:** havuzdan 4 kart; bütçe yettiğince oynanır, hedefli kartta haritada seçilir (aynı karta tekrar tıklamak vazgeçer). Oynanmayanlar havuza döner; kalıcı yasaklar ve Temiz Enerji bir kez oynanır.
+4. **Olay:** rastgele (art arda aynısı gelmez); iki seçenek ya da uyarı (Tamam). Destek 3'ün altındaysa otel ve festivalde kabul kapalı; bütçe yetmeyen seçenek kapalı.
+5. **Tur sonu:** her bölgede %30 çöp +1; kafessiz ve çıkmamış her yuvaya %20 (Tilki Çiti varsa %10) avcı: yumurtanın %30'u gider, Avcı izi. Sonuçlar gelecek turun raporunda. Sonra akış ilerler.
+
+**Kanıtlar.** Isı → Gölgelik 1 ucuz; Işık → Işık Yasağı; Çöp → Araç Yasağı, Şezlong Düzenlemesi; Avcı → Tilki Çiti; Su → Yuva Taşıma. Saha Araştırması açılmamış bir kanıtı rastgele açar.
+
+**Kartların etkisi** `docs/kumsal-durumu.md`'deki eşlemeyle; ayrıntı: Temizlik Kampanyası en kirli 3 bölgede çöp −1; Kumul Onarımı seçilen bölgede; Yuva Taşıma yuvayı gölgelikli bir bölgeye (yoksa aynı bölgede) 12 m'ye, dalga çizgisinin üstüne taşır, bandı yeni yere göre değişir; Tilki Çiti kenardaki bölgeye; Gönüllü Çağrısı o tur +2.
+
+**Metinler.** Bütün yazılar id ile (kart ve görev adları metinler.md'de var; açıklamalar `Açıklama` sütunundan `id_aciklama`, olay seçenekleri `Seçenek A/B` sütunlarından `id_a`, `id_b` olarak aktarılır). Ekranın kendi yazıları için yeni id'ler Yusuf'ta.
+
+Henüz yok: kartların ve olay penceresinin görsel hali (Faz 9), arayüz sesleri, gönüllü atamasını geri alma.
 

@@ -14,17 +14,17 @@ Unity projesi reponun kökü. Bizim her şeyimiz `Assets/_Project/` altında. Ko
 | `Camera/` | Umut | Kumsal, deniz ve yönetim kameraları (Cinemachine) |
 | `Turtle/` | Umut | Anne ve yavru hareketi (kara, deniz), sürü, enerji, nefes, kazma |
 | `Hazards/` | Umut | Ağ, tekne, sıcak leke, çöp, avcılar, ışık, dalga |
-| `Management/` | Toprak | Kumsal haritası, tur akışı, gönüllüler, kaynaklar, kartlar, kanıtlar, olaylar |
+| `Management/` | Umut (2026-11-01'den, Toprak'ın onayıyla) | Kumsal haritası, tur akışı, gönüllüler, kaynaklar, kartlar, kanıtlar, olaylar |
 | `UI/Night/` | Umut | Kaplumbağa bölümlerinin ekran göstergeleri |
 | `UI/Menu/` | Umut | Ana menü, ayarlar, duraklatma menüsü |
-| `UI/Management/` | Toprak | Harita ekranı, kart eli, olay penceresi |
+| `UI/Management/` | Umut (2026-11-01'den, Toprak'ın onayıyla) | Harita ekranı, kart eli, olay penceresi |
 | `Editor/` | Umut | Sahne kurulum araçları |
 
 ## Veri, sahne, varlık (`Assets/_Project/`)
 
 | Klasör | Sahibi | İçinde ne var |
 | --- | --- | --- |
-| `ScriptableObjects/Cards`, `Events`, `VolunteerTasks` | Toprak | Kart, olay ve gönüllü görevi asset'leri |
+| `ScriptableObjects/Cards`, `Events`, `VolunteerTasks` | Umut kurar (İki Dünya → Kumsal sahnesini kur), Toprak dengeler | Kart, olay ve gönüllü görevi asset'leri |
 | `ScriptableObjects/Settings` | Umut + Toprak | Bölüm ve kumsal ayarları; değiştiren diğerine haber verir |
 | `Scenes/Levels/` | Umut | `Menu`, `Bolum1_Donus`, `Kumsal` (Bölüm 2–4 ve insan turları), `Bolum5_IlkYuzus` |
 | `Scenes/Prototypes/` | Umut | Gri kutu denemeler |
