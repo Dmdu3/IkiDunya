@@ -25,5 +25,14 @@ MonoBehaviour:
   oynananTekKartlar: []
   bekleyenUyari: -1
   sonOlay: -1
+  iliskiler: 
+  kanitSayilari: 
+  bakim: 0
+  ekKart: 0
+  sonrakiEk: 0
+  korunanBolgeler: 
+  aktifUyari: -1
+  zincir: -1
+  kopek: 0
   rapor: []
   sonrakiRapor: []
