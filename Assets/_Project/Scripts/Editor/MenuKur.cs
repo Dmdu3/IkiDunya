@@ -422,13 +422,17 @@ namespace IkiDunya.Editor
             kamera.transform.SetPositionAndRotation(new Vector3(6f, 3f, 14f), Quaternion.LookRotation(new Vector3(-6f, -2.5f, -12f)));
             kamera.gameObject.AddComponent<AudioListener>();
 
-            var kaplumbaga = GameObject.CreatePrimitive(PrimitiveType.Sphere).transform;
-            kaplumbaga.name = "YetiskinKaplumbaga";
-            Object.DestroyImmediate(kaplumbaga.GetComponent<Collider>());
-            kaplumbaga.SetParent(grup, false);
+            // Yetişkin kaplumbağa: Yusuf'un caretta'sı (yoksa gri küre); denizden kumsala yürür.
+            Transform kaplumbaga = GriKumsalKur.Bos("YetiskinKaplumbaga", grup);
             kaplumbaga.position = new Vector3(0f, 0f, -4f);
-            kaplumbaga.localScale = new Vector3(1.2f, 0.45f, 1.5f);
-            kaplumbaga.GetComponent<Renderer>().sharedMaterial = kaplumbagaMalzemesi;
+            if (GriKumsalKur.ModelYerlestir(kaplumbaga, "Anne_Caretta", Vector3.zero, 1.5f) == null)
+            {
+                GameObject kure = GameObject.CreatePrimitive(PrimitiveType.Sphere);
+                Object.DestroyImmediate(kure.GetComponent<Collider>());
+                kure.transform.SetParent(kaplumbaga, false);
+                kure.transform.localScale = new Vector3(1.2f, 0.45f, 1.5f);
+                kure.GetComponent<Renderer>().sharedMaterial = kaplumbagaMalzemesi;
+            }
             Transform son = GriKumsalKur.Bos("YuruyusSonu", grup);
             son.position = new Vector3(0f, 0f, 10f);
 

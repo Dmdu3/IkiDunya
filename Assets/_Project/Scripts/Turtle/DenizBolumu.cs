@@ -4,7 +4,8 @@ using UnityEngine;
 
 namespace IkiDunya.Turtle
 {
-    /// <summary>Bir deniz bölümü (Bölüm 1 dönüş, Bölüm 5 ilk yüzüş): kontrol noktaları, enerji biterse ya da avcı yakalarsa son noktadan devam, sonda (Bölüm 5'te kamera uzaklaşarak) akışa geçiş.</summary>
+    /// <summary>Bir deniz bölümü (Bölüm 1 dönüş, Bölüm 5 ilk yüzüş): kontrol noktaları, enerji biterse ya da avcı yakalarsa son noktadan devam, sonda (Bölüm 5'te kamera uzaklaşarak) akışa geçiş.
+    /// Parkur kapısına gelince bölümün ilk parçası biter; parkurdan sonra adımın Sira'sı 1'se bölüm devam noktasından sürer.</summary>
     public class DenizBolumu : MonoBehaviour
     {
         [SerializeField] private AdimTuru adim = AdimTuru.Donus;
@@ -14,13 +15,12 @@ namespace IkiDunya.Turtle
         [SerializeField] private Transform baslangic;
         [Tooltip("Sonda kamera uzaklaşsın mı (Bölüm 5 finali).")]
         [SerializeField] private bool finalKamerasi;
-        [Header("Parkur (menüden oynanınca)")]
-        [SerializeField] private ParkurTuru parkur;
-        [Tooltip("Menüden parkur oynanınca yüzücünün başladığı yer; boşsa bu bölümde parkur yok.")]
-        [SerializeField] private Transform parkurBaslangici;
+        [Tooltip("Parkurdan sonra bölümün devam ettiği yer (adımın Sira'sı 1).")]
+        [SerializeField] private Transform devamBaslangici;
 
         private Transform sonNokta;
         private bool bitti;
+        private int parca;
 
         private void OnEnable()
         {
@@ -42,20 +42,21 @@ namespace IkiDunya.Turtle
 
         private void Start()
         {
-            if (!OyunAkisi.Var) Basla();
+            if (!OyunAkisi.Var) Basla(0);
         }
 
         private void AdimBasladi(Adim yeni)
         {
-            if (yeni.Tur == adim) Basla();
-            else if (yeni.Tur == AdimTuru.Parkur && yeni.Sira == (int)parkur && parkurBaslangici != null) ParkurdanBasla();
+            if (yeni.Tur == adim) Basla(yeni.Sira);
         }
 
-        private void Basla()
+        private void Basla(int yeniParca)
         {
             bitti = false;
-            sonNokta = baslangic;
+            parca = yeniParca;
+            sonNokta = parca > 0 && devamBaslangici != null ? devamBaslangici : baslangic;
             yuzucu.Baslat(sonNokta.position, sonNokta.rotation);
+            if (parca > 0) return;
             // Bölüm 1 annenin denizi: besin ve nefes; Bölüm 5 yavrunun: dalga.
             if (adim == AdimTuru.Donus)
             {
@@ -63,13 +64,6 @@ namespace IkiDunya.Turtle
                 Ipucu.Goster("ipucu_nefes");
             }
             else Ipucu.Goster("ipucu_dalga");
-        }
-
-        private void ParkurdanBasla()
-        {
-            bitti = false;
-            sonNokta = parkurBaslangici;
-            yuzucu.Baslat(sonNokta.position, sonNokta.rotation);
         }
 
         /// <summary>GDD: enerji biterse ya da avcı yakalarsa son kontrol noktasından devam edilir.</summary>
@@ -83,6 +77,14 @@ namespace IkiDunya.Turtle
         private void Ulasildi(KontrolNoktasi nokta)
         {
             if (bitti) return;
+            // Parkur kapısı: ilk parçada bölüm burada biter, parkur sahnesi gelir; devam parçasında sıradan kontrol noktası.
+            if (nokta.Kapi && parca == 0)
+            {
+                bitti = true;
+                yuzucu.Kilitli = true;
+                Tamam();
+                return;
+            }
             if (!nokta.Son)
             {
                 sonNokta = nokta.transform;

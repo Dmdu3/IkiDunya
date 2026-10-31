@@ -89,8 +89,6 @@ namespace IkiDunya.Turtle
         {
             // Sürü ve gecenin nesneleri AdimNesneleri ile açılıp kapanır.
             if (adim.Tur == AdimTuru.KacisGecesi) Basla(adim.Sira);
-            // Menüden çöp seli: deneme yuvasından, varsayılan yavru sayısıyla.
-            else if (adim.Tur == AdimTuru.Parkur && adim.Sira == (int)ParkurTuru.CopSeli) Basla(0);
             else SuAnki = Asama.Kapali;
         }
 

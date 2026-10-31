@@ -10,7 +10,7 @@ namespace IkiDunya.Core
     {
         Kazma, KumKazma, YuvaTamam, Takilma, Kurtarma, YavruKurtuldu, YavruKaybedildi,
         YengecUyari, MartiUyari, TilkiUyari, TilkiEseliyor, Yeme, AgdanKurtulma, KontrolNoktasi, Pervane, DalgaVurdu, Ipucu,
-        Kombo, ParkurBitti
+        Kombo, ParkurBitti, ParkurAsama, SelGeliyor
     }
 
     /// <summary>Ses yuvaları: her ses olayının klipleri ve düzeyi; her adımın ortam sesi ve müziği. Klip boşsa o ses çalmaz, oyun bozulmaz.</summary>

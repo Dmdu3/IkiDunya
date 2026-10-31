@@ -168,7 +168,7 @@ namespace IkiDunya.Core
             if (sahne == ayarlar.MenuSahnesi) return;
 
             // Bir oyun sahnesinde Play'e basıldı: o sahnenin ilk adımından başla.
-            int bulunan = akis.FindIndex(a => ayarlar.SahneAdi(a.Tur) == sahne);
+            int bulunan = akis.FindIndex(a => ayarlar.SahneAdi(a) == sahne);
             if (bulunan < 0)
             {
                 Debug.LogWarning($"OyunAkisi: '{sahne}' sahnesi akışta yok.");
@@ -200,7 +200,7 @@ namespace IkiDunya.Core
 
             parkur = false;
             sira = yeniSira;
-            string sahne = sira >= 0 ? ayarlar.SahneAdi(akis[sira].Tur) : ayarlar.MenuSahnesi;
+            string sahne = sira >= 0 ? ayarlar.SahneAdi(akis[sira]) : ayarlar.MenuSahnesi;
             if (sira >= 0)
             {
                 SuAnkiAdim = akis[sira];

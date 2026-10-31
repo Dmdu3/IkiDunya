@@ -12,6 +12,9 @@ namespace IkiDunya.Core
         [SerializeField] private string bolum1Sahnesi = "Bolum1_Donus";
         [SerializeField] private string kumsalSahnesi = "Kumsal";
         [SerializeField] private string bolum5Sahnesi = "Bolum5_IlkYuzus";
+        [SerializeField] private string posetSurusuSahnesi = "Parkur_PosetSurusu";
+        [SerializeField] private string copSeliSahnesi = "Parkur_CopSeli";
+        [SerializeField] private string copGirdabiSahnesi = "Parkur_CopGirdabi";
 
         [Header("Akış (GDD: Oyun akışı, İnsan kısmı)")]
         [SerializeField] private int yuvaGecesiSayisi = 3;
@@ -19,6 +22,8 @@ namespace IkiDunya.Core
         [SerializeField] private int gecelerArasiTur = 1;
         [SerializeField] private int bekleyisTurSayisi = 6;
         [SerializeField] private int bolum5OncesiTur = 1;
+        [Tooltip("Fırtınadan sonraki kaçış gecesi: bu gece çöp seli parkurunda oynanır.")]
+        [SerializeField] private int selGecesi = 2;
 
         [Header("Geçiş")]
         [Tooltip("Ekranın kararma ya da açılma süresi (sn).")]
@@ -43,6 +48,7 @@ namespace IkiDunya.Core
         public MetinTablosu Metinler => metinler;
         public int BolgeSayisi => bolgeSayisi;
         public int KatmanEnFazla => katmanEnFazla;
+        public int SelGecesi => selGecesi;
         public KumsalBaslangici KumsalBaslangici => kumsalBaslangici;
 
         /// <summary>Kumsalı yeni oyunun ilk haline getirir.</summary>
@@ -52,20 +58,21 @@ namespace IkiDunya.Core
             else kumsal.Sifirla(bolgeSayisi, katmanEnFazla);
         }
 
-        /// <summary>Parkurun oynandığı sahne (menüden oynarken).</summary>
+        /// <summary>Parkurun (minigame) kendi sahnesi.</summary>
         public string ParkurSahnesi(ParkurTuru parkur)
         {
             switch (parkur)
             {
-                case ParkurTuru.PosetSurusu: return bolum1Sahnesi;
-                case ParkurTuru.CopSeli: return kumsalSahnesi;
-                default: return bolum5Sahnesi;
+                case ParkurTuru.PosetSurusu: return posetSurusuSahnesi;
+                case ParkurTuru.CopSeli: return copSeliSahnesi;
+                default: return copGirdabiSahnesi;
             }
         }
 
-        public string SahneAdi(AdimTuru tur)
+        public string SahneAdi(Adim adim)
         {
-            switch (tur)
+            if (adim.Tur == AdimTuru.Parkur) return ParkurSahnesi((ParkurTuru)adim.Sira);
+            switch (adim.Tur)
             {
                 case AdimTuru.Donus: return bolum1Sahnesi;
                 case AdimTuru.IlkYuzus: return bolum5Sahnesi;
@@ -79,7 +86,9 @@ namespace IkiDunya.Core
             var akis = new List<Adim>();
             int tur = 0;
 
+            // Bölüm 1 akıntı kapısında biter; poşet sürüsü parkuru zorunlu, ardından kumsal.
             akis.Add(new Adim(AdimTuru.Donus, 1, 0));
+            akis.Add(new Adim(AdimTuru.Parkur, 1, (int)ParkurTuru.PosetSurusu));
 
             for (int gece = 1; gece <= yuvaGecesiSayisi; gece++)
             {
@@ -92,12 +101,16 @@ namespace IkiDunya.Core
 
             for (int gece = 1; gece <= kacisGecesiSayisi; gece++)
             {
-                akis.Add(new Adim(AdimTuru.KacisGecesi, 4, gece));
+                // Fırtınadan sonraki gece çöp seli parkurunda (o gecenin yuvasından).
+                akis.Add(gece == selGecesi ? new Adim(AdimTuru.Parkur, 4, (int)ParkurTuru.CopSeli) : new Adim(AdimTuru.KacisGecesi, 4, gece));
                 int turSayisi = gece < kacisGecesiSayisi ? gecelerArasiTur : bolum5OncesiTur;
                 for (int i = 0; i < turSayisi; i++) akis.Add(new Adim(AdimTuru.InsanTuru, 4, ++tur));
             }
 
+            // Bölüm 5 girdapta bölünür: girdap parkuru, sonra açık denizden (Sira 1) devam.
             akis.Add(new Adim(AdimTuru.IlkYuzus, 5, 0));
+            akis.Add(new Adim(AdimTuru.Parkur, 5, (int)ParkurTuru.CopGirdabi));
+            akis.Add(new Adim(AdimTuru.IlkYuzus, 5, 1));
             akis.Add(new Adim(AdimTuru.Final, 5, 0));
             return akis;
         }

@@ -4,7 +4,7 @@ using UnityEngine.UI;
 
 namespace IkiDunya.UI.Night
 {
-    /// <summary>Parkur sürerken sağ üstte süre, rekor ve parkurun sayacı; bitince sonuç (yeni rekor). Menüden oynanıyorsa sonuçtan sonra menüye döner.</summary>
+    /// <summary>Parkur sürerken sağ üstte süre, rekor ve parkurun sayacı; bitince sonuç (yeni rekor), ardından akış ilerler (hikâyede sıradaki adım, menüden oynanıyorsa menü).</summary>
     public class ParkurGostergesi : MonoBehaviour
     {
         [SerializeField] private OyunAyarlari ayarlar;
@@ -49,7 +49,7 @@ namespace IkiDunya.UI.Night
 
         private void Kaldi(ParkurTuru tur) => sureKutusu.SetActive(false);
 
-        private void BilgiDegisti(string id, int sayi, int hedef) => bilgiYazisi.text = $"{Al(id)} {sayi}/{hedef}";
+        private void BilgiDegisti(string id, int sayi, int hedef) => bilgiYazisi.text = hedef > 0 ? $"{Al(id)} {sayi}/{hedef}" : Al(id);
 
         private void Bitti(ParkurTuru tur, float sure, float rekor, bool yeni)
         {
@@ -58,7 +58,8 @@ namespace IkiDunya.UI.Night
                                + (yeni ? $"\n{Al("parkur_yeni_rekor")}" : $"\n{Al("parkur_rekor")} {Parkur.Bicim(rekor)}");
             sonucKutusu.SetActive(true);
             sonucKalan = sonucSuresi;
-            menuyeDon = OyunAkisi.ParkurModunda;
+            // Parkur bir akış adımıysa (hikâyede ya da menüden) sonuçtan sonra akış ilerler.
+            menuyeDon = !OyunAkisi.MenudeMi && OyunAkisi.SuAnkiAdim.Tur == AdimTuru.Parkur;
             Ses.Cal(SesTuru.ParkurBitti);
         }
 
@@ -75,8 +76,8 @@ namespace IkiDunya.UI.Night
             sonucKalan -= Time.unscaledDeltaTime;
             if (sonucKalan > 0f) return;
             sonucKutusu.SetActive(false);
-            // Menüden oynanan parkur bitince menüye (geçiş sürüyorsa sonraki karede tekrar denenir).
-            if (menuyeDon && OyunAkisi.ParkurModunda && !OyunAkisi.AdimBitti()) sonucKalan = 0.01f;
+            // Parkur adımı biter: hikâyede sıradaki adım, menüden oynanıyorsa menü (geçiş sürüyorsa sonraki karede tekrar denenir).
+            if (menuyeDon && !OyunAkisi.MenudeMi && OyunAkisi.SuAnkiAdim.Tur == AdimTuru.Parkur && !OyunAkisi.AdimBitti()) sonucKalan = 0.01f;
             else menuyeDon = false;
         }
     }
