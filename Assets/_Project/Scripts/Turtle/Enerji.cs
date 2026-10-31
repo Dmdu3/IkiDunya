@@ -25,6 +25,13 @@ namespace IkiDunya.Turtle
             Degisti?.Invoke(Oran);
         }
 
+        public void Ekle(float miktar)
+        {
+            if (BittiMi || miktar <= 0f) return;
+            deger = Mathf.Min(enFazla, deger + miktar);
+            Degisti?.Invoke(Oran);
+        }
+
         public void Harca(float miktar)
         {
             if (BittiMi || miktar <= 0f) return;

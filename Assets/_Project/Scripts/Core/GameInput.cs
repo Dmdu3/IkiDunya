@@ -30,7 +30,9 @@ namespace IkiDunya.Core
         public static Vector2 Bakis => bakis.ReadValue<Vector2>();              // fare hareketi
         public static bool HizliBasili => hizli.IsPressed();                    // Shift: anne hızlı, yavru sürüyü dağıtır
         public static bool ZiplaDalBasildi => ziplaDal.WasPressedThisFrame();   // Space
+        public static bool ZiplaDalBasili => ziplaDal.IsPressed();              // Space basılı (denizde yüzeye çık)
         public static bool EtkilesBasili => etkiles.IsPressed();                // E basılı tut
+        public static bool EtkilesBasildi => etkiles.WasPressedThisFrame();     // E bas (ağdan kurtul, ye)
         public static bool KazSolBasildi => kazSol.WasPressedThisFrame();       // A (kazma sırası)
         public static bool KazSagBasildi => kazSag.WasPressedThisFrame();       // D (kazma sırası)
         public static bool KazYukariBasildi => kazYukari.WasPressedThisFrame(); // W (kum altında)

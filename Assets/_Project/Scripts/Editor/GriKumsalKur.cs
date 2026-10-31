@@ -218,7 +218,7 @@ namespace IkiDunya.Editor
 
         // ---- Ortak ----
 
-        private static bool SahneAc(string yol, out Scene sahne)
+        internal static bool SahneAc(string yol, out Scene sahne)
         {
             sahne = default;
             if (!EditorSceneManager.SaveCurrentModifiedScenesIfUserWantsTo()) return false;
@@ -243,7 +243,7 @@ namespace IkiDunya.Editor
             return true;
         }
 
-        private static void Kaydet(Scene sahne, string yol)
+        internal static void Kaydet(Scene sahne, string yol)
         {
             EditorSceneManager.SaveScene(sahne, yol);
             AssetDatabase.SaveAssets();
@@ -677,7 +677,7 @@ namespace IkiDunya.Editor
             return KalipKaydet(isaret, KayipIziKalibi);
         }
 
-        private static GameObject KalipKaydet(GameObject nesne, string yol)
+        internal static GameObject KalipKaydet(GameObject nesne, string yol)
         {
             GameObject kalip = PrefabUtility.SaveAsPrefabAsset(nesne, yol);
             Object.DestroyImmediate(nesne);
@@ -686,7 +686,7 @@ namespace IkiDunya.Editor
 
         // ---- Küçük yardımcılar ----
 
-        private static void Govde(Transform ebeveyn, Vector3 konum, Vector3 olcek)
+        internal static void Govde(Transform ebeveyn, Vector3 konum, Vector3 olcek)
         {
             GameObject kabuk = GameObject.CreatePrimitive(PrimitiveType.Sphere);
             kabuk.name = "Kabuk";
@@ -698,7 +698,7 @@ namespace IkiDunya.Editor
             kabuk.GetComponent<Renderer>().sharedMaterial = kaplumbaga;
         }
 
-        private static BirinciSahisKamera KameraKur(Transform ebeveyn, Vector3 konum, Transform govde)
+        internal static BirinciSahisKamera KameraKur(Transform ebeveyn, Vector3 konum, Transform govde)
         {
             var goz = new GameObject("Goz");
             goz.transform.SetParent(ebeveyn, false);
@@ -712,7 +712,7 @@ namespace IkiDunya.Editor
             return bakis;
         }
 
-        private static Transform TuvalKur(string ad, Transform grup)
+        internal static Transform TuvalKur(string ad, Transform grup)
         {
             var tuval = new GameObject(ad, typeof(Canvas), typeof(CanvasScaler));
             tuval.layer = LayerMask.NameToLayer("UI");
@@ -736,7 +736,7 @@ namespace IkiDunya.Editor
             return grup.transform;
         }
 
-        private static Transform Bos(string ad, Transform ebeveyn)
+        internal static Transform Bos(string ad, Transform ebeveyn)
         {
             var nesne = new GameObject(ad).transform;
             nesne.SetParent(ebeveyn, false);
@@ -744,7 +744,7 @@ namespace IkiDunya.Editor
         }
 
         /// <summary>Koyu arka plan ve renkli dolgudan bir çubuk; Cubuk bileşeni arka plandadır, dolgu ilk çocuğudur.</summary>
-        private static Cubuk CubukKur(string ad, Transform ebeveyn, Vector2 enAz, Vector2 enCok, Color renk, bool dikey)
+        internal static Cubuk CubukKur(string ad, Transform ebeveyn, Vector2 enAz, Vector2 enCok, Color renk, bool dikey)
         {
             int ui = LayerMask.NameToLayer("UI");
             var arka = new GameObject(ad, typeof(RectTransform), typeof(Image));
@@ -769,14 +769,14 @@ namespace IkiDunya.Editor
             return cubuk;
         }
 
-        private static void Yasla(RectTransform rect, Vector2 enAz, Vector2 enCok)
+        internal static void Yasla(RectTransform rect, Vector2 enAz, Vector2 enCok)
         {
             rect.anchorMin = enAz;
             rect.anchorMax = enCok;
             rect.offsetMin = rect.offsetMax = Vector2.zero;
         }
 
-        private static GameObject Kutu(string ad, Transform ebeveyn, Vector3 konum, Vector3 boyut, Material malzeme, string katman)
+        internal static GameObject Kutu(string ad, Transform ebeveyn, Vector3 konum, Vector3 boyut, Material malzeme, string katman)
         {
             GameObject kutu = GameObject.CreatePrimitive(PrimitiveType.Cube);
             kutu.name = ad;
@@ -789,12 +789,12 @@ namespace IkiDunya.Editor
             return kutu;
         }
 
-        private static void Klasor(string ust, string ad)
+        internal static void Klasor(string ust, string ad)
         {
             if (!AssetDatabase.IsValidFolder($"{ust}/{ad}")) AssetDatabase.CreateFolder(ust, ad);
         }
 
-        private static Material Malzeme(string ad, Color renk, string shader = "Universal Render Pipeline/Lit")
+        internal static Material Malzeme(string ad, Color renk, string shader = "Universal Render Pipeline/Lit")
         {
             string yol = $"{MalzemeKlasoru}/{ad}.mat";
             var malzeme = AssetDatabase.LoadAssetAtPath<Material>(yol);
@@ -808,7 +808,7 @@ namespace IkiDunya.Editor
             return malzeme;
         }
 
-        private static Material SaydamMalzeme(string ad, Color renk)
+        internal static Material SaydamMalzeme(string ad, Color renk)
         {
             Material malzeme = Malzeme(ad, renk, "Universal Render Pipeline/Unlit");
             malzeme.SetFloat("_Surface", 1f);
@@ -822,9 +822,13 @@ namespace IkiDunya.Editor
             return malzeme;
         }
 
-        /// <summary>Ayar asset'ini Settings klasöründe bulur; yoksa varsayılan değerlerle oluşturur.</summary>
-        private static T Ayar<T>(string ad) where T : ScriptableObject
+        /// <summary>Ayar asset'ini Settings klasöründe (önce adıyla) bulur; yoksa varsayılan değerlerle oluşturur.</summary>
+        internal static T Ayar<T>(string ad) where T : ScriptableObject
         {
+            // Aynı türden birden çok asset olabilir (ör. anne ve yavru deniz ayarları): önce adıyla bakılır.
+            var adiyla = AssetDatabase.LoadAssetAtPath<T>($"{AyarKlasoru}/{ad}.asset");
+            if (adiyla != null) return adiyla;
+
             string[] bulunan = AssetDatabase.FindAssets($"t:{typeof(T).Name}", new[] { AyarKlasoru });
             if (bulunan.Length > 0) return AssetDatabase.LoadAssetAtPath<T>(AssetDatabase.GUIDToAssetPath(bulunan[0]));
 
@@ -833,7 +837,7 @@ namespace IkiDunya.Editor
             return ayar;
         }
 
-        private static void Bagla(Object hedef, string alan, Object deger)
+        internal static void Bagla(Object hedef, string alan, Object deger)
         {
             var so = new SerializedObject(hedef);
             so.FindProperty(alan).objectReferenceValue = deger;
