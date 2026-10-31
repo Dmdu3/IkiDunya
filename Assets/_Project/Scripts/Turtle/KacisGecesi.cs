@@ -105,6 +105,7 @@ namespace IkiDunya.Turtle
         private void CikisiBaslat()
         {
             SuAnki = Asama.Cikis;
+            Ipucu.Goster("ipucu_kumdan_cikis");
             Kat = ayarlar.KatSayisi;
             gecen = 0f;
             CikisEnerjisi = 1f;
@@ -131,6 +132,7 @@ namespace IkiDunya.Turtle
 
             if (!GameInput.KazYukariBasildi) return;
             Kat--;
+            Ses.Cal(SesTuru.KumKazma);
             if (Kat <= 0) YuzeyeCik();
         }
 
@@ -157,6 +159,7 @@ namespace IkiDunya.Turtle
             suruKuruldu = true;
             gunDogumu.Baslat();
             SuAnki = Asama.Kosu;
+            Ipucu.Goster("ipucu_suru");
         }
 
         private void DalgayaBak()

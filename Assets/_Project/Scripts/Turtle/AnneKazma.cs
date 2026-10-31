@@ -67,7 +67,11 @@ namespace IkiDunya.Turtle
             }
 
             if (tus == sonTus) Vurus = Mathf.Max(0, Vurus - ayarlar.YanlisVurusGeri);
-            else Vurus++;
+            else
+            {
+                Vurus++;
+                Ses.Cal(SesTuru.Kazma, transform.position);
+            }
             sonTus = tus;
             kara.Enerji.Harca(ayarlar.VurusEnerjisi);
 
@@ -82,6 +86,7 @@ namespace IkiDunya.Turtle
             {
                 SuAnki = Asama.Bitti;
                 kara.Kilitli = false;
+                Ses.Cal(SesTuru.YuvaTamam);
                 YuvaTamamlandi?.Invoke(yuvaKonumu);
             }
         }

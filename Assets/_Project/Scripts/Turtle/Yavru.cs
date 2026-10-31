@@ -97,6 +97,7 @@ namespace IkiDunya.Turtle
         /// <summary>Öncü yardımı tamamladı: takılan kurtulur, ters dönen çevrilir, yönünü kaybeden sürüye döner.</summary>
         public void YardimEt()
         {
+            Ses.Cal(SesTuru.Kurtarma, transform.position);
             if (EngelDurumu == Engel.Ters) Cevir(false);
             EngelDurumu = Engel.Yok;
             isiktaKalma = 0f;
@@ -108,6 +109,7 @@ namespace IkiDunya.Turtle
         {
             if (SuAnki != Durum.Suruyor) return;
             SuAnki = Durum.Kayip;
+            Ses.Cal(SesTuru.YavruKaybedildi, transform.position);
             gameObject.SetActive(false);
             Kaybedildi?.Invoke(this, neden);
         }
@@ -116,6 +118,7 @@ namespace IkiDunya.Turtle
         {
             if (SuAnki != Durum.Suruyor) return;
             SuAnki = Durum.Kurtuldu;
+            Ses.Cal(SesTuru.YavruKurtuldu);
             gameObject.SetActive(false);
             Kurtuldu?.Invoke(this);
         }
@@ -156,6 +159,8 @@ namespace IkiDunya.Turtle
         private void Takil(TrashTrap.Turu tur)
         {
             if (EngelDurumu != Engel.Yok || tur == TrashTrap.Turu.CopYigini) return;
+            Ses.Cal(SesTuru.Takilma, transform.position);
+            Ipucu.Goster("ipucu_takili");
             if (tur == TrashTrap.Turu.TekerlekIzi)
             {
                 EngelDurumu = Engel.Ters;

@@ -57,6 +57,7 @@ namespace IkiDunya.Hazards
             {
                 if (!bulunan[i].TryGetComponent(out IYuzucu yuzucu) || !savrulanlar.Add(yuzucu)) continue;
                 yuzucu.Savrul(transform.forward * ayarlar.DalgaSavrulmasi);
+                Ses.Cal(SesTuru.DalgaVurdu, yuzucu.Konum);
             }
         }
     }

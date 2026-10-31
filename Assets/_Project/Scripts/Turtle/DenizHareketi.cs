@@ -79,7 +79,11 @@ namespace IkiDunya.Turtle
 
             if (Takili)
             {
-                if (GameInput.EtkilesBasildi && --KalanBasis == 0) yavasKalan = ayarlar.AgSonrasiYavas;
+                if (GameInput.EtkilesBasildi && --KalanBasis == 0)
+                {
+                    yavasKalan = ayarlar.AgSonrasiYavas;
+                    Ses.Cal(SesTuru.AgdanKurtulma);
+                }
                 Enerji.Harca(harcama * Time.deltaTime);
                 return;
             }
@@ -139,6 +143,7 @@ namespace IkiDunya.Turtle
             for (int i = 0; i < sayi; i++)
             {
                 if (!bulunan[i].TryGetComponent(out Yiyecek yiyecek)) continue;
+                Ses.Cal(SesTuru.Yeme);
                 if (yiyecek.Ye() == Yiyecek.Turu.Denizanasi) Enerji.Ekle(tehlikeAyarlari.DenizanasiEnerjisi);
                 else yavasKalan = ayarlar.PosetYavas;
                 return;
@@ -167,6 +172,11 @@ namespace IkiDunya.Turtle
             if (Takili) return;
             if (tur == TrashTrap.Turu.HayaletAg) ToplamBasis = KalanBasis = ayarlar.AgBasisi;
             else if (tur == TrashTrap.Turu.Misina) ToplamBasis = KalanBasis = ayarlar.MisinaBasisi;
+            if (Takili)
+            {
+                Ses.Cal(SesTuru.Takilma);
+                Ipucu.Goster("ipucu_ag");
+            }
             else if (tur == TrashTrap.Turu.Plastik) yavasKalan = ayarlar.PlastikYavas;
         }
     }

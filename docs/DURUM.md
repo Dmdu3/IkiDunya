@@ -4,7 +4,7 @@ ozet: Mekanik tarafın durumu ve sistemlerin haritası. Bir sistem eklendikçe y
 
 # Durum
 
-Son güncelleme: 2026-11-01 — Alpha main'de, deneme listesi tamam (editörde 300+ FPS). Dalda (`umut/oynanis-eksikleri`): tilki yuvayı bozar, öncü de takılır, kumul onarımında dalga çizgisi kayar, denizde tekne gölgesi/köpük ve parlayan ağ. Unity'de henüz denenmedi.
+Son güncelleme: 2026-11-01 — Alpha main'de, deneme listesi tamam (editörde 300+ FPS). Dallarda (`umut/oynanis-eksikleri`, üstünde `umut/ipucu-ses`): tilki yuvayı bozar, öncü de takılır, kumul onarımında dalga çizgisi kayar, denizde tekne gölgesi/köpük ve parlayan ağ; ipuçları, sonuç panelinde yazılar, ses yuvaları (SesAyarlari). Unity'de henüz denenmedi.
 
 ## Sistem haritası
 
@@ -40,6 +40,8 @@ Son güncelleme: 2026-11-01 — Alpha main'de, deneme listesi tamam (editörde 3
 | Avcılar | `Hazards` | `Yengec`, `Marti`, `Tilki`, `AvciAyarlari`, `Cover`; `Core/IAvlanabilir` | Umut | Yapılıyor |
 | Işık kaynakları | `Hazards` | `IsikKaynagi` | Umut | Yapılıyor |
 | Kayıp izleri | `Turtle`, `Hazards` | `KacisGecesi` yazar, `KumsalYapilari` kumda gösterir, `KayipIziHaritasi` insan turunda simge + kanıt | Umut | Yapılıyor |
+| İpuçları (ilk karşılaşmada bir kez) | `Core`, `UI/Night` | `Ipucu`, `IpucuPaneli` | Umut | Yapılıyor (yazılar Yusuf'ta) |
+| Ses: olaylar, ortam sesi, müzik | `Core` | `Ses`, `SesYoneticisi`, `SesAyarlari` | Umut | Yapılıyor (klipler Abdü'de) |
 | Kumsal haritası ve tur akışı | `Management` | — | Toprak | Planlandı |
 | Gönüllüler ve görevler | `Management` | — | Toprak | Planlandı |
 | Kartlar | `Management` | `CardDefinition` | Toprak | Planlandı |
@@ -95,7 +97,7 @@ Bütçe, gönüllü ve halk desteği `KumsalDurumu`'nda değil; insan kısmını
 
 **Kaçışta çöp, avcılar, ışık.** Ağ ve halka izleyen yavruyu takar, tekerlek izi ters çevirir; öncü yanına gidip E'yi basılı tutar (2 / 1,5 sn), bu sırada sürü bekler, sayaç işler. Space bütün sürüyü zıplatır (kum kalesi atlanır, şişe dolaşılır). Öncü de takılır ve ters döner; E'yi basılı tutup kendini kurtarır (bu sırada sürü bekler), ama yönünü kaybetmez. Yengeç deliği 2 sn titrer, sonra yanındaki bir yavruyu alır (zıplayan kurtulur). Martının gölgesi 1,5 sn önce düşer; dalış alanında 3+ yavru varsa 3, yoksa 1 yavru alır. Tilki her gece ihtimalle gelir (çit varsa yarı ihtimal), kumsalın kenarında gezer, konisinde siperde olmayan bir yavru görürse koşar, sürü 3 sn panikle dağılır. Geldiği gece 25 sn gezdikten sonra sonraki gecelerin kafessiz bir yuvasına gidip 4 sn eşeler: yumurtaların yarısı gider, yuvada Avcı izi kalır (kafesli yuvaya dokunmaz). Işık alanındaki yavru ışığa çekilir; 5 sn kalırsa yönünü kaybedip karaya yürür, öncü E ile geri çağırır. Gün doğunca kumda kalanlar o an başlarına gelen nedenle kaybedilir (takılı → Ağ, ters → Çöp, yön kaybı → Işık, diğer → Isı).
 
-**Gecenin sonu.** Yuva gecesi yuvanın bandını ve yumurta sayısını, kaçış kurtulan, kaybedilen, dişi ve erkek sayısını gösterir (dişi oranı yuvanın bandından). Tıklayınca ya da Space'le akış ilerler. Şimdilik yazı yok, sadece sayı ve renk; yazılar `docs/metinler.md`'ye girince eklenecek.
+**Gecenin sonu.** Yuva gecesi yuvanın bandını (renk ve adı) ve yumurta sayısını, kaçış kurtulan, kaybedilen, dişi ve erkek sayısını gösterir (dişi oranı yuvanın bandından). Başlık, satır adları ve "devam" satırı metin id'leriyle (`sonuc_*`, `bant_*`). Tıklayınca ya da Space'le akış ilerler.
 
 **Geçici insan turu.** Kumsala tepeden bakılır; tıklayınca bir hafta geçer (`BirHaftaGecti`) ve tur biter. Toprak'ın yönetim ekranı gelince kaldırılacak.
 
@@ -136,3 +138,32 @@ Henüz yok: pervane sesi klibi (Abdü).
 ## Bilinen sorunlar
 
 - `IkiDunya.Camera` namespace'i yüzünden `IkiDunya.*` içindeki kodda `Camera` yazınca Unity'nin kamera sınıfı değil bu namespace bulunur. Kamera sınıfı için `UnityEngine.Camera` yaz.
+
+## İpuçları ve ses
+
+**İpuçları (`Ipucu`, `IpucuPaneli`).** Oyuncu bir şeyle ilk karşılaştığında ekranın altında kısa bir yazı (6 sn, `OyunAyarlari.IpucuSuresi`); birden çok istenirse sırayla. Her ipucu bir oyunda bir kez çıkar (bu bilgisayarda saklanır, Yeni oyun sıfırlar); geçişte ve duraklatmada bekler. `OyunTercihleri.Ipuclari` kapatır (ayarlarda düğmesi henüz yok). Nerede çıkar:
+
+| id | Ne zaman |
+| --- | --- |
+| `ipucu_poset`, `ipucu_nefes` | Bölüm 1 başında |
+| `ipucu_ag` | Denizde ilk kez ağa ya da misinaya takılınca |
+| `ipucu_dalga` | Bölüm 5 başında |
+| `ipucu_termal`, `ipucu_kazma` | Yuva gecesi başında |
+| `ipucu_kumdan_cikis` | Kaçış gecesinde kumdan çıkış başlarken |
+| `ipucu_suru` | Yavrular yüzeye çıkınca |
+| `ipucu_takili` | Bir yavru ilk kez takılınca ya da ters dönünce |
+| `ipucu_tilki` | Tilkinin geldiği ilk gece |
+
+**Ses (`Ses`, `SesYoneticisi`, `SesAyarlari`).** Sistemler bir kez `Ses.Cal(SesTuru, konum?)` der; klibi `ScriptableObjects/Settings/SesAyarlari`'ndaki yuvadan çalınır (birden çok klip varsa rastgele biri). Klip yoksa sessiz geçer. Konumlu sesler (yengeç, martı, tilki, kazma, yavru) 3B, geri kalanı ekrandan. Her adımın ortam sesi ve müziği aynı asset'te; adım değişince yumuşak geçişle değişir, menüde menü müziği. Teknenin pervanesi kendi AudioSource'unda döngüyle (`SesTuru.Pervane`). Ana ses düzeyi ayarlardan. **Menü ve duraklatmayı kur** her ses türü ve adım için boş yuva açar; Abdü klipleri `Audio/` altına koyup yuvalara sürükler.
+
+| Ses türü | Nerede |
+| --- | --- |
+| Kazma, YuvaTamam | Anne A/D ile kazarken, yuva bitince |
+| KumKazma | Yavrular W ile bir kat çıkınca |
+| Takilma, Kurtarma | Yavru ya da yüzücü takılınca; öncü kurtarınca |
+| YavruKurtuldu, YavruKaybedildi | Yavru denize girince, kaybedilince |
+| YengecUyari, MartiUyari, TilkiUyari, TilkiEseliyor | Avcıların uyarıları (titreyen kum, gölge, koşu, yuva eşeleme) |
+| Yeme, AgdanKurtulma, KontrolNoktasi, DalgaVurdu | Denizde |
+| Pervane | Tekne (döngü) |
+| Ipucu | İpucu kutusu açılınca |
+

@@ -30,6 +30,16 @@ namespace IkiDunya.Hazards
             for (int i = 0; i < kopukOlcekleri.Length; i++) kopukOlcekleri[i] = kopukler[i].localScale;
         }
 
+        private void Start()
+        {
+            // Pervane sesi: kendi AudioSource'unda döngüyle; klip SesAyarlari'ndan (yoksa sessiz).
+            if (!TryGetComponent(out AudioSource kaynak) || kaynak.clip != null) return;
+            kaynak.clip = Ses.Klip(SesTuru.Pervane, out float duzey);
+            kaynak.volume = duzey;
+            kaynak.loop = true;
+            if (kaynak.clip != null) kaynak.Play();
+        }
+
         private void LateUpdate()
         {
             for (int i = 0; i < kopukOlcekleri.Length; i++)
