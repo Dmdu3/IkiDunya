@@ -42,11 +42,11 @@ Son güncelleme: 2026-11-01 — Alpha main'de, deneme listesi tamam (editörde 3
 | Kayıp izleri | `Turtle`, `Hazards` | `KacisGecesi` yazar, `KumsalYapilari` kumda gösterir, `KayipIziHaritasi` insan turunda simge + kanıt | Umut | Yapılıyor |
 | İpuçları (ilk karşılaşmada bir kez) | `Core`, `UI/Night` | `Ipucu`, `IpucuPaneli` | Umut | Yapılıyor (yazılar Yusuf'ta) |
 | Ses: olaylar, ortam sesi, müzik | `Core` | `Ses`, `SesYoneticisi`, `SesAyarlari` | Umut | Yapılıyor (klipler Abdü'de) |
-| Kumsal haritası ve tur akışı | `Management`, `UI/Management` | `InsanTuru`, `HaritaSecici`, `YuvaHaritasi`, `YonetimArayuzu` | Umut | Yapılıyor |
-| Kaynaklar (bütçe, gönüllü, halk desteği), rapor, kayıt | `Management` | `YonetimDurumu`, `YonetimAyarlari`; `Core/IOyunVerisi` | Umut | Yapılıyor |
-| Gönüllüler ve görevler | `Management` | `GorevTanimi`, `Etkiler` | Umut | Yapılıyor |
-| Kartlar | `Management` | `KartTanimi`, `Etkiler` | Umut | Yapılıyor |
-| Kanıtlar, olaylar, tur sonu simülasyonu | `Management` | `OlayTanimi`, `Etkiler` | Umut | Yapılıyor |
+| Kumsal haritası ve tur akışı | `Management`, `UI/Management` | `InsanTuru`, `HaritaSecici`, `YuvaHaritasi`, `YonetimArayuzu` | Toprak | Yapılıyor |
+| Kaynaklar (bütçe, gönüllü, halk desteği), rapor, kayıt | `Management` | `YonetimDurumu`, `YonetimAyarlari`; `Core/IOyunVerisi` | Toprak | Yapılıyor |
+| Gönüllüler ve görevler | `Management` | `GorevTanimi`, `Etkiler` | Toprak | Yapılıyor |
+| Kartlar | `Management` | `KartTanimi`, `Etkiler` | Toprak | Yapılıyor |
+| Kanıtlar, olaylar, tur sonu simülasyonu | `Management` | `OlayTanimi`, `Etkiler` | Toprak | Yapılıyor |
 
 Durum değerleri: Planlandı · Yapılıyor · Oynanabilir · Bitti.
 
@@ -170,7 +170,7 @@ Henüz yok: pervane sesi klibi (Abdü).
 
 ## İnsan kısmı (yönetim ekranı)
 
-Toprak'ın onayıyla Umut yazdı (2026-11-01). Sayılar GDD'den; kâğıt prototip atlandı, denge `ScriptableObjects/Settings/YonetimAyarlari`'nda ayarlanır. **Kumsal sahnesini kur (oyun)** 12 kart (`ScriptableObjects/Cards`), 5 görev (`VolunteerTasks`), 6 olay (`Events`) asset'ini GDD değerleriyle yazar ve ekranı kurar; **Menü ve duraklatmayı kur** `YonetimDurumu`'nu kayda bağlar.
+Toprak'ın onayıyla Umut yazdı (2026-11-01); kodu artık Toprak sürdürür. Sayılar GDD'den; kâğıt prototip atlandı, denge `ScriptableObjects/Settings/YonetimAyarlari`'nda ayarlanır. **Kumsal sahnesini kur (oyun)** 12 kart (`ScriptableObjects/Cards`), 5 görev (`VolunteerTasks`), 6 olay (`Events`) asset'ini GDD değerleriyle yazar ve ekranı kurar; **Menü ve duraklatmayı kur** `YonetimDurumu`'nu kayda bağlar.
 
 **Ekran.** Kumsala tepeden bakılır (kumsalın kendisi harita: çöp, şezlong, ışık, gölgelik, araç izi sahnede görünür; T termal bantları açar). İmlecin altındaki bölge vurgulanır, solda katmanları ve yapıları yazar; yuvalar haritada bandının renginde simge (kafesliyse halkalı), solda listede bant, yumurta ve çıkışa kalan hafta. Kayıp izleri kanıt renginde; tıklanınca kanıt açılır. Üstte tur, bütçe, boş/toplam gönüllü, halk desteği ve aşama.
 
