@@ -1,0 +1,27 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 70207dda553c7634fade3dbc4e5b06a4, type: 3}
+  m_Name: OrtamAyarlari
+  m_EditorClassIdentifier: Assembly-CSharp::IkiDunya.Core.OrtamAyarlari
+  geceIsigi: {r: 0.55, g: 0.65, b: 0.9, a: 1}
+  geceIsikGucu: 0.35
+  geceOrtamIsigi: {r: 0.08, g: 0.1, b: 0.18, a: 1}
+  geceGokyuzu: {r: 0.02, g: 0.03, b: 0.08, a: 1}
+  geceSis: 0.012
+  gunduzIsigi: {r: 1, g: 0.96, b: 0.88, a: 1}
+  gunduzIsikGucu: 1.1
+  gunduzOrtamIsigi: {r: 0.45, g: 0.5, b: 0.55, a: 1}
+  gunduzGokyuzu: {r: 0.55, g: 0.75, b: 0.95, a: 1}
+  suUstuSis: {r: 0.55, g: 0.7, b: 0.8, a: 1}
+  suUstuSisYogunlugu: 0.004
+  suAltiSis: {r: 0.06, g: 0.28, b: 0.38, a: 1}
+  suAltiSisYogunlugu: 0.035
