@@ -1,0 +1,9 @@
+{
+  "id": "kart_tahliye",
+  "ad": "Yuva Tahliyesi",
+  "tur": "Acil",
+  "butce": 3,
+  "bakim": 0,
+  "aciklama": "Dalga çizgisinin altındaki bütün yuvalar güvenli yere taşınır.",
+  "ek": "Fırtına uyarısı sırasında gelir."
+}

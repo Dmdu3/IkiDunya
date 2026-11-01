@@ -38,9 +38,36 @@ namespace IkiDunya.Management
 
             foreach (Yuva yuva in kumsal.Yuvalar)
             {
-                if (yuva.Kafesli) Simge(yuva.Konum, boy * 1.4f, yukseklik - 0.05f, kafesRengi);
-                Simge(yuva.Konum, boy, yukseklik, yuva.Yumurta > 0 ? termal.Renk(kumsal.YuvaBandi(yuva)) : Color.black);
+                // Kafes halkası ve sıcaklık rengi korunur; yuva kum rengiyle çizilir.
+                if (yuva.Kafesli) Simge(yuva.Konum, boy * 1.4f, yukseklik - 0.24f, kafesRengi);
+                Simge(yuva.Konum, boy, yukseklik - 0.12f, new Color32(178, 135, 88, 255));
+                Simge(yuva.Konum, boy * 0.78f, yukseklik, new Color32(226, 188, 129, 255));
+                if (yuva.Yumurta > 0)
+                {
+                    YumurtaSimgesi(yuva.Konum, -.14f, -.08f, -18f);
+                    YumurtaSimgesi(yuva.Konum, .14f, -.08f, 18f);
+                    YumurtaSimgesi(yuva.Konum, 0f, .15f, 5f);
+                }
+                Vector3 durum = yuva.Konum + new Vector3(boy * .35f, 0f, -boy * .33f);
+                Simge(durum, boy * .38f, yukseklik + .12f, new Color32(250, 247, 240, 255));
+                Simge(durum, boy * .25f, yukseklik + .24f, yuva.Yumurta > 0 ? termal.Renk(kumsal.YuvaBandi(yuva)) : Color.black);
             }
+        }
+
+        private void YumurtaSimgesi(Vector3 konum, float x, float z, float aci)
+        {
+            GameObject yumurta = GameObject.CreatePrimitive(PrimitiveType.Sphere);
+            Destroy(yumurta.GetComponent<Collider>());
+            yumurta.transform.SetParent(transform, false);
+            yumurta.transform.position = konum + new Vector3(x * boy, yukseklik + boy * .075f, z * boy);
+            yumurta.transform.localScale = new Vector3(boy * .17f, boy * .12f, boy * .20f);
+            yumurta.transform.localRotation = Quaternion.Euler(0f, aci, 0f);
+            var renderer = yumurta.GetComponent<Renderer>();
+            renderer.sharedMaterial = malzeme;
+            renderer.shadowCastingMode = UnityEngine.Rendering.ShadowCastingMode.Off;
+            blok.SetColor(RenkId, new Color32(250, 247, 240, 255));
+            renderer.SetPropertyBlock(blok);
+            simgeler.Add(yumurta);
         }
 
         private void Simge(Vector3 konum, float cap, float y, Color renk)

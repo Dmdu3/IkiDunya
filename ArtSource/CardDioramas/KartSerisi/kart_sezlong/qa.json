@@ -1,0 +1,16 @@
+{
+  "blender": "5.2.3 LTS",
+  "boyut": [
+    512,
+    320
+  ],
+  "kanal": 4,
+  "saydam_piksel": 128711,
+  "sinir": [
+    113,
+    60,
+    398,
+    259
+  ],
+  "kamera": "ortografik, 35° yükselti, -45° yön"
+}

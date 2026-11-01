@@ -1,0 +1,9 @@
+{
+  "id": "kart_bagis",
+  "ad": "Bağış Kampanyası",
+  "tur": "Kampanya",
+  "butce": 0,
+  "bakim": 0,
+  "aciklama": "Halk desteği kadar bağış toplanır; halk biraz yorulur.",
+  "ek": "Halk desteği 1 azalır."
+}

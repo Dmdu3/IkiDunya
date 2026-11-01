@@ -1,0 +1,9 @@
+{
+    "id":  "kart_golgelik",
+    "ad":  "Gölgelik",
+    "tur":  "Altyapı",
+    "butce":  2,
+    "bakim":  0,
+    "aciklama":  "Seçtiğin bölgeye gölgelik kur. Kum bir bant serinler, kalıcı.",
+    "ek":  "Isı kanıtı temel maliyeti 1 azaltır."
+}

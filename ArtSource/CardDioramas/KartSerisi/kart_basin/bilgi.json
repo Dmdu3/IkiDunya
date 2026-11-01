@@ -1,0 +1,9 @@
+{
+  "id": "kart_basin",
+  "ad": "Basın Bülteni",
+  "tur": "Kampanya",
+  "butce": 1,
+  "bakim": 0,
+  "aciklama": "Bulunan kanıtlar halka anlatılır. Otel bundan hoşlanmaz.",
+  "ek": "Otel −1; halk desteği artar."
+}

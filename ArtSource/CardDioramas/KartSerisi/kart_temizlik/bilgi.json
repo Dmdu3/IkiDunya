@@ -1,0 +1,9 @@
+{
+    "id":  "kart_temizlik",
+    "ad":  "Temizlik Kampanyası",
+    "tur":  "Kampanya",
+    "butce":  2,
+    "bakim":  0,
+    "aciklama":  "En kirli üç bölgede çöp bir kademe azalır.",
+    "ek":  "İkinci Çöp kanıtıyla dört bölge temizlenir."
+}

@@ -1,0 +1,9 @@
+{
+  "id": "kart_saha_arastirmasi",
+  "ad": "Saha Araştırması",
+  "tur": "Araştırma",
+  "butce": 1,
+  "bakim": 0,
+  "aciklama": "Henüz bulunmamış bir kanıtı ortaya çıkarır.",
+  "ek": "Açılmamış bir kanıt rastgele seçilir."
+}
