@@ -118,9 +118,12 @@ Kısa yaz: kart açıklaması en fazla 2 satır, kanıt notu en fazla 3 satır. 
 | bolum3_giris | Bekleyiş. Kumun altında yeni hayatlar büyüyor. |
 | bolum4_giris | Kaçış. Gün doğmadan denize. |
 | bolum5_giris | İlk yüzüş. Uçsuz bucaksız mavi. |
-| ipucu_poset | Denizanası kasılarak yüzer, poşet düz süzülür. Yakından bak, E ile ye. |
+| ipucu_poset | Denizanası güç verir. Yaklaş ve E ile ye. |
+| ipucu_yanilgi_poset | Uzaktan denizanası sandın, bir poşetmiş. Denizanası kasılarak yüzer; bu akıntıyla düz süzülüyordu. |
+| ipucu_yanilgi_isik | Ay sandığın bir lambaymış. Gerçek ay bulutların ardında, denizin üstünde. Gözün yanılsa da dalgaların sesi denizi gösterir. Bakışını bırakırsan yavru en parlak ışığa döner. |
+| ipucu_yanilgi_plastik | Yosun sandığın bir plastik parçasıymış. Yosun parlamaz; bu parlıyordu. Emin değilsen yavaşla ve yakından bak. |
 | ipucu_nefes | Nefesin azalıyor. Space'i basılı tutup yüzeye çık; yüzeyde teknelere dikkat et. |
-| ipucu_poset_yuttu | Poşet yuttun! Enerji kaybettin ve bir süre yavaşsın. Denizanası kasılarak yüzer, poşet düz süzülür. |
+| ipucu_poset_yuttu | Denizanası sandığın bir poşetti. Enerji kaybettin ve bir süre yavaşsın. Denizanası kasılarak yüzer, poşet akıntıyla düz süzülür; emin değilsen yavaşla ve yakından bak. |
 | ipucu_ag | Ağa takıldın! E'ye art arda bas. |
 | ipucu_dalga | Dalga gelirken Space ile altından dal. |
 | ipucu_termal | T ile kumun sıcaklık bantlarını gör. Serin bant daha çok erkek, sıcak bant daha çok dişi yavruyla ilişkilidir. Kırmızı bantta daha az yumurta yaşar; dalga çizgisine dikkat et. |

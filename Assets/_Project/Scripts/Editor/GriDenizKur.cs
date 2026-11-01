@@ -55,7 +55,7 @@ namespace IkiDunya.Editor
             Vector3[] denizanalari = { new Vector3(-8f, -4f, -170f), new Vector3(12f, -5f, -150f), new Vector3(6f, -2f, -140f), new Vector3(-10f, -3f, -100f), new Vector3(8f, -3f, -70f) };
             Vector3[] posetler = { new Vector3(-4f, -3f, -155f), new Vector3(3f, -4f, -130f), new Vector3(10f, -2f, -110f), new Vector3(-12f, -2f, -60f) };
             foreach (Vector3 yer in denizanalari) YiyecekKur(Yiyecek.Turu.Denizanasi, yer, tehlike);
-            foreach (Vector3 yer in posetler) YiyecekKur(Yiyecek.Turu.Poset, yer, tehlike);
+            foreach (Vector3 yer in posetler) YiyecekKur(Yiyecek.Turu.Poset, yer, tehlike, true);
 
             Object.Instantiate(HayaletAgKalibi(), new Vector3(5f, -6f, -135f), Quaternion.Euler(0f, 30f, 0f));
             Object.Instantiate(HayaletAgKalibi(), new Vector3(-8f, -3f, -75f), Quaternion.Euler(0f, -20f, 0f));
@@ -544,7 +544,7 @@ namespace IkiDunya.Editor
             GriKumsalKur.DiziBagla(akim, "cizgiler", cizgiler);
         }
 
-        private static GameObject YiyecekKur(Yiyecek.Turu tur, Vector3 yer, DenizTehlikeAyarlari tehlike)
+        private static GameObject YiyecekKur(Yiyecek.Turu tur, Vector3 yer, DenizTehlikeAyarlari tehlike, bool yanilgi = false)
         {
             // Kök: yeme alanı (tetikleyici küre) ve Yiyecek; görünüş çocukta (Abdü'nün denizanası, Yusuf'un poşeti ya da gri küre).
             var nesne = new GameObject(tur.ToString());
@@ -563,13 +563,60 @@ namespace IkiDunya.Editor
                 kure.transform.SetParent(nesne.transform, false);
                 kure.transform.localScale = denizanasiMi ? new Vector3(0.6f, 0.45f, 0.6f) : new Vector3(0.6f, 0.4f, 0.5f);
                 kure.GetComponent<Renderer>().sharedMaterial = denizanasiMi ? denizanasi : poset;
+                model = kure;
             }
+            if (yanilgi && !denizanasiMi) PosetYanilgisiKur(nesne, model.transform);
             var yiyecek = nesne.AddComponent<Yiyecek>();
             var so = new SerializedObject(yiyecek);
             so.FindProperty("tur").enumValueIndex = (int)tur;
             so.ApplyModifiedPropertiesWithoutUndo();
             GriKumsalKur.Bagla(yiyecek, "ayarlar", tehlike);
             return nesne;
+        }
+
+        /// <summary>Poşet, kaplumbağanın gözünde gerçek denizanası modeliyle görünür ve uzaktan onun gibi kasılır (animasyonu da var).
+        /// Yaklaştıkça kasılma tekler ve durur; poşet akıntıyla düz süzülür (GDD: yakından bakınca ayırt edilir). Gerçeği yavaşlayıp bakan ya da yutan görür.
+        /// Parkur kalıplarında yok: poşet sürüsünün karanlık aşaması poşetin görünmez olmasına dayanır.</summary>
+        private static void PosetYanilgisiKur(GameObject nesne, Transform gercek)
+        {
+            GameObject sahte = GriKumsalKur.ModelYerlestir(nesne.transform, "Denizanasi", new Vector3(0f, -0.25f, 0f), 0.6f);
+            if (sahte != null) GriKumsalKur.AnimasyonBagla(sahte, DenizanasiDenetleyicisi);
+            if (sahte == null)
+            {
+                sahte = GameObject.CreatePrimitive(PrimitiveType.Sphere);
+                Object.DestroyImmediate(sahte.GetComponent<Collider>());
+                sahte.transform.SetParent(nesne.transform, false);
+                sahte.transform.localScale = new Vector3(0.6f, 0.45f, 0.6f);
+                sahte.GetComponent<Renderer>().sharedMaterial = denizanasi;
+            }
+            YanilgiBagla(nesne, AlgiTuru.PosetDenizanasi, gercek, sahte, "Yanilgi_Denizanasi");
+        }
+
+        /// <summary>Parlayan plastik yavrunun gözünde yosun adasının küçük bir parçası gibi görünür: aradığı yerin sözü.
+        /// İpucu: yosun parlamaz, bu parlıyor (ışık alanı yanılgıda da yanar). Yaklaşınca ya da uzun bakınca plastik ortaya çıkar.</summary>
+        private static void PlastikYanilgisiKur(GameObject nesne, Transform gercek)
+        {
+            GameObject sahte = GriKumsalKur.ModelYerlestir(nesne.transform, "Yosun_Adasi", Vector3.zero, 0.9f, false);
+            if (sahte == null)
+            {
+                sahte = GameObject.CreatePrimitive(PrimitiveType.Sphere);
+                Object.DestroyImmediate(sahte.GetComponent<Collider>());
+                sahte.transform.SetParent(nesne.transform, false);
+                sahte.transform.localScale = new Vector3(0.9f, 0.25f, 0.7f);
+                sahte.GetComponent<Renderer>().sharedMaterial = yosun;
+            }
+            YanilgiBagla(nesne, AlgiTuru.PlastikYosun, gercek, sahte, "Yanilgi_Yosun");
+        }
+
+        private static void YanilgiBagla(GameObject nesne, AlgiTuru tur, Transform gercek, GameObject sahte, string ad)
+        {
+            sahte.name = ad;
+            sahte.SetActive(false);
+            var so = new SerializedObject(nesne.AddComponent<AlgiNesnesi>());
+            so.FindProperty("tur").enumValueIndex = (int)tur;
+            so.FindProperty("gercekGorunus").objectReferenceValue = gercek;
+            so.FindProperty("yanilgiGorunus").objectReferenceValue = sahte;
+            so.ApplyModifiedPropertiesWithoutUndo();
         }
 
         private static GameObject HayaletAgKalibi()
@@ -729,11 +776,12 @@ namespace IkiDunya.Editor
             // Yusuf'un parlayan plastiği (1-3) varsa kürenin görüntüsünün yerine geçer; tuzak ve collider aynı kalır.
             // Modelin kökü ortada: kürenin merkezine oturur (tabana oturtulmaz).
             int parcaNo = Mathf.Abs(Mathf.RoundToInt(yer.x + yer.z)) % 3 + 1;
-            if (GriKumsalKur.ModelYerlestir(kok.transform, $"Parlayan_Plastik_{parcaNo}", Vector3.zero, 0.5f, false) != null)
-                parca.GetComponent<Renderer>().enabled = false;
+            GameObject model = GriKumsalKur.ModelYerlestir(kok.transform, $"Parlayan_Plastik_{parcaNo}", Vector3.zero, 0.5f, false);
+            if (model != null) parca.GetComponent<Renderer>().enabled = false;
             var so = new SerializedObject(parca.AddComponent<TrashTrap>());
             so.FindProperty("tur").enumValueIndex = (int)TrashTrap.Turu.Plastik;
             so.ApplyModifiedPropertiesWithoutUndo();
+            PlastikYanilgisiKur(kok, model != null ? model.transform : parca.transform);
         }
 
         /// <summary>Yasakla sönmeyen bir ışık alanı (ışıklı tekne, parlayan plastik).</summary>

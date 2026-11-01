@@ -319,14 +319,27 @@ MonoBehaviour:
   - id: bolum5_giris
     metin: "\u0130lk y\xFCz\xFC\u015F. U\xE7suz bucaks\u0131z mavi."
   - id: ipucu_poset
-    metin: "Denizanas\u0131 kas\u0131larak y\xFCzer, po\u015Fet d\xFCz s\xFCz\xFCl\xFCr.
-      Yak\u0131ndan bak, E ile ye."
+    metin: "Denizanas\u0131 g\xFC\xE7 verir. Yakla\u015F ve E ile ye."
+  - id: ipucu_yanilgi_poset
+    metin: "Uzaktan denizanas\u0131 sand\u0131n, bir po\u015Fetmi\u015F. Denizanas\u0131
+      kas\u0131larak y\xFCzer; bu ak\u0131nt\u0131yla d\xFCz s\xFCz\xFCl\xFCyordu."
+  - id: ipucu_yanilgi_isik
+    metin: "Ay sand\u0131\u011F\u0131n bir lambaym\u0131\u015F. Ger\xE7ek ay bulutlar\u0131n
+      ard\u0131nda, denizin \xFCst\xFCnde. G\xF6z\xFCn yan\u0131lsa da dalgalar\u0131n
+      sesi denizi g\xF6sterir. Bak\u0131\u015F\u0131n\u0131 b\u0131rak\u0131rsan
+      yavru en parlak \u0131\u015F\u0131\u011Fa d\xF6ner."
+  - id: ipucu_yanilgi_plastik
+    metin: "Yosun sand\u0131\u011F\u0131n bir plastik par\xE7as\u0131ym\u0131\u015F.
+      Yosun parlamaz; bu parl\u0131yordu. Emin de\u011Filsen yava\u015Fla ve yak\u0131ndan
+      bak."
   - id: ipucu_nefes
     metin: "Nefesin azal\u0131yor. Space'i bas\u0131l\u0131 tutup y\xFCzeye \xE7\u0131k;
       y\xFCzeyde teknelere dikkat et."
   - id: ipucu_poset_yuttu
-    metin: "Po\u015Fet yuttun! Enerji kaybettin ve bir s\xFCre yava\u015Fs\u0131n.
-      Denizanas\u0131 kas\u0131larak y\xFCzer, po\u015Fet d\xFCz s\xFCz\xFCl\xFCr."
+    metin: "Denizanas\u0131 sand\u0131\u011F\u0131n bir po\u015Fetti. Enerji kaybettin
+      ve bir s\xFCre yava\u015Fs\u0131n. Denizanas\u0131 kas\u0131larak y\xFCzer,
+      po\u015Fet ak\u0131nt\u0131yla d\xFCz s\xFCz\xFCl\xFCr; emin de\u011Filsen
+      yava\u015Fla ve yak\u0131ndan bak."
   - id: ipucu_ag
     metin: "A\u011Fa tak\u0131ld\u0131n! E'ye art arda bas."
   - id: ipucu_dalga

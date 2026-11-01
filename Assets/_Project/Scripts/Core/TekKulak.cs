@@ -13,6 +13,9 @@ namespace IkiDunya.Core
         [RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.SubsystemRegistration)]
         private static void StatikleriSifirla() => aktif = null;
 
+        /// <summary>Şu an açık olan kulak (yoksa null); kıyı sesi gibi dinleyiciyi izleyen sesler okur.</summary>
+        public static AudioListener Etkin => aktif != null ? aktif.kulak : null;
+
         private void Awake() => kulak = GetComponent<AudioListener>();
 
         private void OnEnable()

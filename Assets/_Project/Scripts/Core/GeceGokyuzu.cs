@@ -16,11 +16,53 @@ namespace IkiDunya.Core
         [Tooltip("Ay (kendi küresi; bu objenin çocuğu).")]
         [SerializeField] private Transform ay;
         [SerializeField] private Vector3 ayYonu = new Vector3(-0.35f, 0.45f, -1f);
+        [Header("Bulut (ayın önüne geçer)")]
+        [Tooltip("Bulut tamken ayın kalan parlaklığı (0–1).")]
+        [SerializeField] private float bulutluAy = 0.15f;
+        [Tooltip("Bulut parçalarının rengi; alfa tam bulutun koyuluğu.")]
+        [SerializeField] private Color bulutRengi = new Color(0.06f, 0.07f, 0.1f, 0.9f);
+        [SerializeField] private int bulutParcasi = 7;
+        [Tooltip("Bulutun saydam (alfa karışımlı) malzemesi; gökyüzü shader'ı eklemeli olduğu için koyu bulutu çizemez. Boşsa bulut yok, ay yalnızca söner.")]
+        [SerializeField] private Material bulutMalzemesi;
+
+        private static readonly int RenkId = Shader.PropertyToID("_BaseColor");
+
+        /// <summary>Gerçek ay (gökyüzü açıkken); yavrunun içgüdüsü sahte aylarla karşılaştırır.</summary>
+        public static Transform Ay { get; private set; }
+
+        /// <summary>Ayın önündeki bulut (0 açık – 1 kapalı). Kaplumbağanın algısı sahte ay görünürken artırır; ay ve denizdeki yolu söner.</summary>
+        public static float Bulut { get; set; }
+
+        [RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.SubsystemRegistration)]
+        private static void StatikleriSifirla()
+        {
+            Ay = null;
+            Bulut = 0f;
+        }
+
+        private Renderer ayGorunus;
+        private Transform bulut;
+        private Renderer[] bulutlar;
+        private MaterialPropertyBlock blok;
+        private Color ayRengi = Color.white;
+        private float uygulanan = -1f;
+
+        private void OnEnable() => Ay = ay;
+
+        private void OnDisable()
+        {
+            if (Ay == ay) Ay = null;
+        }
 
         private void Awake()
         {
             GetComponent<MeshFilter>().sharedMesh = YildizAgi();
-            if (ay != null) ay.localPosition = ayYonu.normalized * yaricap * 0.9f;
+            blok = new MaterialPropertyBlock();
+            if (ay == null) return;
+            ay.localPosition = ayYonu.normalized * yaricap * 0.9f;
+            ayGorunus = ay.GetComponent<Renderer>();
+            if (ayGorunus != null && ayGorunus.sharedMaterial.HasProperty(RenkId)) ayRengi = ayGorunus.sharedMaterial.GetColor(RenkId);
+            BulutKur();
         }
 
         private void LateUpdate()
@@ -28,6 +70,61 @@ namespace IkiDunya.Core
             // Gökyüzü hep kameranın etrafında: yürüdükçe yıldızlar kaymasın.
             UnityEngine.Camera kamera = UnityEngine.Camera.main;
             if (kamera != null) transform.position = kamera.transform.position;
+            if (!Mathf.Approximately(uygulanan, Bulut)) BulutUygula();
+        }
+
+        /// <summary>Ayın yanında bekleyen birkaç yassı, koyu küre; bulut arttıkça ayın önüne kayar.</summary>
+        private void BulutKur()
+        {
+            if (ayGorunus == null || bulutMalzemesi == null) return;
+            bulut = new GameObject("Bulut").transform;
+            bulut.SetParent(transform, false);
+            bulutlar = new Renderer[bulutParcasi];
+            var rastgele = new System.Random(77);
+            float boy = ay.localScale.x;
+            for (int i = 0; i < bulutParcasi; i++)
+            {
+                GameObject parca = GameObject.CreatePrimitive(PrimitiveType.Sphere);
+                parca.name = "BulutParcasi";
+                Destroy(parca.GetComponent<Collider>());
+                parca.transform.SetParent(bulut, false);
+                float x = ((float)rastgele.NextDouble() - 0.5f) * 2.6f * boy;
+                float y = ((float)rastgele.NextDouble() - 0.5f) * 0.9f * boy;
+                parca.transform.localPosition = new Vector3(x, y, 0f);
+                parca.transform.localScale = new Vector3(boy * (1.4f + (float)rastgele.NextDouble()), boy * (0.6f + 0.4f * (float)rastgele.NextDouble()), boy * 0.2f);
+                var r = parca.GetComponent<Renderer>();
+                r.sharedMaterial = bulutMalzemesi;
+                r.shadowCastingMode = UnityEngine.Rendering.ShadowCastingMode.Off;
+                r.receiveShadows = false;
+                bulutlar[i] = r;
+            }
+        }
+
+        private void BulutUygula()
+        {
+            uygulanan = Bulut;
+            if (ayGorunus == null) return;
+            float b = Mathf.SmoothStep(0f, 1f, Bulut);
+            Color renk = ayRengi;
+            renk.a *= Mathf.Lerp(1f, bulutluAy, b);
+            ayGorunus.GetPropertyBlock(blok);
+            blok.SetColor(RenkId, renk);
+            ayGorunus.SetPropertyBlock(blok);
+
+            if (bulut == null) return;
+            // Bulut ayla kamera arasında, ayın yanından önüne kayar.
+            Vector3 ayYeri = ay.localPosition;
+            Vector3 yan = Vector3.Cross(ayYeri.normalized, Vector3.up).normalized;
+            bulut.localPosition = ayYeri * 0.96f + yan * (1f - b) * ay.localScale.x * 3f;
+            bulut.localRotation = Quaternion.LookRotation(-ayYeri.normalized);
+            Color bulutRenk = bulutRengi;
+            bulutRenk.a *= Mathf.Lerp(0.15f, 1f, b);
+            foreach (Renderer r in bulutlar)
+            {
+                r.GetPropertyBlock(blok);
+                blok.SetColor(RenkId, bulutRenk);
+                r.SetPropertyBlock(blok);
+            }
         }
 
         private Mesh YildizAgi()

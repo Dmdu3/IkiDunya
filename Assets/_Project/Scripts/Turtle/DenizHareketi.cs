@@ -161,6 +161,8 @@ namespace IkiDunya.Turtle
             }
             if (secilen == null) return;
 
+            // Denizanası sanılan poşet: gerçek o an ağızda görünür.
+            if (secilen.TryGetComponent(out AlgiNesnesi algi)) algi.Yutuldu(goz);
             if (secilen.Ye() == Yiyecek.Turu.Denizanasi)
             {
                 Ses.Cal(SesTuru.Yeme);
@@ -187,7 +189,13 @@ namespace IkiDunya.Turtle
             if (diger.TryGetComponent(out HazardZone bolge) && !tehlikeler.Contains(bolge)) tehlikeler.Add(bolge);
             if (diger.TryGetComponent(out IsikKaynagi isik) && !isiklar.Contains(isik)) isiklar.Add(isik);
             if (diger.TryGetComponent(out Cover _)) siperSayisi++;
-            if (diger.TryGetComponent(out TrashTrap tuzak)) Takil(tuzak.Tur);
+            if (diger.TryGetComponent(out TrashTrap tuzak))
+            {
+                Takil(tuzak.Tur);
+                // Yosun sanılan plastiğe değdi: gerçek o an ortaya çıkar.
+                AlgiNesnesi algi = tuzak.GetComponentInParent<AlgiNesnesi>();
+                if (algi != null) algi.GercegiGor();
+            }
         }
 
         private void OnTriggerExit(Collider diger)

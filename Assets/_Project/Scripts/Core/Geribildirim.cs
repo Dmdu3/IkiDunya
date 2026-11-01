@@ -49,5 +49,12 @@ namespace IkiDunya.Core
 
         /// <summary>Kötü ama darbe olmayan şey (poşet yuttun): kısa kahverengi bulanıklık.</summary>
         public static void Bulanma() => Flas?.Invoke(new Color(0.45f, 0.35f, 0.2f, 0.3f));
+
+        /// <summary>Yanılgı kırıldı, gerçek görüldü: soğuk, soluk bir parıltı ve hafif sarsıntı.</summary>
+        public static void Uyanis()
+        {
+            Flas?.Invoke(new Color(0.75f, 0.82f, 0.9f, 0.22f));
+            Sarsildi?.Invoke(Mathf.Clamp01(Guc(Siddet.Hafif) * 0.5f));
+        }
     }
 }

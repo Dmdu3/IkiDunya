@@ -1,0 +1,69 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 4eaec36e8c4dbd64e879787b8c66a3fc, type: 3}
+  m_Name: AlgiAyarlari
+  m_EditorClassIdentifier: Assembly-CSharp::IkiDunya.Turtle.AlgiAyarlari
+  profiller:
+  - tur: 0
+    kirilmaYaricapi: 0
+    supheYaricapi: 4
+    bakmakKirar: 1
+    bakmaYaricapi: 4
+    bakmaSuresi: 1
+    bakmaHizSiniri: 1.5
+    kirilmaSuresi: 0.5
+    ses: 29
+    ipucu: ipucu_yanilgi_poset
+  - tur: 1
+    kirilmaYaricapi: 8
+    supheYaricapi: 14
+    bakmakKirar: 0
+    bakmaYaricapi: 0
+    bakmaSuresi: 0
+    bakmaHizSiniri: 0
+    kirilmaSuresi: 1.4
+    ses: 30
+    ipucu: ipucu_yanilgi_isik
+  - tur: 2
+    kirilmaYaricapi: 0
+    supheYaricapi: 4
+    bakmakKirar: 1
+    bakmaYaricapi: 4
+    bakmaSuresi: 1
+    bakmaHizSiniri: 1.5
+    kirilmaSuresi: 0.6
+    ses: 29
+    ipucu: ipucu_yanilgi_plastik
+  kasilmaTeklemeBasi: 6
+  kasilmaBitisi: 2.5
+  kasilmaSikligi: 0.8
+  bakmaAcisi: 8
+  kirpmaAraligiUzak: 3
+  kirpmaAraligiYakin: 0.6
+  kirpmaSuresi: 0.09
+  ayAcisalCap: 4.2
+  ayMesafesi: 150
+  ayYukselisi: 7
+  ayRengi: {r: 1.5, g: 1.2, b: 0.7, a: 1}
+  ayTitremesi: 0.35
+  ayTitremeSikligi: 0.12
+  ampulBoyu: 0.35
+  icguduGecikmesi: 0.8
+  icguduYukselmesi: 1.5
+  icguduHizi: 22
+  sahteAyCekiciligi: 2
+  cekicilikYariAcisi: 100
+  aySecimFarki: 1.3
+  bulutSuresi: 6
+  bulutTabani: 0.1
+  ayYoluGenisligi: 1.8
+  ayYoluRengi: {r: 1.1, g: 0.9, b: 0.55, a: 0.09}
