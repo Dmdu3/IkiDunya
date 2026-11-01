@@ -47,12 +47,15 @@ namespace IkiDunya.UI.Menu
         {
             oncekiPanel.SetActive(false);
             gameObject.SetActive(true);
+            // Kilitli parkurlar atlanır; hepsi kilitliyse Geri seçilir.
+            MenuSecenegi.IlkiniSec(gameObject);
         }
 
         private void Kapat()
         {
             gameObject.SetActive(false);
             oncekiPanel.SetActive(true);
+            MenuSecenegi.IlkiniSec(oncekiPanel);
         }
     }
 }

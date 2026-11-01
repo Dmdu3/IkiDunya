@@ -315,6 +315,7 @@ namespace IkiDunya.Editor
             Dropdown kalite = Acilir(sol);
             Button geri = Dugme(sol, "menu_geri", metinler);
             geri.GetComponent<LayoutElement>().preferredHeight = 50f;
+            geri.GetComponentInChildren<Text>().fontSize = 28;
 
             Transform sag = Liste("Tuslar", icerik.transform, new Vector2(0.52f, 0f), new Vector2(1f, 1f));
             var sagDizi = sag.GetComponent<VerticalLayoutGroup>();
@@ -325,6 +326,7 @@ namespace IkiDunya.Editor
             // Tuşları sıfırlayan seçenek tuş sütununda; sol sütun en büyük yazı boyutunda da sığsın.
             Button varsayilan = Dugme(sag, "menu_varsayilan", metinler);
             varsayilan.GetComponent<LayoutElement>().preferredHeight = 50f;
+            varsayilan.GetComponentInChildren<Text>().fontSize = 28;
 
             var panel = kok.gameObject.AddComponent<AyarlarPaneli>();
             GriKumsalKur.Bagla(panel, "ses", ses);
@@ -419,6 +421,7 @@ namespace IkiDunya.Editor
             Toggle oge = acilir.template.GetComponentInChildren<Toggle>(true);
             if (oge != null) Renkler(oge);
             ListeSablonu(acilir, tema);
+            nesne.AddComponent<AcilirListeKaydirma>();
             return acilir;
         }
 
@@ -479,14 +482,19 @@ namespace IkiDunya.Editor
             // Ana menü seçeneklerinin yerinde: üstte soluk küçük başlık, altında parkurlar ve Geri.
             var dugmeler = new Object[System.Enum.GetValues(typeof(ParkurTuru)).Length];
             Transform kutu = Liste("ParkurlarPaneli", ebeveyn, Vector2.zero, Vector2.one);
-            int satir = dugmeler.Length + 2;
-            GriKumsalKur.Yerles((RectTransform)kutu, new Vector2(0f, 1f), new Vector2(MenuSol, -ListeUstu + 10f),
+            int satir = dugmeler.Length + 1;
+            GriKumsalKur.Yerles((RectTransform)kutu, new Vector2(0f, 1f), new Vector2(MenuSol, -ListeUstu - 30f),
                 new Vector2(ListeEni, satir * SecenekBoyu + (satir - 1) * SecenekAraligi));
             var dizi = kutu.GetComponent<VerticalLayoutGroup>();
             dizi.spacing = SecenekAraligi;
             dizi.childAlignment = TextAnchor.UpperLeft;
+            // Küçük başlık sıranın dışında, seçenek yazılarıyla aynı hizada (çizgi payı kadar içeride).
             Etiket(kutu, "ParkurlarYazisi", "menu_parkurlar", metinler);
-            kutu.Find("ParkurlarYazisi").GetComponent<LayoutElement>().preferredHeight = 40f;
+            Text etiket = kutu.Find("ParkurlarYazisi").GetComponent<Text>();
+            etiket.fontSize = 26;
+            etiket.GetComponent<LayoutElement>().ignoreLayout = true;
+            GriKumsalKur.Yerles(etiket.rectTransform, new Vector2(0f, 1f), new Vector2(44f, 0f), new Vector2(ListeEni - 44f, 40f));
+            etiket.rectTransform.pivot = new Vector2(0f, 0f);
             for (int i = 0; i < dugmeler.Length; i++)
             {
                 Button dugme = Dugme(kutu, Parkur.MetinId((ParkurTuru)i), metinler);
@@ -540,6 +548,7 @@ namespace IkiDunya.Editor
             GameObject sonuc = Kutucuk("Sonuc", tuval, new Vector2(0.3f, 0.4f), new Vector2(0.7f, 0.65f));
             Text sonucYazisi = KutuYazisi(sonuc.transform, new Vector2(0.05f, 0.05f), new Vector2(0.95f, 0.95f), 36);
             sonucYazisi.alignment = TextAnchor.MiddleCenter;
+            sonucYazisi.font = GriKumsalKur.Tema().BaslikYazisi;
             sure.SetActive(false);
             sonuc.SetActive(false);
 
@@ -832,6 +841,13 @@ namespace IkiDunya.Editor
             GriKumsalKur.TemaYazisi(yazi, ad == "Baslik", GriKumsalKur.Tema().Yazi);
             yazi.fontSize = boyut;
             yazi.alignment = TextAnchor.MiddleCenter;
+            // Açık gökyüzü ve kum üstünde okunsun: koyu yumuşak gölge ve ince kontur.
+            var kontur = nesne.AddComponent<Outline>();
+            kontur.effectColor = new Color(0f, 0f, 0f, 0.3f);
+            kontur.effectDistance = new Vector2(1.5f, -1.5f);
+            var golge = nesne.AddComponent<Shadow>();
+            golge.effectColor = new Color(0f, 0f, 0f, 0.55f);
+            golge.effectDistance = new Vector2(0f, -3f);
             return yazi;
         }
     }

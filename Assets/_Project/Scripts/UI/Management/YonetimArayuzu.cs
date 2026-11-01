@@ -257,7 +257,13 @@ namespace IkiDunya.UI.Management
                 if (t != null) { t.color = yazi; t.font = T.GovdeYazisi; }
             // Sahnedeki düğme yazıları da temanın yazı tipiyle (görev/kart düğmeleri ve Geri kalıptan kopyalanır).
             foreach (Button d in new[] { dugmeKalibi, ileriDugmesi, aDugmesi, bDugmesi })
+            {
                 foreach (Text t in d.GetComponentsInChildren<Text>(true)) { t.font = T.GovdeYazisi; t.color = yazi; }
+                // Basılamazken soluk ama opak: varsayılan yarı saydamlıkta arkadaki harita kartın içinden görünüyordu.
+                ColorBlock renkler = d.colors;
+                renkler.disabledColor = new Color(.6f, .6f, .6f, 1f);
+                d.colors = renkler;
+            }
             foreach (GameObject panel in new[] { ustBilgi.transform.parent.gameObject, yuvaListesi.transform.parent.gameObject, raporPaneli, gorevPaneli, kartPaneli, olayPaneli })
                 if (panel != null && panel.TryGetComponent(out Image zemin)) Yuvarlak(zemin, kagit);
 
@@ -546,8 +552,12 @@ namespace IkiDunya.UI.Management
 
             Text ad = KartMetni("Ad", dugme.transform, new Vector2(.06f, .17f), new Vector2(.94f, .33f), 24, TextAnchor.MiddleLeft);
             ad.font = T.KalinYazi; ad.text = Al(kart.Id);
-            Text maliyet = KartMetni("Maliyet", dugme.transform, new Vector2(.06f, .01f), new Vector2(.94f, .17f), 24, TextAnchor.MiddleLeft);
-            maliyet.text = $"{Al("yonetim_butce")} {tur.Yonetim.Bedel(kart)}  ·  {Al("kart_bakim")} {kart.Bakim}";
+            // Bedel solda, bakım sağda: iki kısa yazı, dar kartta da tek satırda kalır.
+            Text maliyet = KartMetni("Maliyet", dugme.transform, new Vector2(.06f, .02f), new Vector2(.55f, .17f), 22, TextAnchor.MiddleLeft);
+            maliyet.text = $"{Al("yonetim_butce")} {tur.Yonetim.Bedel(kart)}";
+            Text bakim = KartMetni("Bakim", dugme.transform, new Vector2(.55f, .02f), new Vector2(.94f, .17f), 22, TextAnchor.MiddleRight);
+            bakim.text = $"{Al("kart_bakim")} {kart.Bakim}";
+            bakim.color = T.SolukYazi;
             dugme.onClick.AddListener(() => tur.KartSec(kart));
             var olay = dugme.gameObject.AddComponent<EventTrigger>();
             void Bagla(EventTriggerType tip, UnityEngine.Events.UnityAction<BaseEventData> islem)
