@@ -187,6 +187,13 @@ namespace IkiDunya.Core
             Degisti?.Invoke();
         }
 
+        /// <summary>Bu tur verilmiş kafes görevini geri alır.</summary>
+        public void YuvaKafesiniKaldir(int yuva)
+        {
+            yuvalar[yuva].Kafesli = false;
+            Degisti?.Invoke();
+        }
+
         /// <summary>Yuvayı taşır. Bant yeni yerin zemininden (ısınma hariç) baştan kurulur; süresi bitmemiş etkiler (gölge, sulama) sürer.</summary>
         public void YuvaTasi(int yuva, int bolge, Vector3 konum, bool dalgaAltinda, SicaklikBandi zeminBandi)
         {
@@ -257,6 +264,21 @@ namespace IkiDunya.Core
         public void GeciciYuvaBant(int yuva, int fark, int tur) =>
             Ekle(new GeciciEtki(GeciciEtki.Turu.YuvaBant, yuva, 0, fark, tur), true);
 
+        /// <summary>Bir gönüllü görevinin oluşturduğu tek bir süreli yuva etkisini geri alır.</summary>
+        public bool GeciciYuvaBantGeriAl(int yuva, int fark)
+        {
+            for (int i = geciciEtkiler.Count - 1; i >= 0; i--)
+            {
+                GeciciEtki etki = geciciEtkiler[i];
+                if (etki.Tur != GeciciEtki.Turu.YuvaBant || etki.Hedef != yuva || etki.Fark != fark) continue;
+                Uygula(etki, -1);
+                geciciEtkiler.RemoveAt(i);
+                Degisti?.Invoke();
+                return true;
+            }
+            return false;
+        }
+
         private void Ekle(GeciciEtki etki, bool uygula)
         {
             if (uygula) Uygula(etki, 1);
@@ -289,6 +311,14 @@ namespace IkiDunya.Core
         public void KayipIziEkle(KayipIzi iz)
         {
             kayipIzleri.Add(iz);
+            Degisti?.Invoke();
+        }
+
+        /// <summary>Tekrarlanan gecenin yalnızca o denemede oluşan kayıp izlerini kaldırır.</summary>
+        public void KayipIzleriniSonrasindanSil(int ilk)
+        {
+            if (ilk < 0 || ilk >= kayipIzleri.Count) return;
+            kayipIzleri.RemoveRange(ilk, kayipIzleri.Count - ilk);
             Degisti?.Invoke();
         }
 

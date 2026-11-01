@@ -50,6 +50,11 @@ Kısa yaz: kart açıklaması en fazla 2 satır, kanıt notu en fazla 3 satır. 
 | gorev_golge | Gölge ve sulama | Yuvanın kumu bu tur ve gece serin kalır. |
 | gorev_bilgilendirme | Bilgilendirme | Halkı bilgilendir; halk desteği artar. |
 
+| id | Metin |
+|---|---|
+| gorev_geri_al | Atamayı geri al |
+| engel_destek_dolu | Halk desteği zaten en yüksek düzeyde. |
+
 ## Kanıtlar
 
 | id | Ad | Not |
@@ -118,7 +123,12 @@ Kısa yaz: kart açıklaması en fazla 2 satır, kanıt notu en fazla 3 satır. 
 | ipucu_poset_yuttu | Poşet yuttun! Enerji kaybettin ve bir süre yavaşsın. Denizanası kasılarak yüzer, poşet düz süzülür. |
 | ipucu_ag | Ağa takıldın! E'ye art arda bas. |
 | ipucu_dalga | Dalga gelirken Space ile altından dal. |
-| ipucu_termal | T: termal görünüm. Kumun sıcaklığını gör; çok sıcak ya da çok serin yerden kaçın. |
+| ipucu_termal | T ile kumun sıcaklık bantlarını gör. Serin bant daha çok erkek, sıcak bant daha çok dişi yavruyla ilişkilidir. Kırmızı bantta daha az yumurta yaşar; dalga çizgisine dikkat et. |
+| bilgi_yuva_sicaklik | Doğada yuvanın sıcaklığı yavruların cinsiyet dağılımını etkiler. Aşırı sıcaklık yumurtaların yaşamını tehdit edebilir. Oyunda sıcaklık dört bantla gösterilir. |
+| bilgi_yuva_kulucka | Caretta caretta yumurtaları genellikle yaklaşık iki ayda açılır; süre koşullara göre değişir. Oyunda yuvanın çıkış sayacı sekiz haftadır. |
+| bilgi_yuva_donus | Yetişkin dişi carettalar yuvalamak için doğdukları bölgenin kıyılarına geri dönebilir. |
+| bilgi_rehberi | Yuva rehberi |
+| bilgi_rehberi_ipucu | Yuva ve sıcaklık bilgilerini insan turunda Yuva rehberinden inceleyebilirsin. |
 | ipucu_kazma | Dur ve A ile D'ye sırayla basarak kaz. Yumurtladıktan sonra aynı şekilde ört. |
 | ipucu_kumdan_cikis | W ile yukarı kaz. Kum serinlemeden çıkma, ama çok da bekleme. |
 | ipucu_suru | Öncü sensin; sürü seni izler. Shift ile dağıl, Space ile zıpla. |
@@ -190,6 +200,8 @@ Kısa yaz: kart açıklaması en fazla 2 satır, kanıt notu en fazla 3 satır. 
 | sonuc_disi | Dişi |
 | sonuc_erkek | Erkek |
 | sonuc_devam | Devam etmek için tıkla ya da Space'e bas |
+| sonuc_hic_yavru | Hiçbir yavru denize ulaşamadı. Kumdaki izler, yarım kalan bir yolculuğu hatırlatıyor. |
+| sonuc_tekrar | Son kaçış gecesini tekrar denemek için devam et. |
 | bant_mavi | Serin |
 | bant_yesil | Ilık |
 | bant_turuncu | Sıcak |
