@@ -10,4 +10,10 @@ namespace IkiDunya.Core
         /// <summary>Kayıttan geri yükler; asset bağlantıları korunur.</summary>
         void Oku(string json);
     }
+
+    /// <summary>Finalin, yönetim sistemine bağımlı olmadan koruma bilgisini okuması.</summary>
+    public interface IKorumaDurumu
+    {
+        bool KorumaAlaniVar { get; }
+    }
 }

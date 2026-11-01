@@ -22,6 +22,16 @@ namespace IkiDunya.Hazards
 
         private void Awake()
         {
+            // Eski sahnelerdeki model yerinde kalır; hareketli görsel onun yerine geçer.
+            Transform eskiModel = transform.Find("Model");
+            GameObject hareketli = Resources.Load<GameObject>("BalikciTeknesi_Hareketli");
+            if (eskiModel != null && hareketli != null)
+            {
+                GameObject gorunus = Instantiate(hareketli, transform);
+                gorunus.name = "HareketliModel";
+                foreach (Transform parca in gorunus.GetComponentsInChildren<Transform>(true)) parca.gameObject.layer = gameObject.layer;
+                eskiModel.gameObject.SetActive(false);
+            }
             kaplumbagaMaskesi = LayerMask.GetMask("Turtle");
             transform.position = a.position;
             bYeGidiyor = true;

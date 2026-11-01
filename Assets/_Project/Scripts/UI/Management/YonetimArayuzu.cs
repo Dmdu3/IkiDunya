@@ -303,11 +303,14 @@ namespace IkiDunya.UI.Management
             dugmeler.Clear();
 
             if (tur.SuAnki == InsanTuru.Asama.Gonulluler)
+            {
                 foreach (GorevTanimi gorev in tur.Yonetim.Ayarlar.Gorevler)
                 {
                     GorevTanimi g = gorev;
                     GorevDugmesi(g);
                 }
+                for (int i = 0; i < tur.Atamalar.Count; i++) GorevGeriAlDugmesi(i);
+            }
 
             if (tur.SuAnki == InsanTuru.Asama.Kartlar)
                 foreach (KartTanimi kart in tur.El)
@@ -428,6 +431,23 @@ namespace IkiDunya.UI.Management
             kapat.onClick.RemoveAllListeners();
             kapat.onClick.AddListener(() => kanitPaneli.SetActive(false));
             kanitPaneli.SetActive(false);
+
+            var rehber = Instantiate(dugmeKalibi, kok.transform);
+            rehber.name = "YuvaRehberi";
+            rehber.gameObject.SetActive(true);
+            Yerles((RectTransform)rehber.transform, new Vector2(1f, 1f), new Vector2(-Kenar, -(UstBosluk + UstYukseklik + Aralik)), new Vector2(190f, 50f));
+            Yuvarlak(rehber.GetComponent<Image>(), T.PanelIci);
+            rehber.GetComponentInChildren<Text>(true).text = Al("bilgi_rehberi");
+            rehber.onClick.RemoveAllListeners();
+            rehber.onClick.AddListener(YuvaRehberiniGoster);
+        }
+
+        private void YuvaRehberiniGoster()
+        {
+            if (kanitPaneli == null) return;
+            kanitYazisi.text = $"<b>{Al("bilgi_rehberi")}</b>\n\n{Al("bilgi_yuva_sicaklik")}\n\n{Al("bilgi_yuva_kulucka")}\n\n{Al("bilgi_yuva_donus")}";
+            KanitPaneliniYerlestir();
+            kanitPaneli.SetActive(true);
         }
 
         private void KanitGoster(KayipIzi iz)
@@ -466,10 +486,15 @@ namespace IkiDunya.UI.Management
             }
             if (!bulundu) yazi.AppendLine(Al("kanit_kart_yok"));
             kanitYazisi.text = yazi.ToString();
+            KanitPaneliniYerlestir();
+            kanitPaneli.SetActive(true);
+        }
+
+        private void KanitPaneliniYerlestir()
+        {
             float alt = AltBosluk + (tur.SuAnki == InsanTuru.Asama.Kartlar ? KartPaneliYuksekligi : AltPaneliYuksekligi) + Aralik;
             float bos = ((RectTransform)kok.transform).rect.height - alt - UstBosluk - UstYukseklik - Aralik;
             Yerles((RectTransform)kanitPaneli.transform, new Vector2(1f, 0f), new Vector2(-Kenar, alt), new Vector2(BilgiGenisligi, Mathf.Max(160f, bos)));
-            kanitPaneli.SetActive(true);
         }
 
         private void PanelBasligi(GameObject panel, string id)
@@ -648,6 +673,26 @@ namespace IkiDunya.UI.Management
             aciklama.text = engel != null ? $"<color={EksiRengi}>{Al(engel)}</color>" : Al(gorev.Id + "_aciklama");
             DugmeSesi.Bagla(dugme);
             dugme.onClick.AddListener(() => tur.GorevSec(gorev));
+            dugmeler.Add(dugme);
+        }
+
+        private void GorevGeriAlDugmesi(int sira)
+        {
+            InsanTuru.GorevAtamasi atama = tur.Atamalar[sira];
+            Button dugme = Instantiate(dugmeKalibi, gorevDugmeleri);
+            dugme.gameObject.SetActive(true);
+            dugme.GetComponentInChildren<Text>().gameObject.SetActive(false);
+            Yuvarlak(dugme.GetComponent<Image>(), T.PanelIci);
+            Text baslik = KartMetni("GeriAl", dugme.transform, new Vector2(.06f, .56f), new Vector2(.94f, .95f), 24, TextAnchor.LowerLeft);
+            baslik.font = T.KalinYazi;
+            baslik.color = T.Vurgu;
+            baslik.text = Al("gorev_geri_al");
+            Text ayrinti = KartMetni("Atama", dugme.transform, new Vector2(.06f, .08f), new Vector2(.94f, .53f), 22, TextAnchor.UpperLeft);
+            string hedef = atama.Gorev.Hedef == Hedef.Bolge ? $" · {Al("bolge")} {atama.Hedef + 1}"
+                : atama.Gorev.Hedef == Hedef.Yuva ? $" · {Al("yuva")} {atama.Hedef + 1}" : "";
+            ayrinti.text = Al(atama.Gorev.Id) + hedef;
+            DugmeSesi.Bagla(dugme);
+            dugme.onClick.AddListener(() => tur.GoreviGeriAl(sira));
             dugmeler.Add(dugme);
         }
 
