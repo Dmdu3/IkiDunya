@@ -44,7 +44,7 @@ namespace IkiDunya.Hazards
                     Git(av.Konum, ayarlar.AvciKosuHizi);
                     if (Vector3.Distance(av.Konum, transform.position) > ayarlar.AvciYakalamaMesafesi) break;
                     av.Yakala();
-                    Geribildirim.Darbe(1f);
+                    Geribildirim.Darbe(Siddet.Agir);
                     Bekle();
                     break;
                 case Durum.Bekliyor:
@@ -63,6 +63,8 @@ namespace IkiDunya.Hazards
                 if (!bulunan[i].TryGetComponent(out IYuzucu aday) || aday.Gizli) continue;
                 av = aday;
                 durum = Durum.Kovaliyor;
+                // Yengeç, martı, tilki gibi: saldırmadan önce duyulur.
+                Ses.Cal(SesTuru.AvciBalikUyari, transform.position);
                 return;
             }
         }

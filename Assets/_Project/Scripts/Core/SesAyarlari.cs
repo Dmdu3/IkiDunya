@@ -11,7 +11,9 @@ namespace IkiDunya.Core
         Kazma, KumKazma, YuvaTamam, Takilma, Kurtarma, YavruKurtuldu, YavruKaybedildi,
         YengecUyari, MartiUyari, TilkiUyari, TilkiEseliyor, Yeme, AgdanKurtulma, KontrolNoktasi, Pervane, DalgaVurdu, Ipucu,
         Kombo, ParkurBitti, ParkurAsama, SelGeliyor, PosetYuttu,
-        DugmeTikla, KartOyna, KartDagit, KanitBulundu, KalpAtisi
+        DugmeTikla, KartOyna, KartDagit, KanitBulundu, KalpAtisi,
+        // Sona eklenir: asset'te türler sırasıyla saklanır.
+        AvciBalikUyari, Darbe
     }
 
     /// <summary>Ses yuvaları: her ses olayının klipleri ve düzeyi; her adımın ortam sesi ve müziği. Klip boşsa o ses çalmaz, oyun bozulmaz.</summary>

@@ -66,15 +66,19 @@ namespace IkiDunya.Turtle
             else Ipucu.Goster("ipucu_dalga");
         }
 
-        private void EnerjiBitti() => YenidenBasla("bildirim_deniz_enerji");
+        private void EnerjiBitti()
+        {
+            if (!bitti) Geribildirim.Darbe(Siddet.Hafif);
+            YenidenBasla("bildirim_deniz_enerji");
+        }
 
+        // Darbeyi avcı balık kendisi verir (ağır).
         private void AvciYakaladi() => YenidenBasla("bildirim_deniz_yakalandi");
 
         /// <summary>GDD: enerji biterse ya da avcı yakalarsa son kontrol noktasından devam edilir; oyuncuya neden döndüğü söylenir.</summary>
         private void YenidenBasla(string bildirim)
         {
             if (bitti) return;
-            Geribildirim.Darbe(0.6f);
             Ses.Cal(SesTuru.YavruKaybedildi);
             Ipucu.Bildir(bildirim);
             yuzucu.Baslat(sonNokta.position, sonNokta.rotation);
@@ -95,6 +99,8 @@ namespace IkiDunya.Turtle
             {
                 sonNokta = nokta.transform;
                 Ses.Cal(SesTuru.KontrolNoktasi);
+                // Enerji doldu: yavru kurtulduğundaki yeşil parıltı.
+                Geribildirim.Sevinc();
                 yuzucu.Enerji.Doldur(ayarlar.EnerjiEnFazla);
                 return;
             }

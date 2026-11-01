@@ -3,6 +3,9 @@ using UnityEngine;
 
 namespace IkiDunya.Core
 {
+    /// <summary>Darbe ve sarsıntının şiddeti; sayıları GeribildirimAyarlari'nda.</summary>
+    public enum Siddet { Hafif, Orta, Agir }
+
     /// <summary>Oyuncuya his veren ekran efektlerinin tek kapısı: sarsıntı (kamera), flaş (renk), sevinç, tehlike (düşük enerji: kenar kararması ve kalp atışı).
     /// Sistemler bunu çağırır; kamera ve ekran efektleri dinler.</summary>
     public static class Geribildirim
@@ -15,21 +18,30 @@ namespace IkiDunya.Core
         /// <summary>Oyuncunun tehlikesi (0 güvende – 1 enerji bitmek üzere); ekran kenarı kararır, kalp atar.</summary>
         public static float Tehlike { get; set; }
 
+        /// <summary>Güç seviyelerinin sayıları; ekran efektleri ve kamera açılınca bağlar.</summary>
+        public static GeribildirimAyarlari Ayarlar { get; set; }
+
         [RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.SubsystemRegistration)]
         private static void StatikleriSifirla()
         {
             Sarsildi = null;
             Flas = null;
             Tehlike = 0f;
+            Ayarlar = null;
         }
 
-        public static void Sars(float guc) => Sarsildi?.Invoke(Mathf.Clamp01(guc));
+        /// <summary>Seviyenin gücü (0–1). Ayarlar bağlı değilse (efektsiz deneme sahnesi) dinleyen de yoktur; orta güç döner.</summary>
+        private static float Guc(Siddet siddet) => Ayarlar != null ? Ayarlar.Guc(siddet) : 0.5f;
 
-        /// <summary>Darbe: sarsıntı ve kırmızı flaş.</summary>
-        public static void Darbe(float guc)
+        public static void Sars(Siddet siddet) => Sarsildi?.Invoke(Mathf.Clamp01(Guc(siddet)));
+
+        /// <summary>Darbe: sarsıntı, kırmızı flaş ve darbe sesi.</summary>
+        public static void Darbe(Siddet siddet)
         {
-            Sars(guc);
+            float guc = Guc(siddet);
+            Sarsildi?.Invoke(Mathf.Clamp01(guc));
             Flas?.Invoke(new Color(0.85f, 0.1f, 0.05f, 0.35f * Mathf.Clamp01(guc + 0.3f)));
+            Ses.Cal(SesTuru.Darbe);
         }
 
         /// <summary>İyi bir şey oldu (yavru denize ulaştı): kısa, yumuşak yeşil parıltı.</summary>

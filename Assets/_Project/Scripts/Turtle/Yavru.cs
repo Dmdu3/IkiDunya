@@ -110,7 +110,7 @@ namespace IkiDunya.Turtle
             if (SuAnki != Durum.Suruyor) return;
             SuAnki = Durum.Kayip;
             Ses.Cal(SesTuru.YavruKaybedildi, transform.position);
-            Geribildirim.Sars(Oncu ? 0.6f : 0.2f);
+            Geribildirim.Sars(Oncu ? Siddet.Orta : Siddet.Hafif);
             gameObject.SetActive(false);
             Kaybedildi?.Invoke(this, neden);
         }

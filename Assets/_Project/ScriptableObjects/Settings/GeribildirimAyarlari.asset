@@ -20,3 +20,6 @@ MonoBehaviour:
   kenarKoyulugu: 0.7
   kalpYavas: 1.1
   kalpHizli: 0.5
+  hafif: 0.25
+  orta: 0.55
+  agir: 0.95

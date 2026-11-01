@@ -19,6 +19,10 @@ namespace IkiDunya.Core
         [Tooltip("Kalp atışları arası (sn): tehlike başlarken ve tam tehlikede.")]
         [SerializeField] private float kalpYavas = 1.1f;
         [SerializeField] private float kalpHizli = 0.5f;
+        [Tooltip("Darbe ve sarsıntı şiddetlerinin gücü (0–1): hafif (yavru kaybı, enerji bitti), orta (çarpma, ürkme), ağır (tekne, avcı).")]
+        [Range(0f, 1f)] [SerializeField] private float hafif = 0.25f;
+        [Range(0f, 1f)] [SerializeField] private float orta = 0.55f;
+        [Range(0f, 1f)] [SerializeField] private float agir = 0.95f;
 
         public float SarsintiKaymasi => sarsintiKaymasi;
         public float SarsintiDonmesi => sarsintiDonmesi;
@@ -28,5 +32,6 @@ namespace IkiDunya.Core
         public float KenarKoyulugu => kenarKoyulugu;
         public float KalpYavas => kalpYavas;
         public float KalpHizli => kalpHizli;
+        public float Guc(Siddet siddet) => siddet == Siddet.Agir ? agir : siddet == Siddet.Orta ? orta : hafif;
     }
 }

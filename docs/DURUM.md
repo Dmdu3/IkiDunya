@@ -178,6 +178,8 @@ Pervane sesi klibi bağlı (`Audio/SFX/Pervane.wav`).
 | Takilma, Kurtarma | Yavru ya da yüzücü takılınca; öncü kurtarınca |
 | YavruKurtuldu, YavruKaybedildi | Yavru denize girince, kaybedilince |
 | YengecUyari, MartiUyari, TilkiUyari, TilkiEseliyor | Avcıların uyarıları (titreyen kum, gölge, koşu, yuva eşeleme) |
+| AvciBalikUyari | Avcı balık kovalamaya başlayınca (3B; yuva boş, klip Abdü'de) |
+| Darbe | Her `Geribildirim.Darbe`'de: tekne, avcı yakalaması, çöp girdabı, ürkme, enerji bitmesi (yuva boş, klip Abdü'de) |
 | Yeme, AgdanKurtulma, KontrolNoktasi, DalgaVurdu | Denizde |
 | Pervane | Tekne (döngü) |
 | Ipucu | İpucu kutusu açılınca |
@@ -264,7 +266,7 @@ Uyarılar: kameralardaki kulak `Core/TekKulak` ile tek (açılan kamera alır); 
 
 ## Cila (#64)
 
-- **Geri bildirim (`Core/Geribildirim`, `GeribildirimAyarlari`, `UI/Night/EkranEfektleri`):** çarpma ve yakalanmada kamera sarsıntısı ve kırmızı flaş; poşette kahverengi bulanma; yavru kurtulunca yeşil parıltı; enerji azalınca (`Turtle/EnerjiUyarisi`) ekran kenarı kararır ve kalp atışı sesi (`SesTuru.KalpAtisi`, ses yuvası boş; `SesTuru`'nda Yusuf'un seslerinden sonra, en sonda).
+- **Geri bildirim (`Core/Geribildirim`, `GeribildirimAyarlari`, `UI/Night/EkranEfektleri`):** çarpma ve yakalanmada kamera sarsıntısı, kırmızı flaş ve darbe sesi; şiddet `Siddet.Hafif/Orta/Agir`, sayıları `GeribildirimAyarlari`'nda (koda güç yazılmaz); poşette kahverengi bulanma; yavru kurtulunca ve kontrol noktasında yeşil parıltı; enerji azalınca (`Turtle/EnerjiUyarisi`) ekran kenarı kararır ve kalp atışı sesi (`SesTuru.KalpAtisi`, ses yuvası boş; `SesTuru`'nda Yusuf'un seslerinden sonra, en sonda).
 - **Kamera:** yürürken/yüzerken hafif baş sallanması, Shift'te görüş açısı genişler, oyun kolunun sağ çubuğuyla bakış. Sayılar `KameraAyarlari` ve `GeribildirimAyarlari`'nda.
 - **Gece:** yıldızlar ve ay (`Core/GeceGokyuzu`, shader `IkiDunya/Gokyuzu`; `OrtamIsigi` gece açar); anne ve yavrular kumda iz bırakır (`Turtle/IzBirakici`, 25 sn'de silinir).
 - **Su altı ışık hüzmeleri (`Core/SuIsiklari`):** deniz sahnelerinde yüzücünün çevresinde; suyun üstündeyken görünmez.

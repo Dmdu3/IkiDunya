@@ -91,7 +91,7 @@ namespace IkiDunya.Turtle
         {
             // Ürken anne denize döner; yuva örtüldüyse artık önemi yok.
             if (durum != Durum.Deneme || gorulen != anne.transform) return;
-            Geribildirim.Darbe(0.5f);
+            Geribildirim.Darbe(Siddet.Orta);
             DenemeBitti("bildirim_deneme_insan");
         }
 
@@ -99,7 +99,7 @@ namespace IkiDunya.Turtle
         {
             if (durum == Durum.Deneme)
             {
-                Geribildirim.Darbe(0.3f);
+                Geribildirim.Darbe(Siddet.Hafif);
                 DenemeBitti("bildirim_deneme_enerji");
             }
             else if (durum == Durum.DenizeDonus) GeceBitti();
