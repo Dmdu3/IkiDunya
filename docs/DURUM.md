@@ -253,7 +253,7 @@ Uyarılar: kameralardaki kulak `Core/TekKulak` ile tek (açılan kamera alır); 
 - **Model dönüşü:** kalıbın kendi dönüşü korunur (Blender eksen düzeltmesi; tekne dik duruyordu). Denizanası artık sürekli yükselmez, aynı derinlik çevresinde kasılır.
 - **Poşet:** −10 enerji (`DenizTehlikeAyarlari.posetEnerjiKaybi`), yarı hız, `PosetYuttu` sesi, `ipucu_poset_yuttu`, deniz göstergesinde yavaşlık çubuğu.
 
-## Cila (dal `umut/cila`)
+## Cila (#64)
 
 - **Geri bildirim (`Core/Geribildirim`, `GeribildirimAyarlari`, `UI/Night/EkranEfektleri`):** çarpma ve yakalanmada kamera sarsıntısı ve kırmızı flaş; poşette kahverengi bulanma; yavru kurtulunca yeşil parıltı; enerji azalınca (`Turtle/EnerjiUyarisi`) ekran kenarı kararır ve kalp atışı sesi (`SesTuru.KalpAtisi`, ses yuvası boş; `SesTuru`'nda Yusuf'un seslerinden sonra, en sonda).
 - **Kamera:** yürürken/yüzerken hafif baş sallanması, Shift'te görüş açısı genişler, oyun kolunun sağ çubuğuyla bakış. Sayılar `KameraAyarlari` ve `GeribildirimAyarlari`'nda.
@@ -264,3 +264,12 @@ Uyarılar: kameralardaki kulak `Core/TekKulak` ile tek (açılan kamera alır); 
 - **Ayarlar:** yazı boyutu (bütün arayüz, `Core/ArayuzOlcegi`), ipuçları aç/kapa, tam ekran, çözünürlük, grafik kalitesi (düşük/orta/yüksek).
 - **Oyun kolu:** sol çubuk hareket, sağ çubuk bakış, LT hızlı, A zıpla/dal, X etkileş, LB/RB kazma sol/sağ, Y ya da d-pad yukarı kazmada yukarı, sağ çubuğa basış termal, Start duraklat. Menülerde ilk düğme seçili gelir. İnsan kısmının harita ekranı (Toprak) oyun koluyla denenmedi.
 - **Performans:** deniz kamerasında uzak düzlem 150 m (sis zaten 100 m'de örter); insanlar, kayalar, deniz çayırı ve deniz tabanının süsleri ekranda çok küçülünce çizilmez (LODGroup), küçük süsler gölge atmaz.
+
+## Kart yapıları: kum torbası, gözcü kulübesi, plaj tabelası (Yusuf'un modelleri, 5. parti)
+
+Kaynak betikler `Blender/Yusuf/` (`kum_torbasi.py`, `gozcu_kulubesi.py`, `plaj_tabelasi.py`, toplu: `kumsal_objeleri_5_uret.py`). FBX'ler `Models/Kumsal/` altında (`blender -b -P Blender/Yusuf/kumsal_objeleri_5_uret.py -- Assets/_Project/Models/Kumsal Blender/Yusuf/kumsal_objeleri_5.blend`), malzemeleri öteki kumsal objeleri gibi FBX'in içinde. Düzen öteki kumsal objeleriyle aynı (kök tabanın ortasında, metre, önü Blender'da −y).
+- **`Kum_Torbasi_Seddi`** (Kum Torbası Seddi kartı): 2 m'lik parça (x = −1..+1), boy ~0,35 m, derinlik ~0,8 m; 2 m arayla dönüşsüz dizilince dikişsiz. Tek çuval: `Kum_Torbasi` (0,6 × 0,36 × 0,13 m).
+- **`Gozcu_Kulubesi`** (Gözcü Kulübesi kartı): ayak tabanı 2,3 × 2,3 m, döşeme 2,2 m, mahya ~4,6 m, bayrak ~5,35 m; önde ~0,9 m taşan merdiven. Ön saçakta yanan fener (`P_Kehribar`).
+- **`Plaj_Tabelasi`** (Plaj Tabelaları kartı): iki direkli pano (1,4 × 0,9 m, boy ~2,1 m); üzerinde yazı yok, resimler var (kaplumbağa, ışık yasağı, ayak izi yasağı). Pano yüzü ayrı malzeme (`Tabela_Yuzu`), Unity'de dokulu malzemeyle değiştirilebilir. Küçüğü `Plaj_Tabelasi_Kucuk` (tek direk, ~1,3 m).
+
+Henüz yok: bu yapılar için gri kutu ve koda bağlama (`KumsalYapilari`; kart etkileri Toprak'ta, yapı kalıpları Umut'ta).
