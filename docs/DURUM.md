@@ -34,7 +34,7 @@ Son güncelleme: 2026-11-01 — Dalda (`umut/cila`): Hepsini kur, PC build, F6 p
 | Çöp yığını (anne takılır) | `Hazards` | `TrashTrap` | Umut | Yapılıyor |
 | İnsanlar ve görüş konisi | `Hazards` | `Insan`, `InsanAyarlari` | Umut | Yapılıyor |
 | Sıcak kum lekesi, gün doğumu, dalga | `Hazards` | `HazardZone`, `GunDogumu`, `Dalga`, `KacisAyarlari` | Umut | Yapılıyor |
-| Kumsalı durumdan kurma (çöp, şezlong, ışık, insan, araç izi, gölgelik, kayıp izleri) | `Hazards` | `KumsalYapilari` | Umut | Yapılıyor |
+| Kumsalı durumdan kurma (çöp, halka, şezlong, şemsiye, ışık, insan, araç izi, gölgelik, çit, gözcü kulübesi, kum torbası seddi, plaj tabelası, kayıp izleri) | `Hazards` | `KumsalYapilari` | Umut | Yapılıyor |
 | Kumsalın ilk hali | `Core` | `KumsalBaslangici`, `DenemeKumsali` | Umut | Yapılıyor |
 | Kaçışta çöp (ağ, halka, tekerlek izi) | `Hazards` | `TrashTrap` | Umut | Yapılıyor |
 | Avcılar | `Hazards` | `Yengec`, `Marti`, `Tilki`, `AvciAyarlari`, `Cover`; `Core/IAvlanabilir` | Umut | Yapılıyor |
@@ -273,4 +273,15 @@ Kaynak betikler `Blender/Yusuf/` (`kum_torbasi.py`, `gozcu_kulubesi.py`, `plaj_t
 - **`Gozcu_Kulubesi`** (Gözcü Kulübesi kartı): ayak tabanı 2,3 × 2,3 m, döşeme 2,2 m, mahya ~4,6 m, bayrak ~5,35 m; önde ~0,9 m taşan merdiven. Ön saçakta yanan fener (`P_Kehribar`).
 - **`Plaj_Tabelasi`** (Plaj Tabelaları kartı): iki direkli pano (1,4 × 0,9 m, boy ~2,1 m); üzerinde yazı yok, resimler var (kaplumbağa, ışık yasağı, ayak izi yasağı). Pano yüzü ayrı malzeme (`Tabela_Yuzu`), Unity'de dokulu malzemeyle değiştirilebilir. Küçüğü `Plaj_Tabelasi_Kucuk` (tek direk, ~1,3 m).
 
-Henüz yok: bu yapılar için gri kutu ve koda bağlama (`KumsalYapilari`; kart etkileri Toprak'ta, yapı kalıpları Umut'ta).
+**Kumsala bağlandı (2026-11-01, Toprak).** Kalıplar `Prefabs/Structures/` altında, `KumsalYapilari` kurar:
+- Gece devriyesi olan bölge (Gözcü Kulübesi kartı, devriye görevi) → `GozcuKulubesi`, bölgenin sağında 31 m içeride, merdiveni denize dönük.
+- Kumul onarımı olan bölge (Kumul Onarımı ve Kum Torbası kartları) → `KumTorbasiSeddi` parçaları deniz kenarından 5 m'de, her parça kıyının o noktadaki yönüne döner; iki ucunda tek `KumTorbasi`.
+- İnsanı süreli azaltan etki süren bölge (Plaj Tabelaları) → `PlajTabelasi` / `PlajTabelasiKucuk` sırayla, 12 m'de. Durum `KumsalDurumu.InsanSureliAzaldi(bolge)`'dan okunur; etki sınırda kırpılıp hiç insan azaltmadıysa tabela çıkmaz.
+
+**Kullanılmayan öteki modeller de bağlandı (2026-11-01):**
+- `Ag`, `HayaletAg`, `Misina`, `OtelIsigi` kalıpları artık `Ag`, `Hayalet_Ag`, `Misina`, `Isik_Diregi` modelini gösterir; eski küpler collider olarak kaldı, renderer'ları kapalı. Hayalet ağ ve misinada `Parilti` modelin parıltı malzemesini (`malzemeSirasi`) yakar.
+- Bölüm 1 ve Poşet sürüsündeki elle kopyalanmış hayalet ağ/misina kopyaları kalıp örneğine çevrildi (kalıp değişince sahne de değişir).
+- Bölüm 1 ve Bölüm 5'teki şamandıra silindirleri `Samandira` modeli; Bölüm 5'in ikinci parlayan plastiği `Parlayan_Plastik_3`.
+- Çöp katmanında her ikinci ağ yerine `PlastikHalka` (aynı tuzak, daha küçük alan). Her ikinci şezlongun yanına `Semsiye` (sadece direği engel).
+- Tilki çitinin bittiği uçlara `TilkiCitiSolUc` (`Tilki_Citi_Kose`) ve `TilkiCitiSagUc` (`Tilki_Citi_Kose_Bas`); komşu bölgede de çit varsa uç konmaz.
+- Yuva haritasında yumurtalı yuvanın ortasında üç küre yerine `Yumurta_Kumesi` (`Prefabs/UI/YumurtaKumesiSimgesi`). Tek `Yumurta` modeli kullanılmıyor (kümenin içinde zaten var).

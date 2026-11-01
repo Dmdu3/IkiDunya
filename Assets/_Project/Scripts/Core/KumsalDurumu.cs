@@ -103,6 +103,10 @@ namespace IkiDunya.Core
             Degisti?.Invoke();
         }
 
+        /// <summary>Bölgede insanı süreli azaltan bir etki sürüyor mu (ör. Plaj Tabelaları); kumsalda tabela olarak görünür.</summary>
+        public bool InsanSureliAzaldi(int bolge) =>
+            geciciEtkiler.Exists(e => e.Tur == GeciciEtki.Turu.Katman && e.Hedef == bolge && e.Alt == (int)BolgeKatmani.Insan && e.Fark < 0);
+
         /// <summary>Bölgenin katmanını kalıcı olarak sıfırlar; bekleyen süreli etkileri de düşer (ör. koruma alanı: süre bitince insan geri gelmez).</summary>
         public void KatmanSifirla(int bolge, BolgeKatmani katman)
         {
