@@ -15,14 +15,30 @@ namespace IkiDunya.Turtle
 
         private BirinciSahisKamera kamera;
         private float bakisiz;
+        private Vector3 oncekiYer;
+        private float gozHizi;
 
-        private void Awake() => kamera = GetComponent<BirinciSahisKamera>();
+        private void Awake()
+        {
+            kamera = GetComponent<BirinciSahisKamera>();
+            oncekiYer = transform.position;
+        }
 
         private void LateUpdate()
         {
-            if (ayarlar == null) return;
+            if (ayarlar == null || Time.deltaTime <= 0f) return;
+            // Gözün hızı: gerçeği görmek için yavaşlamak gerekir. Işınlanma (kontrol noktası) hızı bozmasın.
+            float anlik = Vector3.Distance(transform.position, oncekiYer) / Time.deltaTime;
+            oncekiYer = transform.position;
+            gozHizi = Mathf.Lerp(gozHizi, Mathf.Min(anlik, 20f), Time.deltaTime * 6f);
+
             // Kamera bu karede yerine oturduktan sonra: sahte ay göze göre konur.
-            AlgiNesnesi.HepsiniGuncelle(transform, ayarlar);
+            AlgiNesnesi.HepsiniGuncelle(transform, ayarlar, gozHizi);
+
+            // Sahte ay gökteyken bulut gerçek ayın önüne geçer: gökte yine tek bir ay kalır, yanlış yerde.
+            float bulut = AlgiNesnesi.SahteAyGorunuyor ? 1f : ayarlar.BulutTabani;
+            GeceGokyuzu.Bulut = Mathf.MoveTowards(GeceGokyuzu.Bulut, bulut, Time.deltaTime / Mathf.Max(0.1f, ayarlar.BulutSuresi));
+
             if (icgudu) Icgudu();
         }
 
@@ -56,7 +72,8 @@ namespace IkiDunya.Turtle
             hedef = Vector3.zero;
             float enIyi = 0f;
             Transform gercek = GeceGokyuzu.Ay;
-            if (gercek != null && gercek.gameObject.activeInHierarchy) Aday(gercek.position, 1f, ref hedef, ref enIyi);
+            // Bulutun arkasındaki ay sönük: az çeker.
+            if (gercek != null && gercek.gameObject.activeInHierarchy) Aday(gercek.position, 1f - 0.85f * GeceGokyuzu.Bulut, ref hedef, ref enIyi);
             foreach (AlgiNesnesi nesne in AlgiNesnesi.Kayitlar)
                 if (nesne.Tur == AlgiTuru.LambaAy && nesne.YanilgiGorunuyor) Aday(nesne.YanilgiKonumu, ayarlar.SahteAyCekiciligi, ref hedef, ref enIyi);
             return enIyi > 0f;

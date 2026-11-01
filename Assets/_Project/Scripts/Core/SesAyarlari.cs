@@ -15,7 +15,9 @@ namespace IkiDunya.Core
         // Sona eklenir: asset'te türler sırasıyla saklanır.
         AvciBalikUyari, Darbe,
         // Kaplumbağanın algısı: yanılgı kırıldı (poşet/plastik hışırtısı, lambanın elektrik vızıltısı).
-        YanilgiPoset, YanilgiIsik
+        YanilgiPoset, YanilgiIsik,
+        // Kıyının dalga uğultusu (döngü, konumlu): göz yanılsa da kulak denizin yönünü söyler.
+        Kiyi
     }
 
     /// <summary>Ses yuvaları: her ses olayının klipleri ve düzeyi; her adımın ortam sesi ve müziği. Klip boşsa o ses çalmaz, oyun bozulmaz.</summary>

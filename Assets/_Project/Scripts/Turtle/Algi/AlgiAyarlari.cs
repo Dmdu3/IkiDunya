@@ -14,7 +14,7 @@ namespace IkiDunya.Turtle
         public class Profil
         {
             [SerializeField] private AlgiTuru tur;
-            [Tooltip("Bu uzaklığa girince yanılgı kalıcı olarak kırılır (metre).")]
+            [Tooltip("Bu uzaklığa girince yanılgı kalıcı olarak kırılır (metre). 0: yakınlık kırmaz; ancak bakınca ya da yutunca/değince kırılır.")]
             [SerializeField] private float kirilmaYaricapi;
             [Tooltip("Bu uzaklığın içinde yanılgı arada bir 'göz kırpar': gerçek görünüş bir an görünür (metre).")]
             [SerializeField] private float supheYaricapi;
@@ -24,13 +24,16 @@ namespace IkiDunya.Turtle
             [SerializeField] private float bakmaYaricapi;
             [Tooltip("Bu kadar doğrudan bakınca yanılgı kırılır (saniye).")]
             [SerializeField] private float bakmaSuresi;
+            [Tooltip("Göz bundan hızlı giderken bakış sayılmaz (m/sn): gerçeği görmek için yavaşlamak gerekir. 0: sınır yok.")]
+            [SerializeField] private float bakmaHizSiniri;
             [Tooltip("Kırılma anının süresi: yanılgı söner, gerçek belirir (saniye).")]
             [SerializeField] private float kirilmaSuresi;
             [SerializeField] private SesTuru ses;
             [Tooltip("İlk kırılmada gösterilen ipucunun id'si (docs/metinler.md).")]
             [SerializeField] private string ipucu;
 
-            public Profil(AlgiTuru tur, float kirilma, float suphe, bool bakmakKirar, float bakmaYaricapi, float bakmaSuresi, float kirilmaSuresi, SesTuru ses, string ipucu)
+            public Profil(AlgiTuru tur, float kirilma, float suphe, bool bakmakKirar, float bakmaYaricapi, float bakmaSuresi, float bakmaHizSiniri,
+                float kirilmaSuresi, SesTuru ses, string ipucu)
             {
                 this.tur = tur;
                 kirilmaYaricapi = kirilma;
@@ -38,6 +41,7 @@ namespace IkiDunya.Turtle
                 this.bakmakKirar = bakmakKirar;
                 this.bakmaYaricapi = bakmaYaricapi;
                 this.bakmaSuresi = bakmaSuresi;
+                this.bakmaHizSiniri = bakmaHizSiniri;
                 this.kirilmaSuresi = kirilmaSuresi;
                 this.ses = ses;
                 this.ipucu = ipucu;
@@ -49,6 +53,7 @@ namespace IkiDunya.Turtle
             public bool BakmakKirar => bakmakKirar;
             public float BakmaYaricapi => bakmaYaricapi;
             public float BakmaSuresi => bakmaSuresi;
+            public float BakmaHizSiniri => bakmaHizSiniri;
             public float KirilmaSuresi => kirilmaSuresi;
             public SesTuru Ses => ses;
             public string Ipucu => ipucu;
@@ -56,10 +61,19 @@ namespace IkiDunya.Turtle
 
         [SerializeField] private Profil[] profiller =
         {
-            new Profil(AlgiTuru.PosetDenizanasi, 2.4f, 9f, true, 6f, 1.5f, 0.5f, SesTuru.YanilgiPoset, "ipucu_yanilgi_poset"),
-            new Profil(AlgiTuru.LambaAy, 8f, 30f, false, 0f, 0f, 1.4f, SesTuru.YanilgiIsik, "ipucu_yanilgi_isik"),
-            new Profil(AlgiTuru.PlastikYosun, 3f, 10f, true, 7f, 1.5f, 0.6f, SesTuru.YanilgiPoset, "ipucu_yanilgi_plastik"),
+            // Poşet ve plastik yakınlıkla kırılmaz: acele eden yutar/değer, gerçeği ancak yavaşlayıp yakından bakan görür (GDD: yakından bakılır).
+            new Profil(AlgiTuru.PosetDenizanasi, 0f, 4f, true, 4f, 1f, 1.5f, 0.5f, SesTuru.YanilgiPoset, "ipucu_yanilgi_poset"),
+            new Profil(AlgiTuru.LambaAy, 8f, 14f, false, 0f, 0f, 0f, 1.4f, SesTuru.YanilgiIsik, "ipucu_yanilgi_isik"),
+            new Profil(AlgiTuru.PlastikYosun, 0f, 4f, true, 4f, 1f, 1.5f, 0.6f, SesTuru.YanilgiPoset, "ipucu_yanilgi_plastik"),
         };
+
+        [Header("Sahte denizanası kasılması")]
+        [Tooltip("Uzaktan sahte denizanası da kasılır (kaplumbağanın beyni tamamlar); bu uzaklıktan sonra kasılma tekler (metre).")]
+        [SerializeField] private float kasilmaTeklemeBasi = 6f;
+        [Tooltip("Bu uzaklıkta kasılma tamamen durur: poşet akıntıyla düz süzülür (metre).")]
+        [SerializeField] private float kasilmaBitisi = 2.5f;
+        [Tooltip("Kasılma sıklığı (saniyede).")]
+        [SerializeField] private float kasilmaSikligi = 0.8f;
 
         [Header("Şüphe (göz kırpma)")]
         [Tooltip("Ekranın ortasından bu açının içi 'doğrudan bakış' sayılır (derece).")]
@@ -100,6 +114,26 @@ namespace IkiDunya.Turtle
         [Tooltip("Arkada kalan ay daha az çeker: bu açıda çekicilik yarıya iner (derece). Önde gerçek ay varken yandaki lamba yine baskın çıkar, arkadaki çıkmaz.")]
         [SerializeField] private float cekicilikYariAcisi = 100f;
 
+        [Header("Tek ay, bulut, sahte ay yolu")]
+        [Tooltip("Gökte aynı anda tek sahte ay olur (en yakın lamba). Başka lamba ancak bu kadar kat daha yakınsa yerini alır (titremesin).")]
+        [SerializeField] private float aySecimFarki = 1.3f;
+        [Tooltip("Sahte ay görünürken bulut gerçek ayın önüne bu sürede geçer (saniye).")]
+        [SerializeField] private float bulutSuresi = 6f;
+        [Tooltip("Sahte ay yokken bile gökte kalan bulut payı (0–1).")]
+        [SerializeField] private float bulutTabani = 0.1f;
+        [Tooltip("Kumdaki sahte ay yolunun genişliği (metre) ve rengi.")]
+        [SerializeField] private float ayYoluGenisligi = 1.8f;
+        [ColorUsage(true, true)]
+        [SerializeField] private Color ayYoluRengi = new Color(1.1f, 0.9f, 0.55f, 0.09f);
+
+        public float KasilmaTeklemeBasi => kasilmaTeklemeBasi;
+        public float KasilmaBitisi => kasilmaBitisi;
+        public float KasilmaSikligi => kasilmaSikligi;
+        public float AySecimFarki => aySecimFarki;
+        public float BulutSuresi => bulutSuresi;
+        public float BulutTabani => bulutTabani;
+        public float AyYoluGenisligi => ayYoluGenisligi;
+        public Color AyYoluRengi => ayYoluRengi;
         public float BakmaAcisi => bakmaAcisi;
         public float KirpmaAraligiUzak => kirpmaAraligiUzak;
         public float KirpmaAraligiYakin => kirpmaAraligiYakin;

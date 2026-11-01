@@ -500,6 +500,10 @@ namespace IkiDunya.Editor
             gece.SetParent(dunya, false);
             GameObject ay = Kutu("AyYolu", gece, new Vector3(-6f, -0.3f, -DenizDerinligi / 2f), new Vector3(3f, 0.01f, DenizDerinligi), ayYolu, "Default");
             Object.DestroyImmediate(ay.GetComponent<Collider>());
+            // Bulut ayın önüne geçince yansıma da söner.
+            ay.AddComponent<AyYansimasi>();
+            // Kıyının dalga sesi: göz sahte aya kansa da kulak denizin yönünü söyler.
+            new GameObject("KiyiSesi").AddComponent<KiyiSesi>().transform.SetParent(gece, false);
 
             KumsalYapilariKur(kumSicakligi, insanKoku);
             return kumSicakligi;
@@ -963,11 +967,31 @@ namespace IkiDunya.Editor
             ayGorunus.shadowCastingMode = ShadowCastingMode.Off;
             ayGorunus.receiveShadows = false;
             sahteAy.SetActive(false);
+
+            // Kumda sahte aya giden parlak yol (gerçek ayın denizdeki yansıması gibi); noktaları AlgiNesnesi kumun üstüne oturtur.
+            var yol = new GameObject("Yanilgi_AyYolu").AddComponent<LineRenderer>();
+            yol.transform.SetParent(kok, false);
+            yol.useWorldSpace = true;
+            yol.positionCount = 16;
+            yol.alignment = LineAlignment.TransformZ;
+            yol.transform.rotation = Quaternion.Euler(90f, 0f, 0f);
+            yol.widthCurve = new AnimationCurve(new Keyframe(0f, 0.5f), new Keyframe(0.6f, 1f), new Keyframe(1f, 0.6f));
+            // Uçları erir: yol değil, kumda bir ışık parıltısı.
+            var gradyan = new Gradient();
+            gradyan.SetKeys(new[] { new GradientColorKey(Color.white, 0f), new GradientColorKey(Color.white, 1f) },
+                new[] { new GradientAlphaKey(0f, 0f), new GradientAlphaKey(0.7f, 0.25f), new GradientAlphaKey(1f, 0.7f), new GradientAlphaKey(0.2f, 1f) });
+            yol.colorGradient = gradyan;
+            yol.sharedMaterial = Malzeme("SahteAyYolu", Color.white, "IkiDunya/Gokyuzu");
+            yol.shadowCastingMode = ShadowCastingMode.Off;
+            yol.receiveShadows = false;
+            yol.enabled = false;
+
             var algi = kok.gameObject.AddComponent<AlgiNesnesi>();
             Bagla(algi, "gercekGorunus", direk.transform);
             Bagla(algi, "yanilgiGorunus", sahteAy);
             Bagla(algi, "odak", lamba.transform);
             Bagla(algi, "isikYasagiKumsali", kumsal);
+            Bagla(algi, "ayYolu", yol);
             var so = new SerializedObject(algi);
             so.FindProperty("tur").enumValueIndex = (int)AlgiTuru.LambaAy;
             so.ApplyModifiedPropertiesWithoutUndo();
@@ -1262,7 +1286,10 @@ namespace IkiDunya.Editor
             var ayGorunus = ay.GetComponent<Renderer>();
             ayGorunus.sharedMaterial = Malzeme("Ay", new Color(1f, 0.97f, 0.85f, 1f), "IkiDunya/Gokyuzu");
             ayGorunus.shadowCastingMode = ShadowCastingMode.Off;
-            Bagla(gok.AddComponent<GeceGokyuzu>(), "ay", ay.transform);
+            var gokyuzu = gok.AddComponent<GeceGokyuzu>();
+            Bagla(gokyuzu, "ay", ay.transform);
+            // Koyu bulut alfa karışımı ister (gökyüzü shader'ı eklemeli); gece sisi de koyu, bulutu açmaz.
+            Bagla(gokyuzu, "bulutMalzemesi", SaydamMalzeme("Bulut", new Color(0.06f, 0.07f, 0.1f, 0.9f)));
             return gok;
         }
 
@@ -1355,7 +1382,48 @@ namespace IkiDunya.Editor
                 so.FindProperty("icgudu").boolValue = true;
                 so.ApplyModifiedPropertiesWithoutUndo();
             }
+
+            // Kaplumbağanın görüşü: uzak bulanık ve soluk, parlak ışık taşar. Sadece bu kamerada (yönetim ekranı etkilenmez);
+            // göz kapanınca (başka adım) hacim de kapanır.
+            UnityEngine.Rendering.Universal.CameraExtensions.GetUniversalAdditionalCameraData(goz.GetComponent<UnityEngine.Camera>()).renderPostProcessing = true;
+            var hacim = goz.AddComponent<Volume>();
+            hacim.isGlobal = true;
+            hacim.sharedProfile = KaplumbagaGorusu();
             return bakis;
+        }
+
+        /// <summary>Kaplumbağa görüşünün post-process profili (Settings/KaplumbagaGorusu). Varsa dokunulmaz: sanatçı Inspector'dan ayarlar.</summary>
+        private static VolumeProfile KaplumbagaGorusu()
+        {
+            string yol = $"{AyarKlasoru}/KaplumbagaGorusu.asset";
+            var profil = AssetDatabase.LoadAssetAtPath<VolumeProfile>(yol);
+            if (profil != null) return profil;
+
+            profil = ScriptableObject.CreateInstance<VolumeProfile>();
+            AssetDatabase.CreateAsset(profil, yol);
+
+            // Uzak bulanık: belirsiz bir leke ne olduğunu ancak yaklaşınca belli eder.
+            var odak = profil.Add<UnityEngine.Rendering.Universal.DepthOfField>(true);
+            odak.mode.Override(UnityEngine.Rendering.Universal.DepthOfFieldMode.Gaussian);
+            odak.gaussianStart.Override(9f);
+            odak.gaussianEnd.Override(40f);
+            odak.gaussianMaxRadius.Override(1f);
+            odak.highQualitySampling.Override(true);
+            // Parlak ışık taşar: sahte ay (HDR) gerçek aydan çekici parlar.
+            var parilti = profil.Add<UnityEngine.Rendering.Universal.Bloom>(true);
+            parilti.threshold.Override(1f);
+            parilti.intensity.Override(0.6f);
+            parilti.scatter.Override(0.7f);
+            var renk = profil.Add<UnityEngine.Rendering.Universal.ColorAdjustments>(true);
+            renk.saturation.Override(-12f);
+            var kenar = profil.Add<UnityEngine.Rendering.Universal.Vignette>(true);
+            kenar.intensity.Override(0.22f);
+            kenar.smoothness.Override(0.5f);
+
+            foreach (VolumeComponent bilesen in profil.components) AssetDatabase.AddObjectToAsset(bilesen, profil);
+            EditorUtility.SetDirty(profil);
+            AssetDatabase.SaveAssets();
+            return profil;
         }
 
         internal static Transform TuvalKur(string ad, Transform grup)

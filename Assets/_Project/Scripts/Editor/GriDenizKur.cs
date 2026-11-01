@@ -574,12 +574,13 @@ namespace IkiDunya.Editor
             return nesne;
         }
 
-        /// <summary>Uzaktan poşet, kaplumbağanın gözünde gerçek denizanası modeliyle görünür; yaklaşınca ya da uzun bakınca poşet ortaya çıkar.
-        /// Kopya kasılmaz (animasyonsuz): akıntıyla düz süzülmesi dikkatli oyuncuya onu ele verir (GDD: denizanası kasılır, poşet düz süzülür).
+        /// <summary>Poşet, kaplumbağanın gözünde gerçek denizanası modeliyle görünür ve uzaktan onun gibi kasılır (animasyonu da var).
+        /// Yaklaştıkça kasılma tekler ve durur; poşet akıntıyla düz süzülür (GDD: yakından bakınca ayırt edilir). Gerçeği yavaşlayıp bakan ya da yutan görür.
         /// Parkur kalıplarında yok: poşet sürüsünün karanlık aşaması poşetin görünmez olmasına dayanır.</summary>
         private static void PosetYanilgisiKur(GameObject nesne, Transform gercek)
         {
             GameObject sahte = GriKumsalKur.ModelYerlestir(nesne.transform, "Denizanasi", new Vector3(0f, -0.25f, 0f), 0.6f);
+            if (sahte != null) GriKumsalKur.AnimasyonBagla(sahte, DenizanasiDenetleyicisi);
             if (sahte == null)
             {
                 sahte = GameObject.CreatePrimitive(PrimitiveType.Sphere);
