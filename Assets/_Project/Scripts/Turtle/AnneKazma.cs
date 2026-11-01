@@ -73,9 +73,12 @@ namespace IkiDunya.Turtle
                 Ses.Cal(SesTuru.Kazma, transform.position);
             }
             sonTus = tus;
-            kara.Enerji.Harca(ayarlar.VurusEnerjisi);
-
-            if (Vurus < Hedef) return;
+            // Aşamayı tamamlayan vuruş enerji harcamaz: son vuruşta enerji biterse biten yuva kaybolmasın.
+            if (Vurus < Hedef)
+            {
+                kara.Enerji.Harca(ayarlar.VurusEnerjisi);
+                return;
+            }
 
             if (SuAnki == Asama.Kaziyor)
             {

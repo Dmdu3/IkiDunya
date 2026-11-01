@@ -1,6 +1,7 @@
 using System.Collections.Generic;
 using IkiDunya.Core;
 using UnityEngine;
+using UnityEngine.EventSystems;
 
 namespace IkiDunya.Hazards
 {
@@ -56,11 +57,21 @@ namespace IkiDunya.Hazards
         private void Update()
         {
             if (!GameInput.TiklaBasildi) return;
+            // Kart ya da olay paneline tıklanınca altındaki iz açılmasın.
+            if (EventSystem.current != null && EventSystem.current.IsPointerOverGameObject()) return;
             Ray isin = kamera.ScreenPointToRay(GameInput.IsaretciKonumu);
-            if (!Physics.Raycast(isin, out RaycastHit carpan, kamera.farClipPlane)) return;
-
-            int sira = simgeler.IndexOf(carpan.collider);
-            if (sira < 0 || kumsal.KayipIzleri[sira].KanitAcildi) return;
+            // Lambanın çekim alanı gibi trigger'lar ışını kesmesin; üst üste izlerde açılmamış en yakını açılır.
+            RaycastHit[] carpanlar = Physics.RaycastAll(isin, kamera.farClipPlane, ~0, QueryTriggerInteraction.Ignore);
+            int sira = -1;
+            float enYakin = float.MaxValue;
+            foreach (RaycastHit carpan in carpanlar)
+            {
+                int s = simgeler.IndexOf(carpan.collider);
+                if (s < 0 || kumsal.KayipIzleri[s].KanitAcildi || carpan.distance >= enYakin) continue;
+                enYakin = carpan.distance;
+                sira = s;
+            }
+            if (sira < 0) return;
             Debug.Log($"KayipIziHaritasi: kanıt açıldı — {kumsal.KayipIzleri[sira].Kanit}.");
             Ses.Cal(SesTuru.KanitBulundu);
             kumsal.KanitAc(sira);

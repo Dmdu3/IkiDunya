@@ -39,7 +39,7 @@ namespace IkiDunya.Management
             foreach (Yuva yuva in kumsal.Yuvalar)
             {
                 if (yuva.Kafesli) Simge(yuva.Konum, boy * 1.4f, yukseklik - 0.05f, kafesRengi);
-                Simge(yuva.Konum, boy, yukseklik, yuva.Yumurta > 0 ? termal.Renk(yuva.Bant) : Color.black);
+                Simge(yuva.Konum, boy, yukseklik, yuva.Yumurta > 0 ? termal.Renk(kumsal.YuvaBandi(yuva)) : Color.black);
             }
         }
 

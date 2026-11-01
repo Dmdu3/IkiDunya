@@ -14,18 +14,26 @@ namespace IkiDunya.Camera
         private float egim;
         private Transform gizlenen;
 
+        // Sahnede birden çok göz olabilir (anne, sürü); biri kapanınca açık kalanın imleci serbest kalmasın.
+        private static int acikSayisi;
+
+        [RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.SubsystemRegistration)]
+        private static void StatikleriSifirla() => acikSayisi = 0;
+
         private void Start() => KendiniGizle(govde);
 
         private void OnEnable()
         {
+            acikSayisi++;
             Duraklatma.Degisti += DuraklatmaDegisti;
             ImleciKilitle(!Duraklatma.Acik);
         }
 
         private void OnDisable()
         {
+            acikSayisi--;
             Duraklatma.Degisti -= DuraklatmaDegisti;
-            ImleciKilitle(false);
+            if (acikSayisi <= 0) ImleciKilitle(false);
         }
 
         private void DuraklatmaDegisti(bool acik) => ImleciKilitle(!acik);

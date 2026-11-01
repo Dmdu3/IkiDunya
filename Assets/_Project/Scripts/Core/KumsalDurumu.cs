@@ -95,21 +95,53 @@ namespace IkiDunya.Core
 
         public void KatmanDegistir(int bolge, BolgeKatmani katman, int fark)
         {
+            int once = bolgeler[bolge].Seviye(katman);
             bolgeler[bolge].KatmanEkle(katman, fark);
+            // Sınırda kırpılan kısım, aynı yöndeki süreli etkinin kapladığı yerdir: o kadarı kalıcıya geçer, süre bitince geri alınmaz.
+            int kirpilan = fark - (bolgeler[bolge].Seviye(katman) - once);
+            if (kirpilan != 0) GeciciKatmaniKalicilastir(bolge, katman, kirpilan);
             Degisti?.Invoke();
+        }
+
+        /// <summary>Bölgenin katmanını kalıcı olarak sıfırlar; bekleyen süreli etkileri de düşer (ör. koruma alanı: süre bitince insan geri gelmez).</summary>
+        public void KatmanSifirla(int bolge, BolgeKatmani katman)
+        {
+            bolgeler[bolge].KatmanEkle(katman, -bolgeler[bolge].Seviye(katman));
+            geciciEtkiler.RemoveAll(e => e.Tur == GeciciEtki.Turu.Katman && e.Hedef == bolge && e.Alt == (int)katman);
+            Degisti?.Invoke();
+        }
+
+        private void GeciciKatmaniKalicilastir(int bolge, BolgeKatmani katman, int kalan)
+        {
+            for (int i = geciciEtkiler.Count - 1; i >= 0 && kalan != 0; i--)
+            {
+                GeciciEtki etki = geciciEtkiler[i];
+                if (etki.Tur != GeciciEtki.Turu.Katman || etki.Hedef != bolge || etki.Alt != (int)katman) continue;
+                if (Math.Sign(etki.Fark) != Math.Sign(kalan)) continue;
+                int alinan = Math.Sign(kalan) * Math.Min(Math.Abs(kalan), Math.Abs(etki.Fark));
+                etki.Fark -= alinan;
+                kalan -= alinan;
+                if (etki.Fark == 0) geciciEtkiler.RemoveAt(i);
+            }
         }
 
         public void YapiKoy(int bolge, BolgeYapisi yapi)
         {
             bolgeler[bolge].YapiAyarla(yapi, true);
+            // Süreli olarak konmuşsa artık kalıcı: süre bitince kaldırılmaz.
+            YapiEtkileriniSil(bolge, yapi);
             Degisti?.Invoke();
         }
 
         public void YapiKaldir(int bolge, BolgeYapisi yapi)
         {
             bolgeler[bolge].YapiAyarla(yapi, false);
+            YapiEtkileriniSil(bolge, yapi);
             Degisti?.Invoke();
         }
+
+        private void YapiEtkileriniSil(int bolge, BolgeYapisi yapi) =>
+            geciciEtkiler.RemoveAll(e => e.Tur == GeciciEtki.Turu.Yapi && e.Hedef == bolge && e.Alt == (int)yapi);
 
         public void DenizdekiAgDegistir(int fark)
         {
@@ -151,11 +183,21 @@ namespace IkiDunya.Core
             Degisti?.Invoke();
         }
 
-        public void YuvaTasi(int yuva, int bolge, Vector3 konum, bool dalgaAltinda)
+        /// <summary>Yuvayı taşır. Bant yeni yerin zemininden (ısınma hariç) baştan kurulur; süresi bitmemiş etkiler (gölge, sulama) sürer.</summary>
+        public void YuvaTasi(int yuva, int bolge, Vector3 konum, bool dalgaAltinda, SicaklikBandi zeminBandi)
         {
-            yuvalar[yuva].Tasi(bolge, konum, dalgaAltinda);
+            int gecici = 0;
+            foreach (GeciciEtki etki in geciciEtkiler)
+                if (etki.Tur == GeciciEtki.Turu.YuvaBant && etki.Hedef == yuva) gecici += etki.Fark;
+            yuvalar[yuva].Tasi(bolge, konum, dalgaAltinda, zeminBandi, gecici);
             Degisti?.Invoke();
         }
+
+        /// <summary>Yuvanın şu anki bandı: kazıldığı zemin, sonradan gelen farklar ve bütün kumun ısınması. Kaçış gecesi ve harita bunu okur.</summary>
+        public SicaklikBandi YuvaBandi(int yuva) => YuvaBandi(yuvalar[yuva]);
+
+        public SicaklikBandi YuvaBandi(Yuva yuva) =>
+            (SicaklikBandi)Mathf.Clamp((int)yuva.Bant + kumIsinmasi, (int)SicaklikBandi.Mavi, (int)SicaklikBandi.Kirmizi);
 
         public void YuvaYumurtaKaybet(int yuva, int adet)
         {
@@ -163,7 +205,7 @@ namespace IkiDunya.Core
             Degisti?.Invoke();
         }
 
-        /// <summary>Yuvanın sıcaklığını kalıcı olarak bant bant değiştirir (ör. yuva taşındıktan sonra yeni yerin farkı).</summary>
+        /// <summary>Yuvanın sıcaklığını kalıcı olarak bant bant değiştirir (ör. bölgesine gölgelik kondu).</summary>
         public void YuvaBantDegistir(int yuva, int fark)
         {
             yuvalar[yuva].BantFarki += fark;
@@ -303,7 +345,7 @@ namespace IkiDunya.Core
         public Turu Tur => tur;
         public int Hedef => hedef;
         public int Alt => alt;
-        public int Fark => fark;
+        public int Fark { get => fark; internal set => fark = value; }
         public int KalanTur { get => kalanTur; internal set => kalanTur = value; }
     }
 
@@ -361,7 +403,8 @@ namespace IkiDunya.Core
 
         public int Bolge => bolge;
         public Vector3 Konum => konum;
-        /// <summary>Kazıldığı bant ve sonradan gelen farklar (gölge, sulama, sıcak dalgası); kaçış gecesi bunu okur.</summary>
+        /// <summary>Zemin bandı (kazıldığı ya da taşındığı yer, ısınma hariç) ve sonradan gelen farklar (gölgelik, gölge, sulama).
+        /// Bütün kumun ısınması dahil değil; güncel bant için KumsalDurumu.YuvaBandi.</summary>
         public SicaklikBandi Bant => (SicaklikBandi)Mathf.Clamp((int)bant + bantFarki, (int)SicaklikBandi.Mavi, (int)SicaklikBandi.Kirmizi);
         public SicaklikBandi KazildigiBant => bant;
         public int BantFarki { get => bantFarki; internal set => bantFarki = value; }
@@ -370,11 +413,13 @@ namespace IkiDunya.Core
         public int CikisinaHafta { get => cikisinaHafta; internal set => cikisinaHafta = value; }
         public bool Kafesli { get => kafesli; internal set => kafesli = value; }
 
-        internal void Tasi(int yeniBolge, Vector3 yeniKonum, bool yeniDalgaAltinda)
+        internal void Tasi(int yeniBolge, Vector3 yeniKonum, bool yeniDalgaAltinda, SicaklikBandi zeminBandi, int geciciFark)
         {
             bolge = yeniBolge;
             konum = yeniKonum;
             dalgaAltinda = yeniDalgaAltinda;
+            bant = zeminBandi;
+            bantFarki = geciciFark;
         }
     }
 

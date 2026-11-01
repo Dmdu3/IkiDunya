@@ -259,6 +259,8 @@ namespace IkiDunya.Management
             if (BekleyenKart != null) KartiOyna(BekleyenKart, hedef);
             else if (BekleyenGorev != null && yonetim.BosGonullu(kumsal) > 0)
             {
+                // İşe yaramayacak hedefte gönüllü harcanmaz; görev bekler, oyuncu başka hedef seçer.
+                if (!etkiler.GorevIseYarar(BekleyenGorev, hedef)) return;
                 Ses.Cal(SesTuru.DugmeTikla);
                 etkiler.GorevVer(BekleyenGorev, hedef);
             }
