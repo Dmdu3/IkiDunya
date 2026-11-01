@@ -4,7 +4,7 @@ using UnityEngine;
 
 namespace IkiDunya.Hazards
 {
-    /// <summary>Kumsalı KumsalDurumu'ndan kurar: bölge bölge çöp, şezlong, ışık, insan, araç izi, gölgelik; kayıp izleri. Gece ortasında yapılar yeniden kurulmaz.</summary>
+    /// <summary>Kumsalı KumsalDurumu'ndan kurar: bölge bölge çöp, şezlong, ışık, insan, araç izi, gölgelik, çit, kulübe, sed, tabela; kayıp izleri. Gece ortasında yapılar yeniden kurulmaz.</summary>
     public class KumsalYapilari : MonoBehaviour
     {
         [SerializeField] private KumsalDurumu kumsal;
@@ -23,9 +23,24 @@ namespace IkiDunya.Hazards
         [SerializeField] private GameObject tekerlekIziKalibi;
         [Tooltip("Tilki çiti parçası (4 m); bölgenin kara tarafına dizilir. Boşsa çit görünmez.")]
         [SerializeField] private GameObject tilkiCitiKalibi;
+        [Tooltip("Çitin sol ve sağ ucu; komşu bölgede çit yoksa konur. Boşsa uç konmaz.")]
+        [SerializeField] private GameObject citSolUcKalibi;
+        [SerializeField] private GameObject citSagUcKalibi;
         [Tooltip("Kafesli yuvanın etrafına konan kafes. Boşsa kafes görünmez.")]
         [SerializeField] private GameObject yuvaKafesiKalibi;
         [SerializeField] private GameObject isikKalibi;
+        [Tooltip("Ağ yerine sırayla konan plastik halka (çöp katmanının ikinci, dördüncü... tuzağı). Boşsa hep ağ.")]
+        [SerializeField] private GameObject halkaKalibi;
+        [Tooltip("Şezlongların yanına sırayla konan şemsiye. Boşsa şemsiye yok.")]
+        [SerializeField] private GameObject semsiyeKalibi;
+        [Tooltip("Gece devriyesi olan bölgedeki gözcü kulübesi (Gözcü Kulübesi kartı, devriye görevi).")]
+        [SerializeField] private GameObject gozcuKulubesiKalibi;
+        [Tooltip("Kumul onarımı ya da kum torbası olan bölgenin deniz tarafına dizilen sed parçası (2 m; 2 m arayla dikişsiz).")]
+        [SerializeField] private GameObject kumTorbasiSeddiKalibi;
+        [Tooltip("Sedin iki ucuna konan tek kum torbası.")]
+        [SerializeField] private GameObject kumTorbasiKalibi;
+        [Tooltip("İnsanı süreli azaltan etki (Plaj Tabelaları) süren bölgeye konan tabelalar; sırayla kullanılır.")]
+        [SerializeField] private GameObject[] tabelaKaliplari = new GameObject[0];
         [SerializeField] private Insan insanKalibi;
         [Tooltip("Farklı görünüşlü insanlar; doluysa her insan bunlardan biri (bölgeye göre sabit).")]
         [SerializeField] private Insan[] insanKaliplari = new Insan[0];
@@ -41,6 +56,12 @@ namespace IkiDunya.Hazards
         [SerializeField] private float tekerlekIziUzakligi = 17f;
         [Tooltip("Tilki çitinin deniz kenarından uzaklığı (m); kumsalın kara tarafı.")]
         [SerializeField] private float citUzakligi = 38f;
+        [SerializeField] private float kulubeUzakligi = 31f;
+        [Tooltip("Sedin deniz kenarından uzaklığı (m); yuvalarla deniz arasında.")]
+        [SerializeField] private float sedUzakligi = 5f;
+        [SerializeField] private float tabelaUzakligi = 12f;
+        [Tooltip("Şemsiyenin şezlonga göre yeri (şezlongun kendi ekseninde, m).")]
+        [SerializeField] private Vector3 semsiyeKaymasi = new Vector3(1.1f, 0f, 0.3f);
 
         private readonly List<GameObject> yapilar = new List<GameObject>();
         private readonly List<GameObject> izler = new List<GameObject>();
@@ -106,16 +127,24 @@ namespace IkiDunya.Hazards
                 if (bolge.Var(BolgeYapisi.Golgelik)) Koy(golgelikKalibi, kum.BolgeNoktasi(i, golgelikUzakligi), 0f);
                 if (bolge.Var(BolgeYapisi.AracIzi)) Koy(tekerlekIziKalibi, kum.BolgeNoktasi(i, tekerlekIziUzakligi), 0f);
                 if (bolge.Var(BolgeYapisi.TilkiCiti)) CitiKur(i);
+                if (bolge.Var(BolgeYapisi.Devriye)) Koy(gozcuKulubesiKalibi, kum.BolgeNoktasi(i, 0.85f, kulubeUzakligi), 180f);
+                if (bolge.Var(BolgeYapisi.KumulOnarimi)) SeddiKur(i);
+                if (kumsal.InsanSureliAzaldi(i) && tabelaKaliplari.Length > 0)
+                    Koy(tabelaKaliplari[i % tabelaKaliplari.Length], kum.BolgeNoktasi(i, 0.3f, tabelaUzakligi), 180f);
 
                 for (int c = 0; c < bolge.Seviye(BolgeKatmani.Cop); c++)
                 {
                     Koy(copYiginiKalibi, Nokta(rastgele, i, copAraligi), Aci(rastgele));
-                    Koy(agKalibi, Nokta(rastgele, i, copAraligi), Aci(rastgele));
+                    Koy(c % 2 == 1 && halkaKalibi != null ? halkaKalibi : agKalibi, Nokta(rastgele, i, copAraligi), Aci(rastgele));
                     Koy(siseKalibi, Nokta(rastgele, i, copAraligi), 0f);
                 }
 
                 for (int s = 0; s < bolge.Seviye(BolgeKatmani.Sezlong); s++)
-                    Koy(sezlongKalibi, Nokta(rastgele, i, sezlongAraligi), Aci(rastgele));
+                {
+                    GameObject sezlong = Koy(sezlongKalibi, Nokta(rastgele, i, sezlongAraligi), Aci(rastgele));
+                    if (s % 2 == 0 && sezlong != null)
+                        Koy(semsiyeKalibi, sezlong.transform.TransformPoint(semsiyeKaymasi), Aci(rastgele));
+                }
 
                 int isikSayisi = bolge.Seviye(BolgeKatmani.Isik);
                 for (int k = 0; k < isikSayisi; k++)
@@ -147,6 +176,28 @@ namespace IkiDunya.Hazards
             int adet = Mathf.Max(1, Mathf.CeilToInt(kum.BolgeGenisligi / 4f));
             for (int p = 0; p < adet; p++)
                 Koy(tilkiCitiKalibi, kum.BolgeNoktasi(bolge, (p + 0.5f) / adet, citUzakligi), 0f);
+            // Uçlar sadece çitin bittiği yere: komşu bölgede de çit varsa sıra kesintisiz sürer.
+            if (bolge == 0 || !kumsal.BolgeAl(bolge - 1).Var(BolgeYapisi.TilkiCiti))
+                Koy(citSolUcKalibi, kum.BolgeNoktasi(bolge, 0f, citUzakligi), 0f);
+            if (bolge == kumsal.BolgeSayisi - 1 || !kumsal.BolgeAl(bolge + 1).Var(BolgeYapisi.TilkiCiti))
+                Koy(citSagUcKalibi, kum.BolgeNoktasi(bolge, 1f, citUzakligi), 0f);
+        }
+
+        /// <summary>Bölgenin deniz tarafına kum torbası seddi dizer; iki ucuna tek torba.</summary>
+        private void SeddiKur(int bolge)
+        {
+            if (kumTorbasiSeddiKalibi == null) return;
+            int adet = Mathf.Max(1, Mathf.CeilToInt(kum.BolgeGenisligi * 0.8f / 2f));
+            for (int p = 0; p < adet; p++)
+            {
+                float oran = 0.1f + 0.8f * (p + 0.5f) / adet;
+                // Kıyı kıvrımlı: parça, o noktadaki kıyı çizgisine döner, yoksa sed basamak basamak görünür.
+                Vector3 yon = kum.transform.InverseTransformDirection(
+                    kum.BolgeNoktasi(bolge, oran + 0.02f, sedUzakligi) - kum.BolgeNoktasi(bolge, oran - 0.02f, sedUzakligi));
+                Koy(kumTorbasiSeddiKalibi, kum.BolgeNoktasi(bolge, oran, sedUzakligi), -Mathf.Atan2(yon.z, yon.x) * Mathf.Rad2Deg);
+            }
+            Koy(kumTorbasiKalibi, kum.BolgeNoktasi(bolge, 0.08f, sedUzakligi + 0.6f), 25f);
+            Koy(kumTorbasiKalibi, kum.BolgeNoktasi(bolge, 0.92f, sedUzakligi + 0.6f), -20f);
         }
 
         private void IzleriKur()
@@ -156,10 +207,12 @@ namespace IkiDunya.Hazards
                 izler.Add(Instantiate(kayipIziKalibi, iz.Konum, Quaternion.identity, transform));
         }
 
-        private void Koy(GameObject kalip, Vector3 yer, float aci)
+        private GameObject Koy(GameObject kalip, Vector3 yer, float aci)
         {
-            if (kalip == null) return;
-            yapilar.Add(Instantiate(kalip, yer, kum.transform.rotation * Quaternion.Euler(0f, aci, 0f), transform));
+            if (kalip == null) return null;
+            GameObject nesne = Instantiate(kalip, yer, kum.transform.rotation * Quaternion.Euler(0f, aci, 0f), transform);
+            yapilar.Add(nesne);
+            return nesne;
         }
 
         private Vector3 Nokta(System.Random rastgele, int bolge, Vector2 aralik)

@@ -62,3 +62,4 @@ ozet: Ekipçe alınan kararlar, tarih ve nedeniyle. En yeni en üstte. GDD'yi de
 | 2026-10-30 | main korumalı, PR zorunlu, onay zorunlu değil | 4 kişi için hız; herkes kendi alanını birleştirir | Umut |
 | 2026-10-30 | Oyun sahneleri (`Scenes/Levels`) sadece Umut'ta; herkes `Assets/Sandbox/<ad>` | Unity sahneleri birleştirilemez | Umut |
 | 2026-10-30 | Unity 6000.3.25f1, Universal 3D | Ekipte herkes aynı sürüm | Umut |
+| 2026-11-01 | `KumsalDurumu.InsanSureliAzaldi(bolge)` eklendi: bölgede insanı süreli azaltan etki sürüyor mu | Plaj Tabelaları için yeni yapı türü açmadan kumsalda tabela göstermek | Toprak |

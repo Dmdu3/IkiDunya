@@ -10,6 +10,8 @@ namespace IkiDunya.Hazards
         [SerializeField] private DenizTehlikeAyarlari ayarlar;
         [SerializeField] private Renderer[] parcalar;
         [SerializeField] private Color renk = Color.white;
+        [Tooltip("Çok malzemeli modelde sadece bu sıradaki malzeme parlar (ör. modelin parıltı malzemesi); -1: bütün parça.")]
+        [SerializeField] private int malzemeSirasi = -1;
 
         private MaterialPropertyBlock blok;
         private float kayma;
@@ -28,7 +30,11 @@ namespace IkiDunya.Hazards
             simdi.a = renk.a;
             blok.SetColor(RenkId, simdi);
             foreach (Renderer parca in parcalar)
-                if (parca != null) parca.SetPropertyBlock(blok);
+            {
+                if (parca == null) continue;
+                if (malzemeSirasi < 0) parca.SetPropertyBlock(blok);
+                else parca.SetPropertyBlock(blok, malzemeSirasi);
+            }
         }
     }
 }

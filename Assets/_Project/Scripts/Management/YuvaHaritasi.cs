@@ -16,6 +16,10 @@ namespace IkiDunya.Management
         [SerializeField] private float boy = 3f;
         [SerializeField] private float yukseklik = 0.6f;
         [SerializeField] private Color kafesRengi = new Color(0.85f, 0.85f, 0.85f);
+        [Tooltip("Yumurtalı yuvanın ortasına konan yumurta kümesi modeli. Boşsa üç küre çizilir.")]
+        [SerializeField] private GameObject yumurtaKumesiKalibi;
+        [Tooltip("Kümenin genişliği, yuva simgesinin boyuna oranla.")]
+        [SerializeField] private float kumesOrani = 0.75f;
 
         private readonly List<GameObject> simgeler = new List<GameObject>();
         private MaterialPropertyBlock blok;
@@ -42,7 +46,8 @@ namespace IkiDunya.Management
                 if (yuva.Kafesli) Simge(yuva.Konum, boy * 1.4f, yukseklik - 0.24f, kafesRengi);
                 Simge(yuva.Konum, boy, yukseklik - 0.12f, new Color32(178, 135, 88, 255));
                 Simge(yuva.Konum, boy * 0.78f, yukseklik, new Color32(226, 188, 129, 255));
-                if (yuva.Yumurta > 0)
+                if (yuva.Yumurta > 0 && yumurtaKumesiKalibi != null) KumesiKoy(yuva.Konum);
+                else if (yuva.Yumurta > 0)
                 {
                     YumurtaSimgesi(yuva.Konum, -.14f, -.08f, -18f);
                     YumurtaSimgesi(yuva.Konum, .14f, -.08f, 18f);
@@ -52,6 +57,16 @@ namespace IkiDunya.Management
                 Simge(durum, boy * .38f, yukseklik + .12f, new Color32(250, 247, 240, 255));
                 Simge(durum, boy * .25f, yukseklik + .24f, yuva.Yumurta > 0 ? termal.Renk(kumsal.YuvaBandi(yuva)) : Color.black);
             }
+        }
+
+        private void KumesiKoy(Vector3 konum)
+        {
+            GameObject kume = Instantiate(yumurtaKumesiKalibi, konum + Vector3.up * yukseklik, Quaternion.identity, transform);
+            // Kalıbın kendi genişliği 1 m kabul edilir; harita boyuna göre büyütülür.
+            kume.transform.localScale = Vector3.one * (boy * kumesOrani);
+            foreach (Renderer renderer in kume.GetComponentsInChildren<Renderer>())
+                renderer.shadowCastingMode = UnityEngine.Rendering.ShadowCastingMode.Off;
+            simgeler.Add(kume);
         }
 
         private void YumurtaSimgesi(Vector3 konum, float x, float z, float aci)
