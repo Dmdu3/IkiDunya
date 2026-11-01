@@ -31,6 +31,10 @@ namespace IkiDunya.Management
         public Hedef BeklenenHedef => BekleyenKart != null ? BekleyenKart.Hedef : BekleyenGorev != null ? BekleyenGorev.Hedef : Hedef.Yok;
         public YonetimDurumu Yonetim => yonetim;
         public KumsalDurumu Kumsal => kumsal;
+        /// <summary>Son seçilen hedefte görev neden işe yaramadı (metin id'si); arayüz hedef şeridinde gösterir. Yeni seçimde silinir.</summary>
+        public string HedefEngeli { get; private set; }
+        /// <summary>Boşta gönüllü ya da oynanabilir kart varken İleri'ye bir kez basıldı; ikinci basış geçer.</summary>
+        public bool IlerlemeOnayiBekliyor { get; private set; }
 
         /// <summary>Aşama, el ya da bekleyen hedef değişince; arayüz yenilenir.</summary>
         public event Action Degisti;
@@ -84,13 +88,30 @@ namespace IkiDunya.Management
                 return;
             }
 
-            if (Time.frameCount != baslangicKaresi && GameInput.ZiplaDalBasildi) Ilerle();
+            harita.Hedef = BeklenenHedef;
+            // Hedef seçilirken İleri düğmesi gizli; Space de bekleyen kartı ya da görevi bırakıp aşamayı geçmesin. B / sağ tık vazgeçer.
+            if (BeklenenHedef != Hedef.Yok)
+            {
+                if (GameInput.VazgecBasildi) HedeftenVazgec();
+                return;
+            }
+            if (Time.frameCount != baslangicKaresi && GameInput.IleriBasildi) Ilerle();
         }
 
         /// <summary>İleri düğmesi ve Space. Olay aşamasında seçim yapılmadan ilerlenmez.</summary>
         public void Ilerle()
         {
             BekleyeniBirak();
+            // Kullanılmayan gönüllü ya da kart varken ilk basış uyarır, ikincisi geçer (Space'e yanlışlıkla basılabilir).
+            if (!IlerlemeOnayiBekliyor && BosKaynakVar())
+            {
+                IlerlemeOnayiBekliyor = true;
+                Ses.Cal(SesTuru.DugmeTikla);
+                if (SuAnki == Asama.Gonulluler) Ipucu.Bildir("bildirim_bos_gonullu", yonetim.BosGonullu(kumsal));
+                else Ipucu.Bildir("bildirim_oynanabilir_kart");
+                Degisti?.Invoke();
+                return;
+            }
             switch (SuAnki)
             {
                 case Asama.Rapor:
@@ -116,14 +137,32 @@ namespace IkiDunya.Management
             }
         }
 
+        private bool BosKaynakVar()
+        {
+            if (SuAnki == Asama.Gonulluler) return yonetim.BosGonullu(kumsal) > 0;
+            if (SuAnki == Asama.Kartlar)
+                foreach (KartTanimi kart in el)
+                    if (KartOynanabilir(kart)) return true;
+            return false;
+        }
+
         // ---- Gönüllüler ----
 
-        public bool GorevVerilebilir(GorevTanimi gorev) =>
-            SuAnki == Asama.Gonulluler && yonetim.BosGonullu(kumsal) > 0 && (gorev.Hedef != Hedef.Yuva || kumsal.Yuvalar.Count > 0);
+        public bool GorevVerilebilir(GorevTanimi gorev) => SuAnki == Asama.Gonulluler && GorevEngeli(gorev) == null;
+
+        /// <summary>Görev neden verilemez (metin id'si); verilebilirse null.</summary>
+        public string GorevEngeli(GorevTanimi gorev)
+        {
+            if (yonetim.BosGonullu(kumsal) <= 0) return "engel_gonullu_yok";
+            if (gorev.Hedef == Hedef.Yuva && kumsal.Yuvalar.Count == 0) return "engel_yuva_yok";
+            return null;
+        }
 
         public void GorevSec(GorevTanimi gorev)
         {
             if (!GorevVerilebilir(gorev)) return;
+            // Oyuncu kaynağı kullanmaya döndü; sonraki İleri yeniden uyarır.
+            IlerlemeOnayiBekliyor = false;
             if (BekleyenGorev == gorev)
             {
                 BekleyeniBirak();
@@ -159,9 +198,16 @@ namespace IkiDunya.Management
             Ses.Cal(el.Count > 0 ? SesTuru.KartDagit : SesTuru.DugmeTikla);
         }
 
-        public bool KartOynanabilir(KartTanimi kart) =>
-            SuAnki == Asama.Kartlar && el.Contains(kart) && yonetim.Butce >= yonetim.Bedel(kart) && yonetim.KosulTamam(kart)
-            && (kart.Hedef != Hedef.Yuva || kumsal.Yuvalar.Count > 0);
+        public bool KartOynanabilir(KartTanimi kart) => SuAnki == Asama.Kartlar && el.Contains(kart) && KartEngeli(kart) == null;
+
+        /// <summary>Kart neden oynanamaz (metin id'si); oynanabilirse null.</summary>
+        public string KartEngeli(KartTanimi kart)
+        {
+            if (yonetim.Butce < yonetim.Bedel(kart)) return "engel_butce";
+            if (!yonetim.KosulTamam(kart)) return "engel_kosul";
+            if (kart.Hedef == Hedef.Yuva && kumsal.Yuvalar.Count == 0) return "engel_yuva_yok";
+            return null;
+        }
 
         /// <summary>Yuvaya bu tur sonunda avcı gelme ihtimali (0–1); arayüz gösterir.</summary>
         public float AvciRiski(int yuva) => etkiler.AvciRiski(yuva);
@@ -169,6 +215,7 @@ namespace IkiDunya.Management
         public void KartSec(KartTanimi kart)
         {
             if (!KartOynanabilir(kart)) return;
+            IlerlemeOnayiBekliyor = false;
             if (BekleyenKart == kart)
             {
                 Ses.Cal(SesTuru.DugmeTikla);
@@ -259,11 +306,26 @@ namespace IkiDunya.Management
             if (BekleyenKart != null) KartiOyna(BekleyenKart, hedef);
             else if (BekleyenGorev != null && yonetim.BosGonullu(kumsal) > 0)
             {
-                // İşe yaramayacak hedefte gönüllü harcanmaz; görev bekler, oyuncu başka hedef seçer.
-                if (!etkiler.GorevIseYarar(BekleyenGorev, hedef)) return;
+                // İşe yaramayacak hedefte gönüllü harcanmaz; görev bekler, şerit nedenini söyler, oyuncu başka hedef seçer.
+                string engel = etkiler.GorevHedefEngeli(BekleyenGorev, hedef);
+                if (engel != null)
+                {
+                    HedefEngeli = engel;
+                    Degisti?.Invoke();
+                    return;
+                }
                 Ses.Cal(SesTuru.DugmeTikla);
                 etkiler.GorevVer(BekleyenGorev, hedef);
             }
+            BekleyeniBirak();
+            Degisti?.Invoke();
+        }
+
+        /// <summary>Hedef bekleyen kart ya da görev bırakılır (Geri düğmesi, B, sağ tık).</summary>
+        public void HedeftenVazgec()
+        {
+            if (BeklenenHedef == Hedef.Yok) return;
+            Ses.Cal(SesTuru.DugmeTikla);
             BekleyeniBirak();
             Degisti?.Invoke();
         }
@@ -272,6 +334,7 @@ namespace IkiDunya.Management
         {
             BekleyenKart = null;
             BekleyenGorev = null;
+            HedefEngeli = null;
         }
 
         private void KanitAcildi(KayipIzi iz)
@@ -282,6 +345,7 @@ namespace IkiDunya.Management
         private void AsamayaGec(Asama yeni)
         {
             SuAnki = yeni;
+            IlerlemeOnayiBekliyor = false;
             harita.Acik = yeni != Asama.Kapali;
             Degisti?.Invoke();
         }

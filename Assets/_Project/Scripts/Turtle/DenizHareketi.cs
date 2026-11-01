@@ -205,7 +205,7 @@ namespace IkiDunya.Turtle
             else if (tur == TrashTrap.Turu.Misina) ToplamBasis = KalanBasis = ayarlar.MisinaBasisi;
             if (Takili)
             {
-                Geribildirim.Sars(0.35f);
+                Geribildirim.Sars(Siddet.Hafif);
                 Ses.Cal(SesTuru.Takilma);
                 Ipucu.Goster("ipucu_ag");
             }

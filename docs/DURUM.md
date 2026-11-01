@@ -42,7 +42,7 @@ Son güncelleme: 2026-11-01 — Dalda (`umut/cila`): Hepsini kur, PC build, F6 p
 | Kayıp izleri | `Turtle`, `Hazards` | `KacisGecesi` yazar, `KumsalYapilari` kumda gösterir, `KayipIziHaritasi` insan turunda simge + kanıt | Umut | Yapılıyor |
 | İpuçları (ilk karşılaşmada bir kez) | `Core`, `UI/Night` | `Ipucu`, `IpucuPaneli` | Umut | Yapılıyor (yazılar Yusuf'ta) |
 | Ses: olaylar, ortam sesi, müzik | `Core` | `Ses`, `SesYoneticisi`, `SesAyarlari` | Umut | Yapılıyor (ilk klipler bağlı, kalanlar Yusuf'ta) |
-| Kumsal haritası ve tur akışı | `Management`, `UI/Management` | `InsanTuru`, `HaritaSecici`, `YuvaHaritasi`, `YonetimArayuzu` | Toprak | Yapılıyor |
+| Kumsal haritası ve tur akışı | `Management`, `UI/Management` | `InsanTuru`, `HaritaSecici`, `YuvaHaritasi`, `YonetimArayuzu` | Toprak | Yapılıyor. Basılamayan kart/görev nedenini söyler (`KartEngeli`, `GorevEngeli` → `engel_*`; bütçe yetmeyen kartın bedeli kırmızı). İşe yaramayan hedefte gönüllü harcanmaz, hedef şeridi nedeni yazar (`Etkiler.GorevHedefEngeli`). Boşta gönüllü ya da oynanabilir kart varken İleri ilk basışta uyarır ("Yine de ilerle"), ikincide geçer. |
 | Yönetim ekranı görünümü | `UI/Management`, `Art/UI/Resources/KartDioramalari` | `YonetimArayuzu` | Toprak / Abdü | Kart ve gönüllü dioramaları, kompakt paneller ve hedef seçerken gizlenen alt panel eklendi. "Belgesel" temasında: koyu paneller, serif başlıklar, kum vurgusu. Yerleşim tuval biriminde (yazı boyutuyla büyür, 1.5'te çakışmasız denendi); hedef seçerken istem ve Geri alttaki şeritte; kart bilgisi sağda kart panelinin üstünde. |
 | Kaynaklar (bütçe, gönüllü, halk desteği, bakım), rapor, kayıt | `Management` | `YonetimDurumu`, `YonetimAyarlari`; `Core/IOyunVerisi` | Toprak | Yapılıyor |
 | Paydaşlar (Otel, Belediye, Balıkçılar) | `Management` | `Paydas`, `YonetimDurumu`, `YonetimAyarlari` | Toprak | Yapılıyor (Unity'de bir turda denendi, 2026-11-01) |
@@ -150,7 +150,7 @@ Pervane sesi klibi bağlı (`Audio/SFX/Pervane.wav`).
 
 ## İpuçları ve ses
 
-**İpuçları (`Ipucu`, `IpucuPaneli`).** Oyuncu bir şeyle ilk karşılaştığında ekranın altında kısa bir yazı (6 sn, `OyunAyarlari.IpucuSuresi`); birden çok istenirse sırayla. Her ipucu bir oyunda bir kez çıkar (bu bilgisayarda saklanır, Yeni oyun sıfırlar); geçişte ve duraklatmada bekler. `OyunTercihleri.Ipuclari` kapatır (ayarlarda düğmesi henüz yok). Nerede çıkar:
+**İpuçları (`Ipucu`, `IpucuPaneli`).** Oyuncu bir şeyle ilk karşılaştığında ekranın altında kısa bir yazı (6 sn, `OyunAyarlari.IpucuSuresi`); birden çok istenirse sırayla. Her ipucu bir oyunda bir kez çıkar (bu bilgisayarda saklanır, Yeni oyun sıfırlar); geçişte ve duraklatmada bekler. `OyunTercihleri.Ipuclari` kapatır. Nerede çıkar:
 
 | id | Ne zaman |
 | --- | --- |
@@ -163,6 +163,12 @@ Pervane sesi klibi bağlı (`Audio/SFX/Pervane.wav`).
 | `ipucu_takili` | Bir yavru ilk kez takılınca ya da ters dönünce |
 | `ipucu_tilki` | Tilkinin geldiği ilk gece |
 
+**Bildirimler (`Ipucu.Bildir(id, değerler)`).** O an olanı söyleyen kısa yazı, aynı kutuda: her seferinde çıkar, ayarlarda kapanmaz, görünen yazıyı keser (kesilen ipucu sonra yeniden çıkar, eski bildirim atılır), `OyunAyarlari.BildirimSuresi` kadar kalır. Sesini çağıran olay çalar. Nerede: yuva gecesinde deneme bitince (neden + kalan hak; son hak bitince annenin yuvayı kendisi kazdığı, sonuç paneli `AnneAyarlari.KendiligindenYuvaBekleme` sonra açılır), denizde enerji bitince ya da avcı yakalayınca (darbe + kayıp sesi, kontrol noktasına dönüş), poşet parkurunda enerji bitince. Metinler `bildirim_*`.
+
+**Duraklatma ve ses.** Duraklatınca `AudioListener.pause`: pervane, konumlu sesler ve ortam sesi durur; `SesYoneticisi`'nin efekt (düğme) ve müzik kaynakları sürer.
+
+**EventSystem.** `Sistemler` kalıbında kapalı durur, sadece kalıcı `OyunAkisi` açar; sahnedeki ikinci kopyanınki hiç açılmaz.
+
 **Ses (`Ses`, `SesYoneticisi`, `SesAyarlari`).** Sistemler bir kez `Ses.Cal(SesTuru, konum?)` der; klibi `ScriptableObjects/Settings/SesAyarlari`'ndaki yuvadan çalınır (birden çok klip varsa rastgele biri). Klip yoksa sessiz geçer. Konumlu sesler (yengeç, martı, tilki, kazma, yavru) 3B, geri kalanı ekrandan. Her adımın ortam sesi ve müziği aynı asset'te; adım değişince yumuşak geçişle değişir, menüde menü müziği. Teknenin pervanesi kendi AudioSource'unda döngüyle (`SesTuru.Pervane`). Ana ses düzeyi ayarlardan. **Menü ve duraklatmayı kur** her ses türü ve adım için boş yuva açar; Abdü klipleri `Audio/` altına koyup yuvalara sürükler.
 
 | Ses türü | Nerede |
@@ -172,6 +178,8 @@ Pervane sesi klibi bağlı (`Audio/SFX/Pervane.wav`).
 | Takilma, Kurtarma | Yavru ya da yüzücü takılınca; öncü kurtarınca |
 | YavruKurtuldu, YavruKaybedildi | Yavru denize girince, kaybedilince |
 | YengecUyari, MartiUyari, TilkiUyari, TilkiEseliyor | Avcıların uyarıları (titreyen kum, gölge, koşu, yuva eşeleme) |
+| AvciBalikUyari | Avcı balık kovalamaya başlayınca (3B; yuva boş, klip Abdü'de) |
+| Darbe | Her `Geribildirim.Darbe`'de: tekne, avcı yakalaması, çöp girdabı, ürkme, enerji bitmesi (yuva boş, klip Abdü'de) |
 | Yeme, AgdanKurtulma, KontrolNoktasi, DalgaVurdu | Denizde |
 | Pervane | Tekne (döngü) |
 | Ipucu | İpucu kutusu açılınca |
@@ -258,7 +266,7 @@ Uyarılar: kameralardaki kulak `Core/TekKulak` ile tek (açılan kamera alır); 
 
 ## Cila (#64)
 
-- **Geri bildirim (`Core/Geribildirim`, `GeribildirimAyarlari`, `UI/Night/EkranEfektleri`):** çarpma ve yakalanmada kamera sarsıntısı ve kırmızı flaş; poşette kahverengi bulanma; yavru kurtulunca yeşil parıltı; enerji azalınca (`Turtle/EnerjiUyarisi`) ekran kenarı kararır ve kalp atışı sesi (`SesTuru.KalpAtisi`, ses yuvası boş; `SesTuru`'nda Yusuf'un seslerinden sonra, en sonda).
+- **Geri bildirim (`Core/Geribildirim`, `GeribildirimAyarlari`, `UI/Night/EkranEfektleri`):** çarpma ve yakalanmada kamera sarsıntısı, kırmızı flaş ve darbe sesi; şiddet `Siddet.Hafif/Orta/Agir`, sayıları `GeribildirimAyarlari`'nda (koda güç yazılmaz); poşette kahverengi bulanma; yavru kurtulunca ve kontrol noktasında yeşil parıltı; enerji azalınca (`Turtle/EnerjiUyarisi`) ekran kenarı kararır ve kalp atışı sesi (`SesTuru.KalpAtisi`, ses yuvası boş; `SesTuru`'nda Yusuf'un seslerinden sonra, en sonda).
 - **Kamera:** yürürken/yüzerken hafif baş sallanması, Shift'te görüş açısı genişler, oyun kolunun sağ çubuğuyla bakış. Sayılar `KameraAyarlari` ve `GeribildirimAyarlari`'nda.
 - **Gece:** yıldızlar ve ay (`Core/GeceGokyuzu`, shader `IkiDunya/Gokyuzu`; `OrtamIsigi` gece açar); anne ve yavrular kumda iz bırakır (`Turtle/IzBirakici`, 25 sn'de silinir).
 - **Su altı ışık hüzmeleri (`Core/SuIsiklari`):** deniz sahnelerinde yüzücünün çevresinde; suyun üstündeyken görünmez.
@@ -268,7 +276,7 @@ Uyarılar: kameralardaki kulak `Core/TekKulak` ile tek (açılan kamera alır); 
 - **Yazı boyutu ve taşma (`Core/ArayuzOlcegi`):** yazı boyutu 0.75–1.5 tuvali ölçekler (1.5'te tuval 1280x720 gibi davranır). Tuval her en-boy oranında en az referans kadar kalır (`Expand`). Tuvaldeki her yazı kutusuna sığmazsa kendi boyutunun %60'ına kadar küçülür (best fit); kodla kurulan yazılar `ArayuzOlcegi.Boyut(yazi, boyut)` ile boyut alır. **Kural:** yazıyla büyümesi gereken paneller ekran oranıyla (anchor yüzdesi) değil tuval birimiyle (sabit boy + köşe çapası) kurulur ve 1280x720'ye sığacak boyda seçilir; yoksa yazı büyür, kutu büyümez. Kurulum kodunda oranla verilen kutu için `GriKumsalKur.Sabitle(rect, enAz, enCok)`: kutu 1920x1080'deki yerinde kalır ama en yakın kenara (ya da ortaya) çapalanıp sabit boy alır, büyürken ekrandan taşmaz. Yönetim ekranı, ipucu kutusu, ana menü, duraklatma, parkurlar, gece/deniz çubukları, parkur süre/sonuç kutuları, gece sonuç paneli (boyu satır sayısına göre) ve bölüm geçiş yazısı bu kurala göre; 1.5'te çakışmasız denendi. Sonuç paneli açıkken ipucu kutusu gizlenir ve bekler (`GeceSonucuPaneli.Acik`).
 - **Arayüz teması "Belgesel" (`Core/ArayuzTemasi`, `ScriptableObjects/Settings/ArayuzTemasi`):** bütün arayüzün yazı tipleri ve renkleri tek asset'te; kurulum kodu ve `YonetimArayuzu` renkleri buradan alır, koda renk yazılmaz. Başlıklar serif (Lora), gövde sans (Source Sans 3 Regular, kalın yerlerde SemiBold); dosyalar ve OFL lisansları `Art/UI/Fonts`. Koyu yarı saydam paneller, krem yazı, kum rengi vurgu (seçili seçenek, başlık altı çizgi, aşama). Menüler kutusuz: sol üstte serif başlık + kısa vurgu çizgisi, altında sola yaslı seçenekler (`UI/Menu/MenuSecenegi`: seçiliyken vurgu rengi ve solunda çizgi, fare üstüne gelince seçer). Menü ve ayarların zemini alacakaranlık ufku, duraklatmada oyunun üstünde soldan koyulaşan perde (`UI/Menu/UfukZemini`, kodla çizilir). Renk değişikliği asset'ten yapılır; kurulumla gelen renkler (çubuk zemini, panel) sahneyi yeniden kurunca güncellenir.
 - **İpucu kutusu:** üstte ortada (yönetimin üst çubuğunun altında), boyu yazıya göre; iki yanda 440 birim boş bırakır ki yönetimin sol paneli ve kart bilgisiyle çakışmasın.
-- **Oyun kolu:** sol çubuk hareket, sağ çubuk bakış, LT hızlı, A zıpla/dal, X etkileş, LB/RB kazma sol/sağ, Y ya da d-pad yukarı kazmada yukarı, sağ çubuğa basış termal, Start duraklat. Menülerde ilk düğme seçili gelir. İnsan kısmının harita ekranı (Toprak) oyun koluyla denenmedi.
+- **Oyun kolu:** sol çubuk hareket, sağ çubuk bakış, LT hızlı, A zıpla/dal, X etkileş, LB/RB kazma sol/sağ, Y ya da d-pad yukarı kazmada yukarı, sağ çubuğa basış termal, Start duraklat. Menülerde ilk düğme seçili gelir. Yönetim ekranında: A seçer (kart, görev, olay seçeneği; haritada hedef), Y İleri, B ya da sağ tık hedef seçiminden vazgeçer; aşama değişince ilk basılabilir düğme seçilir. Hedef beklenirken sol çubuk (klavyede A/D) bölgeleri ya da yuvaları soldan sağa gezer, fare kıpırdayınca imlece dönülür. Ekrandaki tuş yazıları son kullanılan cihaza göre (`GameInput.KolKullaniliyor`, `TusYazisi`). Gerçek oyun koluyla henüz denenmedi (editörde sanal kolla: Y, B, seçim, çubuk modu).
 - **Performans:** deniz kamerasında uzak düzlem 150 m (sis zaten 100 m'de örter); insanlar, kayalar, deniz çayırı ve deniz tabanının süsleri ekranda çok küçülünce çizilmez (LODGroup), küçük süsler gölge atmaz.
 
 ## Kart yapıları: kum torbası, gözcü kulübesi, plaj tabelası (Yusuf'un modelleri, 5. parti)

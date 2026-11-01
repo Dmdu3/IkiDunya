@@ -27,6 +27,8 @@ namespace IkiDunya.UI.Night
         {
             Geribildirim.Flas += FlasYap;
             OyunAkisi.AdimBasladi += AdimBasladi;
+            // Şiddet seviyelerinin sayıları buradan okunur (Sistemler her sahnede var).
+            if (ayarlar != null) Geribildirim.Ayarlar = ayarlar;
         }
 
         private void OnDisable()

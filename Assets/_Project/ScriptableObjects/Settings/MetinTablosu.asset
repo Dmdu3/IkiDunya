@@ -362,6 +362,21 @@ MonoBehaviour:
   - id: ipucu_cop_seli
     metin: "Ufukta k\xF6p\xFCk g\xF6r\xFCrsen dalga geliyor: kum tepesine \xE7\u0131k.
       Su \xE7ekilince denize ko\u015F."
+  - id: bildirim_deneme_insan
+    metin: "Bir insan seni g\xF6rd\xFC; anne \xFCrk\xFCp denize d\xF6nd\xFC. Kalan
+      deneme: {0}"
+  - id: bildirim_deneme_enerji
+    metin: "Annenin g\xFCc\xFC t\xFCkendi; denize d\xF6nd\xFC. Kalan deneme: {0}"
+  - id: bildirim_kendiliginden_yuva
+    metin: "Anne daha fazla dayanamad\u0131 ve yuvas\u0131n\u0131 oldu\u011Fu yere
+      kazd\u0131."
+  - id: bildirim_deniz_enerji
+    metin: "G\xFCc\xFCn t\xFCkendi. Son kontrol noktas\u0131ndan devam ediyorsun."
+  - id: bildirim_deniz_yakalandi
+    metin: "Bir avc\u0131 seni yakalad\u0131. Son kontrol noktas\u0131ndan devam
+      ediyorsun."
+  - id: bildirim_poset_enerji
+    metin: "G\xFCc\xFCn t\xFCkendi; bu a\u015Fama ba\u015Ftan ba\u015Fl\u0131yor."
   - id: final_30_yil
     metin: "30 y\u0131l sonra"
   - id: final_kurtarilan
@@ -537,6 +552,31 @@ MonoBehaviour:
     metin: "Haritada bir b\xF6lge se\xE7"
   - id: hedef_yuva_sec
     metin: "Haritada bir yuva se\xE7"
+  - id: hedef_kol_tuslari
+    metin: "{0}: gez \xB7 {1}: se\xE7 \xB7 {2}: geri"
+  - id: yonetim_yine_de_ilerle
+    metin: Yine de ilerle
+  - id: bildirim_bos_gonullu
+    metin: "Bo\u015Fta {0} g\xF6n\xFCll\xFCn var. Yine de ilerlemek i\xE7in tekrar
+      bas."
+  - id: bildirim_oynanabilir_kart
+    metin: "B\xFCt\xE7en yetecek kartlar var. Yine de ilerlemek i\xE7in tekrar bas."
+  - id: engel_butce
+    metin: "B\xFCt\xE7e yetmiyor"
+  - id: engel_kosul
+    metin: "Payda\u015F ko\u015Fulu sa\u011Flanmad\u0131"
+  - id: engel_yuva_yok
+    metin: "Kumsalda hen\xFCz yuva yok"
+  - id: engel_gonullu_yok
+    metin: "Bo\u015Fta g\xF6n\xFCll\xFC kalmad\u0131"
+  - id: engel_cop_yok
+    metin: "Bu b\xF6lgede \xE7\xF6p yok"
+  - id: engel_devriye_var
+    metin: "Bu b\xF6lgede zaten devriye var"
+  - id: engel_yuva_bos
+    metin: Bu yuvada bekleyen yumurta yok
+  - id: engel_kafes_var
+    metin: Bu yuva zaten kafesli
   - id: yuva
     metin: Yuva
   - id: yuva_yumurta

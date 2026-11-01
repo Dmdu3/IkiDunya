@@ -18,6 +18,9 @@ namespace IkiDunya.Core
             efekt = Kaynak(false);
             ortam = Kaynak(true);
             muzik = Kaynak(true);
+            // Duraklatma menüsünde düğme sesi çalsın, müzik sürsün; ortam sesi ve dünyadaki sesler durur.
+            efekt.ignoreListenerPause = true;
+            muzik.ignoreListenerPause = true;
         }
 
         private void OnEnable()

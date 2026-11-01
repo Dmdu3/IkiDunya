@@ -48,6 +48,8 @@ namespace IkiDunya.Camera
             acikSayisi++;
             Duraklatma.Degisti += DuraklatmaDegisti;
             Geribildirim.Sarsildi += Sars;
+            // Sistemler'siz deneme sahnesinde de şiddetler ayardan gelsin.
+            if (Geribildirim.Ayarlar == null && geribildirim != null) Geribildirim.Ayarlar = geribildirim;
             ImleciKilitle(!Duraklatma.Acik);
         }
 

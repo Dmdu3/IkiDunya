@@ -26,8 +26,8 @@ namespace IkiDunya.Turtle
         {
             OyunAkisi.AdimBasladi += AdimBasladi;
             KontrolNoktasi.Ulasildi += Ulasildi;
-            yuzucu.Enerji.Bitti += YenidenBasla;
-            yuzucu.Yakalandi += YenidenBasla;
+            yuzucu.Enerji.Bitti += EnerjiBitti;
+            yuzucu.Yakalandi += AvciYakaladi;
         }
 
         private void OnDisable()
@@ -36,8 +36,8 @@ namespace IkiDunya.Turtle
             KontrolNoktasi.Ulasildi -= Ulasildi;
             // Sahne kapanırken yüzücü bizden önce yok edilmiş olabilir.
             if (yuzucu == null) return;
-            yuzucu.Enerji.Bitti -= YenidenBasla;
-            yuzucu.Yakalandi -= YenidenBasla;
+            yuzucu.Enerji.Bitti -= EnerjiBitti;
+            yuzucu.Yakalandi -= AvciYakaladi;
         }
 
         private void Start()
@@ -66,11 +66,21 @@ namespace IkiDunya.Turtle
             else Ipucu.Goster("ipucu_dalga");
         }
 
-        /// <summary>GDD: enerji biterse ya da avcı yakalarsa son kontrol noktasından devam edilir.</summary>
-        private void YenidenBasla()
+        private void EnerjiBitti()
+        {
+            if (!bitti) Geribildirim.Darbe(Siddet.Hafif);
+            YenidenBasla("bildirim_deniz_enerji");
+        }
+
+        // Darbeyi avcı balık kendisi verir (ağır).
+        private void AvciYakaladi() => YenidenBasla("bildirim_deniz_yakalandi");
+
+        /// <summary>GDD: enerji biterse ya da avcı yakalarsa son kontrol noktasından devam edilir; oyuncuya neden döndüğü söylenir.</summary>
+        private void YenidenBasla(string bildirim)
         {
             if (bitti) return;
-            Debug.Log("DenizBolumu: son kontrol noktasından devam.");
+            Ses.Cal(SesTuru.YavruKaybedildi);
+            Ipucu.Bildir(bildirim);
             yuzucu.Baslat(sonNokta.position, sonNokta.rotation);
         }
 
@@ -89,6 +99,8 @@ namespace IkiDunya.Turtle
             {
                 sonNokta = nokta.transform;
                 Ses.Cal(SesTuru.KontrolNoktasi);
+                // Enerji doldu: yavru kurtulduğundaki yeşil parıltı.
+                Geribildirim.Sevinc();
                 yuzucu.Enerji.Doldur(ayarlar.EnerjiEnFazla);
                 return;
             }

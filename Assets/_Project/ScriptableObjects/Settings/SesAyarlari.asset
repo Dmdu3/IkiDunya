@@ -123,6 +123,12 @@ MonoBehaviour:
   - tur: 26
     klipler: []
     duzey: 1
+  - tur: 27
+    klipler: []
+    duzey: 1
+  - tur: 28
+    klipler: []
+    duzey: 1
   adimSesleri:
   - adim: 0
     ortam: {fileID: 8300000, guid: 41d31fea7bb489a4db992505ddab0b76, type: 3}

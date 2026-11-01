@@ -130,6 +130,12 @@ Kısa yaz: kart açıklaması en fazla 2 satır, kanıt notu en fazla 3 satır. 
 | ipucu_poset_surusu | Akıntı bir sürü taşıyor. Denizanalarını ye, poşetlerden kaç. Yeterince yiyince önündeki akıntı açılır. |
 | ipucu_girdap | Girdaba kapıldın! Halkanın boşluğunu yakala; parlak şamandıralar yolu gösterir. |
 | ipucu_cop_seli | Ufukta köpük görürsen dalga geliyor: kum tepesine çık. Su çekilince denize koş. |
+| bildirim_deneme_insan | Bir insan seni gördü; anne ürküp denize döndü. Kalan deneme: {0} |
+| bildirim_deneme_enerji | Annenin gücü tükendi; denize döndü. Kalan deneme: {0} |
+| bildirim_kendiliginden_yuva | Anne daha fazla dayanamadı ve yuvasını olduğu yere kazdı. |
+| bildirim_deniz_enerji | Gücün tükendi. Son kontrol noktasından devam ediyorsun. |
+| bildirim_deniz_yakalandi | Bir avcı seni yakaladı. Son kontrol noktasından devam ediyorsun. |
+| bildirim_poset_enerji | Gücün tükendi; bu aşama baştan başlıyor. |
 | final_30_yil | 30 yıl sonra |
 | final_kurtarilan | Denize ulaşan yavru |
 | jenerik | İKİ DÜNYA, TEK YAŞAM\n\nBir öğrenci oyun projesi\n\nEkip\nUmut · Toprak · Yusuf · Abdü\n\nDeniz kaplumbağaları her yıl doğdukları kumsala döner.\nO kumsalın nasıl olacağı bizim elimizde.\n\nOynadığın için teşekkürler. |
@@ -231,6 +237,18 @@ Kısa yaz: kart açıklaması en fazla 2 satır, kanıt notu en fazla 3 satır. 
 | rapor_kesinti | Belediye kesintisi |
 | hedef_bolge_sec | Haritada bir bölge seç |
 | hedef_yuva_sec | Haritada bir yuva seç |
+| hedef_kol_tuslari | {0}: gez · {1}: seç · {2}: geri |
+| yonetim_yine_de_ilerle | Yine de ilerle |
+| bildirim_bos_gonullu | Boşta {0} gönüllün var. Yine de ilerlemek için tekrar bas. |
+| bildirim_oynanabilir_kart | Bütçen yetecek kartlar var. Yine de ilerlemek için tekrar bas. |
+| engel_butce | Bütçe yetmiyor |
+| engel_kosul | Paydaş koşulu sağlanmadı |
+| engel_yuva_yok | Kumsalda henüz yuva yok |
+| engel_gonullu_yok | Boşta gönüllü kalmadı |
+| engel_cop_yok | Bu bölgede çöp yok |
+| engel_devriye_var | Bu bölgede zaten devriye var |
+| engel_yuva_bos | Bu yuvada bekleyen yumurta yok |
+| engel_kafes_var | Bu yuva zaten kafesli |
 | yuva | Yuva |
 | yuva_yumurta | yumurta |
 | yuva_hafta | çıkmaya hafta |
