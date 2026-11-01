@@ -179,7 +179,9 @@ Pervane sesi klibi bağlı (`Audio/SFX/Pervane.wav`).
 | KartOyna, KartDagit | Kart oynanınca, el dağıtılınca (`InsanTuru`) |
 | KanitBulundu | Haritada kayıp izine tıklanıp kanıt açılınca (`KayipIziHaritasi`) |
 
-**Klipler (2026-11-01, Yusuf).** Bütün efektler (26) ve bütün adımların ortam sesi bağlı (kaynak ve lisans `docs/varliklar.md`'de). Ortam: `Donus`, `IlkYuzus` ve `Parkur` su altı, `YuvaGecesi` ve `KacisGecesi` kumsal gecesi, `InsanTuru` gündüz kumsal, `Final` sakin deniz. Çöp Seli gece kumsalda geçtiği için `SesAyarlari`'ndaki kendi yuvasından (`copSeliOrtami`) kumsal gecesi sesini çalar. Henüz yok: müzikler.
+**Klipler (2026-11-01, Yusuf).** Bütün efektler (26) ve bütün adımların ortam sesi bağlı (kaynak ve lisans `docs/varliklar.md`'de). Ortam: `Donus`, `IlkYuzus` ve `Parkur` su altı, `YuvaGecesi` ve `KacisGecesi` kumsal gecesi, `InsanTuru` gündüz kumsal, `Final` sakin deniz. Çöp Seli gece kumsalda geçtiği için `SesAyarlari`'ndaki kendi yuvasından (`copSeliOrtami`) kumsal gecesi sesini çalar.
+
+**Müzikler (2026-11-01, Yusuf).** `Audio/Music/` altında; menü ve adımların müziği bağlı, adla aynı olan dosya bağlı olandır (`Donus.wav`, `InsanTuru.mp3` …), `Adim_Parca` adlı dosyalar bağlı olmayan yedektir. Düzeyler henüz eşitlenmedi, oyunda ortam sesiyle birlikte dinlenmedi.
 
 ## İnsan kısmı (yönetim ekranı)
 

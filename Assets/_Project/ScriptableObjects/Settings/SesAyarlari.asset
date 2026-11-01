@@ -126,26 +126,26 @@ MonoBehaviour:
   adimSesleri:
   - adim: 0
     ortam: {fileID: 8300000, guid: 41d31fea7bb489a4db992505ddab0b76, type: 3}
-    muzik: {fileID: 0}
+    muzik: {fileID: 8300000, guid: 588586fbb967f354891e196a79af3a56, type: 3}
   - adim: 1
     ortam: {fileID: 8300000, guid: ade668e31bd9bf14b9cdef2e5b7a296e, type: 3}
-    muzik: {fileID: 0}
+    muzik: {fileID: 8300000, guid: ca977107585d6ad4ebe2af2bdaa0ad64, type: 3}
   - adim: 2
     ortam: {fileID: 8300000, guid: 3071901e260eeb24683a4fdf0cfd79e7, type: 3}
-    muzik: {fileID: 0}
+    muzik: {fileID: 8300000, guid: ba482894cc97d8344b7c5f930acfcdf0, type: 3}
   - adim: 3
     ortam: {fileID: 8300000, guid: ade668e31bd9bf14b9cdef2e5b7a296e, type: 3}
-    muzik: {fileID: 0}
+    muzik: {fileID: 8300000, guid: ef93ff35eb1572749aa934ce47ace357, type: 3}
   - adim: 4
     ortam: {fileID: 8300000, guid: 41d31fea7bb489a4db992505ddab0b76, type: 3}
-    muzik: {fileID: 0}
+    muzik: {fileID: 8300000, guid: 7b6ebfdbfcf4d6445a1c9a1f5d4479a0, type: 3}
   - adim: 5
     ortam: {fileID: 8300000, guid: 5f21efcf4a2d21d418ccfe926c126968, type: 3}
-    muzik: {fileID: 0}
+    muzik: {fileID: 8300000, guid: d341ac1e1cda5024db0fdedfb48829db, type: 3}
   - adim: 6
     ortam: {fileID: 8300000, guid: 41d31fea7bb489a4db992505ddab0b76, type: 3}
-    muzik: {fileID: 0}
-  menuMuzigi: {fileID: 0}
+    muzik: {fileID: 8300000, guid: 6fbc1ba245d95fa43909667508500006, type: 3}
+  menuMuzigi: {fileID: 8300000, guid: 466ec0db3b421264bb8df8d4a6991328, type: 3}
   copSeliOrtami: {fileID: 8300000, guid: ade668e31bd9bf14b9cdef2e5b7a296e, type: 3}
   ortamDuzeyi: 0.6
   muzikDuzeyi: 0.4

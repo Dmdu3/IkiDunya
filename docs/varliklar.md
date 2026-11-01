@@ -28,3 +28,17 @@ ozet: Repoya giren hazır model, ses, font ve görsellerin listesi ve lisansı. 
 | `Audio/Ambience/SuAlti.wav` | Deniz bölümleri ve parkurların ortam sesi | [Underwater [Loop] AMB](https://freesound.org/people/DCSFX/sounds/366159/) (DCSFX) | CC0 | Yusuf |
 | `Audio/Ambience/InsanTuru.mp3` | İnsan turu ortam sesi | [Fort-Myers-Beach](https://freesound.org/people/rotcav/sounds/66992/) (rotcav) | CC0 | Yusuf |
 | `Audio/Ambience/Final.wav` | Final ortam sesi | [Gentle ocean waves birdsong and gull](https://freesound.org/people/jackmichaelking/sounds/518637/) (jackmichaelking) | CC0 | Yusuf |
+| `Audio/Music/Menu.mp3` | Ana menü müziği | [Lullabies For The End Of The World #3](https://freemusicarchive.org/music/holiznacc0/lullabies-for-the-end-of-the-world/lullabies-for-the-end-of-the-world-3/) (HoliznaCC0) | CC0 | Yusuf |
+| `Audio/Music/Menu_Lullabies1.mp3` | Menü müziği yedeği (bağlı değil) | [Lullabies For The End Of The World #1](https://freemusicarchive.org/music/holiznacc0/lullabies-for-the-end-of-the-world/lullabies-for-the-end-of-the-world-1/) (HoliznaCC0) | CC0 | Yusuf |
+| `Audio/Music/InsanTuru.mp3` | İnsan turu müziği | [VST guitar](https://freemusicarchive.org/music/holiznacc0/background-music/vst-guitar/) (HoliznaCC0) | CC0 | Yusuf |
+| `Audio/Music/InsanTuru_DriftingPiano.mp3` | İnsan turu müziği yedeği (bağlı değil) | [Drifting Piano](https://freemusicarchive.org/music/holiznacc0/background-music/drifting-piano/) (HoliznaCC0) | CC0 | Yusuf |
+| `Audio/Music/Donus.wav` | Bölüm 1 müziği | [The Abyss, Ambience of a Fallen Age](https://opengameart.org/content/ambience-of-a-fallen-age) (Umplix) | CC0 | Yusuf |
+| `Audio/Music/Donus_ExplorationTheme.wav` | Bölüm 1 müziği yedeği (bağlı değil) | [Exploration Theme](https://opengameart.org/content/exploration-theme) (Cleyton Kauffman) | CC0 | Yusuf |
+| `Audio/Music/YuvaGecesi.mp3` | Yuva gecesi müziği | [Atmosphere 1](https://freemusicarchive.org/music/holiznacc0/retro-gamer-soundtrack/atmosphere-1-1) (HoliznaCC0) | CC0 | Yusuf |
+| `Audio/Music/YuvaGecesi_TreesInTheFog.mp3` | Yuva gecesi müziği yedeği (bağlı değil) | [Trees In The Fog](https://freemusicarchive.org/music/holiznacc0/retro-gamer-soundtrack/trees-in-the-fog/) (HoliznaCC0) | CC0 | Yusuf |
+| `Audio/Music/KacisGecesi.wav` | Kaçış gecesi müziği | [Tension and Distress](https://opengameart.org/content/tension-and-distress) (allen yatsura) | CC0 | Yusuf |
+| `Audio/Music/KacisGecesi_WeAreNotAlone.mp3` | Kaçış gecesi müziği yedeği, bağlı değil (Freesound'un herkese açık yüksek kaliteli önizlemesi, özgün WAV değil) | [We are not alone here](https://freesound.org/people/xkeril/sounds/632686/) (xkeril) | CC0 | Yusuf |
+| `Audio/Music/IlkYuzus.mp3` | Bölüm 5 müziği | [Open Oceans](https://freemusicarchive.org/music/John_Bartmann/underwater-wonders/open-oceans/) (John Bartmann) | CC0 | Yusuf |
+| `Audio/Music/IlkYuzus_DeepSea.wav` | Bölüm 5 müziği yedeği (bağlı değil) | [Deep Sea](https://opengameart.org/content/deep-sea) (Umplix) | CC0 | Yusuf |
+| `Audio/Music/Final.wav` | Final müziği | [First Light Particles](https://opengameart.org/content/first-light-particles-%E2%80%93-cc0-atmospheric-pianoambient-track) (Yoiyami) | CC0 | Yusuf |
+| `Audio/Music/Parkur.mp3` | Parkur müziği | [Action Techno](https://freemusicarchive.org/music/Komiku/The_Binge_Watchers__Score_1/Komiku_-_The_Binge_Watchers_-_Score_1_-_20_Action_Techno) (Komiku) | CC0 | Yusuf |
