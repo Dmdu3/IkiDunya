@@ -56,9 +56,31 @@ Kısa yaz: kart açıklaması en fazla 2 satır, kanıt notu en fazla 3 satır. 
 |---|---|---|
 | kanit_isi | Kanıt: Isı | Yavrular sıcak kumda tükendi. Gölge, kumu serinletir. |
 | kanit_isik | Kanıt: Işık | Yavrular ışığa döndü, denizi kaybetti. Işıklar söndürülebilir. |
-| kanit_cop | Kanıt: Çöp | Yavrular ağa, halkaya, tekerlek izine takıldı. Araçlar ve şezlonglar düzenlenebilir. |
-| kanit_avci | Kanıt: Avcı | Bir tilki yuvayı ya da sürüyü buldu. Çit onu uzak tutar. |
+| kanit_cop | Kanıt: Çöp | Yavrular çöp ve ağlara takılabilir. Bölgeyi gönüllüyle temizleyebilir; araçları ve şezlongları düzenleyebilirsin. |
+| kanit_avci | Kanıt: Avcı | Yuva veya yavrular bir avcıyla karşılaştı. Tilki çiti, tilkiye karşı koruma sağlar. |
 | kanit_su | Kanıt: Su | Deniz yuvayı bastı. Yuvalar taşınabilir. |
+
+| id | Metin |
+|---|---|
+| kanit_neden_sicakkum | Yavru sıcak kumda kaybedildi. |
+| kanit_neden_cop | Yavru kumsaldaki çöpte kaybedildi. |
+| kanit_neden_ag | Yavru ağa takıldı. |
+| kanit_neden_isik | Yavru ışık nedeniyle yolunu kaybetti. |
+| kanit_neden_yengec | Yavru yengeç nedeniyle kaybedildi. |
+| kanit_neden_marti | Yavru martı nedeniyle kaybedildi. |
+| kanit_neden_tilki | Yuva veya yavru tilki nedeniyle kaybedildi. |
+| kanit_neden_dalga | Yuva veya yavru su nedeniyle kaybedildi. |
+| kanit_bulunan | Bulunan kanıt |
+| kanit_ilgili_kartlar | İlgili kartlar |
+| kanit_kart_acildi | Kanıtla havuza açılır |
+| kanit_kart_indirim | Kanıtla bedeli azalır |
+| kanit_kart_guclenme | Daha fazla kanıtla güçlenir |
+| kanit_kart_guclendi | Kanıtla güçlendi |
+| kanit_birim_bolge | bölge |
+| kanit_birim_kademe | kademe |
+| kanit_birim_bant | bant |
+| kanit_kart_yok | Bu kanıta bağlı kart bulunamadı. |
+| kanit_bilgi_kapat | Kapat |
 
 ## Olaylar
 
