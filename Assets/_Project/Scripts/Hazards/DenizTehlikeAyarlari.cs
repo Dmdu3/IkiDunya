@@ -27,6 +27,8 @@ namespace IkiDunya.Hazards
         [Header("Besin")]
         [Tooltip("Denizanası yenince kazanılan enerji (GDD: 15).")]
         [SerializeField] private float denizanasiEnerjisi = 15f;
+        [Tooltip("Poşet yutunca kaybedilen enerji (yavaşlamaya ek ceza).")]
+        [SerializeField] private float posetEnerjiKaybi = 10f;
         [Tooltip("Denizanası ve poşetin süzülme hızı.")]
         [SerializeField] private float suzulmeHizi = 0.4f;
         [Tooltip("Denizanasının kasılma sıklığı (saniyede).")]
@@ -66,6 +68,7 @@ namespace IkiDunya.Hazards
         public float KopukTitremeHizi => kopukTitremeHizi;
         public float KopukTitremeGenligi => kopukTitremeGenligi;
         public float DenizanasiEnerjisi => denizanasiEnerjisi;
+        public float PosetEnerjiKaybi => posetEnerjiKaybi;
         public float SuzulmeHizi => suzulmeHizi;
         public float KasilmaSikligi => kasilmaSikligi;
         public float AvciMenzil => avciMenzil;

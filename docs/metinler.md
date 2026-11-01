@@ -93,6 +93,7 @@ Kısa yaz: kart açıklaması en fazla 2 satır, kanıt notu en fazla 3 satır. 
 | bolum5_giris | İlk yüzüş. Uçsuz bucaksız mavi. |
 | ipucu_poset | Denizanası kasılarak yüzer, poşet düz süzülür. Yakından bak, E ile ye. |
 | ipucu_nefes | Nefesin azalıyor. Space'i basılı tutup yüzeye çık; yüzeyde teknelere dikkat et. |
+| ipucu_poset_yuttu | Poşet yuttun! Enerji kaybettin ve bir süre yavaşsın. Denizanası kasılarak yüzer, poşet düz süzülür. |
 | ipucu_ag | Ağa takıldın! E'ye art arda bas. |
 | ipucu_dalga | Dalga gelirken Space ile altından dal. |
 | ipucu_termal | T: termal görünüm. Kumun sıcaklığını gör; çok sıcak ya da çok serin yerden kaçın. |

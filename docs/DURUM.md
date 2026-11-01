@@ -239,4 +239,8 @@ Kurulum komutları şunları bulursa gri kutunun yerine koyar (önce `Assets/_Pr
 - **Yiyecek:** kök yeme alanı (tetikleyici küre), görünüş çocukta: denizanası `Sandbox/Denizanasi/Denizanasi` (Abdü; `Denizanasi.controller` ile kasılır), poşet `KumsalObjeleri/Poset`.
 
 Uyarılar: kameralardaki kulak `Core/TekKulak` ile tek (açılan kamera alır); menü kamerasında da kulak var. Sahnenin kendi `Sistemler` kopyası Awake'te hemen kapanır (iki EventSystem uyarısı).
+- **Akıntılar** artık görünmez bir alan ve içinde akış yönünde süzülen ince çizgiler (eskiden koca saydam beyaz kutulardı).
+- **Süsler:** Bölüm 1, Poşet sürüsü ve Çöp girdabı sahnelerinde oyun alanının kenarlarına Yusuf'un kayaları ve deniz çayırı (tabanın yüksekliğine oturur).
+- **Model dönüşü:** kalıbın kendi dönüşü korunur (Blender eksen düzeltmesi; tekne dik duruyordu). Denizanası artık sürekli yükselmez, aynı derinlik çevresinde kasılır.
+- **Poşet:** −10 enerji (`DenizTehlikeAyarlari.posetEnerjiKaybi`), yarı hız, `PosetYuttu` sesi, `ipucu_poset_yuttu`, deniz göstergesinde yavaşlık çubuğu.
 

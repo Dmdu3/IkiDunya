@@ -26,6 +26,7 @@ namespace IkiDunya.Turtle
         private int siperSayisi;
         private float dalisKalan;
         private float yavasKalan;
+        private float yavasToplam;
 
         public float Nefes { get; private set; } = 1f;
         public bool NefesVar => ayarlar.NefesSuresi > 0f;
@@ -36,6 +37,8 @@ namespace IkiDunya.Turtle
         /// <summary>Bölüm bitince ya da final sırasında true; kaplumbağa kıpırdamaz.</summary>
         public bool Kilitli { get; set; }
         public Transform Goz => goz;
+        /// <summary>Kalan yavaşlık (0–1): poşet, plastik, ağ sonrası; göstergede çubuk.</summary>
+        public float Yavaslik => yavasToplam > 0f ? Mathf.Clamp01(yavasKalan / yavasToplam) : 0f;
 
         // Başka objelerin OnEnable'ı bu Awake'ten önce çalışabilir; bu yüzden gerekince bulunur.
         public Enerji Enerji => enerji != null ? enerji : enerji = GetComponent<Enerji>();
@@ -81,7 +84,7 @@ namespace IkiDunya.Turtle
             {
                 if (GameInput.EtkilesBasildi && --KalanBasis == 0)
                 {
-                    yavasKalan = ayarlar.AgSonrasiYavas;
+                    Yavasla(ayarlar.AgSonrasiYavas);
                     Ses.Cal(SesTuru.AgdanKurtulma);
                 }
                 Enerji.Harca(harcama * Time.deltaTime);
@@ -143,11 +146,25 @@ namespace IkiDunya.Turtle
             for (int i = 0; i < sayi; i++)
             {
                 if (!bulunan[i].TryGetComponent(out Yiyecek yiyecek)) continue;
-                Ses.Cal(SesTuru.Yeme);
-                if (yiyecek.Ye() == Yiyecek.Turu.Denizanasi) Enerji.Ekle(tehlikeAyarlari.DenizanasiEnerjisi);
-                else yavasKalan = ayarlar.PosetYavas;
+                if (yiyecek.Ye() == Yiyecek.Turu.Denizanasi)
+                {
+                    Ses.Cal(SesTuru.Yeme);
+                    Enerji.Ekle(tehlikeAyarlari.DenizanasiEnerjisi);
+                    return;
+                }
+                // Poşet: enerji vermez, enerji alır ve uzun süre yavaşlatır (GDD: Beslenme).
+                Ses.Cal(SesTuru.PosetYuttu);
+                Enerji.Harca(tehlikeAyarlari.PosetEnerjiKaybi);
+                Yavasla(ayarlar.PosetYavas);
+                Ipucu.Goster("ipucu_poset_yuttu");
                 return;
             }
+        }
+
+        private void Yavasla(float sure)
+        {
+            yavasKalan = Mathf.Max(yavasKalan, sure);
+            yavasToplam = yavasKalan;
         }
 
         private void OnTriggerEnter(Collider diger)
@@ -177,7 +194,7 @@ namespace IkiDunya.Turtle
                 Ses.Cal(SesTuru.Takilma);
                 Ipucu.Goster("ipucu_ag");
             }
-            else if (tur == TrashTrap.Turu.Plastik) yavasKalan = ayarlar.PlastikYavas;
+            else if (tur == TrashTrap.Turu.Plastik) Yavasla(ayarlar.PlastikYavas);
         }
     }
 }

@@ -43,7 +43,7 @@ Bütün kaplumbağa bölümleri aynı kamerada, aynı tuşlarla ve aynı enerji 
 
 - **Akıntılar:** Haritada soluk oklarla görünür. Akıntıyla yüzmek hızlandırır, akıntıya karşı yüzmek 2 kat enerji harcar. Oyuncu rotayı akıntılara göre seçer.
 - **Nefes:** 60 saniyelik nefes çubuğu. Biterse kaplumbağa yüzeye çıkana kadar yavaşlar. Yüzeye çıkmak (Space) çubuğu doldurur ama yüzeyde tekneler vardır.
-- **Beslenme:** Denizanası +15 enerji verir. Poşet denizanasına benzer: yenirse enerji vermez ve kaplumbağa 10 saniye yarı hızda kalır. Ayırt etmek için yakından bakılır: denizanası kasılarak ilerler, poşet akıntıyla düz süzülür.
+- **Beslenme:** Denizanası +15 enerji verir. Poşet denizanasına benzer: yenirse enerji vermez, 10 enerji kaybettirir ve kaplumbağa 10 saniye yarı hızda kalır (ekranda yavaşlık çubuğu). Ayırt etmek için yakından bakılır: denizanası kasılarak ilerler, poşet akıntıyla düz süzülür.
 
 ### Tehditler
 
