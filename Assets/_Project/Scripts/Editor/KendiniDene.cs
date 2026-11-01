@@ -148,7 +148,7 @@ namespace IkiDunya.Editor
                 string[] hucreler = satir.Split('|');
                 if (hucreler.Length < 4) continue;
                 string id = hucreler[1].Trim();
-                if (!idBicimi.IsMatch(id)) continue;
+                if (id == "id" || !idBicimi.IsMatch(id)) continue; // "id" = tablo başlığı
                 if (!idler.Add(id)) tekrar.Add(id);
             }
             Bak(tekrar.Count == 0, "metinler.md'de iki kez yazılmış id: " + string.Join(", ", tekrar.Distinct()));
