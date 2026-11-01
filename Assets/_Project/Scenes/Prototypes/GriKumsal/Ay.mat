@@ -8,11 +8,7 @@ Material:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_Name: Ay
-<<<<<<< HEAD
   m_Shader: {fileID: 4800000, guid: c7d56f558c32a3c49bbed6d6088639f7, type: 3}
-=======
-  m_Shader: {fileID: 4800000, guid: 1ab34e01d3d25d548b446bf502df5a1c, type: 3}
->>>>>>> 4be3b97 ( denemeler2)
   m_Parent: {fileID: 0}
   m_ModifiedSerializedProperties: 0
   m_ValidKeywords: []
