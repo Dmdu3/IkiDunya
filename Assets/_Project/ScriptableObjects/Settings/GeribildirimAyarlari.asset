@@ -9,7 +9,11 @@ MonoBehaviour:
   m_GameObject: {fileID: 0}
   m_Enabled: 1
   m_EditorHideFlags: 0
+<<<<<<< HEAD
   m_Script: {fileID: 11500000, guid: 92eaf4f1f1809714d9b5d9ad1ba78b53, type: 3}
+=======
+  m_Script: {fileID: 11500000, guid: fc013f7ec64e21f4490b166c346fad68, type: 3}
+>>>>>>> 4be3b97 ( denemeler2)
   m_Name: GeribildirimAyarlari
   m_EditorClassIdentifier: Assembly-CSharp::IkiDunya.Core.GeribildirimAyarlari
   sarsintiKaymasi: 0.06
