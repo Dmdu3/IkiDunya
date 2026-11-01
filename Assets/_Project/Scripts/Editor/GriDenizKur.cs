@@ -97,6 +97,9 @@ namespace IkiDunya.Editor
             Kontrol("GirdapKapisi", -110f, denize, false, true);
             GameObject ada = GriKumsalKur.Kutu("YosunAdasi", null, new Vector3(0f, 0f, -195f), new Vector3(12f, 0.6f, 12f), yosun, "Default");
             Object.DestroyImmediate(ada.GetComponent<Collider>());
+            // Yusuf'un yosun adası varsa gri kutunun yerine geçer (12 m). Kökü su çizgisinde kalır (tabana oturtulmaz).
+            if (GriKumsalKur.ModelYerlestir(ada.transform, "Yosun_Adasi", Vector3.zero, 12f, false) != null)
+                ada.GetComponent<Renderer>().enabled = false;
             Kontrol("YosunAdasi_Son", -195f, denize, true);
 
             // Sığ sular: kayalar ve deniz çayırı (avcı balıktan saklanılır)
@@ -220,6 +223,9 @@ namespace IkiDunya.Editor
             Transform merkez = Nokta("Merkez", merkezNoktasi, Quaternion.identity);
             GameObject yigin = GriKumsalKur.Kutu("ParlayanYigin", null, merkezNoktasi + Vector3.down * 2.5f, new Vector3(2.5f, 1.5f, 2.5f), plastik, "Default");
             Object.DestroyImmediate(yigin.GetComponent<Collider>());
+            // Yusuf'un plastik yığını varsa gri kutunun yerine geçer (2,5 m). Kökü ortada (tabana oturtulmaz).
+            if (GriKumsalKur.ModelYerlestir(yigin.transform, "Plastik_Yigini", Vector3.zero, 2.5f, false) != null)
+                yigin.GetComponent<Renderer>().enabled = false;
 
             var halkalar = new Object[parkur.HalkaSayisi];
             for (int h = 0; h < parkur.HalkaSayisi; h++)
@@ -700,6 +706,11 @@ namespace IkiDunya.Editor
             parca.transform.localScale = new Vector3(0.5f, 0.2f, 0.4f);
             parca.GetComponent<Collider>().isTrigger = true;
             parca.GetComponent<Renderer>().sharedMaterial = plastik;
+            // Yusuf'un parlayan plastiği (1-3) varsa kürenin görüntüsünün yerine geçer; tuzak ve collider aynı kalır.
+            // Modelin kökü ortada: kürenin merkezine oturur (tabana oturtulmaz).
+            int parcaNo = Mathf.Abs(Mathf.RoundToInt(yer.x + yer.z)) % 3 + 1;
+            if (GriKumsalKur.ModelYerlestir(kok.transform, $"Parlayan_Plastik_{parcaNo}", Vector3.zero, 0.5f, false) != null)
+                parca.GetComponent<Renderer>().enabled = false;
             var so = new SerializedObject(parca.AddComponent<TrashTrap>());
             so.FindProperty("tur").enumValueIndex = (int)TrashTrap.Turu.Plastik;
             so.ApplyModifiedPropertiesWithoutUndo();
