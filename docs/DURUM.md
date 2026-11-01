@@ -253,3 +253,11 @@ Kaynak betikler `Blender/Yusuf/` (`kum_torbasi.py`, `gozcu_kulubesi.py`, `plaj_t
 - **`Plaj_Tabelasi`** (Plaj Tabelaları kartı): iki direkli pano (1,4 × 0,9 m, boy ~2,1 m); üzerinde yazı yok, resimler var (kaplumbağa, ışık yasağı, ayak izi yasağı). Pano yüzü ayrı malzeme (`Tabela_Yuzu`), Unity'de dokulu malzemeyle değiştirilebilir. Küçüğü `Plaj_Tabelasi_Kucuk` (tek direk, ~1,3 m).
 
 Henüz yok: bu yapılar için gri kutu ve koda bağlama (`KumsalYapilari`; kart etkileri Toprak'ta, yapı kalıpları Umut'ta).
+
+## Şamandıralar (Yusuf'un modelleri, 6. parti)
+
+Kaynak `Blender/Yusuf/samandira.py` (toplu: `kumsal_objeleri_6_uret.py`); FBX'ler Yusuf'un Blender'ında `Sandbox/Yusuf/KumsalObjeleri/` altına üretilecek. Kumsaldaki çöp şamandırası (`Models/Kumsal/Samandira.fbx`) ayrı, değişmedi.
+- **`Samandira_Isaret`**: çöp girdabında boşluğun iki yanındaki `BoslukIsareti` gri küresinin (0,5 m) yerine. ~0,46 m turuncu şamandıra, ekvatorunda ışıyan kuşak (`P_Isik_Parilti`), ip ve yosun; boy ~0,85 m. Kök ortada (suda asılı).
+- **`Samandira_Kontrol`**: Bölüm 1 ve 5'in kontrol noktasındaki sarı gri silindirin yerine. Gövde ~0,7 m çap, kafes direk ve tepede yanan fener (`P_Kehribar`), boy su üstünde ~1,25 m; kök su hizasında (gövdenin ~0,3 m'si ve zincir suyun altında).
+
+Henüz yok: koda bağlama (`Editor/GriDenizKur.cs`: `Halka` içindeki `BoslukIsareti` ve `Kontrol` içindeki `Samandira` primitive'leri; Umut).
