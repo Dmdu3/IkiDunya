@@ -1,5 +1,6 @@
 """Kumsal ve deniz objeleri: ağ parçası, plastik halka, ışık direği, gölgelik;
-yuva çukuru, yumurta, yengeç deliği, tekerlek izi; hayalet ağ, misina.
+yuva çukuru, yumurta, yengeç deliği; hayalet ağ, misina.
+Tekerlek izinin yeni hali tekerlek_izi.py'de (kumsal_objeleri_4_uret.py).
 
 Ölçüler oyundaki gri kutulardan (Editor/GriKumsalKur.cs):
     Ag            TuzakKalibi("Ag", 0,8 x 0,02 x 0,8)          kumda yatan balıkçı ağı
@@ -9,14 +10,13 @@ yuva çukuru, yumurta, yengeç deliği, tekerlek izi; hayalet ağ, misina.
     Yuva_Cukuru   kodda gri hali yok; annenin gövdesine (0,9 x 1,1) göre 1,4 m, içinde 12 yumurta
     Yumurta       tek yumurta, 4,2 cm (masa topu boyu); kod sayıyı kendisi koymak isterse
     Yengec_Deligi YengecKur: TitreyenKum 0,5 m çapında; yengeç merkezden 0,45 m uzakta
-    Tekerlek_Izi  TuzakKalibi("TekerlekIzi", 6 x 0,02 x 0,5): tek lastiğin izi
     Hayalet_Ag    GriDenizKur.HayaletAgKalibi: dikey perde 4 x 3 x 0,1, KÖK ORTADA; kenarlar parlar
     Misina        GriDenizKur.MisinaKalibi: 6 m yatay tel (x boyunca), KÖK ORTADA
 
 Deniz objeleri (Hayalet_Ag, Misina) suda asılı durur: kökleri tabanda değil, gri kutu gibi ortadadır.
 Parlayan kısımlar P_Isik_Parilti malzemesinde (ışıma FBX'te tam taşınmaz; Unity'de malzemeden açılır).
 
-Kumdaki modeller (çukur, delik, iz) zemini kesmez: kumun üstüne oturan alçak bir tümsek/şerittir,
+Kumdaki modeller (çukur, delik) zemini kesmez: kumun üstüne oturan alçak bir tümsek/şerittir,
 "çukur" kısmı tümseğin içinde kalır. Bu yüzden eğimli arazide hafifçe gömülebilirler.
 
 Çalıştırma (Blender 5.2, arka planda):
@@ -414,55 +414,6 @@ def yengec_deligi(r):
     return p.nesne()
 
 
-def tekerlek_izi(r):
-    """Kumsaldan geçmiş bir aracın tek lastik izi (gri kutu 6 x 0,5): basık koyu şerit,
-    dişlerin bıraktığı ok başı deseni, iki kenarda itilmiş kum sırtı."""
-    p = Parca("Tekerlek_Izi")
-    boy = 6.0
-    serit = 0.34
-    adim = 0.25
-    n = int(boy / adim)
-
-    def kayma(x):
-        return 0.05 * math.sin(x * 0.6 + 0.5)
-
-    satir = []
-    for k in range(n + 1):
-        x = -boy / 2 + k * adim
-        y = kayma(x)
-        satir.append([(x, y - serit / 2, 0.004), (x, y + serit / 2, 0.004)])
-    p.yuz(satir, "P_Kum_Sicak", dongu=False)
-
-    # Kenarlarda itilmiş kum sırtı
-    i = p.dilim("P_Kum_Parlak")
-    for kenar in (-1, 1):
-        sirt = []
-        for k in range(n + 1):
-            x = -boy / 2 + k * adim
-            y = kayma(x) + kenar * serit / 2
-            h = 0.022 + 0.008 * math.sin(k * 1.7 + kenar)
-            sirt.append([(x, y, 0.004), (x, y + kenar * 0.03, h), (x, y + kenar * 0.075, 0.0)])
-        v = [[p.bm.verts.new(c) for c in h] for h in sirt]
-        for a in range(len(v) - 1):
-            for b in range(2):
-                q = (v[a][b], v[a + 1][b], v[a + 1][b + 1], v[a][b + 1])
-                f = p.bm.faces.new(q if kenar > 0 else tuple(reversed(q)))
-                f.material_index = i
-
-    # Diş izleri: ok başı deseni, iki sıra kayık
-    x = -boy / 2 + 0.08
-    sira = 0
-    while x < boy / 2 - 0.1:
-        y = kayma(x)
-        for taraf in (-1, 1):
-            kay = 0.03 if (sira % 2) else 0.0
-            a = Vector((x + kay, y + taraf * serit * 0.44, 0.007))
-            b = Vector((x + kay + 0.07, y + taraf * 0.02, 0.007))
-            p.tup([a, b], 0.014, "P_Kaya_Pismis", kenar=3)
-        x += 0.14
-        sira += 1
-    return p.nesne()
-
 def hayalet_ag(r):
     """Suda asılı, yırtık hayalet ağ perdesi (Blender X-Z düzleminde; Unity'de x-y, kalınlık z).
     Üstte şamandıralı yaka ipi, altta kurşunlu ip, kenar ipleri parlar; yırtıklar, sarkan teller, takılmış çöp ve yosun."""
@@ -591,7 +542,7 @@ def misina(r):
     return p.nesne()
 
 
-MODELLER = [ag, plastik_halka, isik_diregi, golgelik, yuva_cukuru, yumurta, yengec_deligi, tekerlek_izi, hayalet_ag, misina]
+MODELLER = [ag, plastik_halka, isik_diregi, golgelik, yuva_cukuru, yumurta, yengec_deligi, hayalet_ag, misina]
 
 
 # ---------------------------------------------------------------- dışa verme ve önizleme
