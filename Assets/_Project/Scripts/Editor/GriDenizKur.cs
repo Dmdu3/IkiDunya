@@ -574,8 +574,8 @@ namespace IkiDunya.Editor
             return nesne;
         }
 
-        /// <summary>Uzaktan poşet, kaplumbağanın gözünde gerçek denizanası modeliyle görünür; yakında ya da uzun bakınca poşet ortaya çıkar.
-        /// Kopya kasılmaz (animasyonsuz): akıntıyla düz süzülmesi dikkatli oyuncuya onu ele verir.
+        /// <summary>Uzaktan poşet, kaplumbağanın gözünde gerçek denizanası modeliyle görünür; yaklaşınca ya da uzun bakınca poşet ortaya çıkar.
+        /// Kopya kasılmaz (animasyonsuz): akıntıyla düz süzülmesi dikkatli oyuncuya onu ele verir (GDD: denizanası kasılır, poşet düz süzülür).
         /// Parkur kalıplarında yok: poşet sürüsünün karanlık aşaması poşetin görünmez olmasına dayanır.</summary>
         private static void PosetYanilgisiKur(GameObject nesne, Transform gercek)
         {
@@ -588,15 +588,33 @@ namespace IkiDunya.Editor
                 sahte.transform.localScale = new Vector3(0.6f, 0.45f, 0.6f);
                 sahte.GetComponent<Renderer>().sharedMaterial = denizanasi;
             }
-            sahte.name = "Yanilgi_Denizanasi";
-            sahte.SetActive(false);
+            YanilgiBagla(nesne, AlgiTuru.PosetDenizanasi, gercek, sahte, "Yanilgi_Denizanasi");
+        }
 
-            var algi = nesne.AddComponent<AlgiNesnesi>();
-            var so = new SerializedObject(algi);
+        /// <summary>Parlayan plastik yavrunun gözünde yosun adasının küçük bir parçası gibi görünür: aradığı yerin sözü.
+        /// İpucu: yosun parlamaz, bu parlıyor (ışık alanı yanılgıda da yanar). Yaklaşınca ya da uzun bakınca plastik ortaya çıkar.</summary>
+        private static void PlastikYanilgisiKur(GameObject nesne, Transform gercek)
+        {
+            GameObject sahte = GriKumsalKur.ModelYerlestir(nesne.transform, "Yosun_Adasi", Vector3.zero, 0.9f, false);
+            if (sahte == null)
+            {
+                sahte = GameObject.CreatePrimitive(PrimitiveType.Sphere);
+                Object.DestroyImmediate(sahte.GetComponent<Collider>());
+                sahte.transform.SetParent(nesne.transform, false);
+                sahte.transform.localScale = new Vector3(0.9f, 0.25f, 0.7f);
+                sahte.GetComponent<Renderer>().sharedMaterial = yosun;
+            }
+            YanilgiBagla(nesne, AlgiTuru.PlastikYosun, gercek, sahte, "Yanilgi_Yosun");
+        }
+
+        private static void YanilgiBagla(GameObject nesne, AlgiTuru tur, Transform gercek, GameObject sahte, string ad)
+        {
+            sahte.name = ad;
+            sahte.SetActive(false);
+            var so = new SerializedObject(nesne.AddComponent<AlgiNesnesi>());
+            so.FindProperty("tur").enumValueIndex = (int)tur;
             so.FindProperty("gercekGorunus").objectReferenceValue = gercek;
             so.FindProperty("yanilgiGorunus").objectReferenceValue = sahte;
-            // Suda görüş kısa: yanılgı ~18 m'den görünür, ~2,4 m'de kırılır.
-            so.FindProperty("yaricapCarpani").floatValue = 0.3f;
             so.ApplyModifiedPropertiesWithoutUndo();
         }
 
@@ -757,11 +775,12 @@ namespace IkiDunya.Editor
             // Yusuf'un parlayan plastiği (1-3) varsa kürenin görüntüsünün yerine geçer; tuzak ve collider aynı kalır.
             // Modelin kökü ortada: kürenin merkezine oturur (tabana oturtulmaz).
             int parcaNo = Mathf.Abs(Mathf.RoundToInt(yer.x + yer.z)) % 3 + 1;
-            if (GriKumsalKur.ModelYerlestir(kok.transform, $"Parlayan_Plastik_{parcaNo}", Vector3.zero, 0.5f, false) != null)
-                parca.GetComponent<Renderer>().enabled = false;
+            GameObject model = GriKumsalKur.ModelYerlestir(kok.transform, $"Parlayan_Plastik_{parcaNo}", Vector3.zero, 0.5f, false);
+            if (model != null) parca.GetComponent<Renderer>().enabled = false;
             var so = new SerializedObject(parca.AddComponent<TrashTrap>());
             so.FindProperty("tur").enumValueIndex = (int)TrashTrap.Turu.Plastik;
             so.ApplyModifiedPropertiesWithoutUndo();
+            PlastikYanilgisiKur(kok, model != null ? model.transform : parca.transform);
         }
 
         /// <summary>Yasakla sönmeyen bir ışık alanı (ışıklı tekne, parlayan plastik).</summary>

@@ -119,6 +119,9 @@ Kısa yaz: kart açıklaması en fazla 2 satır, kanıt notu en fazla 3 satır. 
 | bolum4_giris | Kaçış. Gün doğmadan denize. |
 | bolum5_giris | İlk yüzüş. Uçsuz bucaksız mavi. |
 | ipucu_poset | Denizanası kasılarak yüzer, poşet düz süzülür. Yakından bak, E ile ye. |
+| ipucu_yanilgi_poset | Uzaktan denizanası sandın, bir poşetmiş. Denizanası kasılarak yüzer; bu akıntıyla düz süzülüyordu. |
+| ipucu_yanilgi_isik | Ay sandığın bir lambaymış. Gerçek ay denizin üstündedir ve ışığı suda yansır. Bakışını bırakırsan yavru en parlak ışığa döner. |
+| ipucu_yanilgi_plastik | Yosun sandığın bir plastik parçasıymış. Yosun parlamaz; bu parlıyordu. |
 | ipucu_nefes | Nefesin azalıyor. Space'i basılı tutup yüzeye çık; yüzeyde teknelere dikkat et. |
 | ipucu_poset_yuttu | Poşet yuttun! Enerji kaybettin ve bir süre yavaşsın. Denizanası kasılarak yüzer, poşet düz süzülür. |
 | ipucu_ag | Ağa takıldın! E'ye art arda bas. |

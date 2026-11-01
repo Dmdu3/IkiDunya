@@ -110,6 +110,12 @@ namespace IkiDunya.Camera
             kamera.fieldOfView = Mathf.Lerp(kamera.fieldOfView, hedef, dt * ayarlar.GorusGecisi);
         }
 
+        /// <summary>Gövdeyi bu kadar derece sağa (eksiyse sola) döndürür; oyuncunun girdisi değil, içgüdü (yavru en parlak aya döner) çağırır.</summary>
+        public void Dondur(float derece)
+        {
+            if (govde != null && transform.parent != null) govde.Rotate(0f, derece, 0f, Space.World);
+        }
+
         /// <summary>Gövdeyi değiştirir (ör. öncü yavru değişince).</summary>
         public void GovdeAyarla(Transform yeniGovde)
         {

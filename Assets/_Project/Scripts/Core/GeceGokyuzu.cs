@@ -17,6 +17,19 @@ namespace IkiDunya.Core
         [SerializeField] private Transform ay;
         [SerializeField] private Vector3 ayYonu = new Vector3(-0.35f, 0.45f, -1f);
 
+        /// <summary>Gerçek ay (gökyüzü açıkken); yavrunun içgüdüsü sahte aylarla karşılaştırır.</summary>
+        public static Transform Ay { get; private set; }
+
+        [RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.SubsystemRegistration)]
+        private static void StatikleriSifirla() => Ay = null;
+
+        private void OnEnable() => Ay = ay;
+
+        private void OnDisable()
+        {
+            if (Ay == ay) Ay = null;
+        }
+
         private void Awake()
         {
             GetComponent<MeshFilter>().sharedMesh = YildizAgi();

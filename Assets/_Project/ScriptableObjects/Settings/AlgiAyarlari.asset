@@ -12,11 +12,47 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 4eaec36e8c4dbd64e879787b8c66a3fc, type: 3}
   m_Name: AlgiAyarlari
   m_EditorClassIdentifier: Assembly-CSharp::IkiDunya.Turtle.AlgiAyarlari
-  yanilgiYaricapi: 60
-  kirilmaYaricapi: 8
-  bakmaYaricapi: 20
+  profiller:
+  - tur: 0
+    kirilmaYaricapi: 2.4
+    supheYaricapi: 9
+    bakmakKirar: 1
+    bakmaYaricapi: 6
+    bakmaSuresi: 1.5
+    kirilmaSuresi: 0.5
+    ses: 29
+    ipucu: ipucu_yanilgi_poset
+  - tur: 1
+    kirilmaYaricapi: 8
+    supheYaricapi: 30
+    bakmakKirar: 0
+    bakmaYaricapi: 0
+    bakmaSuresi: 0
+    kirilmaSuresi: 1.4
+    ses: 30
+    ipucu: ipucu_yanilgi_isik
+  - tur: 2
+    kirilmaYaricapi: 3
+    supheYaricapi: 10
+    bakmakKirar: 1
+    bakmaYaricapi: 7
+    bakmaSuresi: 1.5
+    kirilmaSuresi: 0.6
+    ses: 29
+    ipucu: ipucu_yanilgi_plastik
   bakmaAcisi: 8
-  bakmaSuresi: 1.5
-  ayAcisalCap: 3
+  kirpmaAraligiUzak: 3
+  kirpmaAraligiYakin: 0.6
+  kirpmaSuresi: 0.09
+  ayAcisalCap: 4.2
   ayMesafesi: 150
-  ayYukselisi: 6
+  ayYukselisi: 7
+  ayRengi: {r: 1.5, g: 1.2, b: 0.7, a: 1}
+  ayTitremesi: 0.35
+  ayTitremeSikligi: 0.12
+  ampulBoyu: 0.35
+  icguduGecikmesi: 0.8
+  icguduYukselmesi: 1.5
+  icguduHizi: 22
+  sahteAyCekiciligi: 2
+  cekicilikYariAcisi: 100

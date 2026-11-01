@@ -129,6 +129,14 @@ MonoBehaviour:
   - tur: 28
     klipler: []
     duzey: 1
+  - tur: 29
+    klipler:
+    - {fileID: 8300000, guid: 96af061a7e47e3749a681e59edc0e95e, type: 3}
+    duzey: 0.7
+  - tur: 30
+    klipler:
+    - {fileID: 8300000, guid: 6a341b2c4e82e804697e06f75339e926, type: 3}
+    duzey: 0.55
   adimSesleri:
   - adim: 0
     ortam: {fileID: 8300000, guid: 41d31fea7bb489a4db992505ddab0b76, type: 3}
