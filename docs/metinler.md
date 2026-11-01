@@ -215,6 +215,7 @@ Kısa yaz: kart açıklaması en fazla 2 satır, kanıt notu en fazla 3 satır. 
 | rapor_kesinti | Belediye kesintisi |
 | hedef_bolge_sec | Haritada bir bölge seç |
 | hedef_yuva_sec | Haritada bir yuva seç |
+| hedef_kol_tuslari | {0}: gez · {1}: seç · {2}: geri |
 | yonetim_yine_de_ilerle | Yine de ilerle |
 | bildirim_bos_gonullu | Boşta {0} gönüllün var. Yine de ilerlemek için tekrar bas. |
 | bildirim_oynanabilir_kart | Bütçen yetecek kartlar var. Yine de ilerlemek için tekrar bas. |

@@ -20,6 +20,11 @@ namespace IkiDunya.Core
         /// <summary>Ara sahne oynarken true: oyuncu kıpırdamaz.</summary>
         public static bool Kilitli { get; set; }
 
+        /// <summary>Son kullanılan cihaz oyun kolu mu; ekrandaki tuş yazıları buna göre.</summary>
+        public static bool KolKullaniliyor { get; private set; }
+        /// <summary>Oyuncu klavye/fareden oyun koluna ya da tersine geçince.</summary>
+        public static event Action CihazDegisti;
+
         /// <summary>Oyun duraklatılmamışsa (ve duraklatma bu karede kapanmadıysa), ara sahne oynamıyorsa oyun girdileri okunur.</summary>
         private static bool Oyunda => !Kilitli && !Duraklatma.Acik && Time.frameCount != Duraklatma.KapanmaKaresi;
 
@@ -36,6 +41,8 @@ namespace IkiDunya.Core
         private static InputAction duraklat;
         private static InputAction isaretci;
         private static InputAction tikla;
+        private static InputAction ileriKol;
+        private static InputAction vazgec;
         private static InputAction gelistiriciBolum1;
         private static InputAction gelistiriciKumsal;
         private static InputAction gelistiriciBolum5;
@@ -65,6 +72,13 @@ namespace IkiDunya.Core
         public static bool TiklaBasildi => Oyunda ? tikla.WasPressedThisFrame() : false;
         public static bool TiklaBirakildi => Oyunda ? tikla.WasReleasedThisFrame() : false;
         public static bool TiklaBasili => Oyunda ? tikla.IsPressed() : false;
+        /// <summary>Fare bu karede belirgin kıpırdadı (haritada çubuktan imlece dönmek için).</summary>
+        public static bool FareKipirdadi => Oyunda && bakis.ReadValue<Vector2>().sqrMagnitude > 4f;
+        /// <summary>Aşamayı geçir: klavyede Space (ZiplaDal'ın klavye tuşu), oyun kolunda Y. Kolun A'sı arayüzde seçer, ilerletmez.</summary>
+        public static bool IleriBasildi => Oyunda && (ileriKol.WasPressedThisFrame()
+            || (ziplaDal.WasPressedThisFrame() && !(ziplaDal.activeControl?.device is Gamepad)));
+        /// <summary>Hedef seçiminden vazgeç: oyun kolunda B, farede sağ tık.</summary>
+        public static bool VazgecBasildi => Oyunda ? vazgec.WasPressedThisFrame() : false;
 
         // Geliştirici (F1–F6)
         public static bool GelistiriciBolum1Basildi => gelistiriciBolum1.WasPressedThisFrame();
@@ -79,6 +93,8 @@ namespace IkiDunya.Core
         {
             Kapat();
             Kilitli = false;
+            KolKullaniliyor = false;
+            CihazDegisti = null;
             harita = new InputActionMap("Oyun");
 
             hareket = harita.AddAction("Hareket", InputActionType.Value);
@@ -113,6 +129,9 @@ namespace IkiDunya.Core
 
             isaretci = harita.AddAction("Isaretci", InputActionType.Value, "<Pointer>/position");
             tikla = harita.AddAction("Tikla", InputActionType.Button, "<Pointer>/press");
+            ileriKol = harita.AddAction("IleriKol", InputActionType.Button, "<Gamepad>/buttonNorth");
+            vazgec = harita.AddAction("Vazgec", InputActionType.Button, "<Gamepad>/buttonEast");
+            vazgec.AddBinding("<Mouse>/rightButton");
 
             gelistiriciBolum1 = harita.AddAction("GelistiriciBolum1", InputActionType.Button, "<Keyboard>/f1");
             gelistiriciKumsal = harita.AddAction("GelistiriciKumsal", InputActionType.Button, "<Keyboard>/f2");
@@ -125,13 +144,40 @@ namespace IkiDunya.Core
             string kayitli = PlayerPrefs.GetString(TuslarAnahtari, "");
             if (!string.IsNullOrEmpty(kayitli)) harita.LoadBindingOverridesFromJson(kayitli);
 
+            harita.actionTriggered += CihazaBak;
             harita.Enable();
             Application.quitting += Kapat;
+        }
+
+        private static void CihazaBak(InputAction.CallbackContext baglam)
+        {
+            bool kol = baglam.control?.device is Gamepad;
+            if (kol == KolKullaniliyor) return;
+            KolKullaniliyor = kol;
+            CihazDegisti?.Invoke();
         }
 
         // ---- Tuş atama (ayarlar) ----
 
         public static InputAction Eylem(string ad) => harita.FindAction(ad);
+
+        /// <summary>Eylemin son kullanılan cihazdaki tuşu (ekranda göstermek için): oyun kolu ya da klavye/fare bağlaması.</summary>
+        public static string TusYazisi(string ad)
+        {
+            InputAction e = Eylem(ad);
+            if (e == null) return "";
+            for (int i = 0; i < e.bindings.Count; i++)
+            {
+                InputBinding b = e.bindings[i];
+                if (b.isPartOfComposite) continue;
+                bool kol = (b.effectivePath ?? "").StartsWith("<Gamepad>");
+                if (kol == KolKullaniliyor) return e.GetBindingDisplayString(i);
+            }
+            return e.GetBindingDisplayString(0);
+        }
+
+        /// <summary>İleri'nin ekrandaki tuşu: kolda Y, klavyede ZiplaDal'ın tuşu.</summary>
+        public static string IleriTusu => KolKullaniliyor ? TusYazisi("IleriKol") : TusYazisi("ZiplaDal");
 
         public static void BaglamalariKaydet()
         {
@@ -150,6 +196,7 @@ namespace IkiDunya.Core
         {
             Application.quitting -= Kapat;
             if (harita == null) return;
+            harita.actionTriggered -= CihazaBak;
             harita.Disable();
             harita.Dispose();
             harita = null;

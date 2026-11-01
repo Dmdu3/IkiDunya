@@ -63,6 +63,7 @@ namespace IkiDunya.UI.Management
         private Sprite panelSprite;
         private Texture2D panelDokusu;
         private int sonBolge = -2;
+        private InsanTuru.Asama secimAsamasi;
 
         private MetinTablosu Tablo => metinler != null ? metinler : MetinTablosu.Yuklu;
         private ArayuzTemasi T => tema != null ? tema : ArayuzTemasi.Yuklu;
@@ -83,6 +84,7 @@ namespace IkiDunya.UI.Management
             yonetim.Degisti += Yenile;
             kumsal.Degisti += Yenile;
             GameInput.BaglamalarDegisti += Yenile;
+            GameInput.CihazDegisti += Yenile;
             ileriDugmesi.onClick.AddListener(tur.Ilerle);
             DugmeSesi.Bagla(aDugmesi, bDugmesi);
             aDugmesi.onClick.AddListener(() => tur.Sec(true));
@@ -93,6 +95,7 @@ namespace IkiDunya.UI.Management
         private void OnDisable()
         {
             GameInput.BaglamalarDegisti -= Yenile;
+            GameInput.CihazDegisti -= Yenile;
             // Sahne kapanırken tur bizden önce silinmiş olabilir; asset'lerden yine de çıkılır, yoksa silinmiş ekran güncellenmeye çalışır.
             if (yonetim != null) yonetim.Degisti -= Yenile;
             if (kumsal != null) kumsal.Degisti -= Yenile;
@@ -154,7 +157,9 @@ namespace IkiDunya.UI.Management
             IleriYazisi();
 
             Rapor();
+            int seciliSira = SeciliSira();
             if (!hedefSeciliyor) Dugmeler();
+            SecimiKur(seciliSira, hedefSeciliyor);
             Olay();
             YuvaListesi();
             BolgeBilgisi();
@@ -162,15 +167,67 @@ namespace IkiDunya.UI.Management
 
             string istem = tur.BeklenenHedef == Hedef.Bolge ? Al("hedef_bolge_sec")
                 : tur.BeklenenHedef == Hedef.Yuva ? Al("hedef_yuva_sec") : "";
+            // Oyun kolunda haritada gezinmenin tuşları da yazılır (fareyle tıklamak açık).
+            if (GameInput.KolKullaniliyor && istem.Length > 0)
+                istem += "  ·  " + string.Format(Al("hedef_kol_tuslari"), GameInput.TusYazisi("Hareket"), GameInput.TusYazisi("ZiplaDal"), GameInput.TusYazisi("Vazgec"));
             // Görev seçilen hedefte işe yaramadıysa neden önce, kırmızı.
             hedefYazisi.text = tur.HedefEngeli != null && istem.Length > 0 ? $"<color={EksiRengi}>{Al(tur.HedefEngeli)}</color>  ·  {istem}" : istem;
         }
 
-        /// <summary>İleri düğmesinde tuşu da yazar (Space ya da ayarlardan atanan). Düğme açılınca MetinYazisi yazıyı tablodan yeniden kurar; bu ondan sonra çağrılır.</summary>
+        /// <summary>Seçili görev/kart düğmesinin sırası (yoksa -1); düğmeler yeniden kurulunca aynı sıradaki seçilir.</summary>
+        private int SeciliSira()
+        {
+            GameObject secili = EventSystem.current != null ? EventSystem.current.currentSelectedGameObject : null;
+            if (secili == null) return -1;
+            for (int i = 0; i < dugmeler.Count; i++)
+                if (dugmeler[i] != null && dugmeler[i].gameObject == secili) return i;
+            return -1;
+        }
+
+        /// <summary>Oyun koluyla gezinmek için bir düğme seçili olmalı: önceki sıradaki görev/kart, yoksa ilk basılabilir, yoksa İleri; olayda ilk açık seçenek.
+        /// Hedef seçerken hiçbiri seçili olmaz (A haritada seçer, düğmeye basmasın). Fareyle oynarken seçime dokunulmaz.</summary>
+        private void SecimiKur(int oncekiSira, bool hedefSeciliyor)
+        {
+            EventSystem es = EventSystem.current;
+            if (es == null) return;
+            if (hedefSeciliyor)
+            {
+                es.SetSelectedGameObject(null);
+                return;
+            }
+            if (!GameInput.KolKullaniliyor) return;
+
+            // Aynı aşamada seçili düğme hâlâ yerindeyse (İleri, olay seçeneği ya da yeni kurulan düğme) kalır; aşama değişince baştan seçilir.
+            bool asamaDegisti = tur.SuAnki != secimAsamasi;
+            secimAsamasi = tur.SuAnki;
+            GameObject secili = es.currentSelectedGameObject;
+            if (!asamaDegisti && secili != null && secili.activeInHierarchy && SeciliKalabilir(secili)) return;
+
+            Selectable hedef = null;
+            if (tur.SuAnki == InsanTuru.Asama.Olay)
+                hedef = aDugmesi.interactable ? aDugmesi : bDugmesi.interactable ? bDugmesi : null;
+            else if (dugmeler.Count > 0)
+            {
+                int sira = Mathf.Clamp(oncekiSira, 0, dugmeler.Count - 1);
+                if (dugmeler[sira].interactable) hedef = dugmeler[sira];
+                else foreach (Button d in dugmeler) if (d.interactable) { hedef = d; break; }
+            }
+            if (hedef == null && ileriDugmesi.gameObject.activeInHierarchy) hedef = ileriDugmesi;
+            es.SetSelectedGameObject(hedef != null ? hedef.gameObject : null);
+        }
+
+        private bool SeciliKalabilir(GameObject secili)
+        {
+            if (secili == ileriDugmesi.gameObject || secili == aDugmesi.gameObject || secili == bDugmesi.gameObject)
+                return secili.GetComponent<Selectable>().interactable;
+            foreach (Button d in dugmeler) if (d.gameObject == secili) return d.interactable;
+            return false;
+        }
+
+        /// <summary>İleri düğmesinde tuşu da yazar (klavyede Space ya da ayarlardan atanan, oyun kolunda Y). Düğme açılınca MetinYazisi yazıyı tablodan yeniden kurar; bu ondan sonra çağrılır.</summary>
         private void IleriYazisi()
         {
-            InputAction e = GameInput.Eylem("ZiplaDal");
-            string tus = e != null ? $"  [{e.GetBindingDisplayString(0)}]" : "";
+            string tus = $"  [{GameInput.IleriTusu}]";
             // Boşta gönüllü ya da oynanabilir kart varken ilk basış uyardı; ikinci basış geçer.
             ileriDugmesi.GetComponentInChildren<Text>(true).text = Al(tur.IlerlemeOnayiBekliyor ? "yonetim_yine_de_ilerle" : "yonetim_ileri") + tus;
         }
@@ -330,12 +387,8 @@ namespace IkiDunya.UI.Management
             Kenarlik((RectTransform)hedefVazgec.transform, new Vector2(1f, 0f), Vector2.one, -210f, 10f, 12f, 10f);
             Yuvarlak(hedefVazgec.GetComponent<Image>(), T.PanelIci);
             hedefVazgec.GetComponentInChildren<Text>(true).text = Al("menu_geri");
-            DugmeSesi.Bagla(hedefVazgec);
-            hedefVazgec.onClick.AddListener(() =>
-            {
-                if (tur.BekleyenKart != null) tur.KartSec(tur.BekleyenKart);
-                else if (tur.BekleyenGorev != null) tur.GorevSec(tur.BekleyenGorev);
-            });
+            // Sesi HedeftenVazgec çalar (B ve sağ tık da aynı yoldan).
+            hedefVazgec.onClick.AddListener(() => tur.HedeftenVazgec());
 
             kartBilgiPaneli = new GameObject("KartBilgiPaneli", typeof(RectTransform), typeof(Image));
             kartBilgiPaneli.layer = LayerMask.NameToLayer("UI");

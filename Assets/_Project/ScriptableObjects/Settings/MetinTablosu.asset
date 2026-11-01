@@ -513,6 +513,8 @@ MonoBehaviour:
     metin: "Haritada bir b\xF6lge se\xE7"
   - id: hedef_yuva_sec
     metin: "Haritada bir yuva se\xE7"
+  - id: hedef_kol_tuslari
+    metin: "{0}: gez \xB7 {1}: se\xE7 \xB7 {2}: geri"
   - id: yonetim_yine_de_ilerle
     metin: Yine de ilerle
   - id: bildirim_bos_gonullu

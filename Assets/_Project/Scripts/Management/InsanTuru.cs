@@ -88,9 +88,14 @@ namespace IkiDunya.Management
                 return;
             }
 
-            // Hedef seçilirken İleri düğmesi gizli; Space de bekleyen kartı ya da görevi bırakıp aşamayı geçmesin.
-            if (BeklenenHedef != Hedef.Yok) return;
-            if (Time.frameCount != baslangicKaresi && GameInput.ZiplaDalBasildi) Ilerle();
+            harita.Hedef = BeklenenHedef;
+            // Hedef seçilirken İleri düğmesi gizli; Space de bekleyen kartı ya da görevi bırakıp aşamayı geçmesin. B / sağ tık vazgeçer.
+            if (BeklenenHedef != Hedef.Yok)
+            {
+                if (GameInput.VazgecBasildi) HedeftenVazgec();
+                return;
+            }
+            if (Time.frameCount != baslangicKaresi && GameInput.IleriBasildi) Ilerle();
         }
 
         /// <summary>İleri düğmesi ve Space. Olay aşamasında seçim yapılmadan ilerlenmez.</summary>
@@ -312,6 +317,15 @@ namespace IkiDunya.Management
                 Ses.Cal(SesTuru.DugmeTikla);
                 etkiler.GorevVer(BekleyenGorev, hedef);
             }
+            BekleyeniBirak();
+            Degisti?.Invoke();
+        }
+
+        /// <summary>Hedef bekleyen kart ya da görev bırakılır (Geri düğmesi, B, sağ tık).</summary>
+        public void HedeftenVazgec()
+        {
+            if (BeklenenHedef == Hedef.Yok) return;
+            Ses.Cal(SesTuru.DugmeTikla);
             BekleyeniBirak();
             Degisti?.Invoke();
         }
