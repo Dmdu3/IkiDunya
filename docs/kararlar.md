@@ -6,6 +6,7 @@ ozet: Ekipçe alınan kararlar, tarih ve nedeniyle. En yeni en üstte. GDD'yi de
 
 | Tarih | Karar | Neden | Kim |
 |---|---|---|---|
+| 2026-11-01 | Poşet yutmanın cezası belirgin: −10 enerji, 10 sn yarı hız, ses, ilk seferde ipucu, ekranda yavaşlık çubuğu | Denemede ceza fark edilmiyordu (sadece sessiz bir yavaşlama vardı) | Umut |
 | 2026-11-01 | Sahne kurulum komutları (Kumsal sahnesini kur, Menü ve duraklatmayı kur) insan kısmının kart, görev ve olay asset'lerini yeniden yazmaz; sadece ayarlarda hiç kart yoksa Toprak'ın aracı bir kez çalışır | Eski kurulum her çalıştığında 12 kartlık ilk içeriği yazıp Toprak'ın 27 kartını ve dengesini siliyordu | Umut |
 | 2026-11-01 | İnsan kısmı genişledi (GDD: Paydaşlar, Kart türleri, Kartlar, Olaylar): 3 paydaş (Otel, Belediye, Balıkçılar; −3..+3), 5 kart türü, 12 → 27 kart, 6 → 16 olay (zincir ve paydaş tepkisi), kartlarda bakım ve paydaş koşulu, ikinci kanıt kartı güçlendirir, elde 5 kart, haritada avcı riski, çöp birikimi kalabalıkla artar | İnsan turu "bas geç" oynanıyordu: tek bedel bütçeydi, kart seçimi erken tükeniyordu, olaylar birbirinden bağımsızdı | Toprak |
 | 2026-11-01 | Uyarılar (sıcak dalgası, fırtına) geldiği turdan sonraki turun sonunda gerçekleşir; Gönüllü Çağrısı gelecek tura gönüllü ekler | İkisi de karşılık verilemeyen yerdeydi: uyarı sonraki turun başında, gönüllü atamadan önce gerçekleşiyordu; çağrı, gönüllü aşaması bittikten sonra oynanıyordu | Toprak |

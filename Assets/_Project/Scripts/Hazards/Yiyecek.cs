@@ -14,6 +14,7 @@ namespace IkiDunya.Hazards
         [SerializeField] private Vector3 yon = Vector3.right;
 
         private Vector3 ilkOlcek;
+        private float ilkY;
         private float zaman;
 
         public Turu Tur => tur;
@@ -30,6 +31,7 @@ namespace IkiDunya.Hazards
         private void Awake()
         {
             ilkOlcek = transform.localScale;
+            ilkY = transform.position.y;
             zaman = UnityEngine.Random.value * 10f;
         }
 
@@ -38,9 +40,13 @@ namespace IkiDunya.Hazards
             zaman += Time.deltaTime;
             if (tur == Turu.Denizanasi)
             {
-                // Kasılma: kısa itişler ve nabız gibi atan gövde
+                // Kasılma: kısa itişler ve nabız gibi atan gövde. Her kasılmada biraz yükselir, arada geri çöker;
+                // ortalama derinliği aynı kalır (eskiden hep yükselip sudan çıkıyordu).
                 float nabiz = Mathf.Max(0f, Mathf.Sin(zaman * ayarlar.KasilmaSikligi * 2f * Mathf.PI));
-                transform.position += (Vector3.up * 0.5f + yon.normalized) * nabiz * ayarlar.SuzulmeHizi * 2f * Time.deltaTime;
+                transform.position += yon.normalized * nabiz * ayarlar.SuzulmeHizi * 2f * Time.deltaTime;
+                Vector3 yer = transform.position;
+                yer.y = ilkY + Mathf.Sin(zaman * ayarlar.KasilmaSikligi * Mathf.PI) * ayarlar.SuzulmeHizi * 0.5f;
+                transform.position = yer;
                 transform.localScale = Vector3.Scale(ilkOlcek, new Vector3(1f + 0.15f * nabiz, 1f - 0.2f * nabiz, 1f + 0.15f * nabiz));
             }
             else

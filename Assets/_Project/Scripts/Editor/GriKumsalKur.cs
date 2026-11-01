@@ -582,6 +582,8 @@ namespace IkiDunya.Editor
             Animator animator = model.GetComponentInChildren<Animator>();
             if (animator == null) animator = model.AddComponent<Animator>();
             animator.runtimeAnimatorController = denetleyici;
+            // Animasyon modeli yerinden oynatmasın (yeri Yiyecek ve sürü belirler).
+            animator.applyRootMotion = false;
         }
 
         /// <summary>Kalıba Yusuf'un modelini ekler (varsa) ve gri kutunun görüntüsünü gizler; collider ve oynanış aynı kalır.</summary>
@@ -602,7 +604,8 @@ namespace IkiDunya.Editor
             gorunus.name = "Model";
             gorunus.transform.SetParent(ebeveyn, false);
             gorunus.transform.localPosition = Vector3.zero;
-            gorunus.transform.localRotation = Quaternion.identity;
+            // Kalıbın kendi dönüşü korunur: Blender'dan gelen modellerde eksen düzeltmesi oradadır (yoksa model dik ya da ters durur).
+            gorunus.transform.localRotation = kaynak.transform.localRotation;
             foreach (Transform t in gorunus.GetComponentsInChildren<Transform>(true)) t.gameObject.layer = ebeveyn.gameObject.layer;
             foreach (Collider fazla in gorunus.GetComponentsInChildren<Collider>(true)) Object.DestroyImmediate(fazla);
 

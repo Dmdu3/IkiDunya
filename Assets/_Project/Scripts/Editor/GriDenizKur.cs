@@ -64,6 +64,10 @@ namespace IkiDunya.Editor
             SicakSuKur(new Vector3(-12f, -5f, -125f), 5f, tehlike);
             SicakSuKur(new Vector3(10f, -2f, -40f), 4f, tehlike);
 
+            // Süs: oyun şeridinin kenarlarında kayalar ve deniz çayırı (Yusuf'un deniz tabanı modelleri)
+            SuslerKur(new[] { new Vector3(-20f, 0f, -178f), new Vector3(22f, 0f, -150f), new Vector3(-24f, 0f, -100f), new Vector3(18f, 0f, -82f), new Vector3(-14f, 0f, -66f) },
+                new[] { new Vector3(14f, 0f, -104f), new Vector3(-18f, 0f, -86f), new Vector3(22f, 0f, -62f), new Vector3(-22f, 0f, -170f) });
+
             BolumKur(AdimTuru.Donus, ayarlar, anne, baslangic, false, null);
             GriKumsalKur.Kaydet(sahne, Bolum1Sahnesi);
         }
@@ -179,6 +183,10 @@ namespace IkiDunya.Editor
             Object.Instantiate(HayaletAgKalibi(), new Vector3(-8f, -3f, -70f), Quaternion.Euler(0f, 20f, 0f));
             Object.Instantiate(HayaletAgKalibi(), new Vector3(9f, -3f, -58f), Quaternion.Euler(0f, -30f, 0f));
 
+            // Koridorun kenarlarında kayalar ve çayır (sürünün aktığı alanın dışında)
+            SuslerKur(new[] { new Vector3(-20f, 0f, -175f), new Vector3(21f, 0f, -150f), new Vector3(-19f, 0f, -120f), new Vector3(20f, 0f, -96f), new Vector3(-21f, 0f, -70f), new Vector3(19f, 0f, -55f) },
+                new[] { new Vector3(20f, 0f, -168f), new Vector3(-20f, 0f, -135f), new Vector3(22f, 0f, -110f), new Vector3(-19f, 0f, -85f), new Vector3(20f, 0f, -70f) });
+
             var kok = new GameObject("PosetSurusu");
             var surusu = kok.AddComponent<PosetSurusu>();
             GriKumsalKur.Bagla(surusu, "ayarlar", parkur);
@@ -216,6 +224,10 @@ namespace IkiDunya.Editor
             var halkalar = new Object[parkur.HalkaSayisi];
             for (int h = 0; h < parkur.HalkaSayisi; h++)
                 halkalar[h] = HalkaKur(h, merkezNoktasi, parkur);
+
+            // Girdabın çevresinde, en dış halkanın ötesinde kayalar ve çayır
+            SuslerKur(new[] { new Vector3(19f, 0f, -138f), new Vector3(-20f, 0f, -160f), new Vector3(6f, 0f, -172f), new Vector3(-12f, 0f, -132f), new Vector3(22f, 0f, -165f) },
+                new[] { new Vector3(-17f, 0f, -140f), new Vector3(16f, 0f, -170f), new Vector3(-8f, 0f, -173f), new Vector3(20f, 0f, -150f) });
 
             var kok = new GameObject("CopGirdabi");
             var girdap = kok.AddComponent<CopGirdabi>();
@@ -285,6 +297,24 @@ namespace IkiDunya.Editor
                 }
             return halka;
         }
+
+        /// <summary>Deniz tabanının üstüne süs kayaları (collider'lı) ve deniz çayırı (görüntü) koyar; yükseklik tabandan okunur. Model yoksa hiçbir şey koymaz.</summary>
+        private static void SuslerKur(Vector3[] kayalar, Vector3[] cayirlar)
+        {
+            Physics.SyncTransforms();
+            Transform kok = GriKumsalKur.Bos("Susler", null);
+            string[] cayirAdlari = { "DenizCayiri_8x8", "DenizCayiri_6x10", "DenizCayiri_6x8" };
+            for (int i = 0; i < kayalar.Length; i++)
+            {
+                GameObject kaya = GriKumsalKur.KalibiKoy($"Kaya_{i % 3 + 1}", kok, Tabana(kayalar[i]));
+                if (kaya != null) kaya.transform.rotation *= Quaternion.Euler(0f, i * 71f, 0f);
+            }
+            for (int i = 0; i < cayirlar.Length; i++)
+                GriKumsalKur.KalibiKoy(cayirAdlari[i % cayirAdlari.Length], kok, Tabana(cayirlar[i]));
+        }
+
+        /// <summary>Noktayı deniz tabanına indirir (taban yoksa açık deniz derinliği).</summary>
+        private static Vector3 Tabana(Vector3 yer) => new Vector3(yer.x, Zemin.Yukseklik(new Vector3(yer.x, 0f, yer.z), -15f), yer.z);
 
         private static Light GunesBul(Scene sahne)
         {
@@ -404,6 +434,9 @@ namespace IkiDunya.Editor
             GriKumsalKur.Bagla(gosterge, "yuzucu", yuzucu);
             GriKumsalKur.Bagla(gosterge, "nefes", nefes);
             GriKumsalKur.Bagla(gosterge, "kurtulma", kurtulma);
+            // Yavaşlık: poşet yutunca enerji çubuğunun üstünde kahverengi, süre bitince boşalır.
+            Cubuk yavaslik = GriKumsalKur.CubukKur("YavaslikCubugu", tuval, new Vector2(0.03f, 0.115f), new Vector2(0.28f, 0.13f), new Color(0.6f, 0.45f, 0.3f), false);
+            GriKumsalKur.Bagla(gosterge, "yavaslik", yavaslik);
             return yuzucu;
         }
 
@@ -462,15 +495,27 @@ namespace IkiDunya.Editor
             GameObject alan = GriKumsalKur.Kutu("Akinti", null, yer, boyut, akinti, "Default");
             alan.transform.rotation = Quaternion.Euler(0f, yon, 0f);
             alan.GetComponent<Collider>().isTrigger = true;
+            // Alanın kendisi görünmez (koca beyaz blok gibi duruyordu); akıntıyı süzülen çizgiler gösterir.
+            Object.DestroyImmediate(alan.GetComponent<MeshRenderer>());
             alan.isStatic = false;
-            GriKumsalKur.Bagla(alan.AddComponent<Akinti>(), "ayarlar", tehlike);
+            var akim = alan.AddComponent<Akinti>();
+            GriKumsalKur.Bagla(akim, "ayarlar", tehlike);
 
-            // Soluk oklar: akış yönünde ince çizgiler
-            for (int i = -1; i <= 1; i++)
+            Material cizgiMalzemesi = GriKumsalKur.SaydamMalzeme("AkintiCizgisi", new Color(0.85f, 0.95f, 1f, 0.35f));
+            Transform kok = GriKumsalKur.Bos($"{alan.name}_Cizgiler", null);
+            int sayi = Mathf.Clamp(Mathf.RoundToInt(boyut.x * boyut.z / 40f), 8, 30);
+            var cizgiler = new Object[sayi];
+            var rastgele = new System.Random(Mathf.RoundToInt(yer.x * 13f + yer.z * 7f));
+            for (int i = 0; i < sayi; i++)
             {
-                GameObject ok = GriKumsalKur.Kutu("Ok", alan.transform, new Vector3(i * 0.3f, 0f, 0f), new Vector3(0.02f, 0.02f, 0.3f), akinti, "Default");
-                Object.DestroyImmediate(ok.GetComponent<Collider>());
+                Vector3 yerel = new Vector3((float)rastgele.NextDouble() - 0.5f, (float)rastgele.NextDouble() - 0.5f, (float)rastgele.NextDouble() - 0.5f);
+                GameObject cizgi = GriKumsalKur.Kutu("Cizgi", kok, alan.transform.TransformPoint(yerel), new Vector3(0.04f, 0.04f, 1.6f), cizgiMalzemesi, "Default");
+                Object.DestroyImmediate(cizgi.GetComponent<Collider>());
+                cizgi.isStatic = false;
+                cizgi.transform.rotation = alan.transform.rotation;
+                cizgiler[i] = cizgi.transform;
             }
+            GriKumsalKur.DiziBagla(akim, "cizgiler", cizgiler);
         }
 
         private static GameObject YiyecekKur(Yiyecek.Turu tur, Vector3 yer, DenizTehlikeAyarlari tehlike)
