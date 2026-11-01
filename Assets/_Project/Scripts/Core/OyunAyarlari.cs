@@ -34,6 +34,8 @@ namespace IkiDunya.Core
         [SerializeField] private float ipucuSuresi = 6f;
         [Tooltip("Oyuncunun gördüğü yazılar (İki Dünya → Metinleri aktar).")]
         [SerializeField] private MetinTablosu metinler;
+        [Tooltip("Arayüzün yazı tipleri ve renkleri (Menü ve duraklatmayı kur bağlar).")]
+        [SerializeField] private ArayuzTemasi tema;
 
         [Header("Kumsal")]
         [SerializeField] private int bolgeSayisi = 8;
@@ -46,6 +48,7 @@ namespace IkiDunya.Core
         public float BaslikSuresi => baslikSuresi;
         public float IpucuSuresi => ipucuSuresi;
         public MetinTablosu Metinler => metinler;
+        public ArayuzTemasi Tema => tema;
         public int BolgeSayisi => bolgeSayisi;
         public int KatmanEnFazla => katmanEnFazla;
         public int SelGecesi => selGecesi;

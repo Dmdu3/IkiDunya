@@ -77,14 +77,14 @@ namespace IkiDunya.Editor
             kamera.gameObject.AddComponent<AudioListener>();
             kamera.gameObject.AddComponent<TekKulak>();
             kamera.clearFlags = CameraClearFlags.SolidColor;
-            kamera.backgroundColor = new Color(0.05f, 0.12f, 0.18f);
+            kamera.backgroundColor = GriKumsalKur.Tema().Gece;
             kamera.gameObject.tag = "MainCamera";
             PrefabUtility.InstantiatePrefab(AssetDatabase.LoadAssetAtPath<GameObject>(SistemlerKalibi));
 
+            // "Belgesel" teması: alacakaranlık ufku, solda serif başlık ve altında vurgu çizgisi, kutusuz seçenek listesi.
             Transform tuval = GriKumsalKur.TuvalKur("AnaMenu", null);
-            Yazi("Baslik", tuval, new Vector2(0.2f, 0.72f), new Vector2(0.8f, 0.88f), 64, "oyun_adi", metinler);
-
-            Transform dugmeler = Liste("Dugmeler", tuval, new Vector2(0.38f, 0.2f), new Vector2(0.62f, 0.62f));
+            Zemin(tuval, false);
+            Transform dugmeler = BaslikVeListe(tuval, "oyun_adi", 96, 5, metinler);
             Button yeni = Dugme(dugmeler, "menu_yeni_oyun", metinler);
             Button devam = Dugme(dugmeler, "menu_devam_et", metinler);
             Button parkurlar = Dugme(dugmeler, "menu_parkurlar", metinler);
@@ -105,6 +105,59 @@ namespace IkiDunya.Editor
             GriKumsalKur.Kaydet(sahne, MenuSahnesi);
         }
 
+        // Menü düzeni (tuval birimi, sol üstten): başlık, vurgu çizgisi, seçenek listesi. En büyük yazı boyutunda (1280x720) da sığar.
+        private const float MenuSol = 150f, BaslikUstu = 110f, BaslikBoyu = 130f, CizgiUstu = 268f, ListeUstu = 320f;
+        private const float SecenekBoyu = 60f, SecenekAraligi = 4f, ListeEni = 700f;
+
+        /// <summary>Tam ekran zemin: ufuk (ana menü, ayarlar) ya da oyunun üstünde soldan koyulaşan perde (duraklatma).</summary>
+        private static Transform Zemin(Transform ebeveyn, bool perde)
+        {
+            var zemin = new GameObject(perde ? "Panel" : "Zemin", typeof(RectTransform), typeof(RawImage));
+            zemin.layer = LayerMask.NameToLayer("UI");
+            zemin.transform.SetParent(ebeveyn, false);
+            zemin.transform.SetAsFirstSibling();
+            GriKumsalKur.Yasla((RectTransform)zemin.transform, Vector2.zero, Vector2.one);
+            var ufuk = zemin.AddComponent<UfukZemini>();
+            GriKumsalKur.Bagla(ufuk, "tema", GriKumsalKur.Tema());
+            var so = new SerializedObject(ufuk);
+            so.FindProperty("yanKarartma").boolValue = perde;
+            so.ApplyModifiedPropertiesWithoutUndo();
+            return zemin.transform;
+        }
+
+        /// <summary>Solda serif başlık, altında kısa vurgu çizgisi ve seçenek listesi (sol üste çapalı); listeyi döner.</summary>
+        private static Transform BaslikVeListe(Transform ebeveyn, string baslikId, int boyut, int secenekSayisi, MetinTablosu metinler)
+        {
+            ArayuzTemasi tema = GriKumsalKur.Tema();
+            Vector2 solUst = new Vector2(0f, 1f);
+            Yazi("Baslik", ebeveyn, Vector2.zero, Vector2.one, boyut, baslikId, metinler);
+            Text baslik = ebeveyn.Find("Baslik").GetComponent<Text>();
+            GriKumsalKur.TemaYazisi(baslik, true, tema.Yazi);
+            baslik.alignment = TextAnchor.LowerLeft;
+            GriKumsalKur.Yerles((RectTransform)baslik.transform, solUst, new Vector2(MenuSol, -BaslikUstu), new Vector2(1000f, BaslikBoyu));
+            Cizgi(ebeveyn, new Vector2(MenuSol + 6f, -CizgiUstu));
+
+            Transform liste = Liste("Dugmeler", ebeveyn, Vector2.zero, Vector2.one);
+            GriKumsalKur.Yerles((RectTransform)liste, solUst, new Vector2(MenuSol, -ListeUstu),
+                new Vector2(ListeEni, secenekSayisi * SecenekBoyu + (secenekSayisi - 1) * SecenekAraligi));
+            var dizi = liste.GetComponent<VerticalLayoutGroup>();
+            dizi.spacing = SecenekAraligi;
+            dizi.childAlignment = TextAnchor.UpperLeft;
+            return liste;
+        }
+
+        /// <summary>Başlık altındaki kısa vurgu çizgisi (sol üstten konum).</summary>
+        private static void Cizgi(Transform ebeveyn, Vector2 konum)
+        {
+            var cizgi = new GameObject("Cizgi", typeof(RectTransform), typeof(Image));
+            cizgi.layer = LayerMask.NameToLayer("UI");
+            cizgi.transform.SetParent(ebeveyn, false);
+            GriKumsalKur.Yerles((RectTransform)cizgi.transform, new Vector2(0f, 1f), konum, new Vector2(120f, 4f));
+            Image resim = cizgi.GetComponent<Image>();
+            resim.color = GriKumsalKur.Tema().Vurgu;
+            resim.raycastTarget = false;
+        }
+
         /// <summary>Sistemler kalıbına EventSystem, duraklatma menüsü, ipucu kutusu ve ses yöneticisi ekler, deneme panelini çıkarır.</summary>
         private static void SistemlereEkle(MetinTablosu metinler)
         {
@@ -123,19 +176,16 @@ namespace IkiDunya.Editor
 
             Transform tuval = GriKumsalKur.TuvalKur("DuraklatmaMenusu", kok.transform);
             tuval.GetComponent<Canvas>().sortingOrder = 50;
-            var panel = new GameObject("Panel", typeof(RectTransform), typeof(Image));
-            panel.transform.SetParent(tuval, false);
-            GriKumsalKur.Yasla((RectTransform)panel.transform, Vector2.zero, Vector2.one);
-            panel.GetComponent<Image>().color = new Color(0f, 0f, 0f, 0.7f);
-
-            Transform dugmeler = Liste("Dugmeler", panel.transform, new Vector2(0.38f, 0.3f), new Vector2(0.62f, 0.6f));
+            // Oyunun üstünde soldan koyulaşan perde; ana menüyle aynı düzen.
+            Transform panel = Zemin(tuval, true);
+            Transform dugmeler = BaslikVeListe(panel, "oyun_adi", 80, 3, metinler);
             Button oyunaDon = Dugme(dugmeler, "menu_oyuna_don", metinler);
             Button ayarlar = Dugme(dugmeler, "menu_ayarlar", metinler);
             Button anaMenu = Dugme(dugmeler, "menu_ana_menu", metinler);
-            AyarlarPaneli ayarlarPaneli = AyarlarKur(panel.transform, dugmeler.gameObject, metinler);
+            AyarlarPaneli ayarlarPaneli = AyarlarKur(panel, dugmeler.gameObject, metinler);
 
             var menu = tuval.gameObject.AddComponent<DuraklatmaMenusu>();
-            GriKumsalKur.Bagla(menu, "panel", panel);
+            GriKumsalKur.Bagla(menu, "panel", panel.gameObject);
             GriKumsalKur.Bagla(menu, "dugmeler", dugmeler.gameObject);
             GriKumsalKur.Bagla(menu, "oyunaDon", oyunaDon);
             GriKumsalKur.Bagla(menu, "ayarlar", ayarlar);
@@ -165,18 +215,37 @@ namespace IkiDunya.Editor
             var kutu = new GameObject("Kutu", typeof(RectTransform), typeof(Image));
             kutu.layer = LayerMask.NameToLayer("UI");
             kutu.transform.SetParent(tuval, false);
-            GriKumsalKur.Yasla((RectTransform)kutu.transform, new Vector2(0.25f, 0.14f), new Vector2(0.75f, 0.24f));
-            kutu.GetComponent<Image>().color = new Color(0f, 0f, 0f, 0.65f);
+            // Üstte ortada (yönetimin üst çubuğunun altı); boyunu ve enini panel yazıya göre verir.
+            var kutuAlani = (RectTransform)kutu.transform;
+            kutuAlani.anchorMin = kutuAlani.anchorMax = kutuAlani.pivot = new Vector2(0.5f, 1f);
+            kutuAlani.anchoredPosition = new Vector2(0f, -114f);
+            kutuAlani.sizeDelta = new Vector2(900f, 80f);
+            ArayuzTemasi tema = GriKumsalKur.Tema();
+            kutu.GetComponent<Image>().color = tema.Panel;
+            // Solda boydan boya ince vurgu çizgisi.
+            var serit = new GameObject("Serit", typeof(RectTransform), typeof(Image));
+            serit.layer = LayerMask.NameToLayer("UI");
+            serit.transform.SetParent(kutu.transform, false);
+            var seritAlani = (RectTransform)serit.transform;
+            seritAlani.anchorMin = Vector2.zero;
+            seritAlani.anchorMax = new Vector2(0f, 1f);
+            seritAlani.pivot = new Vector2(0f, 0.5f);
+            seritAlani.offsetMin = Vector2.zero;
+            seritAlani.offsetMax = new Vector2(4f, 0f);
+            serit.GetComponent<Image>().color = tema.Vurgu;
 
             var yaziNesnesi = new GameObject("Yazi", typeof(RectTransform), typeof(Text));
             yaziNesnesi.layer = LayerMask.NameToLayer("UI");
             yaziNesnesi.transform.SetParent(kutu.transform, false);
-            GriKumsalKur.Yasla((RectTransform)yaziNesnesi.transform, new Vector2(0.03f, 0.05f), new Vector2(0.97f, 0.95f));
+            var yaziAlani = (RectTransform)yaziNesnesi.transform;
+            GriKumsalKur.Yasla(yaziAlani, Vector2.zero, Vector2.one);
+            yaziAlani.offsetMin = new Vector2(30f, 16f);
+            yaziAlani.offsetMax = new Vector2(-26f, -16f);
             Text yazi = yaziNesnesi.GetComponent<Text>();
-            yazi.font = Resources.GetBuiltinResource<Font>("LegacyRuntime.ttf");
-            yazi.fontSize = 30;
-            yazi.alignment = TextAnchor.MiddleCenter;
-            yazi.color = Color.white;
+            GriKumsalKur.TemaYazisi(yazi, false, tema.Yazi);
+            yazi.fontSize = 29;
+            yazi.lineSpacing = 1.1f;
+            yazi.alignment = TextAnchor.MiddleLeft;
             kutu.SetActive(false);
 
             var panel = tuval.gameObject.AddComponent<IpucuPaneli>();
@@ -208,35 +277,56 @@ namespace IkiDunya.Editor
 
         private static AyarlarPaneli AyarlarKur(Transform ebeveyn, GameObject oncekiPanel, MetinTablosu metinler)
         {
-            // İki sütun: solda ses, fare, ekran ve erişilebilirlik; sağda tuşlar.
-            var kok = new GameObject("AyarlarPaneli", typeof(RectTransform));
-            kok.layer = LayerMask.NameToLayer("UI");
-            kok.transform.SetParent(ebeveyn, false);
-            GriKumsalKur.Yasla((RectTransform)kok.transform, new Vector2(0.08f, 0.03f), new Vector2(0.92f, 0.97f));
+            // Tam ekran ufuk zemini (arkadaki başlık ve düğmeler görünmez); sol üstte serif başlık ve çizgi, altında iki sütun:
+            // solda ses, fare, ekran ve erişilebilirlik; sağda tuşlar. Sütunlar en büyük yazı boyutunda (1280x720) da sığar.
+            ArayuzTemasi tema = GriKumsalKur.Tema();
+            Transform kok = Zemin(ebeveyn, false);
+            kok.SetAsLastSibling();
+            kok.name = "AyarlarPaneli";
+            Yazi("Baslik", kok, Vector2.zero, Vector2.one, 56, "menu_ayarlar", metinler);
+            Text baslik = kok.Find("Baslik").GetComponent<Text>();
+            GriKumsalKur.TemaYazisi(baslik, true, tema.Yazi);
+            baslik.alignment = TextAnchor.LowerLeft;
+            GriKumsalKur.Yerles((RectTransform)baslik.transform, new Vector2(0f, 1f), new Vector2(MenuSol, -40f), new Vector2(800f, 84f));
+            Cizgi(kok, new Vector2(MenuSol + 4f, -136f));
+            var icerik = new GameObject("Icerik", typeof(RectTransform));
+            icerik.layer = LayerMask.NameToLayer("UI");
+            icerik.transform.SetParent(kok, false);
+            var icerikAlani = (RectTransform)icerik.transform;
+            GriKumsalKur.Yasla(icerikAlani, Vector2.zero, Vector2.one);
+            icerikAlani.offsetMin = new Vector2(MenuSol, 36f);
+            icerikAlani.offsetMax = new Vector2(-MenuSol, -166f);
 
-            Transform sol = Liste("Genel", kok.transform, new Vector2(0f, 0f), new Vector2(0.48f, 1f));
-            sol.GetComponent<VerticalLayoutGroup>().spacing = 6f;
-            Yazi("SesYazisi", sol, Vector2.zero, Vector2.zero, 24, "ayar_ses", metinler);
+            Transform sol = Liste("Genel", icerik.transform, new Vector2(0f, 0f), new Vector2(0.44f, 1f));
+            var solDizi = sol.GetComponent<VerticalLayoutGroup>();
+            solDizi.spacing = 4f;
+            solDizi.childAlignment = TextAnchor.UpperLeft;
+            Etiket(sol, "SesYazisi", "ayar_ses", metinler);
             Slider ses = Kaydirici(sol, 0f, 1f);
-            Yazi("FareYazisi", sol, Vector2.zero, Vector2.zero, 24, "ayar_fare", metinler);
+            Etiket(sol, "FareYazisi", "ayar_fare", metinler);
             Slider fare = Kaydirici(sol, 0.2f, 3f);
-            Yazi("YaziBoyuYazisi", sol, Vector2.zero, Vector2.zero, 24, "ayar_yazi_boyutu", metinler);
+            Etiket(sol, "YaziBoyuYazisi", "ayar_yazi_boyutu", metinler);
             Slider yaziBoyu = Kaydirici(sol, 0.75f, 1.5f);
             Toggle ipuclari = Secim(sol, "ayar_ipuclari", metinler);
             Toggle tamEkran = Secim(sol, "ayar_tam_ekran", metinler);
-            Yazi("CozunurlukYazisi", sol, Vector2.zero, Vector2.zero, 24, "ayar_cozunurluk", metinler);
+            Etiket(sol, "CozunurlukYazisi", "ayar_cozunurluk", metinler);
             Dropdown cozunurluk = Acilir(sol);
-            Yazi("KaliteYazisi", sol, Vector2.zero, Vector2.zero, 24, "ayar_kalite", metinler);
+            Etiket(sol, "KaliteYazisi", "ayar_kalite", metinler);
             Dropdown kalite = Acilir(sol);
-            Button varsayilan = Dugme(sol, "menu_varsayilan", metinler);
             Button geri = Dugme(sol, "menu_geri", metinler);
+            geri.GetComponent<LayoutElement>().preferredHeight = 50f;
 
-            Transform sag = Liste("Tuslar", kok.transform, new Vector2(0.52f, 0f), new Vector2(1f, 1f));
-            sag.GetComponent<VerticalLayoutGroup>().spacing = 6f;
-            Yazi("TuslarYazisi", sag, Vector2.zero, Vector2.zero, 24, "ayar_tuslar", metinler);
+            Transform sag = Liste("Tuslar", icerik.transform, new Vector2(0.52f, 0f), new Vector2(1f, 1f));
+            var sagDizi = sag.GetComponent<VerticalLayoutGroup>();
+            sagDizi.spacing = 5f;
+            sagDizi.childAlignment = TextAnchor.UpperLeft;
+            Etiket(sag, "TuslarYazisi", "ayar_tuslar", metinler);
             foreach ((string id, string eylem, int sira) in TusSatirlari) TusSatiriKur(sag, id, eylem, sira, metinler);
+            // Tuşları sıfırlayan seçenek tuş sütununda; sol sütun en büyük yazı boyutunda da sığsın.
+            Button varsayilan = Dugme(sag, "menu_varsayilan", metinler);
+            varsayilan.GetComponent<LayoutElement>().preferredHeight = 50f;
 
-            var panel = kok.AddComponent<AyarlarPaneli>();
+            var panel = kok.gameObject.AddComponent<AyarlarPaneli>();
             GriKumsalKur.Bagla(panel, "ses", ses);
             GriKumsalKur.Bagla(panel, "hassasiyet", fare);
             GriKumsalKur.Bagla(panel, "geri", geri);
@@ -248,8 +338,18 @@ namespace IkiDunya.Editor
             GriKumsalKur.Bagla(panel, "cozunurluk", cozunurluk);
             GriKumsalKur.Bagla(panel, "kalite", kalite);
             GriKumsalKur.Bagla(panel, "arayuzOlcegi", yaziBoyu);
-            kok.SetActive(false);
+            kok.gameObject.SetActive(false);
             return panel;
+        }
+
+        /// <summary>Ayarlarda bir değerin adı: küçük, soluk, sola yaslı.</summary>
+        private static void Etiket(Transform ebeveyn, string ad, string id, MetinTablosu metinler)
+        {
+            Yazi(ad, ebeveyn, Vector2.zero, Vector2.zero, 22, id, metinler);
+            Text yazi = ebeveyn.Find(ad).GetComponent<Text>();
+            yazi.color = GriKumsalKur.Tema().SolukYazi;
+            yazi.alignment = TextAnchor.LowerLeft;
+            yazi.GetComponent<LayoutElement>().preferredHeight = 32f;
         }
 
         /// <summary>Yanında yazısı olan aç/kapa kutusu.</summary>
@@ -258,12 +358,33 @@ namespace IkiDunya.Editor
             GameObject nesne = DefaultControls.CreateToggle(new DefaultControls.Resources());
             nesne.transform.SetParent(ebeveyn, false);
             Katman(nesne);
-            nesne.AddComponent<LayoutElement>().preferredHeight = 36f;
+            nesne.AddComponent<LayoutElement>().preferredHeight = 32f;
+            ArayuzTemasi tema = GriKumsalKur.Tema();
             Text yazi = nesne.GetComponentInChildren<Text>();
             YaziAyarla(yazi, 24, id, metinler);
             yazi.alignment = TextAnchor.MiddleLeft;
-            yazi.color = Color.white;
-            return nesne.GetComponent<Toggle>();
+            ((RectTransform)yazi.transform).offsetMin += new Vector2(12f, 0f);
+            yazi.color = tema.Yazi;
+            // Kutu: ince çerçeveli koyu kare, işaret vurgu renginde.
+            var toggle = nesne.GetComponent<Toggle>();
+            var kutu = (Image)toggle.targetGraphic;
+            kutu.color = tema.Cizgi;
+            Image isaret = kutu.transform.GetChild(0).GetComponent<Image>();
+            isaret.color = tema.Vurgu;
+            isaret.rectTransform.sizeDelta = new Vector2(10f, 10f);
+            Renkler(toggle);
+            return toggle;
+        }
+
+        /// <summary>Seçilebilirin renk geçişi: üstüne gelince/seçilince biraz aydınlanır.</summary>
+        private static void Renkler(Selectable secilebilir)
+        {
+            ColorBlock renkler = secilebilir.colors;
+            renkler.normalColor = Color.white;
+            renkler.highlightedColor = renkler.selectedColor = new Color(1.6f, 1.5f, 1.3f, 1f);
+            renkler.pressedColor = new Color(0.8f, 0.8f, 0.8f, 1f);
+            renkler.colorMultiplier = 1.5f;
+            secilebilir.colors = renkler;
         }
 
         /// <summary>Açılır liste (seçenekleri panel kurar).</summary>
@@ -273,13 +394,31 @@ namespace IkiDunya.Editor
             nesne.transform.SetParent(ebeveyn, false);
             Katman(nesne);
             nesne.AddComponent<LayoutElement>().preferredHeight = 40f;
+            ArayuzTemasi tema = GriKumsalKur.Tema();
             foreach (Text yazi in nesne.GetComponentsInChildren<Text>(true))
             {
-                yazi.font = Resources.GetBuiltinResource<Font>("LegacyRuntime.ttf");
+                GriKumsalKur.TemaYazisi(yazi, false, tema.Yazi);
                 yazi.fontSize = 22;
-                yazi.color = new Color(0.1f, 0.1f, 0.1f);
             }
-            return nesne.GetComponent<Dropdown>();
+            // Koyu kutu, açılan listede koyu panel; ok ve seçili işareti vurgu renginde.
+            var acilir = nesne.GetComponent<Dropdown>();
+            foreach (Image resim in nesne.GetComponentsInChildren<Image>(true))
+            {
+                string ad = resim.gameObject.name;
+                resim.color = ad == "Arrow" || ad == "Item Checkmark" ? tema.Vurgu
+                    : ad == "Template" ? new Color(tema.Gece.r, tema.Gece.g, tema.Gece.b, 0.97f)
+                    : ad == "Handle" ? tema.SolukYazi
+                    : ad == "Scrollbar" ? Color.clear
+                    : tema.PanelIci;
+            }
+            Renkler(acilir);
+            // Ok görseli yok: küçük, 45° dönmüş kare (eşkenar dörtgen) açılır olduğunu belli eder.
+            var ok = (RectTransform)nesne.transform.Find("Arrow");
+            ok.sizeDelta = new Vector2(9f, 9f);
+            ok.localRotation = Quaternion.Euler(0f, 0f, 45f);
+            Toggle oge = acilir.template.GetComponentInChildren<Toggle>(true);
+            if (oge != null) Renkler(oge);
+            return acilir;
         }
 
         private static void Katman(GameObject nesne)
@@ -291,9 +430,17 @@ namespace IkiDunya.Editor
         /// <summary>Parkurlar paneli: her parkur için bir düğme (yazısı rekorla birlikte kodda kurulur) ve Geri.</summary>
         private static ParkurlarPaneli ParkurlarKur(Transform ebeveyn, GameObject oncekiPanel, MetinTablosu metinler)
         {
-            Transform kutu = Liste("ParkurlarPaneli", ebeveyn, new Vector2(0.3f, 0.2f), new Vector2(0.7f, 0.62f));
-            Yazi("ParkurlarYazisi", kutu, Vector2.zero, Vector2.zero, 30, "menu_parkurlar", metinler);
+            // Ana menü seçeneklerinin yerinde: üstte soluk küçük başlık, altında parkurlar ve Geri.
             var dugmeler = new Object[System.Enum.GetValues(typeof(ParkurTuru)).Length];
+            Transform kutu = Liste("ParkurlarPaneli", ebeveyn, Vector2.zero, Vector2.one);
+            int satir = dugmeler.Length + 2;
+            GriKumsalKur.Yerles((RectTransform)kutu, new Vector2(0f, 1f), new Vector2(MenuSol, -ListeUstu + 10f),
+                new Vector2(ListeEni, satir * SecenekBoyu + (satir - 1) * SecenekAraligi));
+            var dizi = kutu.GetComponent<VerticalLayoutGroup>();
+            dizi.spacing = SecenekAraligi;
+            dizi.childAlignment = TextAnchor.UpperLeft;
+            Etiket(kutu, "ParkurlarYazisi", "menu_parkurlar", metinler);
+            kutu.Find("ParkurlarYazisi").GetComponent<LayoutElement>().preferredHeight = 40f;
             for (int i = 0; i < dugmeler.Length; i++)
             {
                 Button dugme = Dugme(kutu, Parkur.MetinId((ParkurTuru)i), metinler);
@@ -340,7 +487,8 @@ namespace IkiDunya.Editor
             Transform tuval = GriKumsalKur.TuvalKur("ParkurArayuzu", kok);
             tuval.GetComponent<Canvas>().sortingOrder = 45;
 
-            GameObject sure = Kutucuk("Sure", tuval, new Vector2(0.68f, 0.86f), new Vector2(0.98f, 0.98f));
+            // Sağ üstte, ipucu kutusunun (üstten 114) üstünde kalacak boyda.
+            GameObject sure = Kutucuk("Sure", tuval, new Vector2(0.773f, 0.9f), new Vector2(0.992f, 0.985f));
             Text sureYazisi = KutuYazisi(sure.transform, new Vector2(0.03f, 0.5f), new Vector2(0.97f, 1f), 28);
             Text bilgiYazisi = KutuYazisi(sure.transform, new Vector2(0.03f, 0f), new Vector2(0.97f, 0.5f), 24);
             GameObject sonuc = Kutucuk("Sonuc", tuval, new Vector2(0.3f, 0.4f), new Vector2(0.7f, 0.65f));
@@ -363,8 +511,8 @@ namespace IkiDunya.Editor
             var kutu = new GameObject(ad, typeof(RectTransform), typeof(Image));
             kutu.layer = LayerMask.NameToLayer("UI");
             kutu.transform.SetParent(ebeveyn, false);
-            GriKumsalKur.Yasla((RectTransform)kutu.transform, enAz, enCok);
-            kutu.GetComponent<Image>().color = new Color(0f, 0f, 0f, 0.6f);
+            GriKumsalKur.Sabitle((RectTransform)kutu.transform, enAz, enCok);
+            kutu.GetComponent<Image>().color = GriKumsalKur.Tema().Panel;
             return kutu;
         }
 
@@ -375,10 +523,9 @@ namespace IkiDunya.Editor
             nesne.transform.SetParent(ebeveyn, false);
             GriKumsalKur.Yasla((RectTransform)nesne.transform, enAz, enCok);
             Text yazi = nesne.GetComponent<Text>();
-            yazi.font = Resources.GetBuiltinResource<Font>("LegacyRuntime.ttf");
+            GriKumsalKur.TemaYazisi(yazi, false, GriKumsalKur.Tema().Yazi);
             yazi.fontSize = boyut;
             yazi.alignment = TextAnchor.MiddleRight;
-            yazi.color = Color.white;
             return yazi;
         }
 
@@ -389,27 +536,45 @@ namespace IkiDunya.Editor
             var satir = new GameObject(id, typeof(RectTransform), typeof(HorizontalLayoutGroup), typeof(LayoutElement));
             satir.layer = ui;
             satir.transform.SetParent(ebeveyn, false);
-            satir.GetComponent<LayoutElement>().preferredHeight = 34f;
+            // Esnek değil: yatay grup yüksekliği zorla genişlettiği için kendini esnek bildirir, satırlar sütunu doldurmasın.
+            satir.GetComponent<LayoutElement>().preferredHeight = 32f;
+            satir.GetComponent<LayoutElement>().flexibleHeight = 0f;
+            ArayuzTemasi tema = GriKumsalKur.Tema();
             var yatay = satir.GetComponent<HorizontalLayoutGroup>();
             yatay.spacing = 12f;
             yatay.childControlWidth = yatay.childControlHeight = true;
-            yatay.childForceExpandWidth = yatay.childForceExpandHeight = true;
+            yatay.childForceExpandWidth = false;
+            yatay.childForceExpandHeight = true;
 
+            // Ad kalan genişliği alır, tuş düğmeleri aynı enle tek sütun olur.
             Yazi("Ad", satir.transform, Vector2.zero, Vector2.zero, 22, id, metinler);
+            Text ad = satir.transform.Find("Ad").GetComponent<Text>();
+            ad.alignment = TextAnchor.MiddleLeft;
+            LayoutElement adYeri = ad.GetComponent<LayoutElement>();
+            adYeri.minWidth = 0f;
+            adYeri.preferredWidth = 0f;
+            adYeri.flexibleWidth = 1f;
 
-            var dugme = new GameObject("Tus", typeof(RectTransform), typeof(Image), typeof(Button));
+            var dugme = new GameObject("Tus", typeof(RectTransform), typeof(Image), typeof(Button), typeof(LayoutElement));
+            LayoutElement tusYeri = dugme.GetComponent<LayoutElement>();
+            tusYeri.minWidth = tusYeri.preferredWidth = 200f;
+            tusYeri.flexibleWidth = 0f;
             dugme.layer = ui;
             dugme.transform.SetParent(satir.transform, false);
-            dugme.GetComponent<Image>().color = new Color(0.92f, 0.9f, 0.85f);
+            // Tuş: koyu kutu, ince çerçeve, krem yazı.
+            dugme.GetComponent<Image>().color = tema.PanelIci;
+            var cerceve = dugme.AddComponent<Outline>();
+            cerceve.effectColor = tema.Cizgi;
+            cerceve.effectDistance = new Vector2(1f, -1f);
+            Renkler(dugme.GetComponent<Button>());
             var yaziNesnesi = new GameObject("Yazi", typeof(RectTransform), typeof(Text));
             yaziNesnesi.layer = ui;
             yaziNesnesi.transform.SetParent(dugme.transform, false);
             GriKumsalKur.Yasla((RectTransform)yaziNesnesi.transform, Vector2.zero, Vector2.one);
             Text tusYazisi = yaziNesnesi.GetComponent<Text>();
-            tusYazisi.font = Resources.GetBuiltinResource<Font>("LegacyRuntime.ttf");
+            GriKumsalKur.TemaYazisi(tusYazisi, false, tema.Yazi);
             tusYazisi.fontSize = 22;
             tusYazisi.alignment = TextAnchor.MiddleCenter;
-            tusYazisi.color = new Color(0.1f, 0.1f, 0.1f);
 
             var bilesen = satir.AddComponent<TusSatiri>();
             var so = new SerializedObject(bilesen);
@@ -437,24 +602,46 @@ namespace IkiDunya.Editor
             return kutu.transform;
         }
 
-        /// <summary>Elle kurulan düğme: arka plan, Button ve çocukta eski tip Text (Unity sürümüne göre hazır düğme başka yazı bileşeni kurabiliyor).</summary>
+        /// <summary>Kutusuz menü seçeneği: görünmez tıklama alanı, sola yaslı yazı, seçiliyken solunda vurgu çizgisi (MenuSecenegi).
+        /// Çocukta eski tip Text (Unity sürümüne göre hazır düğme başka yazı bileşeni kurabiliyor).</summary>
         private static Button Dugme(Transform ebeveyn, string id, MetinTablosu metinler)
         {
             int ui = LayerMask.NameToLayer("UI");
+            ArayuzTemasi tema = GriKumsalKur.Tema();
             var dugme = new GameObject(id, typeof(RectTransform), typeof(Image), typeof(Button), typeof(LayoutElement));
             dugme.layer = ui;
             dugme.transform.SetParent(ebeveyn, false);
-            dugme.GetComponent<Image>().color = new Color(0.92f, 0.9f, 0.85f);
-            dugme.GetComponent<LayoutElement>().preferredHeight = 64f;
+            dugme.GetComponent<Image>().color = Color.clear;
+            dugme.GetComponent<LayoutElement>().preferredHeight = SecenekBoyu;
+            var button = dugme.GetComponent<Button>();
+            button.transition = Selectable.Transition.None;
+
+            var isaret = new GameObject("Isaret", typeof(RectTransform), typeof(Image));
+            isaret.layer = ui;
+            isaret.transform.SetParent(dugme.transform, false);
+            GriKumsalKur.Yerles((RectTransform)isaret.transform, new Vector2(0f, 0.5f), Vector2.zero, new Vector2(28f, 3f));
+            Image isaretResmi = isaret.GetComponent<Image>();
+            isaretResmi.color = tema.Vurgu;
+            isaretResmi.raycastTarget = false;
+            isaretResmi.enabled = false;
 
             var yaziNesnesi = new GameObject("Yazi", typeof(RectTransform), typeof(Text));
             yaziNesnesi.layer = ui;
             yaziNesnesi.transform.SetParent(dugme.transform, false);
-            GriKumsalKur.Yasla((RectTransform)yaziNesnesi.transform, Vector2.zero, Vector2.one);
+            var yaziAlani = (RectTransform)yaziNesnesi.transform;
+            GriKumsalKur.Yasla(yaziAlani, Vector2.zero, Vector2.one);
+            yaziAlani.offsetMin = new Vector2(44f, 0f);
             Text yazi = yaziNesnesi.GetComponent<Text>();
-            YaziAyarla(yazi, 30, id, metinler);
-            yazi.color = new Color(0.1f, 0.1f, 0.1f);
-            return dugme.GetComponent<Button>();
+            YaziAyarla(yazi, 34, id, metinler);
+            yazi.alignment = TextAnchor.MiddleLeft;
+            yazi.color = tema.Yazi;
+            yazi.raycastTarget = false;
+
+            var secenek = dugme.AddComponent<MenuSecenegi>();
+            GriKumsalKur.Bagla(secenek, "tema", tema);
+            GriKumsalKur.Bagla(secenek, "yazi", yazi);
+            GriKumsalKur.Bagla(secenek, "isaret", isaretResmi);
+            return button;
         }
 
         private static Slider Kaydirici(Transform ebeveyn, float enAz, float enCok)
@@ -462,10 +649,24 @@ namespace IkiDunya.Editor
             GameObject nesne = DefaultControls.CreateSlider(new DefaultControls.Resources());
             nesne.layer = LayerMask.NameToLayer("UI");
             nesne.transform.SetParent(ebeveyn, false);
-            nesne.AddComponent<LayoutElement>().preferredHeight = 30f;
+            nesne.AddComponent<LayoutElement>().preferredHeight = 26f;
             var kaydirici = nesne.GetComponent<Slider>();
             kaydirici.minValue = enAz;
             kaydirici.maxValue = enCok;
+            // İnce çizgi: iz soluk, dolu kısım vurgu, tutamak küçük krem dikdörtgen.
+            ArayuzTemasi tema = GriKumsalKur.Tema();
+            foreach (string ad in new[] { "Background", "Fill Area" })
+            {
+                var alan = (RectTransform)nesne.transform.Find(ad);
+                alan.anchorMin = new Vector2(alan.anchorMin.x, 0.42f);
+                alan.anchorMax = new Vector2(alan.anchorMax.x, 0.58f);
+            }
+            nesne.transform.Find("Background").GetComponent<Image>().color = tema.Cizgi;
+            kaydirici.fillRect.GetComponent<Image>().color = tema.Vurgu;
+            var tutamak = (Image)kaydirici.targetGraphic;
+            tutamak.color = tema.Yazi;
+            tutamak.rectTransform.sizeDelta = new Vector2(10f, 0f);
+            Renkler(kaydirici);
             return kaydirici;
         }
 
@@ -478,12 +679,12 @@ namespace IkiDunya.Editor
             else nesne.AddComponent<LayoutElement>().preferredHeight = boyut * 1.5f;
             Text yazi = nesne.GetComponent<Text>();
             YaziAyarla(yazi, boyut, id, metinler);
-            yazi.color = Color.white;
+            yazi.color = GriKumsalKur.Tema().Yazi;
         }
 
         private static void YaziAyarla(Text yazi, int boyut, string id, MetinTablosu metinler)
         {
-            yazi.font = Resources.GetBuiltinResource<Font>("LegacyRuntime.ttf");
+            yazi.font = GriKumsalKur.Tema().GovdeYazisi;
             yazi.fontSize = boyut;
             yazi.alignment = TextAnchor.MiddleCenter;
             yazi.text = metinler.Al(id);
@@ -582,10 +783,9 @@ namespace IkiDunya.Editor
             nesne.transform.SetParent(tuval, false);
             GriKumsalKur.Yasla((RectTransform)nesne.transform, enAz, enCok);
             Text yazi = nesne.GetComponent<Text>();
-            yazi.font = Resources.GetBuiltinResource<Font>("LegacyRuntime.ttf");
+            GriKumsalKur.TemaYazisi(yazi, ad == "Baslik", GriKumsalKur.Tema().Yazi);
             yazi.fontSize = boyut;
             yazi.alignment = TextAnchor.MiddleCenter;
-            yazi.color = Color.white;
             return yazi;
         }
     }

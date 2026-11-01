@@ -41,9 +41,16 @@ namespace IkiDunya.UI.Night
         {
             // Duraklatmada zaman durur (deltaTime 0); geçişte ekran karanlık, ipucu beklesin.
             if (OyunAkisi.GecisSuruyor) return;
+            // Gece sonucu ekrandayken ipucu panelin arkasında kalmasın: gizlenir, süresi işlemez; panel kapanınca kaldığı yerden görünür.
+            if (GeceSonucuPaneli.Acik)
+            {
+                if (kutu.activeSelf) kutu.SetActive(false);
+                return;
+            }
 
             if (kalan > 0f)
             {
+                if (!kutu.activeSelf) kutu.SetActive(true);
                 kalan -= Time.deltaTime;
                 if (kalan <= 0f) kutu.SetActive(false);
                 return;
@@ -53,9 +60,26 @@ namespace IkiDunya.UI.Night
             MetinTablosu tablo = ayarlar.Metinler != null ? ayarlar.Metinler : MetinTablosu.Yuklu;
             string id = sira.Dequeue();
             yazi.text = tablo != null ? tablo.Al(id) : $"[{id}]";
+            Boyutla();
             kutu.SetActive(true);
             kalan = ayarlar.IpucuSuresi;
             Ses.Cal(SesTuru.Ipucu);
         }
+
+        /// <summary>Kutu yazıyı tam alacak boyda; genişliği iki yandaki panellere (yönetimde sol panel, 400 birim) değmeyecek kadar.</summary>
+        private void Boyutla()
+        {
+            var tuval = (RectTransform)transform;
+            var alan = (RectTransform)kutu.transform;
+            var yaziAlani = (RectTransform)yazi.transform;
+            float genislik = Mathf.Clamp(tuval.rect.width - 2f * YanPay, EnDar, EnGenis);
+            float icPay = -yaziAlani.sizeDelta.x;
+            TextGenerationSettings ayar = yazi.GetGenerationSettings(new Vector2(genislik - icPay, 0f));
+            ayar.resizeTextForBestFit = false;
+            float yukseklik = yazi.cachedTextGeneratorForLayout.GetPreferredHeight(yazi.text, ayar) / yazi.pixelsPerUnit;
+            alan.sizeDelta = new Vector2(genislik, Mathf.Max(EnAzYukseklik, yukseklik - yaziAlani.sizeDelta.y));
+        }
+
+        private const float YanPay = 440f, EnDar = 440f, EnGenis = 900f, EnAzYukseklik = 72f;
     }
 }
