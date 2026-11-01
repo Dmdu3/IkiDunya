@@ -25,6 +25,18 @@ namespace IkiDunya.UI.Menu
                 EventSystem.current.SetSelectedGameObject(gameObject);
         }
 
+        /// <summary>Paneldeki ilk basılabilir seçeneği seçer (panel değişince oyun koluyla gezinme kopmasın).</summary>
+        public static void IlkiniSec(GameObject panel)
+        {
+            if (EventSystem.current == null || panel == null) return;
+            foreach (Selectable s in panel.GetComponentsInChildren<Selectable>())
+                if (s.IsInteractable())
+                {
+                    EventSystem.current.SetSelectedGameObject(s.gameObject);
+                    return;
+                }
+        }
+
         private void LateUpdate()
         {
             ArayuzTemasi t = tema != null ? tema : ArayuzTemasi.Yuklu;

@@ -85,6 +85,7 @@ namespace IkiDunya.UI.Menu
         {
             gameObject.SetActive(false);
             oncekiPanel.SetActive(true);
+            MenuSecenegi.IlkiniSec(oncekiPanel);
         }
     }
 }

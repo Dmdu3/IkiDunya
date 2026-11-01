@@ -72,7 +72,9 @@ namespace IkiDunya.UI.Night
             var tuval = (RectTransform)transform;
             var alan = (RectTransform)kutu.transform;
             var yaziAlani = (RectTransform)yazi.transform;
-            float genislik = Mathf.Clamp(tuval.rect.width - 2f * YanPay, EnDar, EnGenis);
+            // Yönetim ekranında iki yanda paneller var; başka yerde kutu daha geniş olabilir.
+            bool yanPaneller = !OyunAkisi.MenudeMi && OyunAkisi.SuAnkiAdim.Tur == AdimTuru.InsanTuru;
+            float genislik = Mathf.Clamp(tuval.rect.width - 2f * (yanPaneller ? YanPay : DarYanPay), EnDar, EnGenis);
             float icPay = -yaziAlani.sizeDelta.x;
             TextGenerationSettings ayar = yazi.GetGenerationSettings(new Vector2(genislik - icPay, 0f));
             ayar.resizeTextForBestFit = false;
@@ -80,6 +82,6 @@ namespace IkiDunya.UI.Night
             alan.sizeDelta = new Vector2(genislik, Mathf.Max(EnAzYukseklik, yukseklik - yaziAlani.sizeDelta.y));
         }
 
-        private const float YanPay = 440f, EnDar = 440f, EnGenis = 900f, EnAzYukseklik = 72f;
+        private const float YanPay = 440f, DarYanPay = 180f, EnDar = 440f, EnGenis = 900f, EnAzYukseklik = 72f;
     }
 }

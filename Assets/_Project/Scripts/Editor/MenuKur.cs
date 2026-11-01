@@ -315,6 +315,7 @@ namespace IkiDunya.Editor
             Dropdown kalite = Acilir(sol);
             Button geri = Dugme(sol, "menu_geri", metinler);
             geri.GetComponent<LayoutElement>().preferredHeight = 50f;
+            geri.GetComponentInChildren<Text>().fontSize = 28;
 
             Transform sag = Liste("Tuslar", icerik.transform, new Vector2(0.52f, 0f), new Vector2(1f, 1f));
             var sagDizi = sag.GetComponent<VerticalLayoutGroup>();
@@ -325,6 +326,7 @@ namespace IkiDunya.Editor
             // Tuşları sıfırlayan seçenek tuş sütununda; sol sütun en büyük yazı boyutunda da sığsın.
             Button varsayilan = Dugme(sag, "menu_varsayilan", metinler);
             varsayilan.GetComponent<LayoutElement>().preferredHeight = 50f;
+            varsayilan.GetComponentInChildren<Text>().fontSize = 28;
 
             var panel = kok.gameObject.AddComponent<AyarlarPaneli>();
             GriKumsalKur.Bagla(panel, "ses", ses);
@@ -418,7 +420,54 @@ namespace IkiDunya.Editor
             ok.localRotation = Quaternion.Euler(0f, 0f, 45f);
             Toggle oge = acilir.template.GetComponentInChildren<Toggle>(true);
             if (oge != null) Renkler(oge);
+            ListeSablonu(acilir, tema);
+            nesne.AddComponent<AcilirListeKaydirma>();
             return acilir;
+        }
+
+        // Açılan listenin satır boyu ve en fazla boyu (tuval birimi). Unity'nin hazır şablonu 20'lik satır kurar, yazı okunmaz.
+        private const float ListeSatiri = 40f, ListeBoyu = 280f;
+
+        /// <summary>Açılan liste: okunur boyda satırlar, seçili satırın solunda ince vurgu çubuğu, ince kaydırma çubuğu.</summary>
+        private static void ListeSablonu(Dropdown acilir, ArayuzTemasi tema)
+        {
+            RectTransform sablon = acilir.template;
+            sablon.sizeDelta = new Vector2(sablon.sizeDelta.x, ListeBoyu);
+            sablon.anchoredPosition = new Vector2(0f, -4f);
+            var icerik = (RectTransform)sablon.Find("Viewport/Content");
+            icerik.sizeDelta = new Vector2(icerik.sizeDelta.x, ListeSatiri);
+            var satir = (RectTransform)icerik.Find("Item");
+            satir.sizeDelta = new Vector2(satir.sizeDelta.x, ListeSatiri);
+
+            var isaret = (RectTransform)satir.Find("Item Checkmark");
+            isaret.anchorMin = new Vector2(0f, 0.5f);
+            isaret.anchorMax = new Vector2(0f, 0.5f);
+            isaret.pivot = new Vector2(0f, 0.5f);
+            isaret.anchoredPosition = new Vector2(8f, 0f);
+            isaret.sizeDelta = new Vector2(4f, ListeSatiri - 16f);
+
+            var etiket = (RectTransform)satir.Find("Item Label");
+            etiket.offsetMin = new Vector2(24f, 2f);
+            etiket.offsetMax = new Vector2(-12f, -2f);
+            Text etiketYazisi = etiket.GetComponent<Text>();
+            etiketYazisi.fontSize = 24;
+            etiketYazisi.alignment = TextAnchor.MiddleLeft;
+
+            // Kaydırma çubuğu ince; listede çok çözünürlük olunca görünür.
+            var kaydirma = (RectTransform)sablon.Find("Scrollbar");
+            kaydirma.sizeDelta = new Vector2(6f, kaydirma.sizeDelta.y);
+            var tutamak = (RectTransform)kaydirma.Find("Sliding Area/Handle");
+            tutamak.sizeDelta = new Vector2(6f, 6f);
+            ((RectTransform)kaydirma.Find("Sliding Area")).sizeDelta = new Vector2(-6f, -6f);
+            ((RectTransform)sablon.Find("Viewport")).sizeDelta = new Vector2(-8f, 0f);
+            // Fare tekerleği bir satır kadar kaydırsın (varsayılan 1 birim, liste yerinden oynamıyor gibi görünür).
+            sablon.GetComponent<ScrollRect>().scrollSensitivity = ListeSatiri;
+
+            Text baslik = acilir.captionText;
+            baslik.fontSize = 24;
+            baslik.color = tema.Yazi;
+            var baslikAlani = (RectTransform)baslik.transform;
+            baslikAlani.offsetMin = new Vector2(14f, baslikAlani.offsetMin.y);
         }
 
         private static void Katman(GameObject nesne)
@@ -433,14 +482,19 @@ namespace IkiDunya.Editor
             // Ana menü seçeneklerinin yerinde: üstte soluk küçük başlık, altında parkurlar ve Geri.
             var dugmeler = new Object[System.Enum.GetValues(typeof(ParkurTuru)).Length];
             Transform kutu = Liste("ParkurlarPaneli", ebeveyn, Vector2.zero, Vector2.one);
-            int satir = dugmeler.Length + 2;
-            GriKumsalKur.Yerles((RectTransform)kutu, new Vector2(0f, 1f), new Vector2(MenuSol, -ListeUstu + 10f),
+            int satir = dugmeler.Length + 1;
+            GriKumsalKur.Yerles((RectTransform)kutu, new Vector2(0f, 1f), new Vector2(MenuSol, -ListeUstu - 30f),
                 new Vector2(ListeEni, satir * SecenekBoyu + (satir - 1) * SecenekAraligi));
             var dizi = kutu.GetComponent<VerticalLayoutGroup>();
             dizi.spacing = SecenekAraligi;
             dizi.childAlignment = TextAnchor.UpperLeft;
+            // Küçük başlık sıranın dışında, seçenek yazılarıyla aynı hizada (çizgi payı kadar içeride).
             Etiket(kutu, "ParkurlarYazisi", "menu_parkurlar", metinler);
-            kutu.Find("ParkurlarYazisi").GetComponent<LayoutElement>().preferredHeight = 40f;
+            Text etiket = kutu.Find("ParkurlarYazisi").GetComponent<Text>();
+            etiket.fontSize = 26;
+            etiket.GetComponent<LayoutElement>().ignoreLayout = true;
+            GriKumsalKur.Yerles(etiket.rectTransform, new Vector2(0f, 1f), new Vector2(44f, 0f), new Vector2(ListeEni - 44f, 40f));
+            etiket.rectTransform.pivot = new Vector2(0f, 0f);
             for (int i = 0; i < dugmeler.Length; i++)
             {
                 Button dugme = Dugme(kutu, Parkur.MetinId((ParkurTuru)i), metinler);
@@ -494,6 +548,7 @@ namespace IkiDunya.Editor
             GameObject sonuc = Kutucuk("Sonuc", tuval, new Vector2(0.3f, 0.4f), new Vector2(0.7f, 0.65f));
             Text sonucYazisi = KutuYazisi(sonuc.transform, new Vector2(0.05f, 0.05f), new Vector2(0.95f, 0.95f), 36);
             sonucYazisi.alignment = TextAnchor.MiddleCenter;
+            sonucYazisi.font = GriKumsalKur.Tema().BaslikYazisi;
             sure.SetActive(false);
             sonuc.SetActive(false);
 
@@ -786,6 +841,13 @@ namespace IkiDunya.Editor
             GriKumsalKur.TemaYazisi(yazi, ad == "Baslik", GriKumsalKur.Tema().Yazi);
             yazi.fontSize = boyut;
             yazi.alignment = TextAnchor.MiddleCenter;
+            // Açık gökyüzü ve kum üstünde okunsun: koyu yumuşak gölge ve ince kontur.
+            var kontur = nesne.AddComponent<Outline>();
+            kontur.effectColor = new Color(0f, 0f, 0f, 0.3f);
+            kontur.effectDistance = new Vector2(1.5f, -1.5f);
+            var golge = nesne.AddComponent<Shadow>();
+            golge.effectColor = new Color(0f, 0f, 0f, 0.55f);
+            golge.effectDistance = new Vector2(0f, -3f);
             return yazi;
         }
     }
