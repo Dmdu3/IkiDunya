@@ -10,6 +10,7 @@ GameObject:
   m_Component:
   - component: {fileID: 8710088896766763077}
   - component: {fileID: 2212601259093849990}
+  - component: {fileID: 4078981641808668026}
   - component: {fileID: 4354381977635000912}
   m_Layer: 0
   m_Name: Insan
@@ -51,6 +52,26 @@ MonoBehaviour:
   tur: 0
   gorunus: {fileID: 749682974125354611}
   kazma: {fileID: 0}
+--- !u!205 &4078981641808668026
+LODGroup:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6669746402332917341}
+  serializedVersion: 2
+  m_LocalReferencePoint: {x: 0, y: 1, z: 0}
+  m_Size: 2
+  m_FadeMode: 0
+  m_AnimateCrossFading: 0
+  m_LastLODIsBillboard: 0
+  m_LODs:
+  - screenRelativeHeight: 0.015
+    fadeTransitionWidth: 0
+    renderers:
+    - renderer: {fileID: 6762118759181921702}
+    - renderer: {fileID: 1885957582308873500}
+  m_Enabled: 1
 --- !u!114 &4354381977635000912
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -215,11 +236,11 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 4565160626574783981, guid: 6ab7c71b74fb98b4ba8d96db4a68f701, type: 3}
       propertyPath: m_LocalRotation.y
-      value: 0
+      value: -0
       objectReference: {fileID: 0}
     - target: {fileID: 4565160626574783981, guid: 6ab7c71b74fb98b4ba8d96db4a68f701, type: 3}
       propertyPath: m_LocalRotation.z
-      value: 0
+      value: -0
       objectReference: {fileID: 0}
     - target: {fileID: 4565160626574783981, guid: 6ab7c71b74fb98b4ba8d96db4a68f701, type: 3}
       propertyPath: m_LocalEulerAnglesHint.x
@@ -241,5 +262,10 @@ PrefabInstance:
 --- !u!4 &749682974125354611 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 4565160626574783981, guid: 6ab7c71b74fb98b4ba8d96db4a68f701, type: 3}
+  m_PrefabInstance: {fileID: 3836466370786139038}
+  m_PrefabAsset: {fileID: 0}
+--- !u!23 &1885957582308873500 stripped
+MeshRenderer:
+  m_CorrespondingSourceObject: {fileID: 3391661026004504194, guid: 6ab7c71b74fb98b4ba8d96db4a68f701, type: 3}
   m_PrefabInstance: {fileID: 3836466370786139038}
   m_PrefabAsset: {fileID: 0}
