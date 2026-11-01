@@ -210,7 +210,7 @@ namespace IkiDunya.Editor
             panel.layer = LayerMask.NameToLayer("UI");
             panel.transform.SetParent(tuval, false);
             Yasla((RectTransform)panel.transform, Vector2.zero, Vector2.one);
-            panel.GetComponent<Image>().color = new Color(0.12f, 0.09f, 0.05f, 0.92f);
+            panel.GetComponent<Image>().color = Tema().Perde;
 
             // Çubuklar alttan başlar (en büyük yazı boyutunda da üstteki ipucu kutusuna değmez); altında çıkış enerjisi.
             Cubuk kesit = CubukKur("KumKesiti", panel.transform, new Vector2(0.44f, 0.1f), new Vector2(0.49f, 0.4f), new Color(0.86f, 0.78f, 0.6f), true);
@@ -1004,12 +1004,21 @@ namespace IkiDunya.Editor
             rect.anchorMin = rect.anchorMax = rect.pivot = new Vector2(0.5f, 0.5f);
             rect.anchoredPosition = Vector2.zero;
             rect.sizeDelta = new Vector2(SonucGenisligi, SonucBasligi + satirSayisi * SonucSatiri + SonucAlti);
-            panel.GetComponent<Image>().color = new Color(0f, 0f, 0f, 0.85f);
-            Text baslik = PanelYazisi(rect, "Baslik", new Vector2(0f, 1f), Vector2.one, 40, TextAnchor.MiddleCenter, baslikId);
-            SatiraKoy((RectTransform)baslik.transform, 0f, 1f, 32f, 32f, 0f, SonucBasligi - 10f);
-            Text devam = PanelYazisi(rect, "Devam", Vector2.zero, new Vector2(1f, 0f), 24, TextAnchor.MiddleCenter, "sonuc_devam");
-            ((RectTransform)devam.transform).offsetMin = new Vector2(32f, 8f);
-            ((RectTransform)devam.transform).offsetMax = new Vector2(-32f, SonucAlti - 8f);
+            ArayuzTemasi tema = Tema();
+            panel.GetComponent<Image>().color = tema.Panel;
+            // Başlık serif, solda; altında kısa vurgu çizgisi.
+            Text baslik = PanelYazisi(rect, "Baslik", new Vector2(0f, 1f), Vector2.one, 44, TextAnchor.LowerLeft, baslikId);
+            TemaYazisi(baslik, true, tema.Yazi);
+            SatiraKoy((RectTransform)baslik.transform, 0f, 1f, 36f, 36f, 0f, SonucBasligi - 22f);
+            var cizgi = new GameObject("Cizgi", typeof(RectTransform), typeof(Image));
+            cizgi.layer = LayerMask.NameToLayer("UI");
+            cizgi.transform.SetParent(rect, false);
+            Yerles((RectTransform)cizgi.transform, new Vector2(0f, 1f), new Vector2(38f, -(SonucBasligi - 12f)), new Vector2(90f, 3f));
+            cizgi.GetComponent<Image>().color = tema.Vurgu;
+            Text devam = PanelYazisi(rect, "Devam", Vector2.zero, new Vector2(1f, 0f), 22, TextAnchor.MiddleLeft, "sonuc_devam");
+            devam.color = tema.SolukYazi;
+            ((RectTransform)devam.transform).offsetMin = new Vector2(38f, 8f);
+            ((RectTransform)devam.transform).offsetMax = new Vector2(-36f, SonucAlti - 8f);
             panel.SetActive(false);
             return rect;
         }
@@ -1031,7 +1040,8 @@ namespace IkiDunya.Editor
             var kare = new GameObject($"Renk_{satir}", typeof(RectTransform), typeof(Image));
             kare.layer = LayerMask.NameToLayer("UI");
             kare.transform.SetParent(panel, false);
-            SatiraKoy((RectTransform)kare.transform, 0f, 0f, 36f, -96f, SatirUstu(satir) + 20f, 60f);
+            // Satırın solunda ince renk çubuğu.
+            SatiraKoy((RectTransform)kare.transform, 0f, 0f, 38f, -44f, SatirUstu(satir) + 30f, 40f);
             var resim = kare.GetComponent<Image>();
             resim.color = renk;
             return resim;
@@ -1041,7 +1051,8 @@ namespace IkiDunya.Editor
         private static void SatirAdi(RectTransform panel, int satir, string id)
         {
             Text ad = PanelYazisi(panel, $"Ad_{satir}", Vector2.zero, Vector2.one, 30, TextAnchor.MiddleLeft, id);
-            SatiraKoy((RectTransform)ad.transform, 0f, 0.6f, 120f, 0f, SatirUstu(satir), SonucSatiri);
+            ad.color = Tema().SolukYazi;
+            SatiraKoy((RectTransform)ad.transform, 0f, 0.6f, 64f, 0f, SatirUstu(satir), SonucSatiri);
         }
 
         /// <summary>Panelde i. satırın sağındaki sayı (ya da bant adı).</summary>
@@ -1052,10 +1063,9 @@ namespace IkiDunya.Editor
             nesne.transform.SetParent(panel, false);
             SatiraKoy((RectTransform)nesne.transform, 0.6f, 1f, 0f, 36f, SatirUstu(satir), SonucSatiri);
             var yazi = nesne.GetComponent<Text>();
-            yazi.font = Resources.GetBuiltinResource<Font>("LegacyRuntime.ttf");
+            TemaYazisi(yazi, true, Tema().Yazi);
             yazi.fontSize = boyut;
             yazi.alignment = TextAnchor.MiddleRight;
-            yazi.color = Color.white;
             return yazi;
         }
 
@@ -1067,10 +1077,9 @@ namespace IkiDunya.Editor
             nesne.transform.SetParent(panel, false);
             Yasla((RectTransform)nesne.transform, enAz, enCok);
             var yazi = nesne.GetComponent<Text>();
-            yazi.font = Resources.GetBuiltinResource<Font>("LegacyRuntime.ttf");
+            TemaYazisi(yazi, false, Tema().Yazi);
             yazi.fontSize = boyut;
             yazi.alignment = hiza;
-            yazi.color = Color.white;
             var metin = nesne.AddComponent<MetinYazisi>();
             Bagla(metin, "tablo", Ayar<MetinTablosu>("MetinTablosu"));
             var so = new SerializedObject(metin);
@@ -1331,7 +1340,7 @@ namespace IkiDunya.Editor
             arka.layer = ui;
             arka.transform.SetParent(ebeveyn, false);
             Sabitle((RectTransform)arka.transform, enAz, enCok);
-            arka.GetComponent<Image>().color = new Color(0f, 0f, 0f, 0.5f);
+            arka.GetComponent<Image>().color = Tema().Panel;
 
             var dolgu = new GameObject("Dolgu", typeof(RectTransform), typeof(Image));
             dolgu.layer = ui;
@@ -1371,6 +1380,43 @@ namespace IkiDunya.Editor
         }
 
         private static float Kenari(float orta) => orta < 0.34f ? 0f : orta > 0.66f ? 1f : 0.5f;
+
+        /// <summary>Tek noktaya çapalı, tuval biriminde sabit boylu kutu (pivot çapayla aynı köşede).</summary>
+        internal static void Yerles(RectTransform rect, Vector2 capa, Vector2 konum, Vector2 boyut)
+        {
+            rect.anchorMin = rect.anchorMax = rect.pivot = capa;
+            rect.anchoredPosition = konum;
+            rect.sizeDelta = boyut;
+        }
+
+        private const string YaziTipiKlasoru = "Assets/_Project/Art/UI/Fonts";
+
+        /// <summary>Arayüz teması: asset'i yoksa kurar, yazı tiplerini bağlar, oyun ayarlarına bağlar.</summary>
+        internal static ArayuzTemasi Tema()
+        {
+            var tema = Ayar<ArayuzTemasi>("ArayuzTemasi");
+            var so = new SerializedObject(tema);
+            if (so.FindProperty("baslikYazisi").objectReferenceValue == null)
+                so.FindProperty("baslikYazisi").objectReferenceValue = AssetDatabase.LoadAssetAtPath<Font>($"{YaziTipiKlasoru}/Lora.ttf");
+            if (so.FindProperty("govdeYazisi").objectReferenceValue == null)
+                so.FindProperty("govdeYazisi").objectReferenceValue = AssetDatabase.LoadAssetAtPath<Font>($"{YaziTipiKlasoru}/SourceSans3-Regular.ttf");
+            if (so.FindProperty("kalinYazi").objectReferenceValue == null)
+                so.FindProperty("kalinYazi").objectReferenceValue = AssetDatabase.LoadAssetAtPath<Font>($"{YaziTipiKlasoru}/SourceSans3-Semibold.ttf");
+            so.ApplyModifiedPropertiesWithoutUndo();
+            EditorUtility.SetDirty(tema);
+            var ayarlar = Ayar<OyunAyarlari>("OyunAyarlari");
+            Bagla(ayarlar, "tema", tema);
+            EditorUtility.SetDirty(ayarlar);
+            return tema;
+        }
+
+        /// <summary>Yazıya temanın yazı tipini ve rengini verir (baslik: serif, değilse sans).</summary>
+        internal static void TemaYazisi(Text yazi, bool baslik, Color renk)
+        {
+            ArayuzTemasi tema = Tema();
+            yazi.font = baslik ? tema.BaslikYazisi : tema.GovdeYazisi;
+            yazi.color = renk;
+        }
 
         internal static GameObject Kutu(string ad, Transform ebeveyn, Vector3 konum, Vector3 boyut, Material malzeme, string katman)
         {

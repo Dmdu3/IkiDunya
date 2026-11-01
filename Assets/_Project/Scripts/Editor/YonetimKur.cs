@@ -115,6 +115,7 @@ namespace IkiDunya.Editor
             GriKumsalKur.Bagla(arayuz, "tur", tur);
             GriKumsalKur.Bagla(arayuz, "harita", harita);
             GriKumsalKur.Bagla(arayuz, "metinler", metinler);
+            GriKumsalKur.Bagla(arayuz, "tema", GriKumsalKur.Tema());
             GriKumsalKur.Bagla(arayuz, "kok", icerik.gameObject);
             GriKumsalKur.Bagla(arayuz, "ustBilgi", ustBilgi);
             GriKumsalKur.Bagla(arayuz, "asamaBasligi", asama);

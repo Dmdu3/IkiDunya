@@ -75,7 +75,7 @@ namespace IkiDunya.Core
                 if (ek is IOyunVerisi veri) veriler.Add(veri);
                 else if (ek != null) Debug.LogError($"OyunAkisi: '{ek.name}' IOyunVerisi değil, kayda girmez.", this);
             }
-            gecis = Gecis.Kur(transform);
+            gecis = Gecis.Kur(transform, ayarlar.Tema);
         }
 
         private void Start()

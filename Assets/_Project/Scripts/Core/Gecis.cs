@@ -11,8 +11,9 @@ namespace IkiDunya.Core
         private Text baslik;
 
         /// <summary>Oyun akışının altına siyah perde ve başlık yazısı kurar.</summary>
-        public static Gecis Kur(Transform ebeveyn)
+        public static Gecis Kur(Transform ebeveyn, ArayuzTemasi tema)
         {
+            if (tema == null) tema = ArayuzTemasi.Yuklu;
             var nesne = new GameObject("Gecis", typeof(Canvas), typeof(CanvasGroup));
             nesne.transform.SetParent(ebeveyn, false);
             var tuval = nesne.GetComponent<Canvas>();
@@ -22,16 +23,16 @@ namespace IkiDunya.Core
             var perde = new GameObject("Perde", typeof(RectTransform), typeof(Image));
             perde.transform.SetParent(nesne.transform, false);
             Yasla((RectTransform)perde.transform);
-            perde.GetComponent<Image>().color = Color.black;
+            perde.GetComponent<Image>().color = tema != null ? tema.Gece : Color.black;
 
             var yazi = new GameObject("Baslik", typeof(RectTransform), typeof(Text));
             yazi.transform.SetParent(nesne.transform, false);
             Yasla((RectTransform)yazi.transform);
             var metin = yazi.GetComponent<Text>();
-            metin.font = Resources.GetBuiltinResource<Font>("LegacyRuntime.ttf");
-            metin.fontSize = 48;
+            metin.font = tema != null ? tema.BaslikYazisi : Resources.GetBuiltinResource<Font>("LegacyRuntime.ttf");
+            metin.fontSize = 52;
             metin.alignment = TextAnchor.MiddleCenter;
-            metin.color = Color.white;
+            metin.color = tema != null ? tema.Yazi : Color.white;
             // Uzun başlık kenara yapışmasın.
             ((RectTransform)yazi.transform).offsetMin = new Vector2(120f, 0f);
             ((RectTransform)yazi.transform).offsetMax = new Vector2(-120f, 0f);

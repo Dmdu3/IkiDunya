@@ -19,6 +19,8 @@ namespace IkiDunya.UI.Management
         [SerializeField] private HaritaSecici harita;
         [SerializeField] private MetinTablosu metinler;
         [SerializeField] private GameObject kok;
+        [Tooltip("Yazı tipleri ve renkler (boşsa yüklü tema).")]
+        [SerializeField] private ArayuzTemasi tema;
 
         private YonetimDurumu yonetim;
         private KumsalDurumu kumsal;
@@ -63,6 +65,7 @@ namespace IkiDunya.UI.Management
         private int sonBolge = -2;
 
         private MetinTablosu Tablo => metinler != null ? metinler : MetinTablosu.Yuklu;
+        private ArayuzTemasi T => tema != null ? tema : ArayuzTemasi.Yuklu;
         private string Al(string id) => Tablo != null ? Tablo.Al(id) : $"[{id}]";
         private string Etiket(string id)
         {
@@ -119,24 +122,24 @@ namespace IkiDunya.UI.Management
             YonetimDurumu y = tur.Yonetim;
             KumsalDurumu k = tur.Kumsal;
             haftaEtiketi.text = Al("yonetim_tur");
-            haftaMetni.text = $"<b>{y.Tur}</b>";
+            haftaMetni.text = $"{y.Tur}";
             butceEtiketi.text = Al("yonetim_butce");
-            butceMetni.text = y.Bakim > 0 ? $"<b>{y.Butce}</b> (−{y.Bakim})" : $"<b>{y.Butce}</b>";
+            butceMetni.text = y.Bakim > 0 ? $"{y.Butce} (−{y.Bakim})" : $"{y.Butce}";
             gonulluEtiketi.text = Al("yonetim_gonullu");
-            gonulluMetni.text = $"<b>{y.BosGonullu(k)}/{y.Gonullu(k)}</b>";
+            gonulluMetni.text = $"{y.BosGonullu(k)}/{y.Gonullu(k)}";
             destekEtiketi.text = Al("yonetim_destek");
-            destekMetni.text = $"<b>{y.Destek}/{y.Ayarlar.DestekEnFazla}</b>";
+            destekMetni.text = $"{y.Destek}/{y.Ayarlar.DestekEnFazla}";
             var ust = new StringBuilder();
             foreach (Paydas p in System.Enum.GetValues(typeof(Paydas)))
                 ust.Append($"{Al(PaydasId(p))} {Isaretli(y.Iliski(p))}  ");
-            if (y.UyariVar) ust.Append($"\n<color=#b45121>{Al($"uyari_{y.AktifUyari.ToString().ToLowerInvariant()}")}</color>");
+            if (y.UyariVar) ust.Append($"\n<color={ArayuzTemasi.Kod(T.Olumsuz)}>{Al($"uyari_{y.AktifUyari.ToString().ToLowerInvariant()}")}</color>");
             iliskiMetni.text = ust.ToString();
             asamaBasligi.text = Al($"asama_{tur.SuAnki.ToString().ToLowerInvariant()}");
             var serit = new StringBuilder();
             foreach (InsanTuru.Asama asama in new[] { InsanTuru.Asama.Rapor, InsanTuru.Asama.Gonulluler, InsanTuru.Asama.Kartlar, InsanTuru.Asama.Olay })
             {
                 string ad = Al($"asama_{asama.ToString().ToLowerInvariant()}");
-                serit.Append(asama == tur.SuAnki ? $"<color=#246F7D><b>{ad}</b></color>" : $"<color=#71827A>{ad}</color>");
+                serit.Append(asama == tur.SuAnki ? $"<color={ArayuzTemasi.Kod(T.Vurgu)}><b>{ad}</b></color>" : $"<color={ArayuzTemasi.Kod(T.SolukYazi)}>{ad}</color>");
                 serit.Append("    ");
             }
             foreach (Text t in asamaSeritleri) t.text = serit.ToString();
@@ -245,13 +248,16 @@ namespace IkiDunya.UI.Management
         private void GorunumuKur()
         {
             if (kartBilgiPaneli != null || kok == null || dugmeKalibi == null) return;
-            Color kagit = new Color32(250, 247, 240, 245);
-            Color yazi = new Color32(24, 56, 70, 255);
-            Color turkuaz = new Color32(36, 111, 125, 255);
+            Color kagit = T.Panel;
+            Color yazi = T.Yazi;
+            Color turkuaz = T.Vurgu;
             panelDokusu = YuvarlakDoku();
             panelSprite = Sprite.Create(panelDokusu, new Rect(0, 0, 32, 32), new Vector2(.5f, .5f), 100, 0, SpriteMeshType.FullRect, new Vector4(10, 10, 10, 10));
-            foreach (Text t in new[] { ustBilgi, asamaBasligi, yuvaListesi, bolgeBilgisi, raporYazisi, olayYazisi })
-                if (t != null) t.color = yazi;
+            foreach (Text t in new[] { ustBilgi, asamaBasligi, yuvaListesi, bolgeBilgisi, raporYazisi, olayYazisi, hedefYazisi })
+                if (t != null) { t.color = yazi; t.font = T.GovdeYazisi; }
+            // Sahnedeki düğme yazıları da temanın yazı tipiyle (görev/kart düğmeleri ve Geri kalıptan kopyalanır).
+            foreach (Button d in new[] { dugmeKalibi, ileriDugmesi, aDugmesi, bDugmesi })
+                foreach (Text t in d.GetComponentsInChildren<Text>(true)) { t.font = T.GovdeYazisi; t.color = yazi; }
             foreach (GameObject panel in new[] { ustBilgi.transform.parent.gameObject, yuvaListesi.transform.parent.gameObject, raporPaneli, gorevPaneli, kartPaneli, olayPaneli })
                 if (panel != null && panel.TryGetComponent(out Image zemin)) Yuvarlak(zemin, kagit);
 
@@ -265,10 +271,10 @@ namespace IkiDunya.UI.Management
             gonulluMetni = KaynakHucresi(ustPanel, .25f, .365f, out gonulluEtiketi);
             destekMetni = KaynakHucresi(ustPanel, .37f, .50f, out destekEtiketi);
             BilgiZemini(ustPanel, .51f, .845f);
-            BilgiZemini(ustPanel, .85f, .99f, new Color32(224, 237, 226, 255));
+            BilgiZemini(ustPanel, .85f, .99f);
             iliskiMetni = KartMetni("Iliskiler", ustPanel, new Vector2(.52f, .12f), new Vector2(.835f, .88f), 23, TextAnchor.MiddleLeft);
             Konum((RectTransform)asamaBasligi.transform, .855f, .12f, .985f, .88f);
-            asamaBasligi.color = turkuaz; asamaBasligi.fontStyle = FontStyle.Bold; ArayuzOlcegi.Boyut(asamaBasligi, 25);
+            asamaBasligi.color = turkuaz; asamaBasligi.font = T.BaslikYazisi; asamaBasligi.fontStyle = FontStyle.Normal; ArayuzOlcegi.Boyut(asamaBasligi, 28);
             asamaBasligi.alignment = TextAnchor.MiddleCenter;
             foreach (GameObject panel in new[] { raporPaneli, gorevPaneli, olayPaneli })
                 AltSerit((RectTransform)panel.transform, AltPaneliYuksekligi);
@@ -285,12 +291,13 @@ namespace IkiDunya.UI.Management
             Kenarlik((RectTransform)bDugmesi.transform, new Vector2(.5f, 0f), new Vector2(1f, 0f), 8f, 16f, 24f, -126f);
             Yerles((RectTransform)ileriDugmesi.transform, new Vector2(1f, 0f), new Vector2(-Kenar, AltBosluk), new Vector2(IleriGenisligi, IleriYuksekligi));
             Yuvarlak(ileriDugmesi.GetComponent<Image>(), turkuaz);
-            ileriDugmesi.GetComponentInChildren<Text>().color = Color.white;
+            ileriDugmesi.GetComponentInChildren<Text>().color = T.Gece;
+            ileriDugmesi.GetComponentInChildren<Text>().font = T.KalinYazi;
             foreach (Button secenek in new[] { aDugmesi, bDugmesi })
-                Yuvarlak(secenek.GetComponent<Image>(), new Color32(241, 237, 228, 255));
+                Yuvarlak(secenek.GetComponent<Image>(), T.PanelIci);
             Transform sol = yuvaListesi.transform.parent;
             solBaslik = KartMetni("SolBaslik", sol, new Vector2(.06f, .86f), new Vector2(.94f, .98f), 27, TextAnchor.MiddleLeft);
-            solBaslik.fontStyle = FontStyle.Bold; solBaslik.color = turkuaz;
+            solBaslik.font = T.BaslikYazisi; solBaslik.color = yazi;
             yuvaListesi.gameObject.SetActive(false);
             YuvaPaneliKur(sol);
             ArayuzOlcegi.Boyut(bolgeBilgisi, 24);
@@ -312,7 +319,7 @@ namespace IkiDunya.UI.Management
             hedefVazgec.name = "HedefVazgec";
             hedefVazgec.gameObject.SetActive(true);
             Kenarlik((RectTransform)hedefVazgec.transform, new Vector2(1f, 0f), Vector2.one, -210f, 10f, 12f, 10f);
-            Yuvarlak(hedefVazgec.GetComponent<Image>(), new Color32(241, 237, 228, 255));
+            Yuvarlak(hedefVazgec.GetComponent<Image>(), T.PanelIci);
             hedefVazgec.GetComponentInChildren<Text>(true).text = Al("menu_geri");
             DugmeSesi.Bagla(hedefVazgec);
             hedefVazgec.onClick.AddListener(() =>
@@ -326,9 +333,9 @@ namespace IkiDunya.UI.Management
             kartBilgiPaneli.transform.SetParent(kok.transform, false);
             var arka = kartBilgiPaneli.GetComponent<Image>(); Yuvarlak(arka, kagit); arka.raycastTarget = false;
             kartBilgiTuru = KartMetni("Tur", kartBilgiPaneli.transform, new Vector2(.07f, .80f), new Vector2(.93f, .94f), 20, TextAnchor.MiddleLeft);
-            kartBilgiTuru.color = turkuaz; kartBilgiTuru.fontStyle = FontStyle.Bold;
+            kartBilgiTuru.color = turkuaz; kartBilgiTuru.font = T.KalinYazi;
             kartBilgiAdi = KartMetni("Ad", kartBilgiPaneli.transform, new Vector2(.07f, .62f), new Vector2(.93f, .80f), 29, TextAnchor.MiddleLeft);
-            kartBilgiAdi.fontStyle = FontStyle.Bold;
+            kartBilgiAdi.font = T.BaslikYazisi;
             kartBilgiYazisi = KartMetni("Bilgi", kartBilgiPaneli.transform, new Vector2(.07f, .27f), new Vector2(.93f, .60f), 24, TextAnchor.UpperLeft);
             kartBilgiEk = KartMetni("Etki", kartBilgiPaneli.transform, new Vector2(.07f, .05f), new Vector2(.93f, .25f), 21, TextAnchor.UpperLeft);
             kartBilgiPaneli.SetActive(false);
@@ -338,13 +345,13 @@ namespace IkiDunya.UI.Management
         {
             Text baslik = KartMetni("Baslik", panel.transform, new Vector2(0f, 1f), new Vector2(.4f, 1f), 27, TextAnchor.MiddleLeft);
             Kenarlik((RectTransform)baslik.transform, new Vector2(0f, 1f), new Vector2(.4f, 1f), 24f, -PanelBasligiYuksekligi + 4f, 0f, 6f);
-            baslik.fontStyle = FontStyle.Bold; baslik.text = Al(id);
+            baslik.font = T.BaslikYazisi; baslik.text = Al(id);
             Text asamalar = KartMetni("Asamalar", panel.transform, new Vector2(.4f, 1f), Vector2.one, 20, TextAnchor.MiddleRight);
             Kenarlik((RectTransform)asamalar.transform, new Vector2(.4f, 1f), Vector2.one, 12f, -PanelBasligiYuksekligi + 4f, 24f, 6f);
             asamaSeritleri.Add(asamalar);
         }
 
-        private void BilgiZemini(Transform ebeveyn, float sol, float sag, Color32? renk = null)
+        private void BilgiZemini(Transform ebeveyn, float sol, float sag)
         {
             var nesne = new GameObject("KaynakZemini", typeof(RectTransform), typeof(Image));
             nesne.layer = LayerMask.NameToLayer("UI");
@@ -352,7 +359,7 @@ namespace IkiDunya.UI.Management
             nesne.transform.SetAsFirstSibling();
             Konum((RectTransform)nesne.transform, sol, .1f, sag, .9f);
             var resim = nesne.GetComponent<Image>();
-            Yuvarlak(resim, renk ?? new Color32(239, 235, 224, 255));
+            Yuvarlak(resim, T.PanelIci);
             resim.raycastTarget = false;
         }
 
@@ -361,8 +368,10 @@ namespace IkiDunya.UI.Management
         {
             BilgiZemini(ust, sol, sag);
             etiket = KartMetni("Etiket", ust, new Vector2(sol + .007f, .5f), new Vector2(sag - .004f, .86f), 21, TextAnchor.LowerLeft);
-            etiket.color = new Color32(62, 92, 89, 255);
-            return KartMetni("Deger", ust, new Vector2(sol + .007f, .14f), new Vector2(sag - .004f, .52f), 28, TextAnchor.UpperLeft);
+            etiket.color = T.SolukYazi;
+            Text deger = KartMetni("Deger", ust, new Vector2(sol + .007f, .14f), new Vector2(sag - .004f, .52f), 28, TextAnchor.UpperLeft);
+            deger.font = T.KalinYazi;
+            return deger;
         }
 
         private void YuvaPaneliKur(Transform sol)
@@ -390,7 +399,7 @@ namespace IkiDunya.UI.Management
             var bolge = new GameObject("BolgeKutusu", typeof(RectTransform), typeof(Image));
             bolge.layer = LayerMask.NameToLayer("UI"); bolge.transform.SetParent(sol, false);
             bolgeKutusu = (RectTransform)bolge.transform;
-            var zemin = bolge.GetComponent<Image>(); Yuvarlak(zemin, new Color32(241, 237, 227, 255)); zemin.raycastTarget = false;
+            var zemin = bolge.GetComponent<Image>(); Yuvarlak(zemin, T.PanelIci); zemin.raycastTarget = false;
             bolgeBilgisi.transform.SetParent(bolge.transform, false);
             Kenarlik((RectTransform)bolgeBilgisi.transform, Vector2.zero, Vector2.one, 14f, 8f, 14f, 8f);
         }
@@ -409,7 +418,7 @@ namespace IkiDunya.UI.Management
         private const float SolGenislik = 400f, SolBaslikYuksekligi = 60f, SolAltPay = 14f;
         private const float HedefGenisligi = 860f, HedefYuksekligi = 80f;
         // Sol panel ve kart bilgisi ortadaki ipucu kutusuna (IpucuPaneli, iki yanda 440 birim boş bırakır) değmeyecek enlikte.
-        private const float BilgiGenisligi = 400f, BilgiYuksekligi = 420f;
+        private const float BilgiGenisligi = 400f, BilgiYuksekligi = 340f;
 
         /// <summary>Tek noktaya çapalı, sabit boyutlu kutu (pivot çapayla aynı köşede).</summary>
         private static void Yerles(RectTransform r, Vector2 capa, Vector2 konum, Vector2 boyut)
@@ -456,8 +465,8 @@ namespace IkiDunya.UI.Management
             var r = (RectTransform)nesne.transform; r.anchorMin = alt; r.anchorMax = ust;
             r.offsetMin = r.offsetMax = Vector2.zero;
             var t = nesne.GetComponent<Text>();
-            t.font = dugmeKalibi.GetComponentInChildren<Text>(true).font; ArayuzOlcegi.Boyut(t, boyut);
-            t.color = new Color32(24, 56, 70, 255); t.alignment = hiza; t.raycastTarget = false;
+            t.font = T.GovdeYazisi; ArayuzOlcegi.Boyut(t, boyut);
+            t.color = T.Yazi; t.alignment = hiza; t.raycastTarget = false;
             t.supportRichText = true;
             return t;
         }
@@ -490,7 +499,7 @@ namespace IkiDunya.UI.Management
             Button dugme = Instantiate(dugmeKalibi, gorevDugmeleri);
             dugme.gameObject.SetActive(true);
             dugme.GetComponentInChildren<Text>().gameObject.SetActive(false);
-            Yuvarlak(dugme.GetComponent<Image>(), new Color32(241, 237, 227, 255));
+            Yuvarlak(dugme.GetComponent<Image>(), T.PanelIci);
             dugme.interactable = tur.GorevVerilebilir(gorev);
 
             var nesne = new GameObject("GorevGorseli", typeof(RectTransform), typeof(Image));
@@ -501,7 +510,7 @@ namespace IkiDunya.UI.Management
             resim.sprite = id != null ? KartGorseli(id) : null; resim.enabled = resim.sprite != null;
 
             Text baslik = KartMetni("GorevAdi", dugme.transform, new Vector2(.30f, .67f), new Vector2(.97f, .96f), 26, TextAnchor.LowerLeft);
-            baslik.fontStyle = FontStyle.Bold; baslik.text = Al(gorev.Id);
+            baslik.font = T.KalinYazi; baslik.text = Al(gorev.Id);
             Text aciklama = KartMetni("GorevAciklama", dugme.transform, new Vector2(.30f, .06f), new Vector2(.97f, .66f), 24, TextAnchor.UpperLeft);
             aciklama.text = Al(gorev.Id + "_aciklama");
             DugmeSesi.Bagla(dugme);
@@ -514,7 +523,7 @@ namespace IkiDunya.UI.Management
             Button dugme = Instantiate(dugmeKalibi, kartDugmeleri);
             dugme.gameObject.SetActive(true);
             var zemin = dugme.GetComponent<Image>();
-            Yuvarlak(zemin, tur.BekleyenKart == kart ? new Color32(222, 235, 207, 255) : new Color32(250, 247, 240, 255));
+            Yuvarlak(zemin, tur.BekleyenKart == kart ? Color.Lerp(T.PanelIci, T.Vurgu, .3f) : T.PanelIci);
             bool oynanabilir = tur.KartOynanabilir(kart);
             dugme.interactable = oynanabilir;
             Text eski = dugme.GetComponentInChildren<Text>(); eski.gameObject.SetActive(false);
@@ -522,9 +531,9 @@ namespace IkiDunya.UI.Management
             var ust = new GameObject("Tur", typeof(RectTransform), typeof(Image));
             ust.layer = LayerMask.NameToLayer("UI"); ust.transform.SetParent(dugme.transform, false);
             var ur = (RectTransform)ust.transform; ur.anchorMin = new Vector2(0, .86f); ur.anchorMax = Vector2.one; ur.offsetMin = ur.offsetMax = Vector2.zero;
-            var bant = ust.GetComponent<Image>(); bant.color = new Color32(36, 111, 125, 255); bant.raycastTarget = false;
+            var bant = ust.GetComponent<Image>(); bant.color = T.Panel; bant.raycastTarget = false;
             Text turYazisi = KartMetni("TurYazisi", ust.transform, new Vector2(.05f, 0), new Vector2(.95f, 1), 21, TextAnchor.MiddleLeft);
-            turYazisi.color = Color.white;
+            turYazisi.color = T.Vurgu;
             turYazisi.text = Al($"kart_turu_{kart.Tur.ToString().ToLowerInvariant()}");
 
             var gorsel = new GameObject("Diorama", typeof(RectTransform), typeof(Image));
@@ -536,7 +545,7 @@ namespace IkiDunya.UI.Management
             if (!oynanabilir) resim.color = new Color(1, 1, 1, .5f);
 
             Text ad = KartMetni("Ad", dugme.transform, new Vector2(.06f, .17f), new Vector2(.94f, .33f), 24, TextAnchor.MiddleLeft);
-            ad.fontStyle = FontStyle.Bold; ad.text = Al(kart.Id);
+            ad.font = T.KalinYazi; ad.text = Al(kart.Id);
             Text maliyet = KartMetni("Maliyet", dugme.transform, new Vector2(.06f, .01f), new Vector2(.94f, .17f), 24, TextAnchor.MiddleLeft);
             maliyet.text = $"{Al("yonetim_butce")} {tur.Yonetim.Bedel(kart)}  ·  {Al("kart_bakim")} {kart.Bakim}";
             dugme.onClick.AddListener(() => tur.KartSec(kart));
@@ -556,7 +565,7 @@ namespace IkiDunya.UI.Management
         {
             if (kartBilgiPaneli == null) return;
             kartBilgiTuru.text = Al($"kart_turu_{kart.Tur.ToString().ToLowerInvariant()}");
-            kartBilgiTuru.color = kart.Tur == KartTuru.Acil ? new Color32(192, 86, 27, 255) : new Color32(36, 111, 125, 255);
+            kartBilgiTuru.color = kart.Tur == KartTuru.Acil ? T.Olumsuz : T.Vurgu;
             kartBilgiAdi.text = Al(kart.Id);
             kartBilgiYazisi.text = Al(kart.Id + "_aciklama");
             var ek = new StringBuilder($"{Al("yonetim_butce")} {tur.Yonetim.Bedel(kart)}  ·  {Al("kart_bakim")} {kart.Bakim}");
@@ -585,8 +594,10 @@ namespace IkiDunya.UI.Management
             if (panelDokusu != null) Destroy(panelDokusu);
         }
 
-        // Açık zeminli düğmede okunan renkler.
-        private const string TurRengi = "#444444", ArtiRengi = "#2e7d32", EksiRengi = "#b03030";
+        // Koyu panelde okunan renkler (temadan).
+        private string TurRengi => ArayuzTemasi.Kod(T.SolukYazi);
+        private string ArtiRengi => ArayuzTemasi.Kod(T.Olumlu);
+        private string EksiRengi => ArayuzTemasi.Kod(T.Olumsuz);
 
         private void HalkVePaydas(StringBuilder etki, int destek, PaydasFarki paydas)
         {
@@ -595,7 +606,7 @@ namespace IkiDunya.UI.Management
                 if (paydas.Al(p) != 0) etki.Append(Fark(Al(PaydasId(p)), paydas.Al(p)));
         }
 
-        private static string Fark(string ad, int sayi) => $"<color={(sayi > 0 ? ArtiRengi : EksiRengi)}>{ad} {Isaretli(sayi)}</color>  ";
+        private string Fark(string ad, int sayi) => $"<color={(sayi > 0 ? ArtiRengi : EksiRengi)}>{ad} {Isaretli(sayi)}</color>  ";
         private static string PaydasId(Paydas p) => $"paydas_{p.ToString().ToLowerInvariant()}";
         private static string Isaretli(int sayi) => sayi > 0 ? $"+{sayi}" : sayi.ToString();
 
@@ -634,16 +645,16 @@ namespace IkiDunya.UI.Management
                 var kart = new GameObject("YuvaKarti", typeof(RectTransform), typeof(Image), typeof(LayoutElement));
                 kart.layer = LayerMask.NameToLayer("UI"); kart.transform.SetParent(yuvaIcerigi, false);
                 kart.GetComponent<LayoutElement>().preferredHeight = 108;
-                var zemin = kart.GetComponent<Image>(); Yuvarlak(zemin, new Color32(241, 237, 227, 255)); zemin.raycastTarget = false;
+                var zemin = kart.GetComponent<Image>(); Yuvarlak(zemin, T.PanelIci); zemin.raycastTarget = false;
                 Text ad = KartMetni("YuvaAdi", kart.transform, new Vector2(.06f, .62f), new Vector2(.52f, .96f), 24, TextAnchor.MiddleLeft);
-                ad.fontStyle = FontStyle.Bold; ad.text = $"{Al("yuva")} {i + 1}";
+                ad.font = T.KalinYazi; ad.text = $"{Al("yuva")} {i + 1}";
 
                 var rozet = new GameObject("SicaklikRozeti", typeof(RectTransform), typeof(Image));
                 rozet.layer = LayerMask.NameToLayer("UI"); rozet.transform.SetParent(kart.transform, false);
                 Konum((RectTransform)rozet.transform, .57f, .64f, .94f, .94f);
-                var rozetZemini = rozet.GetComponent<Image>(); Yuvarlak(rozetZemini, new Color32(224, 237, 226, 255)); rozetZemini.raycastTarget = false;
+                var rozetZemini = rozet.GetComponent<Image>(); Yuvarlak(rozetZemini, T.Panel); rozetZemini.raycastTarget = false;
                 Text bant = KartMetni("Bant", rozet.transform, new Vector2(.03f, .04f), new Vector2(.97f, .96f), 20, TextAnchor.MiddleCenter);
-                bant.color = new Color32(45, 105, 91, 255); bant.fontStyle = FontStyle.Bold;
+                bant.color = T.Vurgu; bant.font = T.KalinYazi;
                 bant.text = Al($"bant_{tur.Kumsal.YuvaBandi(i).ToString().ToLowerInvariant()}");
 
                 Text ayrinti = KartMetni("Ayrinti", kart.transform, new Vector2(.06f, .06f), new Vector2(.94f, .60f), 21, TextAnchor.UpperLeft);

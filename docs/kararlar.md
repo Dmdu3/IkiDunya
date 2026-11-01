@@ -63,3 +63,4 @@ ozet: Ekipçe alınan kararlar, tarih ve nedeniyle. En yeni en üstte. GDD'yi de
 | 2026-10-30 | Oyun sahneleri (`Scenes/Levels`) sadece Umut'ta; herkes `Assets/Sandbox/<ad>` | Unity sahneleri birleştirilemez | Umut |
 | 2026-10-30 | Unity 6000.3.25f1, Universal 3D | Ekipte herkes aynı sürüm | Umut |
 | 2026-11-01 | `KumsalDurumu.InsanSureliAzaldi(bolge)` eklendi: bölgede insanı süreli azaltan etki sürüyor mu | Plaj Tabelaları için yeni yapı türü açmadan kumsalda tabela göstermek | Toprak |
+| 2026-11-01 | Arayüz teması "Belgesel": koyu paneller, serif başlık (Lora) + sans gövde (Source Sans 3), kum rengi vurgu, kutusuz sola yaslı menüler; renk ve yazı tipleri `ArayuzTemasi` asset'inde | Üç tema canlı prototiple karşılaştırıldı (Kumsal kâğıdı, Gece denizi, Belgesel); doğa belgeseli havası seçildi. Yazı tipleri OFL, oyunla dağıtılabilir | Toprak |
