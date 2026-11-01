@@ -124,11 +124,7 @@ GameObject:
   m_Component:
   - component: {fileID: 7684374286034542869}
   - component: {fileID: 1557332784727055730}
-<<<<<<< HEAD
   - component: {fileID: 4968204778745242241}
-=======
-  - component: {fileID: 2514670514202374176}
->>>>>>> 4be3b97 ( denemeler2)
   - component: {fileID: 8023613463292295576}
   m_Layer: 0
   m_Name: Insan_02
@@ -170,11 +166,7 @@ MonoBehaviour:
   tur: 0
   gorunus: {fileID: 2941927419909053681}
   kazma: {fileID: 0}
-<<<<<<< HEAD
 --- !u!205 &4968204778745242241
-=======
---- !u!205 &2514670514202374176
->>>>>>> 4be3b97 ( denemeler2)
 LODGroup:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}

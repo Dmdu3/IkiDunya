@@ -1,10 +1,6 @@
 %YAML 1.1
 %TAG !u! tag:unity3d.com,2011:
-<<<<<<< HEAD
 --- !u!1 &8499189493940006450
-=======
---- !u!1 &4318391509232689681
->>>>>>> 4be3b97 ( denemeler2)
 GameObject:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -12,11 +8,7 @@ GameObject:
   m_PrefabAsset: {fileID: 0}
   serializedVersion: 6
   m_Component:
-<<<<<<< HEAD
   - component: {fileID: 7896237316480045338}
-=======
-  - component: {fileID: 883106120998282914}
->>>>>>> 4be3b97 ( denemeler2)
   m_Layer: 13
   m_Name: YuvaKafesi
   m_TagString: Untagged
@@ -24,48 +16,29 @@ GameObject:
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
   m_IsActive: 1
-<<<<<<< HEAD
 --- !u!4 &7896237316480045338
-=======
---- !u!4 &883106120998282914
->>>>>>> 4be3b97 ( denemeler2)
 Transform:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-<<<<<<< HEAD
   m_GameObject: {fileID: 8499189493940006450}
-=======
-  m_GameObject: {fileID: 4318391509232689681}
->>>>>>> 4be3b97 ( denemeler2)
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
-<<<<<<< HEAD
   - {fileID: 5674598629144692151}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1001 &5281174380249604700
-=======
-  - {fileID: 3655172418252791592}
-  m_Father: {fileID: 0}
-  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!1001 &3833546863428909251
->>>>>>> 4be3b97 ( denemeler2)
 PrefabInstance:
   m_ObjectHideFlags: 0
   serializedVersion: 2
   m_Modification:
     serializedVersion: 3
-<<<<<<< HEAD
     m_TransformParent: {fileID: 7896237316480045338}
-=======
-    m_TransformParent: {fileID: 883106120998282914}
->>>>>>> 4be3b97 ( denemeler2)
     m_Modifications:
     - target: {fileID: -8679921383154817045, guid: 26ee44e57a8768845b3d15036c8bc80f, type: 3}
       propertyPath: m_LocalScale.x
@@ -132,15 +105,8 @@ PrefabInstance:
     m_AddedGameObjects: []
     m_AddedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 26ee44e57a8768845b3d15036c8bc80f, type: 3}
-<<<<<<< HEAD
 --- !u!4 &5674598629144692151 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: -8679921383154817045, guid: 26ee44e57a8768845b3d15036c8bc80f, type: 3}
   m_PrefabInstance: {fileID: 5281174380249604700}
-=======
---- !u!4 &3655172418252791592 stripped
-Transform:
-  m_CorrespondingSourceObject: {fileID: -8679921383154817045, guid: 26ee44e57a8768845b3d15036c8bc80f, type: 3}
-  m_PrefabInstance: {fileID: 3833546863428909251}
->>>>>>> 4be3b97 ( denemeler2)
   m_PrefabAsset: {fileID: 0}
