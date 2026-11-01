@@ -513,6 +513,29 @@ MonoBehaviour:
     metin: "Haritada bir b\xF6lge se\xE7"
   - id: hedef_yuva_sec
     metin: "Haritada bir yuva se\xE7"
+  - id: yonetim_yine_de_ilerle
+    metin: Yine de ilerle
+  - id: bildirim_bos_gonullu
+    metin: "Bo\u015Fta {0} g\xF6n\xFCll\xFCn var. Yine de ilerlemek i\xE7in tekrar
+      bas."
+  - id: bildirim_oynanabilir_kart
+    metin: "B\xFCt\xE7en yetecek kartlar var. Yine de ilerlemek i\xE7in tekrar bas."
+  - id: engel_butce
+    metin: "B\xFCt\xE7e yetmiyor"
+  - id: engel_kosul
+    metin: "Payda\u015F ko\u015Fulu sa\u011Flanmad\u0131"
+  - id: engel_yuva_yok
+    metin: "Kumsalda hen\xFCz yuva yok"
+  - id: engel_gonullu_yok
+    metin: "Bo\u015Fta g\xF6n\xFCll\xFC kalmad\u0131"
+  - id: engel_cop_yok
+    metin: "Bu b\xF6lgede \xE7\xF6p yok"
+  - id: engel_devriye_var
+    metin: "Bu b\xF6lgede zaten devriye var"
+  - id: engel_yuva_bos
+    metin: Bu yuvada bekleyen yumurta yok
+  - id: engel_kafes_var
+    metin: Bu yuva zaten kafesli
   - id: yuva
     metin: Yuva
   - id: yuva_yumurta

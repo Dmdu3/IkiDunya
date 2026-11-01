@@ -187,20 +187,24 @@ namespace IkiDunya.Management
         // ---- Gönüllü görevleri ----
 
         /// <summary>Görev bu hedefte bir şey değiştirir mi (çöpsüz bölgeye temizlik, zaten devriyeli bölgeye devriye, kafesli ya da çıkmış yuvaya kafes değiştirmez).</summary>
-        public bool GorevIseYarar(GorevTanimi gorev, int hedef)
+        public bool GorevIseYarar(GorevTanimi gorev, int hedef) => GorevHedefEngeli(gorev, hedef) == null;
+
+        /// <summary>Görev bu hedefte neden işe yaramaz (metin id'si); yararsa null.</summary>
+        public string GorevHedefEngeli(GorevTanimi gorev, int hedef)
         {
             switch (gorev.Etki)
             {
                 case GorevEtkisi.Temizlik:
-                    return kumsal.BolgeAl(hedef).Seviye(BolgeKatmani.Cop) > 0;
+                    return kumsal.BolgeAl(hedef).Seviye(BolgeKatmani.Cop) > 0 ? null : "engel_cop_yok";
                 case GorevEtkisi.Devriye:
-                    return !kumsal.BolgeAl(hedef).Var(BolgeYapisi.Devriye);
+                    return kumsal.BolgeAl(hedef).Var(BolgeYapisi.Devriye) ? "engel_devriye_var" : null;
                 case GorevEtkisi.Kafes:
                 case GorevEtkisi.GolgeSulama:
                     Yuva y = kumsal.Yuvalar[hedef];
-                    return y.Yumurta > 0 && y.CikisinaHafta > 0 && !(gorev.Etki == GorevEtkisi.Kafes && y.Kafesli);
+                    if (y.Yumurta <= 0 || y.CikisinaHafta <= 0) return "engel_yuva_bos";
+                    return gorev.Etki == GorevEtkisi.Kafes && y.Kafesli ? "engel_kafes_var" : null;
                 default:
-                    return true;
+                    return null;
             }
         }
 

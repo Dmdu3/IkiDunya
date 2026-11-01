@@ -160,8 +160,10 @@ namespace IkiDunya.UI.Management
             BolgeBilgisi();
             SolPanel();
 
-            hedefYazisi.text = tur.BeklenenHedef == Hedef.Bolge ? Al("hedef_bolge_sec")
+            string istem = tur.BeklenenHedef == Hedef.Bolge ? Al("hedef_bolge_sec")
                 : tur.BeklenenHedef == Hedef.Yuva ? Al("hedef_yuva_sec") : "";
+            // Görev seçilen hedefte işe yaramadıysa neden önce, kırmızı.
+            hedefYazisi.text = tur.HedefEngeli != null && istem.Length > 0 ? $"<color={EksiRengi}>{Al(tur.HedefEngeli)}</color>  ·  {istem}" : istem;
         }
 
         /// <summary>İleri düğmesinde tuşu da yazar (Space ya da ayarlardan atanan). Düğme açılınca MetinYazisi yazıyı tablodan yeniden kurar; bu ondan sonra çağrılır.</summary>
@@ -169,7 +171,8 @@ namespace IkiDunya.UI.Management
         {
             InputAction e = GameInput.Eylem("ZiplaDal");
             string tus = e != null ? $"  [{e.GetBindingDisplayString(0)}]" : "";
-            ileriDugmesi.GetComponentInChildren<Text>(true).text = Al("yonetim_ileri") + tus;
+            // Boşta gönüllü ya da oynanabilir kart varken ilk basış uyardı; ikinci basış geçer.
+            ileriDugmesi.GetComponentInChildren<Text>(true).text = Al(tur.IlerlemeOnayiBekliyor ? "yonetim_yine_de_ilerle" : "yonetim_ileri") + tus;
         }
 
         /// <summary>Sol panel boşken (yuva yok, imleç haritada değil) haritayı kapatmasın. Boyu içeriğe göre, üst çubukla alttaki panelin arasına sığacak kadar.</summary>
@@ -518,7 +521,9 @@ namespace IkiDunya.UI.Management
             Text baslik = KartMetni("GorevAdi", dugme.transform, new Vector2(.30f, .67f), new Vector2(.97f, .96f), 26, TextAnchor.LowerLeft);
             baslik.font = T.KalinYazi; baslik.text = Al(gorev.Id);
             Text aciklama = KartMetni("GorevAciklama", dugme.transform, new Vector2(.30f, .06f), new Vector2(.97f, .66f), 24, TextAnchor.UpperLeft);
-            aciklama.text = Al(gorev.Id + "_aciklama");
+            // Verilemeyen görevde açıklamanın yerine nedeni (gönüllü kalmadı, yuva yok).
+            string engel = tur.GorevEngeli(gorev);
+            aciklama.text = engel != null ? $"<color={EksiRengi}>{Al(engel)}</color>" : Al(gorev.Id + "_aciklama");
             DugmeSesi.Bagla(dugme);
             dugme.onClick.AddListener(() => tur.GorevSec(gorev));
             dugmeler.Add(dugme);
@@ -555,6 +560,7 @@ namespace IkiDunya.UI.Management
             // Bedel solda, bakım sağda: iki kısa yazı, dar kartta da tek satırda kalır.
             Text maliyet = KartMetni("Maliyet", dugme.transform, new Vector2(.06f, .02f), new Vector2(.55f, .17f), 22, TextAnchor.MiddleLeft);
             maliyet.text = $"{Al("yonetim_butce")} {tur.Yonetim.Bedel(kart)}";
+            if (tur.KartEngeli(kart) == "engel_butce") maliyet.color = T.Olumsuz;
             Text bakim = KartMetni("Bakim", dugme.transform, new Vector2(.55f, .02f), new Vector2(.94f, .17f), 22, TextAnchor.MiddleRight);
             bakim.text = $"{Al("kart_bakim")} {kart.Bakim}";
             bakim.color = T.SolukYazi;
@@ -587,6 +593,9 @@ namespace IkiDunya.UI.Management
                 etkiler.Append($"<color={renk}>{Al(PaydasId(kart.KosulPaydas))} {Isaretli(kart.KosulEnAz)} {Al("kart_ister")}</color>");
             }
             if (tur.Yonetim.Guclu(kart)) etkiler.Append($"<color={ArtiRengi}>{Al("kart_guclu")}</color>");
+            // Oynanamıyorsa nedeni en sonda, kırmızı (koşul zaten kırmızı yazılı, tekrar edilmez).
+            string engel = tur.KartEngeli(kart);
+            if (engel != null && engel != "engel_kosul") etkiler.Append($"\n<color={EksiRengi}>{Al(engel)}</color>");
             if (etkiler.Length > 0) ek.Append("\n").Append(etkiler.ToString().TrimEnd());
             kartBilgiEk.text = ek.ToString();
             // Kart panelinin üstünde, sağda; üst çubuğa değmeyecek boyda.

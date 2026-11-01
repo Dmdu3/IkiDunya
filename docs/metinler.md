@@ -215,6 +215,17 @@ Kısa yaz: kart açıklaması en fazla 2 satır, kanıt notu en fazla 3 satır. 
 | rapor_kesinti | Belediye kesintisi |
 | hedef_bolge_sec | Haritada bir bölge seç |
 | hedef_yuva_sec | Haritada bir yuva seç |
+| yonetim_yine_de_ilerle | Yine de ilerle |
+| bildirim_bos_gonullu | Boşta {0} gönüllün var. Yine de ilerlemek için tekrar bas. |
+| bildirim_oynanabilir_kart | Bütçen yetecek kartlar var. Yine de ilerlemek için tekrar bas. |
+| engel_butce | Bütçe yetmiyor |
+| engel_kosul | Paydaş koşulu sağlanmadı |
+| engel_yuva_yok | Kumsalda henüz yuva yok |
+| engel_gonullu_yok | Boşta gönüllü kalmadı |
+| engel_cop_yok | Bu bölgede çöp yok |
+| engel_devriye_var | Bu bölgede zaten devriye var |
+| engel_yuva_bos | Bu yuvada bekleyen yumurta yok |
+| engel_kafes_var | Bu yuva zaten kafesli |
 | yuva | Yuva |
 | yuva_yumurta | yumurta |
 | yuva_hafta | çıkmaya hafta |
