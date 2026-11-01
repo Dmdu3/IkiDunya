@@ -947,6 +947,10 @@ namespace IkiDunya.Editor
             halkaGorunus.sharedMaterial = isikHalkasi;
             halkaGorunus.shadowCastingMode = ShadowCastingMode.Off;
             Bagla(isik, "halka", halka);
+
+            // Gece, uzaktan: lambanın parlak başı ay gibi görünür, direk gizlenir. Yaklaşınca ya da ışık yasaklanınca gerçek ortaya çıkar.
+            AlgiEkle(kok.gameObject, AlgiTuru.Isik, AlgiTuru.Ay, direk.transform, 1f, true, isik, lamba.transform,
+                Malzeme("Ay", new Color(1f, 0.97f, 0.85f, 1f), "IkiDunya/Gokyuzu"));
             return kok.gameObject;
         }
 
@@ -1266,7 +1270,32 @@ namespace IkiDunya.Editor
             Bagla(bakis, "ayarlar", Ayar<KameraAyarlari>("KameraAyarlari"));
             Bagla(bakis, "geribildirim", Ayar<GeribildirimAyarlari>("GeribildirimAyarlari"));
             if (govde != null) Bagla(bakis, "govde", govde);
+
+            // Kaplumbağanın algısı gözle birlikte gelir: lambaları ay, poşetleri denizanası sanar.
+            var algi = goz.AddComponent<KaplumbagaAlgisi>();
+            Bagla(algi, "ayarlar", Ayar<AlgiAyarlari>("AlgiAyarlari"));
+            Bagla(algi, "goz", goz.transform);
             return bakis;
+        }
+
+        /// <summary>Bir nesneye kaplumbağa yanılgısı ekler: gerçekte ne, ne sanılacak, hangi görünüş gizlenecek.</summary>
+        internal static AlgiNesnesi AlgiEkle(GameObject kok, AlgiTuru gercek, AlgiTuru yanilgi, Transform gorunus,
+            float yaricapCarpani = 1f, bool geceGerekli = false, IsikKaynagi isik = null, Transform odak = null,
+            Material yanilgiMalzemesi = null)
+        {
+            var algi = kok.AddComponent<AlgiNesnesi>();
+            var so = new SerializedObject(algi);
+            so.FindProperty("gercekTuru").enumValueIndex = (int)gercek;
+            so.FindProperty("yanilgiTuru").enumValueIndex = (int)yanilgi;
+            so.FindProperty("geceGerekli").boolValue = geceGerekli;
+            so.FindProperty("yaricapCarpani").floatValue = yaricapCarpani;
+            so.FindProperty("gercekGorunus").objectReferenceValue = gorunus;
+            so.FindProperty("odak").objectReferenceValue = odak;
+            if (isik != null) so.FindProperty("gercekIsik").objectReferenceValue = isik;
+            if (yanilgiMalzemesi != null)
+                so.FindProperty(yanilgi == AlgiTuru.Ay ? "ayMalzemesi" : "denizanasiMalzemesi").objectReferenceValue = yanilgiMalzemesi;
+            so.ApplyModifiedPropertiesWithoutUndo();
+            return algi;
         }
 
         internal static Transform TuvalKur(string ad, Transform grup)

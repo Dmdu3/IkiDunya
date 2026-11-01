@@ -13,6 +13,7 @@ Unity projesi reponun kökü. Bizim her şeyimiz `Assets/_Project/` altında. Ko
 | `Core/` | Umut | Oyun akışı, bölüm geçişleri, kayıt, `KumsalDurumu` (ortak durum), `GameInput` (bütün tuşlar) |
 | `Camera/` | Umut | Kumsal, deniz ve yönetim kameraları (Cinemachine) |
 | `Turtle/` | Umut | Anne ve yavru hareketi (kara, deniz), sürü, enerji, nefes, kazma |
+| `Turtle/Algi/` | Umut | Kaplumbağanın algı yanılgıları: lambayı ay, poşeti denizanası sanması |
 | `Hazards/` | Umut | Ağ, tekne, sıcak leke, çöp, avcılar, ışık, dalga |
 | `Management/` | Toprak (2026-11-01'de Umut yazdı, sonra Toprak devraldı) | Kumsal haritası, tur akışı, gönüllüler, kaynaklar, kartlar, kanıtlar, olaylar |
 | `UI/Night/` | Umut | Kaplumbağa bölümlerinin ekran göstergeleri |

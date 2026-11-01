@@ -55,7 +55,7 @@ namespace IkiDunya.Editor
             Vector3[] denizanalari = { new Vector3(-8f, -4f, -170f), new Vector3(12f, -5f, -150f), new Vector3(6f, -2f, -140f), new Vector3(-10f, -3f, -100f), new Vector3(8f, -3f, -70f) };
             Vector3[] posetler = { new Vector3(-4f, -3f, -155f), new Vector3(3f, -4f, -130f), new Vector3(10f, -2f, -110f), new Vector3(-12f, -2f, -60f) };
             foreach (Vector3 yer in denizanalari) YiyecekKur(Yiyecek.Turu.Denizanasi, yer, tehlike);
-            foreach (Vector3 yer in posetler) YiyecekKur(Yiyecek.Turu.Poset, yer, tehlike);
+            foreach (Vector3 yer in posetler) YiyecekKur(Yiyecek.Turu.Poset, yer, tehlike, true);
 
             Object.Instantiate(HayaletAgKalibi(), new Vector3(5f, -6f, -135f), Quaternion.Euler(0f, 30f, 0f));
             Object.Instantiate(HayaletAgKalibi(), new Vector3(-8f, -3f, -75f), Quaternion.Euler(0f, -20f, 0f));
@@ -544,7 +544,7 @@ namespace IkiDunya.Editor
             GriKumsalKur.DiziBagla(akim, "cizgiler", cizgiler);
         }
 
-        private static GameObject YiyecekKur(Yiyecek.Turu tur, Vector3 yer, DenizTehlikeAyarlari tehlike)
+        private static GameObject YiyecekKur(Yiyecek.Turu tur, Vector3 yer, DenizTehlikeAyarlari tehlike, bool yanilgi = false)
         {
             // Kök: yeme alanı (tetikleyici küre) ve Yiyecek; görünüş çocukta (Abdü'nün denizanası, Yusuf'un poşeti ya da gri küre).
             var nesne = new GameObject(tur.ToString());
@@ -555,7 +555,9 @@ namespace IkiDunya.Editor
             bool denizanasiMi = tur == Yiyecek.Turu.Denizanasi;
             GameObject model = GriKumsalKur.ModelYerlestir(nesne.transform, denizanasiMi ? "Denizanasi" : "Poset", new Vector3(0f, -0.25f, 0f), 0.6f);
             if (model != null && denizanasiMi) GriKumsalKur.AnimasyonBagla(model, DenizanasiDenetleyicisi);
-            if (model == null)
+            Transform gorunus;
+            if (model != null) gorunus = model.transform;
+            else
             {
                 GameObject kure = GameObject.CreatePrimitive(PrimitiveType.Sphere);
                 kure.name = "Gri";
@@ -563,7 +565,14 @@ namespace IkiDunya.Editor
                 kure.transform.SetParent(nesne.transform, false);
                 kure.transform.localScale = denizanasiMi ? new Vector3(0.6f, 0.45f, 0.6f) : new Vector3(0.6f, 0.4f, 0.5f);
                 kure.GetComponent<Renderer>().sharedMaterial = denizanasiMi ? denizanasi : poset;
+                gorunus = kure.transform;
             }
+
+            // Uzaktan poşet denizanası sanılır; yaklaşınca ya da termal görünümde gerçek ortaya çıkar.
+            // Parkur kalıplarında bilerek yok: poşet sürüsünün karanlık aşaması poşetin görünmez olmasına dayanır.
+            if (yanilgi && tur == Yiyecek.Turu.Poset)
+                GriKumsalKur.AlgiEkle(nesne, AlgiTuru.Poset, AlgiTuru.Denizanasi, gorunus, 0.5f, false, null, null, denizanasi);
+
             var yiyecek = nesne.AddComponent<Yiyecek>();
             var so = new SerializedObject(yiyecek);
             so.FindProperty("tur").enumValueIndex = (int)tur;

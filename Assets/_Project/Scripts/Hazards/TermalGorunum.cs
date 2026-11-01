@@ -20,6 +20,12 @@ namespace IkiDunya.Hazards
         private static readonly int DokuOlcekId = Shader.PropertyToID("_BaseMap_ST");
         private static Texture2D[] desenler;
 
+        /// <summary>Termal görünüm şu an açık mı; kaplumbağanın algısı gerçeği gösterirken bunu okur.</summary>
+        public static bool AcikMi { get; private set; }
+
+        [RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.SubsystemRegistration)]
+        private static void StatikleriSifirla() => AcikMi = false;
+
         private Transform kok;
         private Renderer[,] seritler;
         private float[,] seritOrtaZ;
@@ -30,7 +36,12 @@ namespace IkiDunya.Hazards
         private void Awake() => blok = new MaterialPropertyBlock();
 
         private void OnEnable() => kumsal.Degisti += Renklendir;
-        private void OnDisable() => kumsal.Degisti -= Renklendir;
+
+        private void OnDisable()
+        {
+            kumsal.Degisti -= Renklendir;
+            AcikMi = false;
+        }
 
         private void Update()
         {
@@ -39,7 +50,10 @@ namespace IkiDunya.Hazards
             if (kok == null) SeritleriKur();
             else kok.gameObject.SetActive(!Acik);
             if (Acik) Renklendir();
+            AcikMi = Acik;
         }
+
+        private void OnDestroy() => AcikMi = false;
 
         private void SeritleriKur()
         {

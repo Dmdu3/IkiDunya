@@ -4,7 +4,7 @@ ozet: Mekanik tarafın durumu ve sistemlerin haritası. Bir sistem eklendikçe y
 
 # Durum
 
-Son güncelleme: 2026-11-01 — Dalda (`umut/cila`): Hepsini kur, PC build, F6 paneli, geri bildirim efektleri, kamera hissi, gece gökyüzü ve izler, ara sahneler, final jeneriği, yeni ayarlar, oyun kolu, performans, Kendini dene. Alpha main'de, deneme listesi tamam (editörde 300+ FPS). Main'de: insan kısmı (yönetim ekranı, Faz 0–4). Main'de: Yusuf'un kumsalı (#40). Main'de: minigame sahneleri ve Yusuf'un canlıları (#43, #45). Dalda (`umut/metin-animasyon-kamera`): bütün metinlerin ilk taslağı, kodla animasyon, birinci şahısta kendi gövdesi gizli. Unity'de henüz denenmedi.
+Son güncelleme: 2026-11-01 — Dalda (`umut/cila`): Hepsini kur, PC build, F6 paneli, geri bildirim efektleri, kamera hissi, gece gökyüzü ve izler, ara sahneler, final jeneriği, yeni ayarlar, oyun kolu, performans, Kendini dene. Alpha main'de, deneme listesi tamam (editörde 300+ FPS). Main'de: insan kısmı (yönetim ekranı, Faz 0–4). Main'de: Yusuf'un kumsalı (#40). Main'de: minigame sahneleri ve Yusuf'un canlıları (#43, #45). Dalda (`umut/metin-animasyon-kamera`): bütün metinlerin ilk taslağı, kodla animasyon, birinci şahısta kendi gövdesi gizli. Unity'de henüz denenmedi. Yeni: kaplumbağanın algı yanılgıları (`Turtle/Algi`: lamba→ay, poşet→denizanası).
 
 ## Sistem haritası
 
@@ -39,6 +39,7 @@ Son güncelleme: 2026-11-01 — Dalda (`umut/cila`): Hepsini kur, PC build, F6 p
 | Kaçışta çöp (ağ, halka, tekerlek izi) | `Hazards` | `TrashTrap` | Umut | Yapılıyor |
 | Avcılar | `Hazards` | `Yengec`, `Marti`, `Tilki`, `AvciAyarlari`, `Cover`; `Core/IAvlanabilir` | Umut | Yapılıyor |
 | Işık kaynakları | `Hazards` | `IsikKaynagi` | Umut | Yapılıyor |
+| Kaplumbağanın algısı (yanılgılar: lamba→ay, poşet→denizanası) | `Turtle/Algi` | `AlgiNesnesi`, `AlgiDunyasi`, `KaplumbagaAlgisi`, `AlgiAyarlari` | Umut | Yapılıyor (prototip; Unity'de denenmedi) |
 | Kayıp izleri | `Turtle`, `Hazards` | `KacisGecesi` yazar, `KumsalYapilari` kumda gösterir, `KayipIziHaritasi` insan turunda simge + kanıt | Umut | Yapılıyor |
 | İpuçları (ilk karşılaşmada bir kez) | `Core`, `UI/Night` | `Ipucu`, `IpucuPaneli` | Umut | Yapılıyor (yazılar Yusuf'ta) |
 | Ses: olaylar, ortam sesi, müzik | `Core` | `Ses`, `SesYoneticisi`, `SesAyarlari` | Umut | Yapılıyor (ilk klipler bağlı, kalanlar Yusuf'ta) |
@@ -138,6 +139,7 @@ Pervane sesi klibi bağlı (`Audio/SFX/Pervane.wav`).
 - **Gece ve gündüz (`OrtamIsigi`, `OrtamAyarlari`):** kumsalda yuva ve kaçış gecelerinde ay ışığı, koyu gökyüzü ve sis; insan turunda gündüz; finalde güneşin rengini `FinalSahnesi` verir. Ay ışığı denizin üstünde soluk bir yol.
 - **Su (`SuDalgalanmasi`, `SuAltiGorunumu`):** su yüzeyi dalga dalga oynar (iki yüzlü malzeme, alttan da görünür); denizde göz suya girince sis koyu ve yoğun olur.
 - **Işık halkası:** otel ışığının kumda çekim alanı kadar sarı bir halkası var; Işık Yasağı ile söner.
+- **Kaplumbağanın algısı (`Turtle/Algi`):** uzaktan sokak lambası ay, poşet denizanası gibi görünür; göz ucuyla ve uzaktan güçlenir. Yaklaşınca, doğrudan bakınca, termal görünüm açıkken ya da ışık yasaklanınca yanılgı kırılır ve gerçek görünüş geri gelir. Kırılma kalıcıdır: kaplumbağa gerçeği bir kez gördüyse artık aldanmaz. Poşet sürüsü parkurunda bilerek kapalı (karanlık aşama poşetin görünmezliğine dayanır).
 - **Termal görünüm:** şeritler yarı saydam; her bandın ayrı deseni var (Mavi yatay çizgi, Yeşil nokta, Turuncu çapraz, Kırmızı dama), renk ayırt edemeyenler için.
 - **Tuş atama:** Ayarlar'da 11 eylemin tuşu değiştirilir (`TusSatiri`), `PlayerPrefs`'te saklanır, "varsayılan" ile geri döner.
 - **Geliştirici:** F5 kare hızı (FPS) göstergesi.

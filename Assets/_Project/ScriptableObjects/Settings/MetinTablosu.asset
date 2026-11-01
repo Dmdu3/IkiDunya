@@ -281,6 +281,9 @@ MonoBehaviour:
   - id: ipucu_nefes
     metin: "Nefesin azal\u0131yor. Space'i bas\u0131l\u0131 tutup y\xFCzeye \xE7\u0131k;
       y\xFCzeyde teknelere dikkat et."
+  - id: ipucu_poset_yuttu
+    metin: "Po\u015Fet yuttun! Enerji kaybettin ve bir s\xFCre yava\u015Fs\u0131n.
+      Denizanas\u0131 kas\u0131larak y\xFCzer, po\u015Fet d\xFCz s\xFCz\xFCl\xFCr."
   - id: ipucu_ag
     metin: "A\u011Fa tak\u0131ld\u0131n! E'ye art arda bas."
   - id: ipucu_dalga
@@ -324,6 +327,11 @@ MonoBehaviour:
     metin: "30 y\u0131l sonra"
   - id: final_kurtarilan
     metin: "Denize ula\u015Fan yavru"
+  - id: jenerik
+    metin: "\u0130K\u0130 D\xDCNYA, TEK YA\u015EAM\\n\\nBir \xF6\u011Frenci oyun
+      projesi\\n\\nEkip\\nUmut \xB7 Toprak \xB7 Yusuf \xB7 Abd\xFC\\n\\nDeniz kaplumba\u011Falar\u0131
+      her y\u0131l do\u011Fduklar\u0131 kumsala d\xF6ner.\\nO kumsal\u0131n nas\u0131l
+      olaca\u011F\u0131 bizim elimizde.\\n\\nOynad\u0131\u011F\u0131n i\xE7in te\u015Fekk\xFCrler."
   - id: oyun_adi
     metin: "\u0130ki D\xFCnya, Tek Ya\u015Fam"
   - id: menu_yeni_oyun
@@ -350,6 +358,22 @@ MonoBehaviour:
     metin: Fare hassasiyeti
   - id: ayar_tuslar
     metin: "Tu\u015Flar"
+  - id: ayar_yazi_boyutu
+    metin: "Yaz\u0131 boyutu"
+  - id: ayar_ipuclari
+    metin: "\u0130pu\xE7lar\u0131"
+  - id: ayar_tam_ekran
+    metin: Tam ekran
+  - id: ayar_cozunurluk
+    metin: "\xC7\xF6z\xFCn\xFCrl\xFCk"
+  - id: ayar_kalite
+    metin: Grafik kalitesi
+  - id: ayar_kalite_dusuk
+    metin: "D\xFC\u015F\xFCk"
+  - id: ayar_kalite_orta
+    metin: Orta
+  - id: ayar_kalite_yuksek
+    metin: "Y\xFCksek"
   - id: tus_ileri
     metin: "\u0130leri"
   - id: tus_geri
