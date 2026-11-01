@@ -23,6 +23,27 @@ namespace IkiDunya.Management
 
         // ---- Kartlar ----
 
+        /// <summary>Bölge hedefli kart bu bölgede neden bir şey yapmaz (metin id'si); yaparsa null. Bedel boşa gitmesin diye kart oynanmaz.</summary>
+        public string KartHedefEngeli(KartTanimi kart, int hedef)
+        {
+            if (kart.Hedef != Hedef.Bolge) return null;
+            Bolge bolge = kumsal.BolgeAl(hedef);
+            switch (kart.Etki)
+            {
+                case KartEtkisi.Golgelik:
+                    return bolge.Var(BolgeYapisi.Golgelik) ? "engel_golgelik_var" : null;
+                case KartEtkisi.KumulOnarimi:
+                case KartEtkisi.KumTorbasi:
+                    return bolge.Var(BolgeYapisi.KumulOnarimi) ? "engel_kumul_var" : null;
+                case KartEtkisi.GozcuKulubesi:
+                    return bolge.Var(BolgeYapisi.Devriye) ? "engel_devriye_var" : null;
+                case KartEtkisi.Aydinlatma:
+                    return bolge.Seviye(BolgeKatmani.Isik) > 0 ? null : "engel_isik_yok";
+                default:
+                    return null;
+            }
+        }
+
         /// <summary>Kartı oynar: bedeli düşülür, etkisi uygulanır, halk ve paydaş farkı işlenir. Hedef bölge ya da yuva sırasıdır (hedefsizse -1).</summary>
         public void KartOyna(KartTanimi kart, int hedef)
         {

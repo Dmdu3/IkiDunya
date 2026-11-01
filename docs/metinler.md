@@ -254,6 +254,7 @@ Kısa yaz: kart açıklaması en fazla 2 satır, kanıt notu en fazla 3 satır. 
 | rapor_bakim | Bakım |
 | rapor_sponsor | Otel sponsorluğu |
 | rapor_kesinti | Belediye kesintisi |
+| rapor_odenemeyen | Bütçe yetmedi, ödenemeyen |
 | hedef_bolge_sec | Haritada bir bölge seç |
 | hedef_yuva_sec | Haritada bir yuva seç |
 | hedef_kol_tuslari | {0}: gez · {1}: seç · {2}: geri |
@@ -268,6 +269,9 @@ Kısa yaz: kart açıklaması en fazla 2 satır, kanıt notu en fazla 3 satır. 
 | engel_devriye_var | Bu bölgede zaten devriye var |
 | engel_yuva_bos | Bu yuvada bekleyen yumurta yok |
 | engel_kafes_var | Bu yuva zaten kafesli |
+| engel_golgelik_var | Bu bölgede zaten gölgelik var |
+| engel_kumul_var | Bu bölgenin kumulu zaten sağlam |
+| engel_isik_yok | Bu bölgede söndürülecek ışık yok |
 | yuva | Yuva |
 | yuva_yumurta | yumurta |
 | yuva_hafta | çıkmaya hafta |

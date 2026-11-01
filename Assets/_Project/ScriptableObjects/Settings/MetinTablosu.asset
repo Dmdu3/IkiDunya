@@ -589,6 +589,8 @@ MonoBehaviour:
     metin: "Otel sponsorlu\u011Fu"
   - id: rapor_kesinti
     metin: Belediye kesintisi
+  - id: rapor_odenemeyen
+    metin: "B\xFCt\xE7e yetmedi, \xF6denemeyen"
   - id: hedef_bolge_sec
     metin: "Haritada bir b\xF6lge se\xE7"
   - id: hedef_yuva_sec
@@ -618,6 +620,12 @@ MonoBehaviour:
     metin: Bu yuvada bekleyen yumurta yok
   - id: engel_kafes_var
     metin: Bu yuva zaten kafesli
+  - id: engel_golgelik_var
+    metin: "Bu b\xF6lgede zaten g\xF6lgelik var"
+  - id: engel_kumul_var
+    metin: "Bu b\xF6lgenin kumulu zaten sa\u011Flam"
+  - id: engel_isik_yok
+    metin: "Bu b\xF6lgede s\xF6nd\xFCr\xFClecek \u0131\u015F\u0131k yok"
   - id: yuva
     metin: Yuva
   - id: yuva_yumurta

@@ -214,17 +214,11 @@ namespace IkiDunya.Management
                     butce += ayarlar.OtelSponsoru;
                     RaporEkle("rapor_sponsor", ayarlar.OtelSponsoru);
                 }
-                if (Kus(Paydas.Belediye))
-                {
-                    butce -= ayarlar.BelediyeKesintisi;
-                    RaporEkle("rapor_kesinti", -ayarlar.BelediyeKesintisi);
-                }
-                if (bakim > 0)
-                {
-                    butce -= bakim;
-                    RaporEkle("rapor_bakim", -bakim);
-                }
-                butce = Mathf.Max(0, butce);
+                // Bütçe sıfırın altına inmez: raporda gerçekte alınan yazılır, yetmeyen kısım ayrı satırda.
+                int odenemeyen = 0;
+                if (Kus(Paydas.Belediye)) odenemeyen += Ode("rapor_kesinti", ayarlar.BelediyeKesintisi);
+                if (bakim > 0) odenemeyen += Ode("rapor_bakim", bakim);
+                if (odenemeyen > 0) RaporEkle("rapor_odenemeyen", odenemeyen);
             }
             aktifUyari = bekleyenUyari;
             bekleyenUyari = -1;
@@ -245,6 +239,15 @@ namespace IkiDunya.Management
         {
             rapor.Add(new RaporSatiri(id, sayi));
             Degisti?.Invoke();
+        }
+
+        /// <summary>Bütçeden yettiği kadarını düşer, alınanı rapora yazar (hiç alınamadıysa satır yok); ödenemeyen kısmı döner.</summary>
+        private int Ode(string raporId, int tutar)
+        {
+            int alinan = Mathf.Min(tutar, butce);
+            butce -= alinan;
+            if (alinan > 0) RaporEkle(raporId, -alinan);
+            return tutar - alinan;
         }
 
         /// <summary>Tur sonunda olan, gelecek turun raporunda görünecek satır.</summary>
