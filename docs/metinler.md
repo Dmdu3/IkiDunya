@@ -148,6 +148,7 @@ Kısa yaz: kart açıklaması en fazla 2 satır, kanıt notu en fazla 3 satır. 
 | bildirim_poset_enerji | Gücün tükendi; bu aşama baştan başlıyor. |
 | final_30_yil | 30 yıl sonra |
 | final_kurtarilan | Denize ulaşan yavru |
+| bildirim_jenerik_gec | Geçmek için tıkla ya da {0} tuşuna bas. |
 | jenerik | İKİ DÜNYA, TEK YAŞAM\n\nBir öğrenci oyun projesi\n\nEkip\nUmut · Toprak · Yusuf · Abdü\n\nDeniz kaplumbağaları her yıl doğdukları kumsala döner.\nO kumsalın nasıl olacağı bizim elimizde.\n\nOynadığın için teşekkürler. |
 
 ## Menü ve ayarlar
@@ -157,6 +158,8 @@ Kısa yaz: kart açıklaması en fazla 2 satır, kanıt notu en fazla 3 satır. 
 | oyun_adi | İki Dünya, Tek Yaşam |
 | menu_yeni_oyun | Yeni oyun |
 | menu_devam_et | Devam et |
+| menu_yeni_oyun_onay | Kayıt silinsin mi? Tekrar bas |
+| bildirim_kayit_okunamadi | Kayıt okunamadı. Dosya silinmedi; yeni oyuna başlayabilir ya da tekrar deneyebilirsin. |
 | menu_parkurlar | Parkurlar |
 | menu_ayarlar | Ayarlar |
 | menu_cikis | Çıkış |
@@ -164,6 +167,7 @@ Kısa yaz: kart açıklaması en fazla 2 satır, kanıt notu en fazla 3 satır. 
 | menu_ana_menu | Ana menü |
 | menu_geri | Geri |
 | menu_varsayilan | Varsayılan tuşlar |
+| menu_varsayilan_onay | Tuşlar sıfırlansın mı? Tekrar bas |
 | ayar_ses | Ses |
 | ayar_fare | Fare hassasiyeti |
 | ayar_tuslar | Tuşlar |
@@ -199,9 +203,24 @@ Kısa yaz: kart açıklaması en fazla 2 satır, kanıt notu en fazla 3 satır. 
 | sonuc_kaybedilen | Kaybedilen |
 | sonuc_disi | Dişi |
 | sonuc_erkek | Erkek |
-| sonuc_devam | Devam etmek için tıkla ya da Space'e bas |
+| sonuc_devam | Devam etmek için tıkla ya da {0} tuşuna bas |
 | sonuc_hic_yavru | Hiçbir yavru denize ulaşamadı. Kumdaki izler, yarım kalan bir yolculuğu hatırlatıyor. |
 | sonuc_tekrar | Son kaçış gecesini tekrar denemek için devam et. |
+| kayip_sicakkum | Sıcak kum |
+| kayip_cop | Çöp |
+| kayip_ag | Ağ |
+| kayip_isik | Işık |
+| kayip_yengec | Yengeç |
+| kayip_marti | Martı |
+| kayip_tilki | Tilki |
+| kayip_dalga | Dalga |
+| gosterge_suru | Kumda {0}  ·  Denizde {1}  ·  Kayıp {2} |
+| bildirim_kum_alti_enerji | Yavruların gücü tükendi; kumu baştan kazıyorlar. |
+| bildirim_sicak_kum | Yüzey çok sıcaktı: {0} yavru kumdan çıkamadı. |
+| bildirim_gun_doguyor | Gün doğmak üzere! Kumda kalan {0} yavru denize ulaşmalı. |
+| bildirim_oncu_kurtuldu | Öncü denize ulaştı! Sıradaki yavruyu sen sürüyorsun. Kumda {0} kaldı. |
+| bildirim_oncu_kayip | Öncü kaybedildi. Sıradaki yavruyu sen sürüyorsun. Kumda {0} kaldı. |
+| bildirim_hepsi_kayip | Bu gece hiçbir yavru denize ulaşamadı. |
 | bant_mavi | Serin |
 | bant_yesil | Ilık |
 | bant_turuncu | Sıcak |
@@ -247,6 +266,7 @@ Kısa yaz: kart açıklaması en fazla 2 satır, kanıt notu en fazla 3 satır. 
 | rapor_bakim | Bakım |
 | rapor_sponsor | Otel sponsorluğu |
 | rapor_kesinti | Belediye kesintisi |
+| rapor_odenemeyen | Bütçe yetmedi, ödenemeyen |
 | hedef_bolge_sec | Haritada bir bölge seç |
 | hedef_yuva_sec | Haritada bir yuva seç |
 | hedef_kol_tuslari | {0}: gez · {1}: seç · {2}: geri |
@@ -261,6 +281,9 @@ Kısa yaz: kart açıklaması en fazla 2 satır, kanıt notu en fazla 3 satır. 
 | engel_devriye_var | Bu bölgede zaten devriye var |
 | engel_yuva_bos | Bu yuvada bekleyen yumurta yok |
 | engel_kafes_var | Bu yuva zaten kafesli |
+| engel_golgelik_var | Bu bölgede zaten gölgelik var |
+| engel_kumul_var | Bu bölgenin kumulu zaten sağlam |
+| engel_isik_yok | Bu bölgede söndürülecek ışık yok |
 | yuva | Yuva |
 | yuva_yumurta | yumurta |
 | yuva_hafta | çıkmaya hafta |

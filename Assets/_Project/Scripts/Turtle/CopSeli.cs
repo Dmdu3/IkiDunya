@@ -251,8 +251,9 @@ namespace IkiDunya.Turtle
                 Parkur.Bitir(ParkurTuru.CopSeli);
                 return;
             }
-            // Kimse kurtulamadı: rekor yok, gece yine de biter.
+            // Kimse kurtulamadı: rekor yok, gece yine de biter; oyuncu beklerken nedenini görür.
             Parkur.Birak(ParkurTuru.CopSeli);
+            Ipucu.Bildir("bildirim_hepsi_kayip");
             StartCoroutine(Ilerle());
         }
 

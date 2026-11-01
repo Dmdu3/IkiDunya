@@ -42,7 +42,7 @@ Son güncelleme: 2026-11-01 — Dalda (`umut/cila`): Hepsini kur, PC build, F6 p
 | Kayıp izleri | `Turtle`, `Hazards` | `KacisGecesi` yazar, `KumsalYapilari` kumda gösterir, `KayipIziHaritasi` insan turunda simge + kanıt | Umut | Yapılıyor |
 | İpuçları (ilk karşılaşmada bir kez) | `Core`, `UI/Night` | `Ipucu`, `IpucuPaneli` | Umut | Yapılıyor (yazılar Yusuf'ta) |
 | Ses: olaylar, ortam sesi, müzik | `Core` | `Ses`, `SesYoneticisi`, `SesAyarlari` | Umut | Yapılıyor (ilk klipler bağlı, kalanlar Yusuf'ta) |
-| Kumsal haritası ve tur akışı | `Management`, `UI/Management` | `InsanTuru`, `HaritaSecici`, `YuvaHaritasi`, `YonetimArayuzu` | Toprak | Yapılıyor. Basılamayan kart/görev nedenini söyler (`KartEngeli`, `GorevEngeli` → `engel_*`; bütçe yetmeyen kartın bedeli kırmızı). İşe yaramayan hedefte gönüllü harcanmaz, hedef şeridi nedeni yazar (`Etkiler.GorevHedefEngeli`). Boşta gönüllü ya da oynanabilir kart varken İleri ilk basışta uyarır ("Yine de ilerle"), ikincide geçer. |
+| Kumsal haritası ve tur akışı | `Management`, `UI/Management` | `InsanTuru`, `HaritaSecici`, `YuvaHaritasi`, `YonetimArayuzu` | Toprak | Yapılıyor. Basılamayan kart/görev nedenini söyler (`KartEngeli`, `GorevEngeli` → `engel_*`; bütçe yetmeyen kartın bedeli kırmızı). İşe yaramayan hedefte gönüllü harcanmaz; bölge hedefli kart da o bölgede bir şey yapmayacaksa (gölgelik/kumul/devriye zaten var, ışık yok) bedeli harcanmaz; hedef şeridi nedeni yazar (`Etkiler.GorevHedefEngeli`, `KartHedefEngeli`). Tur başı raporunda bütçe yetmezse kesinti ve bakımın gerçekte alınanı yazılır, kalanı `rapor_odenemeyen` satırında. Boşta gönüllü ya da oynanabilir kart varken İleri ilk basışta uyarır ("Yine de ilerle"), ikincide geçer. |
 | Yönetim ekranı görünümü | `UI/Management`, `Art/UI/Resources/KartDioramalari` | `YonetimArayuzu` | Toprak / Abdü | Kart ve gönüllü dioramaları, kompakt paneller ve hedef seçerken gizlenen alt panel eklendi. "Belgesel" temasında: koyu paneller, serif başlıklar, kum vurgusu. Yerleşim tuval biriminde (yazı boyutuyla büyür, 1.5'te çakışmasız denendi); hedef seçerken istem ve Geri alttaki şeritte; kart bilgisi sağda kart panelinin üstünde. |
 | Kaynaklar (bütçe, gönüllü, halk desteği, bakım), rapor, kayıt | `Management` | `YonetimDurumu`, `YonetimAyarlari`; `Core/IOyunVerisi` | Toprak | Yapılıyor |
 | Paydaşlar (Otel, Belediye, Balıkçılar) | `Management` | `Paydas`, `YonetimDurumu`, `YonetimAyarlari` | Toprak | Yapılıyor (Unity'de bir turda denendi, 2026-11-01) |
@@ -106,7 +106,9 @@ Bütçe, gönüllü ve halk desteği `KumsalDurumu`'nda değil; insan kısmını
 
 **Kaçışta çöp, avcılar, ışık.** Ağ ve halka izleyen yavruyu takar, tekerlek izi ters çevirir; öncü yanına gidip E'yi basılı tutar (2 / 1,5 sn), bu sırada sürü bekler, sayaç işler. Space bütün sürüyü zıplatır (kum kalesi atlanır, şişe dolaşılır). Öncü de takılır ve ters döner; E'yi basılı tutup kendini kurtarır (bu sırada sürü bekler), ama yönünü kaybetmez. Yengeç deliği 2 sn titrer, sonra yanındaki bir yavruyu alır (zıplayan kurtulur). Martının gölgesi 1,5 sn önce düşer; dalış alanında 3+ yavru varsa 3, yoksa 1 yavru alır. Tilki her gece ihtimalle gelir (çit varsa yarı ihtimal), kumsalın kenarında gezer, konisinde siperde olmayan bir yavru görürse koşar, sürü 3 sn panikle dağılır. Geldiği gece 25 sn gezdikten sonra sonraki gecelerin kafessiz bir yuvasına gidip 4 sn eşeler: yumurtaların yarısı gider, yuvada Avcı izi kalır (kafesli yuvaya dokunmaz). Işık alanındaki yavru ışığa çekilir; 5 sn kalırsa yönünü kaybedip karaya yürür, öncü E ile geri çağırır. Gün doğunca kumda kalanlar o an başlarına gelen nedenle kaybedilir (takılı → Ağ, ters → Çöp, yön kaybı → Işık, diğer → Isı).
 
-**Gecenin sonu.** Yuva gecesi yuvanın bandını (renk ve adı) ve yumurta sayısını, kaçış kurtulan, kaybedilen, dişi ve erkek sayısını gösterir (dişi oranı yuvanın bandından). Başlık, satır adları ve "devam" satırı metin id'leriyle (`sonuc_*`, `bant_*`). Tıklayınca ya da Space'le akış ilerler.
+**Gecenin sonu.** Yuva gecesi yuvanın bandını (renk ve adı) ve yumurta sayısını, kaçış kurtulan, kaybedilen, dişi ve erkek sayısını ve altında kayıpların nedenlerini (`kayip_*`, çoktan aza) gösterir (dişi oranı yuvanın bandından).
+
+**Kaçışta oyuncuya bilgi.** Koşuda gün doğumu çubuğunun altında kumda, denizde, kayıp yavru sayısı (`gosterge_suru`). Bildirimler (`Ipucu.Bildir`): kum altında enerji bitince (çıkış ve kumun soğuması baştan; soğuma korunsaydı enerjiyi bilerek bitirmek bedava serin kum verirdi), yüzeye çıkışta sıcak kumda kalanlar, gün doğumu `KacisAyarlari.GunDogumuUyarisi` oranına gelince bir kez, öncü denize ulaşınca ya da kaybedilince (kamera sıradakine geçer), çöp selinde hiç kurtulan yoksa. Başlık, satır adları ve "devam" satırı metin id'leriyle (`sonuc_*`, `bant_*`). Tıklayınca ya da Space'le akış ilerler; panel en az `OyunAyarlari.SonucEnAzSure` açık kalır ve gecenin sonunda basılı tutulan tuş bırakılmadan kapanmaz (`Turtle/SonucKapisi`).
 
 **İnsan turu.** Geçici tur kalktı; yerine yönetim ekranı geldi (aşağıda "İnsan kısmı").
 
@@ -124,7 +126,7 @@ Pervane sesi klibi bağlı (`Audio/SFX/Pervane.wav`).
 
 ## Menü, kayıt, final (Faz 7)
 
-**Akış.** Adımlar arasında ekran kararır; yeni bölüme girilince karanlıkta `bolumN_giris` metni görünür (Bölüm 3 dahil). Her adımın başında kayıt yazılır (`Kayit`: adım sırası + `KumsalDurumu`'nun JSON'u, `persistentDataPath/kayit.json`). Ana menüde "Devam et" kayıtlı adımdan sürer; "Yeni oyun" kaydı siler. Son adım (final) bitince kayıt silinir, menüye dönülür.
+**Akış.** Adımlar arasında ekran kararır; yeni bölüme girilince karanlıkta `bolumN_giris` metni görünür (Bölüm 3 dahil). Her adımın başında kayıt yazılır (`Kayit`: adım sırası + `KumsalDurumu`'nun JSON'u, `persistentDataPath/kayit.json`). Kayıt önce geçici dosyaya yazılır, eski kayıt `kayit.yedek.json` olur; asıl kayıt okunamazsa yedekten (bir önceki adım) devam edilir, bozuk dosya `kayit.bozuk.json`'a alınır. İkisi de okunamazsa dosyalar silinmez, menüde `bildirim_kayit_okunamadi` çıkar. Ana menüde kayıt varsa "Devam et" seçili açılır; "Yeni oyun" kayıt varken ilk basışta sorar (`menu_yeni_oyun_onay`), ikinci basışta kaydı siler. Son adım (final) bitince kayıt silinir, menüye dönülür.
 
 **Duraklatma.** Esc oyun sırasında duraklatma menüsünü açar (zaman durur, imleç serbest). Duraklatma açıkken ve kapandığı karede `GameInput` oyun girdilerini vermez, böylece menüye tıklamak oyuna geçmez. Ayarlar (ses, fare hassasiyeti) bu bilgisayarda `PlayerPrefs`'te.
 
@@ -136,11 +138,12 @@ Pervane sesi klibi bağlı (`Audio/SFX/Pervane.wav`).
 
 ## Görünüm ve erişilebilirlik
 
-- **Gece ve gündüz (`OrtamIsigi`, `OrtamAyarlari`):** kumsalda yuva ve kaçış gecelerinde ay ışığı, koyu gökyüzü ve sis; insan turunda gündüz; finalde güneşin rengini `FinalSahnesi` verir. Ay ışığı denizin üstünde soluk bir yol.
+- **Gece ve gündüz (`OrtamIsigi`, `OrtamAyarlari`):** kumsalda yuva ve kaçış gecelerinde ay ışığı, koyu gökyüzü ve sis; insan turunda gündüz; finalde güneşin rengini `FinalSahnesi` verir. Ay ışığı denizin üstünde soluk bir yol (`AyYolu`, `GeceNesneleri` grubunda: sadece yuva ve kaçış gecelerinde açık).
 - **Su (`SuDalgalanmasi`, `SuAltiGorunumu`):** su yüzeyi dalga dalga oynar (iki yüzlü malzeme, alttan da görünür); denizde göz suya girince sis koyu ve yoğun olur.
 - **Işık halkası:** otel ışığının kumda çekim alanı kadar sarı bir halkası var; Işık Yasağı ile söner.
 - **Termal görünüm:** şeritler yarı saydam; her bandın ayrı deseni var (Mavi yatay çizgi, Yeşil nokta, Turuncu çapraz, Kırmızı dama), renk ayırt edemeyenler için.
-- **Tuş atama:** Ayarlar'da 11 eylemin tuşu değiştirilir (`TusSatiri`), `PlayerPrefs`'te saklanır, "varsayılan" ile geri döner.
+- **Tuş atama:** Ayarlar'da 11 eylemin klavye tuşu değiştirilir (`TusSatiri`; oyun kolu tuşları sabit, atamada yok sayılır), `PlayerPrefs`'te saklanır. Esc, B ya da sağ tık atamadan çıkar. Yeni tuş başka satırdaysa yer değiştirirler, diğer satır kısa süre vurgulanır; yürüme ile kazmanın ortak A/D/W'si çakışma sayılmaz. "Varsayılan tuşlar" ilk basışta sorar (`menu_varsayilan_onay`), ikincide sıfırlar ve satırları vurgular.
+- **Cihaza göre tuş yazısı:** gece sonucunun "devam" satırı (`sonuc_devam`, `{0}`) ve finaldeki jenerik ipucu (`bildirim_jenerik_gec`) son kullanılan cihazın tuşunu yazar. Jenerik tıklama, Space/A ya da kolun Y'siyle geçilir.
 - **Geliştirici:** F5 kare hızı (FPS) göstergesi.
 - **Editör:** `KumsalDurumu` asset'i Play bitince Play öncesi haline döner; Play'deki yuvalar ve izler git'e değişiklik olarak düşmez.
 

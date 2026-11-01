@@ -208,7 +208,10 @@ namespace IkiDunya.Turtle
                 if (aday.SuAnki != Yavru.Durum.Suruyor) continue;
                 if (yeni == null || (yeni.EngelDurumu != Yavru.Engel.Yok && aday.EngelDurumu == Yavru.Engel.Yok)) yeni = aday;
             }
-            if (yeni != null) OncuYap(yeni);
+            if (yeni == null) return;
+            OncuYap(yeni);
+            // Kamera başka yavruya geçti: oyuncu nedenini bilsin (öncü denize mi ulaştı, kaybedildi mi).
+            Ipucu.Bildir(yavru.SuAnki == Yavru.Durum.Kurtuldu ? "bildirim_oncu_kurtuldu" : "bildirim_oncu_kayip", Kalan);
         }
 
         private void OncuYap(Yavru yeni)

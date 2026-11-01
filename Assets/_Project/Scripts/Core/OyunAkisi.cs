@@ -27,6 +27,8 @@ namespace IkiDunya.Core
         public static bool Var => ornek != null;
         /// <summary>Devam edilebilecek bir kayıt var mı.</summary>
         public static bool KayitVar => Kayit.Var;
+        /// <summary>Oyunun genel ayarları; akış yoksa (deneme sahnesi) null.</summary>
+        public static OyunAyarlari Ayarlar => ornek != null ? ornek.ayarlar : null;
         /// <summary>Ekran kararıp açılırken (sahne yükleniyor, bölüm başlığı) true; ipuçları bu sırada beklemeye alınır.</summary>
         public static bool GecisSuruyor => ornek != null && ornek.yukleniyor;
         public static bool KorumaAlaniVar
@@ -182,14 +184,18 @@ namespace IkiDunya.Core
             ornek.AdimaGec(0);
         }
 
-        /// <summary>Menüden devam: kayıtlı kumsal ve adımdan sürer; kayıt yoksa yeni oyun.</summary>
+        /// <summary>Menüden devam: kayıtlı kumsal ve adımdan sürer. Kayıt okunamazsa sessizce yeni oyun başlamaz (kayıt silinirdi):
+        /// oyuncuya söylenir, kumsal sıfırlanır (yarım okunmuş olabilir), menüde kalınır.</summary>
         public static void DevamEt()
         {
             if (ornek == null || ornek.yukleniyor) return;
             if (Kayit.Yukle(ornek.kumsal, ornek.veriler, out int kayitliSira) && kayitliSira >= 0 && kayitliSira < ornek.akis.Count)
+            {
                 ornek.AdimaGec(kayitliSira);
-            else
-                YeniOyun();
+                return;
+            }
+            ornek.KumsaliSifirla();
+            Ipucu.Bildir("bildirim_kayit_okunamadi");
         }
 
         /// <summary>Şu anki adım bitti (gece bitti, tur bitti); sıradakine geçilir. Son adımdan sonra kayıt silinir, menüye dönülür.

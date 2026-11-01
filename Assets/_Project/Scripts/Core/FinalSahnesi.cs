@@ -131,14 +131,21 @@ namespace IkiDunya.Core
             float jenerikOrani = 1f;
             if (jenerik != null)
             {
-                jenerik.gameObject.SetActive(true);
+                if (!jenerik.gameObject.activeSelf)
+                {
+                    jenerik.gameObject.SetActive(true);
+                    // Jenerik başlarken bir kez: nasıl geçileceği (son kullanılan cihazın tuşuyla).
+                    Ipucu.Bildir("bildirim_jenerik_gec", GameInput.TusYazisi("ZiplaDal"));
+                }
                 jenerikOrani = Mathf.Clamp01((gecen - yuruyusSuresi) / jenerikSuresi);
                 // Jenerik başlığın üstünden geçmesin diye yazılar söner.
                 if (yazilar != null) yazilar.alpha = Mathf.Min(yazilar.alpha, 1f - Mathf.Clamp01((gecen - yuruyusSuresi) / yaziBelirmeSuresi));
                 float yol = jenerik.rect.height + ((RectTransform)jenerik.parent).rect.height;
                 jenerik.anchoredPosition = new Vector2(jenerik.anchoredPosition.x, jenerikBaslangicY + yol * jenerikOrani);
             }
-            if (!GameInput.TiklaBasildi && jenerikOrani < 1f) return;
+            // Fareyle tıklama, Space / A ya da kolun İleri'si (Y) geçer.
+            bool gec = GameInput.TiklaBasildi || GameInput.ZiplaDalBasildi || GameInput.IleriBasildi;
+            if (!gec && jenerikOrani < 1f) return;
             if (OyunAkisi.AdimBitti()) aktif = false;
         }
     }

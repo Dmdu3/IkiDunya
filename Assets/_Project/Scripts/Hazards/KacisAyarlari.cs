@@ -9,6 +9,8 @@ namespace IkiDunya.Hazards
         [Header("Gün doğumu")]
         [Tooltip("Kumsal koşusunun süresi (GDD: 150 sn).")]
         [SerializeField] private float gunDogumuSuresi = 150f;
+        [Tooltip("Sürenin bu oranında (0–1) oyuncu bir kez uyarılır: gün doğunca kumda kalanlar kaybedilir.")]
+        [Range(0f, 1f)] [SerializeField] private float gunDogumuUyarisi = 0.75f;
 
         [Header("Sıcak kum lekesi")]
         [Tooltip("Gece başında lekenin ölçek çarpanı.")]
@@ -34,6 +36,7 @@ namespace IkiDunya.Hazards
 
         public float IsikCekimGucu => isikCekimGucu;
         public float GunDogumuSuresi => gunDogumuSuresi;
+        public float GunDogumuUyarisi => gunDogumuUyarisi;
         public float LekeBaslangicOlcegi => lekeBaslangicOlcegi;
         public float LekeSonOlcegi => lekeSonOlcegi;
         public float GolgelikLekeCarpani => golgelikLekeCarpani;

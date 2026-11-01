@@ -331,7 +331,18 @@ namespace IkiDunya.Management
 
         private void Uygula(int hedef)
         {
-            if (BekleyenKart != null) KartiOyna(BekleyenKart, hedef);
+            if (BekleyenKart != null)
+            {
+                // Bu bölgede bir şey yapmayacak kartın bedeli harcanmaz; kart bekler, şerit nedenini söyler.
+                string kartEngeli = etkiler.KartHedefEngeli(BekleyenKart, hedef);
+                if (kartEngeli != null)
+                {
+                    HedefEngeli = kartEngeli;
+                    Degisti?.Invoke();
+                    return;
+                }
+                KartiOyna(BekleyenKart, hedef);
+            }
             else if (BekleyenGorev != null && yonetim.BosGonullu(kumsal) > 0)
             {
                 // İşe yaramayacak hedefte gönüllü harcanmaz; görev bekler, şerit nedenini söyler, oyuncu başka hedef seçer.

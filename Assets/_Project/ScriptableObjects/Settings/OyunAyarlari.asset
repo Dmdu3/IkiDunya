@@ -29,6 +29,7 @@ MonoBehaviour:
   baslikSuresi: 2.5
   ipucuSuresi: 6
   bildirimSuresi: 3.5
+  sonucEnAzSure: 1
   metinler: {fileID: 11400000, guid: 31d8e9dd20aab384c8f1e1e79f74f96a, type: 2}
   tema: {fileID: 11400000, guid: 174ea4a66d2f521448f9d3c5720d8651, type: 2}
   bolgeSayisi: 8

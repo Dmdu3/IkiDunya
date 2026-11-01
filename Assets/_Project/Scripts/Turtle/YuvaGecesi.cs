@@ -21,7 +21,7 @@ namespace IkiDunya.Turtle
         private Durum durum;
         private int kalanDeneme;
         private Yuva sonYuva;
-        private int bitisKaresi;
+        private readonly SonucKapisi sonucKapisi = new SonucKapisi();
 
         public int KalanDeneme => kalanDeneme;
         /// <summary>Yuvanın şu anki bandı (bu gecenin kum ısınması dahil); sonuç paneli gösterir.</summary>
@@ -85,7 +85,7 @@ namespace IkiDunya.Turtle
         private void Update()
         {
             if (durum == Durum.DenizeDonus && kum.KiyidanUzaklik(anne.transform.position) < 0f) GeceBitti();
-            else if (durum == Durum.Bitti && Time.frameCount != bitisKaresi && (GameInput.TiklaBasildi || GameInput.ZiplaDalBasildi)) SonucuKapat();
+            else if (durum == Durum.Bitti && sonucKapisi.KapatIstendi()) SonucuKapat();
         }
 
         private void InsanGordu(Transform gorulen)
@@ -149,7 +149,7 @@ namespace IkiDunya.Turtle
         private void GeceBitti()
         {
             durum = Durum.Bitti;
-            bitisKaresi = Time.frameCount;
+            sonucKapisi.Ac();
             // Yarım kalan kazma sonuç ekranının arkasında sürmesin (örtme bitince anneyi açardı).
             kazma.Sifirla();
             kazma.enabled = false;

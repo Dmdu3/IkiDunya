@@ -1,3 +1,4 @@
+using System.Collections.Generic;
 using IkiDunya.Core;
 using IkiDunya.Hazards;
 using IkiDunya.Turtle;
@@ -28,6 +29,9 @@ namespace IkiDunya.UI.Night
         [SerializeField] private Text kaybedilen;
         [SerializeField] private Text disi;
         [SerializeField] private Text erkek;
+        [Tooltip("Kayıpların nedenleri (Sıcak kum 4 · Ağ 2 …); kayıp yoksa boş.")]
+        [SerializeField] private Text kayipNedenleri;
+
         private GameObject kayipEkrani;
         private Sprite kayipGorseli;
 
@@ -76,6 +80,7 @@ namespace IkiDunya.UI.Night
             if (bantAdi != null && tablo != null) bantAdi.text = tablo.Al($"bant_{bant.ToString().ToLowerInvariant()}");
             yumurtaSayisi.text = yuva.Yumurta.ToString();
             yuvaPaneli.SetActive(true);
+            DevamYazisi(yuvaPaneli);
             Acik = true;
         }
 
@@ -86,10 +91,38 @@ namespace IkiDunya.UI.Night
             kaybedilen.text = sonuc.Kaybedilen.ToString();
             disi.text = sonuc.Disi.ToString();
             erkek.text = sonuc.Erkek.ToString();
+            if (kayipNedenleri != null) kayipNedenleri.text = Nedenler(sonuc.Nedenler);
             if (kacisGecesi.TekrarGerekli) KayipEkraniniGoster();
             else if (kayipEkrani != null) kayipEkrani.SetActive(false);
             kacisPaneli.SetActive(true);
+            DevamYazisi(kacisPaneli);
             Acik = true;
+        }
+
+        /// <summary>"Devam" satırına son kullanılan cihazın tuşunu koyar (Space ya da A). Panel açıldıktan sonra: MetinYazisi açılınca ham metni yazar.</summary>
+        private void DevamYazisi(GameObject panel)
+        {
+            Transform devam = panel.transform.Find("Devam");
+            MetinTablosu tablo = metinler != null ? metinler : MetinTablosu.Yuklu;
+            if (devam == null || tablo == null || !devam.TryGetComponent(out Text yazi)) return;
+            yazi.text = string.Format(tablo.Al("sonuc_devam"), GameInput.TusYazisi("ZiplaDal"));
+        }
+
+        /// <summary>"Sıcak kum 4 · Ağ 2"; çoktan aza, sıfırlar yazılmaz.</summary>
+        private string Nedenler(int[] sayilar)
+        {
+            if (sayilar == null) return "";
+            MetinTablosu tablo = metinler != null ? metinler : MetinTablosu.Yuklu;
+            var sira = new List<int>();
+            for (int i = 0; i < sayilar.Length; i++) if (sayilar[i] > 0) sira.Add(i);
+            sira.Sort((a, b) => sayilar[b].CompareTo(sayilar[a]));
+            var parcalar = new List<string>();
+            foreach (int i in sira)
+            {
+                string id = $"kayip_{((KayipNedeni)i).ToString().ToLowerInvariant()}";
+                parcalar.Add($"{(tablo != null ? tablo.Al(id) : id)} {sayilar[i]}");
+            }
+            return string.Join("  ·  ", parcalar);
         }
 
         private void KayipEkraniniGoster()
