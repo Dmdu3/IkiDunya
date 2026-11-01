@@ -17,6 +17,7 @@ namespace IkiDunya.UI.Menu
 
         private void Awake()
         {
+            DugmeSesi.Bagla(yeniOyun, devamEt, ayarlar, cikis, parkurlar);
             yeniOyun.onClick.AddListener(OyunAkisi.YeniOyun);
             devamEt.onClick.AddListener(OyunAkisi.DevamEt);
             ayarlar.onClick.AddListener(ayarlarPaneli.Ac);

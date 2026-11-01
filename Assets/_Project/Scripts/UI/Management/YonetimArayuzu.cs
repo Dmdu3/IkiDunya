@@ -59,6 +59,7 @@ namespace IkiDunya.UI.Management
             kumsal.Degisti += Yenile;
             GameInput.BaglamalarDegisti += Yenile;
             ileriDugmesi.onClick.AddListener(tur.Ilerle);
+            DugmeSesi.Bagla(aDugmesi, bDugmesi);
             aDugmesi.onClick.AddListener(() => tur.Sec(true));
             bDugmesi.onClick.AddListener(() => tur.Sec(false));
             Yenile();
@@ -221,6 +222,8 @@ namespace IkiDunya.UI.Management
             }
             dugme.interactable = acik;
             if (secili) dugme.GetComponent<Image>().color = new Color(1f, 0.85f, 0.4f);
+            // Kart düğmesinin sesini InsanTuru seçer: anında oynanan kartta tıklama ve kart sesi üst üste binmesin.
+            if (!kart) DugmeSesi.Bagla(dugme);
             dugme.onClick.AddListener(tikla);
             dugmeler.Add(dugme);
         }

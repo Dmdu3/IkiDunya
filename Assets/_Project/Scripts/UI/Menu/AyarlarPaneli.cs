@@ -19,6 +19,7 @@ namespace IkiDunya.UI.Menu
         {
             ses.onValueChanged.AddListener(deger => OyunTercihleri.Ses = deger);
             hassasiyet.onValueChanged.AddListener(deger => OyunTercihleri.HassasiyetCarpani = deger);
+            DugmeSesi.Bagla(geri, varsayilanTuslar);
             geri.onClick.AddListener(Kapat);
             if (varsayilanTuslar != null) varsayilanTuslar.onClick.AddListener(GameInput.VarsayilanaDon);
         }

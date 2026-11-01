@@ -10,7 +10,8 @@ namespace IkiDunya.Core
     {
         Kazma, KumKazma, YuvaTamam, Takilma, Kurtarma, YavruKurtuldu, YavruKaybedildi,
         YengecUyari, MartiUyari, TilkiUyari, TilkiEseliyor, Yeme, AgdanKurtulma, KontrolNoktasi, Pervane, DalgaVurdu, Ipucu,
-        Kombo, ParkurBitti, ParkurAsama, SelGeliyor, PosetYuttu
+        Kombo, ParkurBitti, ParkurAsama, SelGeliyor, PosetYuttu,
+        DugmeTikla, KartOyna, KartDagit, KanitBulundu
     }
 
     /// <summary>Ses yuvaları: her ses olayının klipleri ve düzeyi; her adımın ortam sesi ve müziği. Klip boşsa o ses çalmaz, oyun bozulmaz.</summary>
@@ -50,6 +51,8 @@ namespace IkiDunya.Core
         [SerializeField] private List<Efekt> efektler = new List<Efekt>();
         [SerializeField] private List<AdimSesi> adimSesleri = new List<AdimSesi>();
         [SerializeField] private AudioClip menuMuzigi;
+        [Tooltip("Çöp Seli parkurunun ortam sesi: gece kumsalda geçer, öteki parkurlar denizde. Boşsa Parkur adımının ortam sesi çalar.")]
+        [SerializeField] private AudioClip copSeliOrtami;
 
         [Header("Düzeyler")]
         [Range(0f, 1f)] [SerializeField] private float ortamDuzeyi = 0.6f;
@@ -67,6 +70,13 @@ namespace IkiDunya.Core
 
         public Efekt EfektAl(SesTuru tur) => efektler.Find(e => e.Tur == tur);
         public AdimSesi AdimSesiAl(AdimTuru adim) => adimSesleri.Find(a => a.Adim == adim);
+
+        /// <summary>Adımın ortam sesi; Çöp Seli parkuru kendi sesini kullanır.</summary>
+        public AudioClip OrtamAl(Adim adim)
+        {
+            if (adim.Tur == AdimTuru.Parkur && adim.Sira == (int)ParkurTuru.CopSeli && copSeliOrtami != null) return copSeliOrtami;
+            return AdimSesiAl(adim.Tur)?.Ortam;
+        }
 
         /// <summary>Her ses türü ve her adım için boş yuva açar (editör kurulumu çağırır); dolu yuvalara dokunmaz.</summary>
         public void EksikYuvalariEkle()

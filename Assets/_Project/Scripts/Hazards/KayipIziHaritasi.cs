@@ -62,6 +62,7 @@ namespace IkiDunya.Hazards
             int sira = simgeler.IndexOf(carpan.collider);
             if (sira < 0 || kumsal.KayipIzleri[sira].KanitAcildi) return;
             Debug.Log($"KayipIziHaritasi: kanıt açıldı — {kumsal.KayipIzleri[sira].Kanit}.");
+            Ses.Cal(SesTuru.KanitBulundu);
             kumsal.KanitAc(sira);
         }
     }
