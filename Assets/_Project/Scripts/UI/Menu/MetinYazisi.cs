@@ -22,5 +22,13 @@ namespace IkiDunya.UI.Menu
             }
             yazi.text = kullanilan.Al(id);
         }
+
+        /// <summary>Geçici olarak başka bir metni gösterir (ör. onay sorusu); null verilirse kendi metnine döner.</summary>
+        public void Goster(string digerId)
+        {
+            MetinTablosu kullanilan = tablo != null ? tablo : MetinTablosu.Yuklu;
+            var yazi = GetComponent<Text>();
+            if (kullanilan != null && yazi != null) yazi.text = kullanilan.Al(digerId ?? id);
+        }
     }
 }

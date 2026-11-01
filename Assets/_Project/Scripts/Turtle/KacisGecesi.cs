@@ -42,7 +42,7 @@ namespace IkiDunya.Turtle
         private int kumdaKalan;
         private bool suruKuruldu;
         private float gecen;
-        private int bitisKaresi;
+        private readonly SonucKapisi sonucKapisi = new SonucKapisi();
 
         public Asama SuAnki { get; private set; }
         /// <summary>Yavruların üstünde kalan kum katı.</summary>
@@ -117,7 +117,7 @@ namespace IkiDunya.Turtle
         {
             if (SuAnki == Asama.Cikis) CikisGuncelle();
             else if (SuAnki == Asama.Kosu) DalgayaBak();
-            else if (SuAnki == Asama.Bitti && Time.frameCount != bitisKaresi && (GameInput.TiklaBasildi || GameInput.ZiplaDalBasildi)) SonucuKapat();
+            else if (SuAnki == Asama.Bitti && sonucKapisi.KapatIstendi()) SonucuKapat();
         }
 
         private void CikisGuncelle()
@@ -204,7 +204,7 @@ namespace IkiDunya.Turtle
         {
             if (SuAnki == Asama.Bitti) return;
             SuAnki = Asama.Bitti;
-            bitisKaresi = Time.frameCount;
+            sonucKapisi.Ac();
             gunDogumu.Durdur();
             suru.Durdur();
 

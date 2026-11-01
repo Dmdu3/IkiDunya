@@ -106,7 +106,7 @@ Bütçe, gönüllü ve halk desteği `KumsalDurumu`'nda değil; insan kısmını
 
 **Kaçışta çöp, avcılar, ışık.** Ağ ve halka izleyen yavruyu takar, tekerlek izi ters çevirir; öncü yanına gidip E'yi basılı tutar (2 / 1,5 sn), bu sırada sürü bekler, sayaç işler. Space bütün sürüyü zıplatır (kum kalesi atlanır, şişe dolaşılır). Öncü de takılır ve ters döner; E'yi basılı tutup kendini kurtarır (bu sırada sürü bekler), ama yönünü kaybetmez. Yengeç deliği 2 sn titrer, sonra yanındaki bir yavruyu alır (zıplayan kurtulur). Martının gölgesi 1,5 sn önce düşer; dalış alanında 3+ yavru varsa 3, yoksa 1 yavru alır. Tilki her gece ihtimalle gelir (çit varsa yarı ihtimal), kumsalın kenarında gezer, konisinde siperde olmayan bir yavru görürse koşar, sürü 3 sn panikle dağılır. Geldiği gece 25 sn gezdikten sonra sonraki gecelerin kafessiz bir yuvasına gidip 4 sn eşeler: yumurtaların yarısı gider, yuvada Avcı izi kalır (kafesli yuvaya dokunmaz). Işık alanındaki yavru ışığa çekilir; 5 sn kalırsa yönünü kaybedip karaya yürür, öncü E ile geri çağırır. Gün doğunca kumda kalanlar o an başlarına gelen nedenle kaybedilir (takılı → Ağ, ters → Çöp, yön kaybı → Işık, diğer → Isı).
 
-**Gecenin sonu.** Yuva gecesi yuvanın bandını (renk ve adı) ve yumurta sayısını, kaçış kurtulan, kaybedilen, dişi ve erkek sayısını gösterir (dişi oranı yuvanın bandından). Başlık, satır adları ve "devam" satırı metin id'leriyle (`sonuc_*`, `bant_*`). Tıklayınca ya da Space'le akış ilerler.
+**Gecenin sonu.** Yuva gecesi yuvanın bandını (renk ve adı) ve yumurta sayısını, kaçış kurtulan, kaybedilen, dişi ve erkek sayısını gösterir (dişi oranı yuvanın bandından). Başlık, satır adları ve "devam" satırı metin id'leriyle (`sonuc_*`, `bant_*`). Tıklayınca ya da Space'le akış ilerler; panel en az `OyunAyarlari.SonucEnAzSure` açık kalır ve gecenin sonunda basılı tutulan tuş bırakılmadan kapanmaz (`Turtle/SonucKapisi`).
 
 **İnsan turu.** Geçici tur kalktı; yerine yönetim ekranı geldi (aşağıda "İnsan kısmı").
 
@@ -124,7 +124,7 @@ Pervane sesi klibi bağlı (`Audio/SFX/Pervane.wav`).
 
 ## Menü, kayıt, final (Faz 7)
 
-**Akış.** Adımlar arasında ekran kararır; yeni bölüme girilince karanlıkta `bolumN_giris` metni görünür (Bölüm 3 dahil). Her adımın başında kayıt yazılır (`Kayit`: adım sırası + `KumsalDurumu`'nun JSON'u, `persistentDataPath/kayit.json`). Ana menüde "Devam et" kayıtlı adımdan sürer; "Yeni oyun" kaydı siler. Son adım (final) bitince kayıt silinir, menüye dönülür.
+**Akış.** Adımlar arasında ekran kararır; yeni bölüme girilince karanlıkta `bolumN_giris` metni görünür (Bölüm 3 dahil). Her adımın başında kayıt yazılır (`Kayit`: adım sırası + `KumsalDurumu`'nun JSON'u, `persistentDataPath/kayit.json`). Kayıt önce geçici dosyaya yazılır, eski kayıt `kayit.yedek.json` olur; asıl kayıt okunamazsa yedekten (bir önceki adım) devam edilir, bozuk dosya `kayit.bozuk.json`'a alınır. İkisi de okunamazsa dosyalar silinmez, menüde `bildirim_kayit_okunamadi` çıkar. Ana menüde kayıt varsa "Devam et" seçili açılır; "Yeni oyun" kayıt varken ilk basışta sorar (`menu_yeni_oyun_onay`), ikinci basışta kaydı siler. Son adım (final) bitince kayıt silinir, menüye dönülür.
 
 **Duraklatma.** Esc oyun sırasında duraklatma menüsünü açar (zaman durur, imleç serbest). Duraklatma açıkken ve kapandığı karede `GameInput` oyun girdilerini vermez, böylece menüye tıklamak oyuna geçmez. Ayarlar (ses, fare hassasiyeti) bu bilgisayarda `PlayerPrefs`'te.
 
@@ -136,7 +136,7 @@ Pervane sesi klibi bağlı (`Audio/SFX/Pervane.wav`).
 
 ## Görünüm ve erişilebilirlik
 
-- **Gece ve gündüz (`OrtamIsigi`, `OrtamAyarlari`):** kumsalda yuva ve kaçış gecelerinde ay ışığı, koyu gökyüzü ve sis; insan turunda gündüz; finalde güneşin rengini `FinalSahnesi` verir. Ay ışığı denizin üstünde soluk bir yol.
+- **Gece ve gündüz (`OrtamIsigi`, `OrtamAyarlari`):** kumsalda yuva ve kaçış gecelerinde ay ışığı, koyu gökyüzü ve sis; insan turunda gündüz; finalde güneşin rengini `FinalSahnesi` verir. Ay ışığı denizin üstünde soluk bir yol (`AyYolu`, `GeceNesneleri` grubunda: sadece yuva ve kaçış gecelerinde açık).
 - **Su (`SuDalgalanmasi`, `SuAltiGorunumu`):** su yüzeyi dalga dalga oynar (iki yüzlü malzeme, alttan da görünür); denizde göz suya girince sis koyu ve yoğun olur.
 - **Işık halkası:** otel ışığının kumda çekim alanı kadar sarı bir halkası var; Işık Yasağı ile söner.
 - **Termal görünüm:** şeritler yarı saydam; her bandın ayrı deseni var (Mavi yatay çizgi, Yeşil nokta, Turuncu çapraz, Kırmızı dama), renk ayırt edemeyenler için.

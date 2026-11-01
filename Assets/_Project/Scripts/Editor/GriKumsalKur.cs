@@ -494,8 +494,10 @@ namespace IkiDunya.Editor
             var cizgi = dalgaCizgisi.gameObject.AddComponent<DalgaCizgisi>();
             Bagla(cizgi, "kum", kumSicakligi);
             Bagla(cizgi, "kumsal", Ayar<KumsalDurumu>("KumsalDurumu"));
-            // Ay ışığı: denizin üstünde doğru yönü gösteren parlak yol
-            GameObject ay = Kutu("AyYolu", dunya, new Vector3(-6f, -0.3f, -DenizDerinligi / 2f), new Vector3(3f, 0.01f, DenizDerinligi), ayYolu, "Default");
+            // Ay ışığı: denizin üstünde doğru yönü gösteren parlak yol; sadece gecelerde (gündüz yönetim ekranında beyaz çubuk görünürdü).
+            Transform gece = Grup("GeceNesneleri", new[] { AdimTuru.YuvaGecesi, AdimTuru.KacisGecesi });
+            gece.SetParent(dunya, false);
+            GameObject ay = Kutu("AyYolu", gece, new Vector3(-6f, -0.3f, -DenizDerinligi / 2f), new Vector3(3f, 0.01f, DenizDerinligi), ayYolu, "Default");
             Object.DestroyImmediate(ay.GetComponent<Collider>());
 
             KumsalYapilariKur(kumSicakligi, insanKoku);
@@ -1311,13 +1313,15 @@ namespace IkiDunya.Editor
         }
 
         /// <summary>Adımına göre açılıp kapanan nesne grubu (AdimNesneleri).</summary>
-        private static Transform Grup(string ad, AdimTuru tur, params ParkurTuru[] parkurlar)
+        private static Transform Grup(string ad, AdimTuru tur, params ParkurTuru[] parkurlar) => Grup(ad, new[] { tur }, parkurlar);
+
+        private static Transform Grup(string ad, AdimTuru[] adimlar, params ParkurTuru[] parkurlar)
         {
             var grup = new GameObject(ad).AddComponent<AdimNesneleri>();
             var so = new SerializedObject(grup);
             SerializedProperty turler = so.FindProperty("turler");
-            turler.arraySize = 1;
-            turler.GetArrayElementAtIndex(0).enumValueIndex = (int)tur;
+            turler.arraySize = adimlar.Length;
+            for (int i = 0; i < adimlar.Length; i++) turler.GetArrayElementAtIndex(i).enumValueIndex = (int)adimlar[i];
             SerializedProperty parkurDizisi = so.FindProperty("parkurlar");
             parkurDizisi.arraySize = parkurlar.Length;
             for (int i = 0; i < parkurlar.Length; i++) parkurDizisi.GetArrayElementAtIndex(i).enumValueIndex = (int)parkurlar[i];

@@ -392,6 +392,11 @@ MonoBehaviour:
     metin: Yeni oyun
   - id: menu_devam_et
     metin: Devam et
+  - id: menu_yeni_oyun_onay
+    metin: "Kay\u0131t silinsin mi? Tekrar bas"
+  - id: bildirim_kayit_okunamadi
+    metin: "Kay\u0131t okunamad\u0131. Dosya silinmedi; yeni oyuna ba\u015Flayabilir
+      ya da tekrar deneyebilirsin."
   - id: menu_parkurlar
     metin: Parkurlar
   - id: menu_ayarlar

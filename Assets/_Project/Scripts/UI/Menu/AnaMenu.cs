@@ -16,10 +16,12 @@ namespace IkiDunya.UI.Menu
         [SerializeField] private Button parkurlar;
         [SerializeField] private ParkurlarPaneli parkurlarPaneli;
 
+        private bool onayBekliyor;
+
         private void Awake()
         {
             DugmeSesi.Bagla(yeniOyun, devamEt, ayarlar, cikis, parkurlar);
-            yeniOyun.onClick.AddListener(OyunAkisi.YeniOyun);
+            yeniOyun.onClick.AddListener(YeniOyunaBasildi);
             devamEt.onClick.AddListener(OyunAkisi.DevamEt);
             ayarlar.onClick.AddListener(ayarlarPaneli.Ac);
             cikis.onClick.AddListener(Cik);
@@ -31,9 +33,39 @@ namespace IkiDunya.UI.Menu
             devamEt.interactable = OyunAkisi.KayitVar;
             Cursor.lockState = CursorLockMode.None;
             Cursor.visible = true;
-            // Oyun koluyla gezilebilsin: ilk düğme seçili.
-            if (EventSystem.current != null) EventSystem.current.SetSelectedGameObject(yeniOyun.gameObject);
+            OnayiBirak();
+            // Oyun koluyla gezilebilsin: kayıt varsa Devam et, yoksa Yeni oyun seçili (tek basış kaydı silmesin).
+            Button ilk = devamEt.interactable ? devamEt : yeniOyun;
+            if (EventSystem.current != null) EventSystem.current.SetSelectedGameObject(ilk.gameObject);
         }
+
+        private void Update()
+        {
+            // Onay beklerken başka düğmeye geçilir ya da boşluğa tıklanırsa soru kalkar.
+            if (onayBekliyor && (EventSystem.current == null || EventSystem.current.currentSelectedGameObject != yeniOyun.gameObject)) OnayiBirak();
+        }
+
+        /// <summary>Kayıt varken ilk basış sorar (kayıt silinecek), ikinci basış yeni oyunu başlatır.</summary>
+        private void YeniOyunaBasildi()
+        {
+            if (OyunAkisi.KayitVar && !onayBekliyor)
+            {
+                onayBekliyor = true;
+                YeniOyunYazisi()?.Goster("menu_yeni_oyun_onay");
+                return;
+            }
+            OnayiBirak();
+            OyunAkisi.YeniOyun();
+        }
+
+        private void OnayiBirak()
+        {
+            if (!onayBekliyor) return;
+            onayBekliyor = false;
+            YeniOyunYazisi()?.Goster(null);
+        }
+
+        private MetinYazisi YeniOyunYazisi() => yeniOyun.GetComponentInChildren<MetinYazisi>(true);
 
         private static void Cik()
         {

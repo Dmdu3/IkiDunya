@@ -147,6 +147,8 @@ Kısa yaz: kart açıklaması en fazla 2 satır, kanıt notu en fazla 3 satır. 
 | oyun_adi | İki Dünya, Tek Yaşam |
 | menu_yeni_oyun | Yeni oyun |
 | menu_devam_et | Devam et |
+| menu_yeni_oyun_onay | Kayıt silinsin mi? Tekrar bas |
+| bildirim_kayit_okunamadi | Kayıt okunamadı. Dosya silinmedi; yeni oyuna başlayabilir ya da tekrar deneyebilirsin. |
 | menu_parkurlar | Parkurlar |
 | menu_ayarlar | Ayarlar |
 | menu_cikis | Çıkış |
