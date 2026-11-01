@@ -450,19 +450,20 @@ namespace IkiDunya.Editor
 
             // Göstergeler: enerji, nefes, ağdan kurtulma
             Transform tuval = GriKumsalKur.TuvalKur("DenizArayuzu", null);
-            Cubuk enerji = GriKumsalKur.CubukKur("EnerjiCubugu", tuval, new Vector2(0.03f, 0.04f), new Vector2(0.28f, 0.065f), new Color(0.4f, 0.8f, 0.45f), false);
+            Cubuk enerji = GriKumsalKur.CubukKur("EnerjiCubugu", tuval, new Vector2(0.03f, 0.04f), new Vector2(0.28f, 0.065f), new Color(0.4f, 0.8f, 0.45f), false, "gosterge_enerji");
             var enerjiGostergesi = enerji.gameObject.AddComponent<EnerjiCubugu>();
             GriKumsalKur.Bagla(enerjiGostergesi, "enerji", nesne.GetComponent<Enerji>());
             GriKumsalKur.Bagla(enerjiGostergesi, "dolgu", enerji.transform.GetChild(0));
-            Cubuk nefes = GriKumsalKur.CubukKur("NefesCubugu", tuval, new Vector2(0.03f, 0.08f), new Vector2(0.28f, 0.1f), new Color(0.5f, 0.8f, 1f), false);
+            Cubuk nefes = GriKumsalKur.CubukKur("NefesCubugu", tuval, new Vector2(0.03f, 0.08f), new Vector2(0.28f, 0.1f), new Color(0.5f, 0.8f, 1f), false, "gosterge_nefes");
             Cubuk kurtulma = GriKumsalKur.CubukKur("KurtulmaCubugu", tuval, new Vector2(0.42f, 0.42f), new Vector2(0.58f, 0.445f), Color.white, false);
             var gosterge = tuval.gameObject.AddComponent<DenizGostergesi>();
             GriKumsalKur.Bagla(gosterge, "yuzucu", yuzucu);
             GriKumsalKur.Bagla(gosterge, "nefes", nefes);
             GriKumsalKur.Bagla(gosterge, "kurtulma", kurtulma);
             // Yavaşlık: poşet yutunca enerji çubuğunun üstünde kahverengi, süre bitince boşalır.
-            Cubuk yavaslik = GriKumsalKur.CubukKur("YavaslikCubugu", tuval, new Vector2(0.03f, 0.115f), new Vector2(0.28f, 0.13f), new Color(0.6f, 0.45f, 0.3f), false);
+            Cubuk yavaslik = GriKumsalKur.CubukKur("YavaslikCubugu", tuval, new Vector2(0.03f, 0.115f), new Vector2(0.28f, 0.13f), new Color(0.6f, 0.45f, 0.3f), false, "gosterge_yavaslik");
             GriKumsalKur.Bagla(gosterge, "yavaslik", yavaslik);
+            GriKumsalKur.TusSatiriKur(tuval, "tuslar_deniz", "Hareket", "ZiplaDal", "Hizli");
             return yuzucu;
         }
 
@@ -514,6 +515,11 @@ namespace IkiDunya.Editor
             samandira.transform.position = new Vector3(4f, 0.2f, z);
             samandira.transform.localScale = new Vector3(0.6f, 0.4f, 0.6f);
             samandira.GetComponent<Renderer>().sharedMaterial = isaret;
+            // Yusuf'un şamandırası varsa silindirin yerine geçer (aynı boyda, suyun üstünde yüzer).
+            Transform tutucu = GriKumsalKur.Bos("Samandira", null);
+            tutucu.position = new Vector3(4f, 0f, z);
+            if (GriKumsalKur.ModelYerlestir(tutucu, "Samandira", Vector3.zero, 0.8f) != null) Object.DestroyImmediate(samandira);
+            else Object.DestroyImmediate(tutucu.gameObject);
         }
 
         private static void AkintiKur(Vector3 yer, Vector3 boyut, float yon, DenizTehlikeAyarlari tehlike)
@@ -642,7 +648,7 @@ namespace IkiDunya.Editor
                 kenar.isStatic = false;
                 kenarlar[i] = kenar.GetComponent<Renderer>();
             }
-            ParildatKur(kok, new Color(0.7f, 1f, 1f), kenarlar);
+            ModelVeyaParilti(kok, "Hayalet_Ag", new Color(0.7f, 1f, 1f), kenarlar);
             return GriKumsalKur.KalipKaydet(kok, $"{KalipKlasoru}/HayaletAg.prefab");
         }
 
@@ -659,17 +665,27 @@ namespace IkiDunya.Editor
             var so = new SerializedObject(govde.AddComponent<TrashTrap>());
             so.FindProperty("tur").enumValueIndex = (int)TrashTrap.Turu.Misina;
             so.ApplyModifiedPropertiesWithoutUndo();
-            ParildatKur(kok, new Color(0.95f, 0.95f, 0.8f), govde.GetComponent<Renderer>());
+            ModelVeyaParilti(kok, "Misina", new Color(0.95f, 0.95f, 0.8f), govde.GetComponent<Renderer>());
             return GriKumsalKur.KalipKaydet(kok, $"{KalipKlasoru}/Misina.prefab");
         }
 
-        private static void ParildatKur(GameObject kok, Color renk, params Renderer[] parcalar)
+        /// <summary>Yusuf'un modeli varsa gri kutuların yerine geçer ve sadece modelin parıltı malzemesi parlar; yoksa gri parçalar parlar.</summary>
+        private static void ModelVeyaParilti(GameObject kok, string model, Color renk, params Renderer[] griParcalar)
+        {
+            // Modelin kökü ortada: gri kutunun merkezine oturur.
+            GameObject gorunus = GriKumsalKur.ModelEkle(kok, model, 0f, false);
+            if (gorunus == null) ParildatKur(kok, renk, -1, griParcalar);
+            else ParildatKur(kok, renk, GriKumsalKur.MalzemeSirasi(gorunus, "P_Isik_Parilti"), gorunus.GetComponentsInChildren<Renderer>());
+        }
+
+        private static void ParildatKur(GameObject kok, Color renk, int malzemeSirasi, params Renderer[] parcalar)
         {
             var parilti = kok.AddComponent<Parilti>();
             GriKumsalKur.Bagla(parilti, "ayarlar", GriKumsalKur.Ayar<DenizTehlikeAyarlari>("DenizTehlikeAyarlari"));
             GriKumsalKur.DiziBagla(parilti, "parcalar", parcalar);
             var so = new SerializedObject(parilti);
             so.FindProperty("renk").colorValue = renk;
+            so.FindProperty("malzemeSirasi").intValue = malzemeSirasi;
             so.ApplyModifiedPropertiesWithoutUndo();
         }
 

@@ -26,6 +26,7 @@ namespace IkiDunya.Core
         [SerializeField] private Material bulutMalzemesi;
 
         private static readonly int RenkId = Shader.PropertyToID("_BaseColor");
+        private static readonly int YuvarlakId = Shader.PropertyToID("_Yuvarlak");
 
         /// <summary>Gerçek ay (gökyüzü açıkken); yavrunun içgüdüsü sahte aylarla karşılaştırır.</summary>
         public static Transform Ay { get; private set; }
@@ -58,6 +59,12 @@ namespace IkiDunya.Core
         {
             GetComponent<MeshFilter>().sharedMesh = YildizAgi();
             blok = new MaterialPropertyBlock();
+            // Yıldızlar yuvarlak: dörtgenin kenarı erir (kare benek gibi durmasın).
+            var yildizlar = GetComponent<MeshRenderer>();
+            yildizlar.GetPropertyBlock(blok);
+            blok.SetFloat(YuvarlakId, 1f);
+            yildizlar.SetPropertyBlock(blok);
+            blok.Clear();
             if (ay == null) return;
             ay.localPosition = ayYonu.normalized * yaricap * 0.9f;
             ayGorunus = ay.GetComponent<Renderer>();
@@ -132,6 +139,7 @@ namespace IkiDunya.Core
             var rastgele = new System.Random(1234);
             var koseler = new Vector3[yildizSayisi * 4];
             var renkler = new Color[koseler.Length];
+            var uv = new Vector2[koseler.Length];
             var ucgenler = new int[yildizSayisi * 6];
             float altSinir = Mathf.Sin(-ufukPayi * Mathf.Deg2Rad);
             for (int i = 0; i < yildizSayisi; i++)
@@ -154,11 +162,12 @@ namespace IkiDunya.Core
                 koseler[k + 2] = merkez + (sag + ust) * boy;
                 koseler[k + 3] = merkez + (-sag + ust) * boy;
                 for (int j = 0; j < 4; j++) renkler[k + j] = renk;
+                uv[k] = new Vector2(0f, 0f); uv[k + 1] = new Vector2(1f, 0f); uv[k + 2] = new Vector2(1f, 1f); uv[k + 3] = new Vector2(0f, 1f);
                 int t = i * 6;
                 ucgenler[t] = k; ucgenler[t + 1] = k + 1; ucgenler[t + 2] = k + 2;
                 ucgenler[t + 3] = k; ucgenler[t + 4] = k + 2; ucgenler[t + 5] = k + 3;
             }
-            var mesh = new Mesh { name = "Yildizlar", vertices = koseler, colors = renkler, triangles = ucgenler };
+            var mesh = new Mesh { name = "Yildizlar", vertices = koseler, colors = renkler, uv = uv, triangles = ucgenler };
             mesh.bounds = new Bounds(Vector3.zero, Vector3.one * yaricap * 2f);
             return mesh;
         }

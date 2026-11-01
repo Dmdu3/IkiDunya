@@ -753,7 +753,7 @@ namespace IkiDunya.Editor
         }
 
         /// <summary>Kumsal sahnesinin final grubu: tepeden bakan kamera, denizden çıkan yetişkin kaplumbağa, başlık ve kurtarılan yavru sayısı.</summary>
-        internal static void FinalKur(Transform grup, Scene sahne, Material kaplumbagaMalzemesi, Material izMalzemesi)
+        internal static void FinalKur(Transform grup, Scene sahne, Material kaplumbagaMalzemesi)
         {
             MetinTablosu metinler = GriKumsalKur.Ayar<MetinTablosu>("MetinTablosu");
             Light gunes = null;
@@ -763,7 +763,8 @@ namespace IkiDunya.Editor
             var kamera = new GameObject("FinalKamerasi").AddComponent<UnityEngine.Camera>();
             kamera.gameObject.AddComponent<TekKulak>();
             kamera.transform.SetParent(grup, false);
-            kamera.transform.SetPositionAndRotation(new Vector3(6f, 3f, 14f), Quaternion.LookRotation(new Vector3(-6f, -2.5f, -12f)));
+            // Başta kaplumbağaya yakın (uzakta nokta kadar kalıyordu), yürüyüşle birlikte kumsala açılır.
+            kamera.transform.SetPositionAndRotation(new Vector3(3.5f, 1.5f, 4.5f), Quaternion.LookRotation(new Vector3(-3.5f, -1.3f, -8.5f)));
 
             // Yetişkin kaplumbağa: Yusuf'un caretta'sı (yoksa gri küre); denizden kumsala yürür.
             Transform kaplumbaga = GriKumsalKur.Bos("YetiskinKaplumbaga", grup);
@@ -781,12 +782,20 @@ namespace IkiDunya.Editor
             Transform son = GriKumsalKur.Bos("YuruyusSonu", grup);
             son.position = new Vector3(0f, 0f, 10f);
 
-            // Temiz Enerji oynanmadıysa kumda sıcak izler
+            // Temiz Enerji oynanmadıysa kumda kızgın lekeler: kenarı kuma karışan, kumulun biçimine oturan yanık izleri.
             Transform izler = GriKumsalKur.Bos("SicakIzler", grup);
-            for (int i = 0; i < 6; i++)
+            Material izMalzemesi = GriKumsalKur.SaydamMalzeme("FinalSicakKum", new Color(0.45f, 0.12f, 0.05f, 0.5f));
+            for (int i = 0; i < 7; i++)
             {
-                GameObject iz = GriKumsalKur.Kutu("Iz", izler, new Vector3(-8f + i * 3.2f, 0.01f, 6f + (i % 3) * 3f), new Vector3(2f, 0.02f, 2f), izMalzemesi, "Default");
-                Object.DestroyImmediate(iz.GetComponent<Collider>());
+                Transform iz = GriKumsalKur.Bos("Iz", izler);
+                iz.position = new Vector3(-9f + i * 3.1f, 0f, 5f + (i % 3) * 3.5f);
+                iz.gameObject.AddComponent<MeshFilter>();
+                var gorunus = iz.gameObject.AddComponent<MeshRenderer>();
+                gorunus.sharedMaterial = izMalzemesi;
+                gorunus.shadowCastingMode = UnityEngine.Rendering.ShadowCastingMode.Off;
+                var so = new SerializedObject(iz.gameObject.AddComponent<KumLekesi>());
+                so.FindProperty("yaricap").floatValue = 1.6f + (i * 0.37f) % 1.2f;
+                so.ApplyModifiedPropertiesWithoutUndo();
             }
 
             Transform tuval = GriKumsalKur.TuvalKur("FinalArayuzu", grup);

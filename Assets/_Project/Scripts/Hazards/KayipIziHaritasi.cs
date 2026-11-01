@@ -90,7 +90,7 @@ namespace IkiDunya.Hazards
                 if (acikSira >= 0) AcilmisIzSecildi?.Invoke(kumsal.KayipIzleri[acikSira]);
                 return;
             }
-            Debug.Log($"KayipIziHaritasi: kanıt açıldı — {kumsal.KayipIzleri[sira].Kanit}.");
+            if (Debug.isDebugBuild) Debug.Log($"KayipIziHaritasi: kanıt açıldı — {kumsal.KayipIzleri[sira].Kanit}.");
             Ses.Cal(SesTuru.KanitBulundu);
             kumsal.KanitAc(sira);
         }

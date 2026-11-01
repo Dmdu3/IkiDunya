@@ -30,6 +30,8 @@ namespace IkiDunya.UI.Night
         [SerializeField] private Cubuk yardimCubugu;
         [Tooltip("Gün doğumu çubuğunun altında: kumda, denizde, kayıp yavru sayısı.")]
         [SerializeField] private Text suruSayisi;
+        [Tooltip("Koşudaki tuş satırı (yürü, kurtar, termal); sadece koşuda görünür.")]
+        [SerializeField] private GameObject kosuTuslari;
 
         private int sonKalan = -1, sonKurtulan = -1, sonKayip = -1;
 
@@ -39,6 +41,7 @@ namespace IkiDunya.UI.Night
             bool kosu = gece.SuAnki == KacisGecesi.Asama.Kosu;
             if (cikisPaneli.activeSelf != cikis) cikisPaneli.SetActive(cikis);
             if (gunDogumuCubugu.gameObject.activeSelf != kosu) gunDogumuCubugu.gameObject.SetActive(kosu);
+            if (kosuTuslari != null && kosuTuslari.activeSelf != kosu) kosuTuslari.SetActive(kosu);
             // Sürü ve kurtarma çubuğu sonradan eklendi; eski sahnede bağlı değilse sadece çubuk görünmez.
             if (suru != null && yardimCubugu != null)
             {

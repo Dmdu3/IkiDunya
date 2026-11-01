@@ -229,6 +229,12 @@ Shader "IkiDunya/Sandbox/StilizeDeniz"
                 float kopuk = max(kiyiKopugu, max(tepe, yayilma));
                 renk = lerp(renk, _KopukRenk.rgb, kopuk);
 
+                // Sahnenin aydınlığı: gündüz 1'e doyar (görünüş aynı), gece ay ışığı ve ortam ışığı kadar kararır
+                // (yoksa gece deniz ve köpük gündüz gibi parlıyordu). Ay parıltısı (yansıma) sonra eklenir, kararmaz.
+                half aydinlik = saturate(Luminance(gunes.color) + Luminance(SampleSH(n)));
+                renk *= aydinlik;
+                renk += gunes.color * pow(saturate(dot(n, h)), _Parlaklik) * _ParlamaGucu * (1 - aydinlik);
+
                 half alfa = lerp(_SigSaydamlik, 1, saturate(derinlik / _SaydamlikDerinligi));
                 alfa = max(alfa, kopuk);
                 renk = MixFog(renk, c.fog);

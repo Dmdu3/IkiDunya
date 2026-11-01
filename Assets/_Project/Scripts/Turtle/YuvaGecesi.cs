@@ -143,7 +143,7 @@ namespace IkiDunya.Turtle
             var yuva = new Yuva(kum.Bolge(yer), yer, kum.ZeminBandi(yer), kum.DalgaAltinda(yer), yumurta, ayarlar.KuluckaHafta);
             kumsal.YuvaEkle(yuva);
             sonYuva = yuva;
-            Debug.Log($"YuvaGecesi: yuva kazıldı — bölge {yuva.Bolge}, {bant}, dalga altında: {yuva.DalgaAltinda}, {yumurta} yumurta.");
+            if (Debug.isDebugBuild) Debug.Log($"YuvaGecesi: yuva kazıldı — bölge {yuva.Bolge}, {bant}, dalga altında: {yuva.DalgaAltinda}, {yumurta} yumurta.");
         }
 
         private void GeceBitti()
@@ -154,7 +154,7 @@ namespace IkiDunya.Turtle
             kazma.Sifirla();
             kazma.enabled = false;
             anne.Kilitli = true;
-            Debug.Log("YuvaGecesi: gece bitti.");
+            if (Debug.isDebugBuild) Debug.Log("YuvaGecesi: gece bitti.");
             SonucHazir?.Invoke(sonYuva);
         }
 
