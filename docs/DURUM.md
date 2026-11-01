@@ -312,3 +312,13 @@ Kaynak betikler `Blender/Yusuf/` (`kum_torbasi.py`, `gozcu_kulubesi.py`, `plaj_t
 - **Gece:** `StilizeDeniz` gece ay ve ortam ışığı kadar kararır (gündüz aynı); yıldızlar, su altı hüzmeleri ve ay yolu yumuşak kenarlı (`IkiDunya/Gokyuzu`: `_Yuvarlak`, `_SadeceYan`).
 - **Sesler:** `Darbe`, `KalpAtisi`, `AvciBalikUyari` yuvalarında kodla sentezlenmiş geçici klipler.
 - Oyun içi `Debug.Log`'lar sadece geliştirici sürümünde.
+
+## Fragman (2026-11-01, Toprak, `toprak/fragman`)
+
+Tanıtım fragmanı oyunun içinden kodla çekilir ve kurgulanır; paket ya da dış program gerekmez. Kod `Assets/Sandbox/Toprak/Fragman/` (oyuna girmez), çıktı `Recordings/Fragman/` (repoya girmez).
+
+- **Çekim (`FragmanCekimleri`, `FragmanKaydi`):** Menu sahnesinden Play, sonra **İki Dünya → Fragman → Çekimleri kaydet**. Her çekim akışın ilgili adımına gider (F6 paneliyle aynı yol), kaplumbağayı otomatik sürer (`GameInput.Otomatik`), oyunun arayüzünü gizler, gerekiyorsa kendi sinema kamerasıyla izler ve sabit 30 fps'te 1920×1080 JPG kareler yazar. Yazı kartları (siyah zeminde serif yazı) ve başlık (menünün ufuk zemini) de çekim olarak kaydedilir. Oyuncunun kayıt dosyası çekimden önce saklanır, sonra geri konur.
+- **Kurgu (`Editor/FragmanKurgu`):** **İki Dünya → Fragman → Kurguyu oluştur (MP4)**. Plan koddadır: parçalar (kesme, çapraz geçiş, kararma, alt üçte bire bindirilen yazı), müzik (Menü ninnisi → Action Techno'nun vuruş girişi yavruların koşusuna denk → final müziği), ortam sesi ve vurgular. Unity'nin `MediaEncoder`'ı H.264 + AAC yazar: `Recordings/Fragman/IkiDunya_Fragman.mp4`.
+- **Model ya da sahne değişince:** çekimleri yeniden kaydet, kurguyu yeniden oluştur. Çekim kayıt sırasında `.cs` düzenlenirse Unity Play'de derler ve çekim yarıda kalır.
+- **`GameInput.Otomatik` (`OtomatikGirdi`):** atanınca kaplumbağa girdileri (hareket, bakış, Shift, Space, E, kazma) oyuncudan değil bundan okunur; null iken (her zaman, oyun içinde) gerçek girdi. Sadece fragman çekimi kullanır.
+- **Bilinen:** Çöp seli parkurunun dalgası kamerada okunmuyor (sahne gri kutu, su ufukta ince çizgi); fragmanda sadece ay ve çöp yığını görünür. İlk yüzüşte sinema kamerası yavruya yaklaşmıyor (yavru uzakta küçük kalıyor).

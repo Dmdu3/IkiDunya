@@ -50,18 +50,21 @@ namespace IkiDunya.Core
         private static InputAction gelistiriciPerformans;
         private static InputAction gelistiriciPanel;
 
+        /// <summary>Otomatik sürüş (fragman çekimi): atanınca kaplumbağa girdileri oyuncudan değil bundan okunur; null iken gerçek girdi.</summary>
+        public static OtomatikGirdi Otomatik { get; set; }
+
         // Kaplumbağa bölümleri (birinci şahıs)
-        public static Vector2 Hareket => Oyunda ? hareket.ReadValue<Vector2>() : Vector2.zero;          // WASD
-        public static Vector2 Bakis => Oyunda ? bakis.ReadValue<Vector2>() : Vector2.zero;              // fare hareketi
-        public static Vector2 BakisCubugu => Oyunda ? bakisCubugu.ReadValue<Vector2>() : Vector2.zero;  // oyun kolu sağ çubuk (−1..1)
-        public static bool HizliBasili => Oyunda ? hizli.IsPressed() : false;                    // Shift: anne hızlı, yavru sürüyü dağıtır
-        public static bool ZiplaDalBasildi => Oyunda ? ziplaDal.WasPressedThisFrame() : false;   // Space
-        public static bool ZiplaDalBasili => Oyunda ? ziplaDal.IsPressed() : false;              // Space basılı (denizde yüzeye çık)
-        public static bool EtkilesBasili => Oyunda ? etkiles.IsPressed() : false;                // E basılı tut
-        public static bool EtkilesBasildi => Oyunda ? etkiles.WasPressedThisFrame() : false;     // E bas (ağdan kurtul, ye)
-        public static bool KazSolBasildi => Oyunda ? kazSol.WasPressedThisFrame() : false;       // A (kazma sırası)
-        public static bool KazSagBasildi => Oyunda ? kazSag.WasPressedThisFrame() : false;       // D (kazma sırası)
-        public static bool KazYukariBasildi => Oyunda ? kazYukari.WasPressedThisFrame() : false; // W (kum altında)
+        public static Vector2 Hareket => Otomatik != null ? Otomatik.Hareket : Oyunda ? hareket.ReadValue<Vector2>() : Vector2.zero;          // WASD
+        public static Vector2 Bakis => Otomatik != null ? Otomatik.Bakis : Oyunda ? bakis.ReadValue<Vector2>() : Vector2.zero;              // fare hareketi
+        public static Vector2 BakisCubugu => Otomatik != null ? Vector2.zero : Oyunda ? bakisCubugu.ReadValue<Vector2>() : Vector2.zero;  // oyun kolu sağ çubuk (−1..1)
+        public static bool HizliBasili => Otomatik != null ? Otomatik.Hizli : Oyunda && hizli.IsPressed();                    // Shift: anne hızlı, yavru sürüyü dağıtır
+        public static bool ZiplaDalBasildi => Otomatik != null ? Otomatik.ZiplaDalBasildi : Oyunda && ziplaDal.WasPressedThisFrame();   // Space
+        public static bool ZiplaDalBasili => Otomatik != null ? Otomatik.ZiplaDalBasili : Oyunda && ziplaDal.IsPressed();              // Space basılı (denizde yüzeye çık)
+        public static bool EtkilesBasili => Otomatik != null ? Otomatik.EtkilesBasili : Oyunda && etkiles.IsPressed();                // E basılı tut
+        public static bool EtkilesBasildi => Otomatik != null ? Otomatik.EtkilesBasildi : Oyunda && etkiles.WasPressedThisFrame();     // E bas (ağdan kurtul, ye)
+        public static bool KazSolBasildi => Otomatik != null ? Otomatik.KazSolBasildi : Oyunda && kazSol.WasPressedThisFrame();       // A (kazma sırası)
+        public static bool KazSagBasildi => Otomatik != null ? Otomatik.KazSagBasildi : Oyunda && kazSag.WasPressedThisFrame();       // D (kazma sırası)
+        public static bool KazYukariBasildi => Otomatik != null ? Otomatik.KazYukariBasildi : Oyunda && kazYukari.WasPressedThisFrame(); // W (kum altında)
         public static bool TermalBasildi => Oyunda ? termal.WasPressedThisFrame() : false;       // T
 
         // Genel
@@ -95,6 +98,7 @@ namespace IkiDunya.Core
         {
             Kapat();
             Kilitli = false;
+            Otomatik = null;
             KolKullaniliyor = false;
             CihazDegisti = null;
             harita = new InputActionMap("Oyun");
@@ -203,5 +207,20 @@ namespace IkiDunya.Core
             harita.Dispose();
             harita = null;
         }
+    }
+
+    /// <summary>Oyuncunun yerine verilen kaplumbağa girdileri (<see cref="GameInput.Otomatik"/>). "Basıldı" değerlerini atayan her kare geri kapatır.</summary>
+    public class OtomatikGirdi
+    {
+        public Vector2 Hareket { get; set; }
+        public Vector2 Bakis { get; set; }
+        public bool Hizli { get; set; }
+        public bool ZiplaDalBasildi { get; set; }
+        public bool ZiplaDalBasili { get; set; }
+        public bool EtkilesBasili { get; set; }
+        public bool EtkilesBasildi { get; set; }
+        public bool KazSolBasildi { get; set; }
+        public bool KazSagBasildi { get; set; }
+        public bool KazYukariBasildi { get; set; }
     }
 }
