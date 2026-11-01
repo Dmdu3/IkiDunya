@@ -21,6 +21,10 @@ namespace IkiDunya.Hazards
         [SerializeField] private GameObject siseKalibi;
         [SerializeField] private GameObject sezlongKalibi;
         [SerializeField] private GameObject tekerlekIziKalibi;
+        [Tooltip("Tilki çiti parçası (4 m); bölgenin kara tarafına dizilir. Boşsa çit görünmez.")]
+        [SerializeField] private GameObject tilkiCitiKalibi;
+        [Tooltip("Kafesli yuvanın etrafına konan kafes. Boşsa kafes görünmez.")]
+        [SerializeField] private GameObject yuvaKafesiKalibi;
         [SerializeField] private GameObject isikKalibi;
         [SerializeField] private Insan insanKalibi;
         [Tooltip("Farklı görünüşlü insanlar; doluysa her insan bunlardan biri (bölgeye göre sabit).")]
@@ -35,6 +39,8 @@ namespace IkiDunya.Hazards
         [SerializeField] private float isikUzakligi = 34f;
         [SerializeField] private float golgelikUzakligi = 20f;
         [SerializeField] private float tekerlekIziUzakligi = 17f;
+        [Tooltip("Tilki çitinin deniz kenarından uzaklığı (m); kumsalın kara tarafı.")]
+        [SerializeField] private float citUzakligi = 38f;
 
         private readonly List<GameObject> yapilar = new List<GameObject>();
         private readonly List<GameObject> izler = new List<GameObject>();
@@ -99,6 +105,7 @@ namespace IkiDunya.Hazards
 
                 if (bolge.Var(BolgeYapisi.Golgelik)) Koy(golgelikKalibi, kum.BolgeNoktasi(i, golgelikUzakligi), 0f);
                 if (bolge.Var(BolgeYapisi.AracIzi)) Koy(tekerlekIziKalibi, kum.BolgeNoktasi(i, tekerlekIziUzakligi), 0f);
+                if (bolge.Var(BolgeYapisi.TilkiCiti)) CitiKur(i);
 
                 for (int c = 0; c < bolge.Seviye(BolgeKatmani.Cop); c++)
                 {
@@ -127,6 +134,19 @@ namespace IkiDunya.Hazards
                     yapilar.Add(insan.gameObject);
                 }
             }
+
+            // Kafesli yuvaların etrafına tel kafes: kartların ve kafes görevinin kumsaldaki hali.
+            foreach (Yuva yuva in kumsal.Yuvalar)
+                if (yuva.Kafesli) Koy(yuvaKafesiKalibi, yuva.Konum, 0f);
+        }
+
+        /// <summary>Bölgenin kara tarafına 4 m'lik çit parçalarını dizer; parçalar bölge genişliğini kaplar.</summary>
+        private void CitiKur(int bolge)
+        {
+            if (tilkiCitiKalibi == null) return;
+            int adet = Mathf.Max(1, Mathf.CeilToInt(kum.BolgeGenisligi / 4f));
+            for (int p = 0; p < adet; p++)
+                Koy(tilkiCitiKalibi, kum.BolgeNoktasi(bolge, (p + 0.5f) / adet, citUzakligi), 0f);
         }
 
         private void IzleriKur()
