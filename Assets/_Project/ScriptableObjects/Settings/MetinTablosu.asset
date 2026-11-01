@@ -148,6 +148,10 @@ MonoBehaviour:
     metin: Bilgilendirme
   - id: gorev_bilgilendirme_aciklama
     metin: "Halk\u0131 bilgilendir; halk deste\u011Fi artar."
+  - id: gorev_geri_al
+    metin: "Atamay\u0131 geri al"
+  - id: engel_destek_dolu
+    metin: "Halk deste\u011Fi zaten en y\xFCksek d\xFCzeyde."
   - id: kanit_isi
     metin: "Kan\u0131t: Is\u0131"
   - id: kanit_isi_not
@@ -328,8 +332,27 @@ MonoBehaviour:
   - id: ipucu_dalga
     metin: "Dalga gelirken Space ile alt\u0131ndan dal."
   - id: ipucu_termal
-    metin: "T: termal g\xF6r\xFCn\xFCm. Kumun s\u0131cakl\u0131\u011F\u0131n\u0131
-      g\xF6r; \xE7ok s\u0131cak ya da \xE7ok serin yerden ka\xE7\u0131n."
+    metin: "T ile kumun s\u0131cakl\u0131k bantlar\u0131n\u0131 g\xF6r. Serin bant
+      daha \xE7ok erkek, s\u0131cak bant daha \xE7ok di\u015Fi yavruyla ili\u015Fkilidir.
+      K\u0131rm\u0131z\u0131 bantta daha az yumurta ya\u015Far; dalga \xE7izgisine
+      dikkat et."
+  - id: bilgi_yuva_sicaklik
+    metin: "Do\u011Fada yuvan\u0131n s\u0131cakl\u0131\u011F\u0131 yavrular\u0131n
+      cinsiyet da\u011F\u0131l\u0131m\u0131n\u0131 etkiler. A\u015F\u0131r\u0131
+      s\u0131cakl\u0131k yumurtalar\u0131n ya\u015Fam\u0131n\u0131 tehdit edebilir.
+      Oyunda s\u0131cakl\u0131k d\xF6rt bantla g\xF6sterilir."
+  - id: bilgi_yuva_kulucka
+    metin: "Caretta caretta yumurtalar\u0131 genellikle yakla\u015F\u0131k iki ayda
+      a\xE7\u0131l\u0131r; s\xFCre ko\u015Fullara g\xF6re de\u011Fi\u015Fir. Oyunda
+      yuvan\u0131n \xE7\u0131k\u0131\u015F sayac\u0131 sekiz haftad\u0131r."
+  - id: bilgi_yuva_donus
+    metin: "Yeti\u015Fkin di\u015Fi carettalar yuvalamak i\xE7in do\u011Fduklar\u0131
+      b\xF6lgenin k\u0131y\u0131lar\u0131na geri d\xF6nebilir."
+  - id: bilgi_rehberi
+    metin: Yuva rehberi
+  - id: bilgi_rehberi_ipucu
+    metin: "Yuva ve s\u0131cakl\u0131k bilgilerini insan turunda Yuva rehberinden
+      inceleyebilirsin."
   - id: ipucu_kazma
     metin: "Dur ve A ile D'ye s\u0131rayla basarak kaz. Yumurtlad\u0131ktan sonra
       ayn\u0131 \u015Fekilde \xF6rt."
@@ -477,6 +500,11 @@ MonoBehaviour:
     metin: Erkek
   - id: sonuc_devam
     metin: "Devam etmek i\xE7in t\u0131kla ya da {0} tu\u015Funa bas"
+  - id: sonuc_hic_yavru
+    metin: "Hi\xE7bir yavru denize ula\u015Famad\u0131. Kumdaki izler, yar\u0131m
+      kalan bir yolculu\u011Fu hat\u0131rlat\u0131yor."
+  - id: sonuc_tekrar
+    metin: "Son ka\xE7\u0131\u015F gecesini tekrar denemek i\xE7in devam et."
   - id: kayip_sicakkum
     metin: "S\u0131cak kum"
   - id: kayip_cop

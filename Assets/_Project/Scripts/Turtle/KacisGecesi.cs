@@ -48,8 +48,10 @@ namespace IkiDunya.Turtle
         private readonly SonucKapisi sonucKapisi = new SonucKapisi();
         private int[] nedenler = new int[Enum.GetValues(typeof(KayipNedeni)).Length];
         private bool gunUyarildi;
+        private int geceIziBaslangici;
 
         public Asama SuAnki { get; private set; }
+        public bool TekrarGerekli => OyunAkisi.SonKacisGecesi && kumsal.DenizeUlasanYavru == 0;
         /// <summary>Yavruların üstünde kalan kum katı.</summary>
         public int Kat { get; private set; }
         /// <summary>Yüzey sıcaklığı: 1 sıcak, 0 serin.</summary>
@@ -98,12 +100,15 @@ namespace IkiDunya.Turtle
         }
 
         /// <summary>Gecenin yuvası Bölüm 2'deki aynı sıradaki yuvadır.</summary>
-        private void Basla(int gece)
+        private void Basla(int gece, bool tekrar = false)
         {
+            geceIziBaslangici = kumsal.KayipIzleri.Count;
             bool yuvaVar = gece >= 1 && gece <= kumsal.Yuvalar.Count;
             yuvaKonumu = yuvaVar ? kumsal.Yuvalar[gece - 1].Konum : varsayilanYuva.position;
             yuvaBandi = yuvaVar ? kumsal.YuvaBandi(gece - 1) : kum.Bant(yuvaKonumu);
             yavruSayisi = yuvaVar ? kumsal.Yuvalar[gece - 1].Yumurta : ayarlar.VarsayilanYavruSayisi;
+            // Tüm yumurtalar daha önce kaybedildiyse tekrar denemesi oynanabilsin.
+            if (tekrar && yavruSayisi <= 0) yavruSayisi = ayarlar.VarsayilanYavruSayisi;
             kumdaKalan = 0;
             suruKuruldu = false;
             nedenler = new int[nedenler.Length];
@@ -242,6 +247,13 @@ namespace IkiDunya.Turtle
 
         private void SonucuKapat()
         {
+            if (TekrarGerekli)
+            {
+                kumsal.KayipIzleriniSonrasindanSil(geceIziBaslangici);
+                SonucKapandi?.Invoke();
+                Basla(OyunAkisi.SuAnkiAdim.Sira, true);
+                return;
+            }
             // Geçiş sürerken kabul edilmezse sonuç açık kalır, sonraki tıklamada tekrar denenir.
             if (OyunAkisi.Var && !OyunAkisi.AdimBitti()) return;
             SuAnki = Asama.Kapali;

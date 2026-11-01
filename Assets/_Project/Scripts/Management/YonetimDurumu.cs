@@ -25,7 +25,7 @@ namespace IkiDunya.Management
     /// <summary>İnsan kısmının kendi durumu: bütçe, halk desteği, paydaşlar, gönüllüler, açılan kanıtlar, oynanan kalıcı kartlar ve bakımları, uyarılar, olay zinciri, rapor.
     /// Kumsalın durumu KumsalDurumu'nda; bu asset kayda IOyunVerisi olarak girer.</summary>
     [CreateAssetMenu(menuName = "İki Dünya/Yönetim Durumu", fileName = "YonetimDurumu")]
-    public class YonetimDurumu : ScriptableObject, IOyunVerisi
+    public class YonetimDurumu : ScriptableObject, IOyunVerisi, IKorumaDurumu
     {
         [SerializeField] private YonetimAyarlari ayarlar;
 
@@ -81,6 +81,7 @@ namespace IkiDunya.Management
         public int EkKart => ekKart;
         public bool Kopek => kopek;
         public bool Korunuyor(int bolge) => korunanBolgeler.Contains(bolge);
+        public bool KorumaAlaniVar => korunanBolgeler.Count > 0;
 
         // ---- Paydaşlar ----
 
@@ -271,6 +272,13 @@ namespace IkiDunya.Management
         public void GonulluKullan()
         {
             kullanilanGonullu++;
+            Degisti?.Invoke();
+        }
+
+        public void GonulluIadeEt()
+        {
+            if (kullanilanGonullu <= 0) return;
+            kullanilanGonullu--;
             Degisti?.Invoke();
         }
 

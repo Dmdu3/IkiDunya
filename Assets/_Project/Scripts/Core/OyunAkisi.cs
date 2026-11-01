@@ -31,6 +31,31 @@ namespace IkiDunya.Core
         public static OyunAyarlari Ayarlar => ornek != null ? ornek.ayarlar : null;
         /// <summary>Ekran kararıp açılırken (sahne yükleniyor, bölüm başlığı) true; ipuçları bu sırada beklemeye alınır.</summary>
         public static bool GecisSuruyor => ornek != null && ornek.yukleniyor;
+        public static bool KorumaAlaniVar
+        {
+            get
+            {
+                if (ornek == null) return false;
+                foreach (IOyunVerisi veri in ornek.veriler)
+                    if (veri is IKorumaDurumu koruma && koruma.KorumaAlaniVar) return true;
+                return false;
+            }
+        }
+        /// <summary>İlk yüzüşten önce başka kaçış gecesi kalmadıysa bu son gecedir.</summary>
+        public static bool SonKacisGecesi
+        {
+            get
+            {
+                if (ornek == null || ornek.parkur || SuAnkiAdim.Tur != AdimTuru.KacisGecesi) return false;
+                for (int i = ornek.sira + 1; i < ornek.akis.Count; i++)
+                {
+                    Adim adim = ornek.akis[i];
+                    if (adim.Tur == AdimTuru.IlkYuzus) return true;
+                    if (adim.Tur == AdimTuru.KacisGecesi || (adim.Tur == AdimTuru.Parkur && adim.Bolum == 4)) return false;
+                }
+                return false;
+            }
+        }
 
         private static OyunAkisi ornek;
 

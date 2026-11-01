@@ -252,6 +252,33 @@ namespace IkiDunya.Management
             }
         }
 
+        /// <summary>Bu turdaki geçerli bir gönüllü atamasının etkisini geri alır.</summary>
+        public bool GorevGeriAl(GorevTanimi gorev, int hedef)
+        {
+            switch (gorev.Etki)
+            {
+                case GorevEtkisi.Temizlik:
+                    kumsal.KatmanDegistir(hedef, BolgeKatmani.Cop, 1);
+                    break;
+                case GorevEtkisi.Devriye:
+                    kumsal.YapiKaldir(hedef, BolgeYapisi.Devriye);
+                    break;
+                case GorevEtkisi.Kafes:
+                    kumsal.YuvaKafesiniKaldir(hedef);
+                    break;
+                case GorevEtkisi.GolgeSulama:
+                    if (!kumsal.GeciciYuvaBantGeriAl(hedef, -1)) return false;
+                    break;
+                case GorevEtkisi.Bilgilendirme:
+                    yonetim.DestekDegistir(-1);
+                    break;
+                default:
+                    return false;
+            }
+            yonetim.GonulluIadeEt();
+            return true;
+        }
+
         // ---- Olaylar ----
 
         /// <summary>Olay havuza girer mi: koşulu (paydaş küs, en az tur) sağlanıyor mu; sadece zincirle gelenler girmez.</summary>

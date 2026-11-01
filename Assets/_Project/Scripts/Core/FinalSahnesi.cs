@@ -37,6 +37,8 @@ namespace IkiDunya.Core
         private float jenerikBaslangicY;
         private float gecen;
         private bool aktif;
+        private Image finalGorseli;
+        private Sprite finalSprite;
 
         private void Awake()
         {
@@ -57,6 +59,7 @@ namespace IkiDunya.Core
             sicakIzler.SetActive(!kumsal.TemizEnerji);
             baslik.text = metinler.Al("final_30_yil");
             kurtarilan.text = $"{metinler.Al("final_kurtarilan")} {kumsal.DenizeUlasanYavru}";
+            GorseliKur();
 
             if (kamera != null) kamera.SetPositionAndRotation(kameraIlkYer, kameraIlkDonus);
             if (yazilar != null) yazilar.alpha = 0f;
@@ -66,6 +69,36 @@ namespace IkiDunya.Core
                 if (jenerik.TryGetComponent(out Text jenerikYazisi)) jenerikYazisi.text = metinler.Al("jenerik");
                 jenerik.gameObject.SetActive(false);
             }
+        }
+
+        private void GorseliKur()
+        {
+            if (yazilar == null) return;
+            if (finalGorseli == null)
+            {
+                var nesne = new GameObject("FinalGorseli", typeof(RectTransform), typeof(Image));
+                nesne.layer = yazilar.gameObject.layer;
+                nesne.transform.SetParent(yazilar.transform, false);
+                nesne.transform.SetAsFirstSibling();
+                var rect = (RectTransform)nesne.transform;
+                rect.anchorMin = new Vector2(.53f, .22f); rect.anchorMax = new Vector2(.96f, .70f);
+                rect.offsetMin = rect.offsetMax = Vector2.zero;
+                finalGorseli = nesne.GetComponent<Image>();
+                finalGorseli.preserveAspect = true;
+                finalGorseli.raycastTarget = false;
+            }
+            string kaynak = kumsal.TemizEnerji ? "Final_Temiz" : "Final_Sicak";
+            if (OyunAkisi.KorumaAlaniVar) kaynak += "_Koruma";
+            Texture2D doku = Resources.Load<Texture2D>(kaynak);
+            if (finalSprite != null) Destroy(finalSprite);
+            finalSprite = doku != null ? Sprite.Create(doku, new Rect(0, 0, doku.width, doku.height), new Vector2(.5f, .5f)) : null;
+            finalGorseli.sprite = finalSprite;
+            finalGorseli.enabled = finalSprite != null;
+        }
+
+        private void OnDestroy()
+        {
+            if (finalSprite != null) Destroy(finalSprite);
         }
 
         private void OnDisable()

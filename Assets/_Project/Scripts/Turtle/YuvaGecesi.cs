@@ -68,6 +68,7 @@ namespace IkiDunya.Turtle
         {
             Ipucu.Goster("ipucu_termal");
             Ipucu.Goster("ipucu_kazma");
+            Ipucu.Goster("bilgi_rehberi_ipucu");
             kalanDeneme = ayarlar.DenemeHakki;
             DenemeBaslat();
         }

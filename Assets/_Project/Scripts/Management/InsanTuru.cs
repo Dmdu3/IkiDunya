@@ -12,6 +12,13 @@ namespace IkiDunya.Management
     {
         public enum Asama { Kapali, Rapor, Gonulluler, Kartlar, Olay, Bitiyor }
 
+        public sealed class GorevAtamasi
+        {
+            public GorevTanimi Gorev { get; }
+            public int Hedef { get; }
+            public GorevAtamasi(GorevTanimi gorev, int hedef) { Gorev = gorev; Hedef = hedef; }
+        }
+
         [SerializeField] private KumsalDurumu kumsal;
         [SerializeField] private YonetimDurumu yonetim;
         [SerializeField] private KumSicakligi kum;
@@ -19,10 +26,12 @@ namespace IkiDunya.Management
 
         private Etkiler etkiler;
         private readonly List<KartTanimi> el = new List<KartTanimi>();
+        private readonly List<GorevAtamasi> atamalar = new List<GorevAtamasi>();
         private int baslangicKaresi;
 
         public Asama SuAnki { get; private set; }
         public IReadOnlyList<KartTanimi> El => el;
+        public IReadOnlyList<GorevAtamasi> Atamalar => atamalar;
         public OlayTanimi Olay { get; private set; }
         public bool OlaySecildi { get; private set; }
         /// <summary>Haritada hedef bekleyen kart ya da görev (yoksa null).</summary>
@@ -71,6 +80,7 @@ namespace IkiDunya.Management
             kumsal.BirHaftaGecti();
             yonetim.TurBasla(kumsal);
             el.Clear();
+            atamalar.Clear();
             Olay = null;
             OlaySecildi = false;
             Ipucu.Goster("ipucu_kanit");
@@ -120,6 +130,7 @@ namespace IkiDunya.Management
                     Ipucu.Goster("ipucu_gonullu");
                     break;
                 case Asama.Gonulluler:
+                    atamalar.Clear();
                     ElDagit();
                     AsamayaGec(Asama.Kartlar);
                     Ipucu.Goster("ipucu_kart");
@@ -155,6 +166,7 @@ namespace IkiDunya.Management
         {
             if (yonetim.BosGonullu(kumsal) <= 0) return "engel_gonullu_yok";
             if (gorev.Hedef == Hedef.Yuva && kumsal.Yuvalar.Count == 0) return "engel_yuva_yok";
+            if (gorev.Etki == GorevEtkisi.Bilgilendirme && yonetim.Destek >= yonetim.Ayarlar.DestekEnFazla) return "engel_destek_dolu";
             return null;
         }
 
@@ -170,8 +182,24 @@ namespace IkiDunya.Management
                 return;
             }
             BekleyeniBirak();
-            if (gorev.Hedef == Hedef.Yok) etkiler.GorevVer(gorev, -1);
+            if (gorev.Hedef == Hedef.Yok) GoreviUygula(gorev, -1);
             else BekleyenGorev = gorev;
+            Degisti?.Invoke();
+        }
+
+        private void GoreviUygula(GorevTanimi gorev, int hedef)
+        {
+            etkiler.GorevVer(gorev, hedef);
+            atamalar.Add(new GorevAtamasi(gorev, hedef));
+        }
+
+        public void GoreviGeriAl(int sira)
+        {
+            if (SuAnki != Asama.Gonulluler || sira < 0 || sira >= atamalar.Count) return;
+            GorevAtamasi atama = atamalar[sira];
+            if (!etkiler.GorevGeriAl(atama.Gorev, atama.Hedef)) return;
+            atamalar.RemoveAt(sira);
+            IlerlemeOnayiBekliyor = false;
             Degisti?.Invoke();
         }
 
@@ -326,7 +354,7 @@ namespace IkiDunya.Management
                     return;
                 }
                 Ses.Cal(SesTuru.DugmeTikla);
-                etkiler.GorevVer(BekleyenGorev, hedef);
+                GoreviUygula(BekleyenGorev, hedef);
             }
             BekleyeniBirak();
             Degisti?.Invoke();
