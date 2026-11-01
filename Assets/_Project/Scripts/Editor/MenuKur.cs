@@ -165,13 +165,20 @@ namespace IkiDunya.Editor
             var kutu = new GameObject("Kutu", typeof(RectTransform), typeof(Image));
             kutu.layer = LayerMask.NameToLayer("UI");
             kutu.transform.SetParent(tuval, false);
-            GriKumsalKur.Yasla((RectTransform)kutu.transform, new Vector2(0.25f, 0.14f), new Vector2(0.75f, 0.24f));
-            kutu.GetComponent<Image>().color = new Color(0f, 0f, 0f, 0.65f);
+            // Üstte ortada (yönetimin üst çubuğunun altı); boyunu ve enini panel yazıya göre verir.
+            var kutuAlani = (RectTransform)kutu.transform;
+            kutuAlani.anchorMin = kutuAlani.anchorMax = kutuAlani.pivot = new Vector2(0.5f, 1f);
+            kutuAlani.anchoredPosition = new Vector2(0f, -114f);
+            kutuAlani.sizeDelta = new Vector2(900f, 80f);
+            kutu.GetComponent<Image>().color = new Color(0f, 0f, 0f, 0.75f);
 
             var yaziNesnesi = new GameObject("Yazi", typeof(RectTransform), typeof(Text));
             yaziNesnesi.layer = LayerMask.NameToLayer("UI");
             yaziNesnesi.transform.SetParent(kutu.transform, false);
-            GriKumsalKur.Yasla((RectTransform)yaziNesnesi.transform, new Vector2(0.03f, 0.05f), new Vector2(0.97f, 0.95f));
+            var yaziAlani = (RectTransform)yaziNesnesi.transform;
+            GriKumsalKur.Yasla(yaziAlani, Vector2.zero, Vector2.one);
+            yaziAlani.offsetMin = new Vector2(24f, 14f);
+            yaziAlani.offsetMax = new Vector2(-24f, -14f);
             Text yazi = yaziNesnesi.GetComponent<Text>();
             yazi.font = Resources.GetBuiltinResource<Font>("LegacyRuntime.ttf");
             yazi.fontSize = 30;
@@ -208,13 +215,18 @@ namespace IkiDunya.Editor
 
         private static AyarlarPaneli AyarlarKur(Transform ebeveyn, GameObject oncekiPanel, MetinTablosu metinler)
         {
-            // İki sütun: solda ses, fare, ekran ve erişilebilirlik; sağda tuşlar.
-            var kok = new GameObject("AyarlarPaneli", typeof(RectTransform));
+            // Tam ekran koyu zemin (arkadaki başlık ve düğmeler görünmesin); içinde iki sütun: solda ses, fare, ekran ve erişilebilirlik; sağda tuşlar.
+            var kok = new GameObject("AyarlarPaneli", typeof(RectTransform), typeof(Image));
             kok.layer = LayerMask.NameToLayer("UI");
             kok.transform.SetParent(ebeveyn, false);
-            GriKumsalKur.Yasla((RectTransform)kok.transform, new Vector2(0.08f, 0.03f), new Vector2(0.92f, 0.97f));
+            GriKumsalKur.Yasla((RectTransform)kok.transform, Vector2.zero, Vector2.one);
+            kok.GetComponent<Image>().color = new Color(0.04f, 0.1f, 0.15f, 1f);
+            var icerik = new GameObject("Icerik", typeof(RectTransform));
+            icerik.layer = LayerMask.NameToLayer("UI");
+            icerik.transform.SetParent(kok.transform, false);
+            GriKumsalKur.Yasla((RectTransform)icerik.transform, new Vector2(0.08f, 0.04f), new Vector2(0.92f, 0.96f));
 
-            Transform sol = Liste("Genel", kok.transform, new Vector2(0f, 0f), new Vector2(0.48f, 1f));
+            Transform sol = Liste("Genel", icerik.transform, new Vector2(0f, 0f), new Vector2(0.46f, 1f));
             sol.GetComponent<VerticalLayoutGroup>().spacing = 6f;
             Yazi("SesYazisi", sol, Vector2.zero, Vector2.zero, 24, "ayar_ses", metinler);
             Slider ses = Kaydirici(sol, 0f, 1f);
@@ -228,13 +240,15 @@ namespace IkiDunya.Editor
             Dropdown cozunurluk = Acilir(sol);
             Yazi("KaliteYazisi", sol, Vector2.zero, Vector2.zero, 24, "ayar_kalite", metinler);
             Dropdown kalite = Acilir(sol);
-            Button varsayilan = Dugme(sol, "menu_varsayilan", metinler);
             Button geri = Dugme(sol, "menu_geri", metinler);
 
-            Transform sag = Liste("Tuslar", kok.transform, new Vector2(0.52f, 0f), new Vector2(1f, 1f));
+            Transform sag = Liste("Tuslar", icerik.transform, new Vector2(0.52f, 0f), new Vector2(1f, 1f));
             sag.GetComponent<VerticalLayoutGroup>().spacing = 6f;
             Yazi("TuslarYazisi", sag, Vector2.zero, Vector2.zero, 24, "ayar_tuslar", metinler);
             foreach ((string id, string eylem, int sira) in TusSatirlari) TusSatiriKur(sag, id, eylem, sira, metinler);
+            // Tuşları sıfırlayan düğme tuş sütununda; sol sütun en büyük yazı boyutunda da sığsın.
+            Button varsayilan = Dugme(sag, "menu_varsayilan", metinler);
+            varsayilan.GetComponent<LayoutElement>().preferredHeight = 52f;
 
             var panel = kok.AddComponent<AyarlarPaneli>();
             GriKumsalKur.Bagla(panel, "ses", ses);
@@ -262,6 +276,7 @@ namespace IkiDunya.Editor
             Text yazi = nesne.GetComponentInChildren<Text>();
             YaziAyarla(yazi, 24, id, metinler);
             yazi.alignment = TextAnchor.MiddleLeft;
+            ((RectTransform)yazi.transform).offsetMin += new Vector2(12f, 0f);
             yazi.color = Color.white;
             return nesne.GetComponent<Toggle>();
         }
@@ -393,11 +408,22 @@ namespace IkiDunya.Editor
             var yatay = satir.GetComponent<HorizontalLayoutGroup>();
             yatay.spacing = 12f;
             yatay.childControlWidth = yatay.childControlHeight = true;
-            yatay.childForceExpandWidth = yatay.childForceExpandHeight = true;
+            yatay.childForceExpandWidth = false;
+            yatay.childForceExpandHeight = true;
 
+            // Ad kalan genişliği alır, tuş düğmeleri aynı enle tek sütun olur.
             Yazi("Ad", satir.transform, Vector2.zero, Vector2.zero, 22, id, metinler);
+            Text ad = satir.transform.Find("Ad").GetComponent<Text>();
+            ad.alignment = TextAnchor.MiddleLeft;
+            LayoutElement adYeri = ad.GetComponent<LayoutElement>();
+            adYeri.minWidth = 0f;
+            adYeri.preferredWidth = 0f;
+            adYeri.flexibleWidth = 1f;
 
-            var dugme = new GameObject("Tus", typeof(RectTransform), typeof(Image), typeof(Button));
+            var dugme = new GameObject("Tus", typeof(RectTransform), typeof(Image), typeof(Button), typeof(LayoutElement));
+            LayoutElement tusYeri = dugme.GetComponent<LayoutElement>();
+            tusYeri.minWidth = tusYeri.preferredWidth = 200f;
+            tusYeri.flexibleWidth = 0f;
             dugme.layer = ui;
             dugme.transform.SetParent(satir.transform, false);
             dugme.GetComponent<Image>().color = new Color(0.92f, 0.9f, 0.85f);

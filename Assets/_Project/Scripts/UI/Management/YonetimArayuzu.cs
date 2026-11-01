@@ -51,6 +51,8 @@ namespace IkiDunya.UI.Management
         private Text kartBilgiYazisi;
         private Text kartBilgiTuru, kartBilgiAdi, kartBilgiEk;
         private Text haftaMetni, butceMetni, gonulluMetni, destekMetni, iliskiMetni;
+        private Text haftaEtiketi, butceEtiketi, gonulluEtiketi, destekEtiketi;
+        private GameObject hedefSeridi;
         private Text solBaslik;
         private RectTransform yuvaGorunumu, yuvaIcerigi, bolgeKutusu;
         private readonly List<GameObject> yuvaKartlari = new List<GameObject>();
@@ -116,11 +118,14 @@ namespace IkiDunya.UI.Management
 
             YonetimDurumu y = tur.Yonetim;
             KumsalDurumu k = tur.Kumsal;
-            haftaMetni.text = $"<size=23><color=#3E5C59>{Al("yonetim_tur")}</color></size>\n<b>{y.Tur}</b>";
-            butceMetni.text = $"<size=23><color=#3E5C59>{Al("yonetim_butce")}</color></size>\n<b>{y.Butce}</b>";
-            if (y.Bakim > 0) butceMetni.text += $" <size=20>(−{y.Bakim})</size>";
-            gonulluMetni.text = $"<size=23><color=#3E5C59>{Al("yonetim_gonullu")}</color></size>\n<b>{y.BosGonullu(k)}/{y.Gonullu(k)}</b>";
-            destekMetni.text = $"<size=23><color=#3E5C59>{Al("yonetim_destek")}</color></size>\n<b>{y.Destek}/{y.Ayarlar.DestekEnFazla}</b>";
+            haftaEtiketi.text = Al("yonetim_tur");
+            haftaMetni.text = $"<b>{y.Tur}</b>";
+            butceEtiketi.text = Al("yonetim_butce");
+            butceMetni.text = y.Bakim > 0 ? $"<b>{y.Butce}</b> (−{y.Bakim})" : $"<b>{y.Butce}</b>";
+            gonulluEtiketi.text = Al("yonetim_gonullu");
+            gonulluMetni.text = $"<b>{y.BosGonullu(k)}/{y.Gonullu(k)}</b>";
+            destekEtiketi.text = Al("yonetim_destek");
+            destekMetni.text = $"<b>{y.Destek}/{y.Ayarlar.DestekEnFazla}</b>";
             var ust = new StringBuilder();
             foreach (Paydas p in System.Enum.GetValues(typeof(Paydas)))
                 ust.Append($"{Al(PaydasId(p))} {Isaretli(y.Iliski(p))}  ");
@@ -142,7 +147,7 @@ namespace IkiDunya.UI.Management
             kartPaneli.SetActive(tur.SuAnki == InsanTuru.Asama.Kartlar && !hedefSeciliyor);
             olayPaneli.SetActive(tur.SuAnki == InsanTuru.Asama.Olay);
             ileriDugmesi.gameObject.SetActive(tur.SuAnki != InsanTuru.Asama.Olay && !hedefSeciliyor);
-            if (hedefVazgec != null) hedefVazgec.gameObject.SetActive(hedefSeciliyor);
+            if (hedefSeridi != null) hedefSeridi.SetActive(hedefSeciliyor);
             IleriYazisi();
 
             Rapor();
@@ -164,7 +169,7 @@ namespace IkiDunya.UI.Management
             ileriDugmesi.GetComponentInChildren<Text>(true).text = Al("yonetim_ileri") + tus;
         }
 
-        /// <summary>Sol panel boşken (yuva yok, imleç haritada değil) haritayı kapatmasın.</summary>
+        /// <summary>Sol panel boşken (yuva yok, imleç haritada değil) haritayı kapatmasın. Boyu içeriğe göre, üst çubukla alttaki panelin arasına sığacak kadar.</summary>
         private void SolPanel()
         {
             bool yuvaVar = yuvaKartlari.Count > 0;
@@ -175,26 +180,34 @@ namespace IkiDunya.UI.Management
             solBaslik.text = yuvaVar ? Al("yuva") : $"{Al("bolge")} {harita.Ustundeki + 1}";
             int bolgeSatiri = bolgeVar ? bolgeBilgisi.text.TrimEnd().Split('\n').Length : 0;
             float yuvaAlani = yuvaKartlari.Count * 116f;
-            float bolgeAlani = bolgeVar ? (bolgeSatiri * 27f + 24f) : 0f;
-            float yukseklik = Mathf.Clamp(.06f + (yuvaAlani + bolgeAlani) / 1080f, .17f, .60f);
-            Konum((RectTransform)yuvaListesi.transform.parent, .015f, .875f - yukseklik, .22f, .875f);
-            float baslikYuksekligi = Mathf.Clamp(.045f / yukseklik, .10f, .28f);
-            float govdeUst = 1f - baslikYuksekligi - .03f;
-            Konum((RectTransform)solBaslik.transform, .06f, govdeUst, .94f, .98f);
-            float govdeAlt = .06f;
+            float bolgeAlani = bolgeVar ? (bolgeSatiri * 30f + 40f) : 0f;
+            float ust = UstBosluk + UstYukseklik + Aralik;
+            float bos = ((RectTransform)kok.transform).rect.height - ust - AltPanelUstu() - Aralik;
+            float yukseklik = Mathf.Clamp(SolBaslikYuksekligi + SolAltPay + yuvaAlani + bolgeAlani, 160f, Mathf.Max(160f, bos));
+            Yerles((RectTransform)yuvaListesi.transform.parent, new Vector2(0f, 1f), new Vector2(Kenar, -ust), new Vector2(SolGenislik, yukseklik));
+            Kenarlik((RectTransform)solBaslik.transform, new Vector2(0f, 1f), Vector2.one, 22f, -SolBaslikYuksekligi + 6f, 22f, 8f);
+            float govde = yukseklik - SolBaslikYuksekligi - SolAltPay;
             if (yuvaVar && bolgeVar)
             {
-                float ayrim = govdeAlt + (govdeUst - govdeAlt) * bolgeAlani / (yuvaAlani + bolgeAlani);
-                Konum(yuvaGorunumu, .05f, ayrim + .025f, .95f, govdeUst);
-                Konum(bolgeKutusu, .05f, govdeAlt, .95f, ayrim);
+                float bolgeBoyu = govde * bolgeAlani / (yuvaAlani + bolgeAlani);
+                Kenarlik(yuvaGorunumu, Vector2.zero, Vector2.one, 20f, SolAltPay + bolgeBoyu + 5f, 20f, SolBaslikYuksekligi);
+                Kenarlik(bolgeKutusu, Vector2.zero, new Vector2(1f, 0f), 20f, SolAltPay, 20f, -(SolAltPay + bolgeBoyu - 5f));
             }
             else
             {
-                Konum(yuvaGorunumu, .05f, govdeAlt, .95f, govdeUst);
-                Konum(bolgeKutusu, .05f, govdeAlt, .95f, govdeUst);
+                Kenarlik(yuvaGorunumu, Vector2.zero, Vector2.one, 20f, SolAltPay, 20f, SolBaslikYuksekligi);
+                Kenarlik(bolgeKutusu, Vector2.zero, Vector2.one, 20f, SolAltPay, 20f, SolBaslikYuksekligi);
             }
             yuvaGorunumu.gameObject.SetActive(yuvaVar);
             bolgeKutusu.gameObject.SetActive(bolgeVar);
+        }
+
+        /// <summary>Alttaki açık panelin (ya da hedef şeridinin) üst kenarı, tuvalin altından.</summary>
+        private float AltPanelUstu()
+        {
+            if (hedefSeridi != null && hedefSeridi.activeSelf) return AltBosluk + HedefYuksekligi;
+            if (kartPaneli.activeSelf) return AltBosluk + KartPaneliYuksekligi;
+            return AltBosluk + AltPaneliYuksekligi;
         }
 
         private void Rapor()
@@ -242,37 +255,35 @@ namespace IkiDunya.UI.Management
             foreach (GameObject panel in new[] { ustBilgi.transform.parent.gameObject, yuvaListesi.transform.parent.gameObject, raporPaneli, gorevPaneli, kartPaneli, olayPaneli })
                 if (panel != null && panel.TryGetComponent(out Image zemin)) Yuvarlak(zemin, kagit);
 
-            Konum((RectTransform)ustBilgi.transform.parent, .015f, .89f, .985f, .99f);
+            // Yerleşim tuval biriminde (1920x1080'e göre): yazı boyutu ayarı tuvali büyütünce paneller de yazıyla birlikte büyür.
+            // En büyük ayarda tuval 1280x720'ye iner; üst çubuk, sol panel ve alt panel buna da sığacak boyda.
+            Kenarlik((RectTransform)ustBilgi.transform.parent, new Vector2(0f, 1f), Vector2.one, Kenar, -(UstBosluk + UstYukseklik), Kenar, UstBosluk);
             Transform ustPanel = ustBilgi.transform.parent;
             ustBilgi.gameObject.SetActive(false);
-            BilgiZemini(ustPanel, .015f, .115f); BilgiZemini(ustPanel, .12f, .22f);
-            BilgiZemini(ustPanel, .225f, .34f); BilgiZemini(ustPanel, .345f, .48f);
-            BilgiZemini(ustPanel, .49f, .845f);
-            BilgiZemini(ustPanel, .85f, .985f, new Color32(224, 237, 226, 255));
-            haftaMetni = KartMetni("Hafta", ustPanel, new Vector2(.025f, .08f), new Vector2(.11f, .92f), 30, TextAnchor.MiddleLeft);
-            butceMetni = KartMetni("Butce", ustPanel, new Vector2(.13f, .08f), new Vector2(.215f, .92f), 30, TextAnchor.MiddleLeft);
-            gonulluMetni = KartMetni("Gonullu", ustPanel, new Vector2(.235f, .08f), new Vector2(.335f, .92f), 30, TextAnchor.MiddleLeft);
-            destekMetni = KartMetni("Destek", ustPanel, new Vector2(.355f, .08f), new Vector2(.475f, .92f), 30, TextAnchor.MiddleLeft);
-            iliskiMetni = KartMetni("Iliskiler", ustPanel, new Vector2(.50f, .08f), new Vector2(.835f, .92f), 23, TextAnchor.MiddleLeft);
-            iliskiMetni.resizeTextForBestFit = true; iliskiMetni.resizeTextMinSize = 20; iliskiMetni.resizeTextMaxSize = 23;
-            Konum((RectTransform)asamaBasligi.transform, .855f, .1f, .98f, .9f);
-            asamaBasligi.color = turkuaz; asamaBasligi.fontStyle = FontStyle.Bold; asamaBasligi.fontSize = 25;
+            haftaMetni = KaynakHucresi(ustPanel, .01f, .125f, out haftaEtiketi);
+            butceMetni = KaynakHucresi(ustPanel, .13f, .245f, out butceEtiketi);
+            gonulluMetni = KaynakHucresi(ustPanel, .25f, .365f, out gonulluEtiketi);
+            destekMetni = KaynakHucresi(ustPanel, .37f, .50f, out destekEtiketi);
+            BilgiZemini(ustPanel, .51f, .845f);
+            BilgiZemini(ustPanel, .85f, .99f, new Color32(224, 237, 226, 255));
+            iliskiMetni = KartMetni("Iliskiler", ustPanel, new Vector2(.52f, .12f), new Vector2(.835f, .88f), 23, TextAnchor.MiddleLeft);
+            Konum((RectTransform)asamaBasligi.transform, .855f, .12f, .985f, .88f);
+            asamaBasligi.color = turkuaz; asamaBasligi.fontStyle = FontStyle.Bold; ArayuzOlcegi.Boyut(asamaBasligi, 25);
             asamaBasligi.alignment = TextAnchor.MiddleCenter;
-            Konum((RectTransform)yuvaListesi.transform.parent, .015f, .56f, .22f, .89f);
             foreach (GameObject panel in new[] { raporPaneli, gorevPaneli, olayPaneli })
-                Konum((RectTransform)panel.transform, .015f, .02f, .86f, .26f);
-            Konum((RectTransform)kartPaneli.transform, .015f, .02f, .86f, .35f);
+                AltSerit((RectTransform)panel.transform, AltPaneliYuksekligi);
+            AltSerit((RectTransform)kartPaneli.transform, KartPaneliYuksekligi);
             PanelBasligi(raporPaneli, "asama_rapor");
             PanelBasligi(gorevPaneli, "asama_gonulluler");
             PanelBasligi(kartPaneli, "asama_kartlar");
             PanelBasligi(olayPaneli, "asama_olay");
-            Konum((RectTransform)gorevDugmeleri, .02f, .06f, .98f, .74f);
-            Konum((RectTransform)kartDugmeleri, .02f, .06f, .98f, .80f);
-            Konum((RectTransform)raporYazisi.transform, .03f, .07f, .97f, .73f);
-            Konum((RectTransform)olayYazisi.transform, .03f, .48f, .97f, .74f);
-            Konum((RectTransform)aDugmesi.transform, .03f, .07f, .485f, .43f);
-            Konum((RectTransform)bDugmesi.transform, .515f, .07f, .97f, .43f);
-            Konum((RectTransform)ileriDugmesi.transform, .875f, .02f, .985f, .095f);
+            Kenarlik((RectTransform)gorevDugmeleri, Vector2.zero, Vector2.one, 16f, 14f, 16f, PanelBasligiYuksekligi);
+            Kenarlik((RectTransform)kartDugmeleri, Vector2.zero, Vector2.one, 16f, 14f, 16f, PanelBasligiYuksekligi);
+            Kenarlik((RectTransform)raporYazisi.transform, Vector2.zero, Vector2.one, 32f, 16f, 32f, PanelBasligiYuksekligi + 4f);
+            Kenarlik((RectTransform)olayYazisi.transform, Vector2.zero, Vector2.one, 32f, 136f, 32f, PanelBasligiYuksekligi + 4f);
+            Kenarlik((RectTransform)aDugmesi.transform, Vector2.zero, new Vector2(.5f, 0f), 24f, 16f, 8f, -126f);
+            Kenarlik((RectTransform)bDugmesi.transform, new Vector2(.5f, 0f), new Vector2(1f, 0f), 8f, 16f, 24f, -126f);
+            Yerles((RectTransform)ileriDugmesi.transform, new Vector2(1f, 0f), new Vector2(-Kenar, AltBosluk), new Vector2(IleriGenisligi, IleriYuksekligi));
             Yuvarlak(ileriDugmesi.GetComponent<Image>(), turkuaz);
             ileriDugmesi.GetComponentInChildren<Text>().color = Color.white;
             foreach (Button secenek in new[] { aDugmesi, bDugmesi })
@@ -282,16 +293,26 @@ namespace IkiDunya.UI.Management
             solBaslik.fontStyle = FontStyle.Bold; solBaslik.color = turkuaz;
             yuvaListesi.gameObject.SetActive(false);
             YuvaPaneliKur(sol);
-            bolgeBilgisi.fontSize = 24;
-            bolgeBilgisi.resizeTextForBestFit = true; bolgeBilgisi.resizeTextMinSize = 21; bolgeBilgisi.resizeTextMaxSize = 24;
-            raporYazisi.fontSize = 26; olayYazisi.fontSize = 26;
-            hedefYazisi.color = yazi;
-            Konum((RectTransform)hedefYazisi.transform, .34f, .81f, .68f, .89f);
+            ArayuzOlcegi.Boyut(bolgeBilgisi, 24);
+            ArayuzOlcegi.Boyut(raporYazisi, 26); ArayuzOlcegi.Boyut(olayYazisi, 26);
 
-            hedefVazgec = Instantiate(dugmeKalibi, kok.transform);
+            // Hedef seçerken alt panel gizlenir; yerine istem ve Geri düğmesi alttaki şeritte.
+            hedefSeridi = new GameObject("HedefSeridi", typeof(RectTransform), typeof(Image));
+            hedefSeridi.layer = LayerMask.NameToLayer("UI");
+            hedefSeridi.transform.SetParent(kok.transform, false);
+            Yerles((RectTransform)hedefSeridi.transform, new Vector2(.5f, 0f), new Vector2(0f, AltBosluk), new Vector2(HedefGenisligi, HedefYuksekligi));
+            Yuvarlak(hedefSeridi.GetComponent<Image>(), kagit);
+            hedefYazisi.color = yazi;
+            hedefYazisi.transform.SetParent(hedefSeridi.transform, false);
+            Kenarlik((RectTransform)hedefYazisi.transform, Vector2.zero, Vector2.one, 24f, 8f, 230f, 8f);
+            ArayuzOlcegi.Boyut(hedefYazisi, 28);
+            hedefSeridi.SetActive(false);
+
+            hedefVazgec = Instantiate(dugmeKalibi, hedefSeridi.transform);
             hedefVazgec.name = "HedefVazgec";
-            Konum((RectTransform)hedefVazgec.transform, .69f, .815f, .79f, .885f);
-            Yuvarlak(hedefVazgec.GetComponent<Image>(), kagit);
+            hedefVazgec.gameObject.SetActive(true);
+            Kenarlik((RectTransform)hedefVazgec.transform, new Vector2(1f, 0f), Vector2.one, -210f, 10f, 12f, 10f);
+            Yuvarlak(hedefVazgec.GetComponent<Image>(), new Color32(241, 237, 228, 255));
             hedefVazgec.GetComponentInChildren<Text>(true).text = Al("menu_geri");
             DugmeSesi.Bagla(hedefVazgec);
             hedefVazgec.onClick.AddListener(() =>
@@ -299,34 +320,27 @@ namespace IkiDunya.UI.Management
                 if (tur.BekleyenKart != null) tur.KartSec(tur.BekleyenKart);
                 else if (tur.BekleyenGorev != null) tur.GorevSec(tur.BekleyenGorev);
             });
-            hedefVazgec.gameObject.SetActive(false);
 
             kartBilgiPaneli = new GameObject("KartBilgiPaneli", typeof(RectTransform), typeof(Image));
             kartBilgiPaneli.layer = LayerMask.NameToLayer("UI");
             kartBilgiPaneli.transform.SetParent(kok.transform, false);
-            var r = (RectTransform)kartBilgiPaneli.transform;
-            r.anchorMin = new Vector2(.66f, .37f); r.anchorMax = new Vector2(.975f, .69f);
-            r.offsetMin = r.offsetMax = Vector2.zero;
             var arka = kartBilgiPaneli.GetComponent<Image>(); Yuvarlak(arka, kagit); arka.raycastTarget = false;
             kartBilgiTuru = KartMetni("Tur", kartBilgiPaneli.transform, new Vector2(.07f, .80f), new Vector2(.93f, .94f), 20, TextAnchor.MiddleLeft);
             kartBilgiTuru.color = turkuaz; kartBilgiTuru.fontStyle = FontStyle.Bold;
             kartBilgiAdi = KartMetni("Ad", kartBilgiPaneli.transform, new Vector2(.07f, .62f), new Vector2(.93f, .80f), 29, TextAnchor.MiddleLeft);
-            kartBilgiAdi.fontStyle = FontStyle.Bold; kartBilgiAdi.resizeTextForBestFit = true; kartBilgiAdi.resizeTextMinSize = 21; kartBilgiAdi.resizeTextMaxSize = 29;
+            kartBilgiAdi.fontStyle = FontStyle.Bold;
             kartBilgiYazisi = KartMetni("Bilgi", kartBilgiPaneli.transform, new Vector2(.07f, .27f), new Vector2(.93f, .60f), 24, TextAnchor.UpperLeft);
-            kartBilgiYazisi.resizeTextForBestFit = true;
-            kartBilgiYazisi.resizeTextMinSize = 19;
-            kartBilgiYazisi.resizeTextMaxSize = 24;
             kartBilgiEk = KartMetni("Etki", kartBilgiPaneli.transform, new Vector2(.07f, .05f), new Vector2(.93f, .25f), 21, TextAnchor.UpperLeft);
-            kartBilgiEk.resizeTextForBestFit = true; kartBilgiEk.resizeTextMinSize = 17; kartBilgiEk.resizeTextMaxSize = 21;
             kartBilgiPaneli.SetActive(false);
         }
 
         private void PanelBasligi(GameObject panel, string id)
         {
-            Text baslik = KartMetni("Baslik", panel.transform, new Vector2(.025f, .78f), new Vector2(.36f, .98f), 27, TextAnchor.MiddleLeft);
+            Text baslik = KartMetni("Baslik", panel.transform, new Vector2(0f, 1f), new Vector2(.4f, 1f), 27, TextAnchor.MiddleLeft);
+            Kenarlik((RectTransform)baslik.transform, new Vector2(0f, 1f), new Vector2(.4f, 1f), 24f, -PanelBasligiYuksekligi + 4f, 0f, 6f);
             baslik.fontStyle = FontStyle.Bold; baslik.text = Al(id);
-            Text asamalar = KartMetni("Asamalar", panel.transform, new Vector2(.38f, .78f), new Vector2(.975f, .98f), 20, TextAnchor.MiddleRight);
-            asamalar.resizeTextForBestFit = true; asamalar.resizeTextMinSize = 16; asamalar.resizeTextMaxSize = 20;
+            Text asamalar = KartMetni("Asamalar", panel.transform, new Vector2(.4f, 1f), Vector2.one, 20, TextAnchor.MiddleRight);
+            Kenarlik((RectTransform)asamalar.transform, new Vector2(.4f, 1f), Vector2.one, 12f, -PanelBasligiYuksekligi + 4f, 24f, 6f);
             asamaSeritleri.Add(asamalar);
         }
 
@@ -336,10 +350,19 @@ namespace IkiDunya.UI.Management
             nesne.layer = LayerMask.NameToLayer("UI");
             nesne.transform.SetParent(ebeveyn, false);
             nesne.transform.SetAsFirstSibling();
-            Konum((RectTransform)nesne.transform, sol, .12f, sag, .88f);
+            Konum((RectTransform)nesne.transform, sol, .1f, sag, .9f);
             var resim = nesne.GetComponent<Image>();
             Yuvarlak(resim, renk ?? new Color32(239, 235, 224, 255));
             resim.raycastTarget = false;
+        }
+
+        /// <summary>Üst çubukta bir kaynak: zemin, üstte küçük adı, altta değeri.</summary>
+        private Text KaynakHucresi(Transform ust, float sol, float sag, out Text etiket)
+        {
+            BilgiZemini(ust, sol, sag);
+            etiket = KartMetni("Etiket", ust, new Vector2(sol + .007f, .5f), new Vector2(sag - .004f, .86f), 21, TextAnchor.LowerLeft);
+            etiket.color = new Color32(62, 92, 89, 255);
+            return KartMetni("Deger", ust, new Vector2(sol + .007f, .14f), new Vector2(sag - .004f, .52f), 28, TextAnchor.UpperLeft);
         }
 
         private void YuvaPaneliKur(Transform sol)
@@ -369,7 +392,7 @@ namespace IkiDunya.UI.Management
             bolgeKutusu = (RectTransform)bolge.transform;
             var zemin = bolge.GetComponent<Image>(); Yuvarlak(zemin, new Color32(241, 237, 227, 255)); zemin.raycastTarget = false;
             bolgeBilgisi.transform.SetParent(bolge.transform, false);
-            Konum((RectTransform)bolgeBilgisi.transform, .06f, .06f, .94f, .94f);
+            Kenarlik((RectTransform)bolgeBilgisi.transform, Vector2.zero, Vector2.one, 14f, 8f, 14f, 8f);
         }
 
         private static void Konum(RectTransform r, float sol, float alt, float sag, float ust)
@@ -377,6 +400,34 @@ namespace IkiDunya.UI.Management
             r.anchorMin = new Vector2(sol, alt); r.anchorMax = new Vector2(sag, ust);
             r.offsetMin = r.offsetMax = Vector2.zero;
         }
+
+        // Yerleşim ölçüleri (tuval birimi; 1920x1080 referans, en büyük yazı boyutunda tuval 1280x720).
+        private const float Kenar = 16f, Aralik = 12f;
+        private const float UstBosluk = 10f, UstYukseklik = 92f;
+        private const float AltBosluk = 14f, AltPaneliYuksekligi = 270f, KartPaneliYuksekligi = 360f, PanelBasligiYuksekligi = 58f;
+        private const float IleriGenisligi = 210f, IleriYuksekligi = 76f;
+        private const float SolGenislik = 400f, SolBaslikYuksekligi = 60f, SolAltPay = 14f;
+        private const float HedefGenisligi = 860f, HedefYuksekligi = 80f;
+        // Sol panel ve kart bilgisi ortadaki ipucu kutusuna (IpucuPaneli, iki yanda 440 birim boş bırakır) değmeyecek enlikte.
+        private const float BilgiGenisligi = 400f, BilgiYuksekligi = 420f;
+
+        /// <summary>Tek noktaya çapalı, sabit boyutlu kutu (pivot çapayla aynı köşede).</summary>
+        private static void Yerles(RectTransform r, Vector2 capa, Vector2 konum, Vector2 boyut)
+        {
+            r.anchorMin = r.anchorMax = r.pivot = capa;
+            r.anchoredPosition = konum; r.sizeDelta = boyut;
+        }
+
+        /// <summary>İki çapa arasında, kenarlardan içe boşluklu kutu (sag ve ust içe doğru pozitif).</summary>
+        private static void Kenarlik(RectTransform r, Vector2 capaAlt, Vector2 capaUst, float sol, float alt, float sag, float ust)
+        {
+            r.anchorMin = capaAlt; r.anchorMax = capaUst; r.pivot = new Vector2(.5f, .5f);
+            r.offsetMin = new Vector2(sol, alt); r.offsetMax = new Vector2(-sag, -ust);
+        }
+
+        /// <summary>Alttaki panel: ekran boyunca, sağda İleri düğmesine yer bırakarak.</summary>
+        private static void AltSerit(RectTransform r, float yukseklik) =>
+            Kenarlik(r, Vector2.zero, new Vector2(1f, 0f), Kenar, AltBosluk, Kenar + IleriGenisligi + Aralik, -(AltBosluk + yukseklik));
 
         private static Texture2D YuvarlakDoku()
         {
@@ -405,7 +456,7 @@ namespace IkiDunya.UI.Management
             var r = (RectTransform)nesne.transform; r.anchorMin = alt; r.anchorMax = ust;
             r.offsetMin = r.offsetMax = Vector2.zero;
             var t = nesne.GetComponent<Text>();
-            t.font = dugmeKalibi.GetComponentInChildren<Text>(true).font; t.fontSize = boyut;
+            t.font = dugmeKalibi.GetComponentInChildren<Text>(true).font; ArayuzOlcegi.Boyut(t, boyut);
             t.color = new Color32(24, 56, 70, 255); t.alignment = hiza; t.raycastTarget = false;
             t.supportRichText = true;
             return t;
@@ -450,9 +501,9 @@ namespace IkiDunya.UI.Management
             resim.sprite = id != null ? KartGorseli(id) : null; resim.enabled = resim.sprite != null;
 
             Text baslik = KartMetni("GorevAdi", dugme.transform, new Vector2(.30f, .67f), new Vector2(.97f, .96f), 26, TextAnchor.LowerLeft);
-            baslik.fontStyle = FontStyle.Bold; baslik.resizeTextForBestFit = true; baslik.resizeTextMinSize = 19; baslik.resizeTextMaxSize = 26; baslik.text = Al(gorev.Id);
+            baslik.fontStyle = FontStyle.Bold; baslik.text = Al(gorev.Id);
             Text aciklama = KartMetni("GorevAciklama", dugme.transform, new Vector2(.30f, .06f), new Vector2(.97f, .66f), 24, TextAnchor.UpperLeft);
-            aciklama.resizeTextForBestFit = true; aciklama.resizeTextMinSize = 20; aciklama.resizeTextMaxSize = 24; aciklama.text = Al(gorev.Id + "_aciklama");
+            aciklama.text = Al(gorev.Id + "_aciklama");
             DugmeSesi.Bagla(dugme);
             dugme.onClick.AddListener(() => tur.GorevSec(gorev));
             dugmeler.Add(dugme);
@@ -473,7 +524,7 @@ namespace IkiDunya.UI.Management
             var ur = (RectTransform)ust.transform; ur.anchorMin = new Vector2(0, .86f); ur.anchorMax = Vector2.one; ur.offsetMin = ur.offsetMax = Vector2.zero;
             var bant = ust.GetComponent<Image>(); bant.color = new Color32(36, 111, 125, 255); bant.raycastTarget = false;
             Text turYazisi = KartMetni("TurYazisi", ust.transform, new Vector2(.05f, 0), new Vector2(.95f, 1), 21, TextAnchor.MiddleLeft);
-            turYazisi.color = Color.white; turYazisi.resizeTextForBestFit = true; turYazisi.resizeTextMinSize = 16; turYazisi.resizeTextMaxSize = 21;
+            turYazisi.color = Color.white;
             turYazisi.text = Al($"kart_turu_{kart.Tur.ToString().ToLowerInvariant()}");
 
             var gorsel = new GameObject("Diorama", typeof(RectTransform), typeof(Image));
@@ -485,9 +536,8 @@ namespace IkiDunya.UI.Management
             if (!oynanabilir) resim.color = new Color(1, 1, 1, .5f);
 
             Text ad = KartMetni("Ad", dugme.transform, new Vector2(.06f, .17f), new Vector2(.94f, .33f), 24, TextAnchor.MiddleLeft);
-            ad.fontStyle = FontStyle.Bold; ad.resizeTextForBestFit = true; ad.resizeTextMinSize = 16; ad.resizeTextMaxSize = 24; ad.text = Al(kart.Id);
+            ad.fontStyle = FontStyle.Bold; ad.text = Al(kart.Id);
             Text maliyet = KartMetni("Maliyet", dugme.transform, new Vector2(.06f, .01f), new Vector2(.94f, .17f), 24, TextAnchor.MiddleLeft);
-            maliyet.resizeTextForBestFit = true; maliyet.resizeTextMinSize = 18; maliyet.resizeTextMaxSize = 24;
             maliyet.text = $"{Al("yonetim_butce")} {tur.Yonetim.Bedel(kart)}  ·  {Al("kart_bakim")} {kart.Bakim}";
             dugme.onClick.AddListener(() => tur.KartSec(kart));
             var olay = dugme.gameObject.AddComponent<EventTrigger>();
@@ -520,6 +570,10 @@ namespace IkiDunya.UI.Management
             if (tur.Yonetim.Guclu(kart)) etkiler.Append($"<color={ArtiRengi}>{Al("kart_guclu")}</color>");
             if (etkiler.Length > 0) ek.Append("\n").Append(etkiler.ToString().TrimEnd());
             kartBilgiEk.text = ek.ToString();
+            // Kart panelinin üstünde, sağda; üst çubuğa değmeyecek boyda.
+            float alt = AltBosluk + KartPaneliYuksekligi + Aralik, ust = UstBosluk + UstYukseklik + Aralik;
+            float bos = ((RectTransform)kok.transform).rect.height - alt - ust;
+            Yerles((RectTransform)kartBilgiPaneli.transform, new Vector2(1f, 0f), new Vector2(-Kenar, alt), new Vector2(BilgiGenisligi, Mathf.Min(BilgiYuksekligi, bos)));
             kartBilgiPaneli.SetActive(true);
         }
 
@@ -590,11 +644,9 @@ namespace IkiDunya.UI.Management
                 var rozetZemini = rozet.GetComponent<Image>(); Yuvarlak(rozetZemini, new Color32(224, 237, 226, 255)); rozetZemini.raycastTarget = false;
                 Text bant = KartMetni("Bant", rozet.transform, new Vector2(.03f, .04f), new Vector2(.97f, .96f), 20, TextAnchor.MiddleCenter);
                 bant.color = new Color32(45, 105, 91, 255); bant.fontStyle = FontStyle.Bold;
-                bant.resizeTextForBestFit = true; bant.resizeTextMinSize = 16; bant.resizeTextMaxSize = 20;
                 bant.text = Al($"bant_{tur.Kumsal.YuvaBandi(i).ToString().ToLowerInvariant()}");
 
                 Text ayrinti = KartMetni("Ayrinti", kart.transform, new Vector2(.06f, .06f), new Vector2(.94f, .60f), 21, TextAnchor.UpperLeft);
-                ayrinti.resizeTextForBestFit = true; ayrinti.resizeTextMinSize = 18; ayrinti.resizeTextMaxSize = 21;
                 var bilgi = new StringBuilder($"{Etiket("yuva_yumurta")} {y.Yumurta}  ·  {Etiket("yuva_hafta")} {y.CikisinaHafta}");
                 if (y.Kafesli) bilgi.Append($"\n{Etiket("yuva_kafesli")}");
                 float risk = tur.AvciRiski(i);

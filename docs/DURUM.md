@@ -43,7 +43,7 @@ Son güncelleme: 2026-11-01 — Dalda (`umut/cila`): Hepsini kur, PC build, F6 p
 | İpuçları (ilk karşılaşmada bir kez) | `Core`, `UI/Night` | `Ipucu`, `IpucuPaneli` | Umut | Yapılıyor (yazılar Yusuf'ta) |
 | Ses: olaylar, ortam sesi, müzik | `Core` | `Ses`, `SesYoneticisi`, `SesAyarlari` | Umut | Yapılıyor (ilk klipler bağlı, kalanlar Yusuf'ta) |
 | Kumsal haritası ve tur akışı | `Management`, `UI/Management` | `InsanTuru`, `HaritaSecici`, `YuvaHaritasi`, `YonetimArayuzu` | Toprak | Yapılıyor |
-| Yönetim ekranı görünümü | `UI/Management`, `Art/UI/Resources/KartDioramalari` | `YonetimArayuzu` | Toprak / Abdü | Kart ve gönüllü dioramaları, kompakt paneller ve hedef seçerken gizlenen alt panel eklendi; Unity'de yeni sürümle görsel ve oynanış kontrolü bekliyor. |
+| Yönetim ekranı görünümü | `UI/Management`, `Art/UI/Resources/KartDioramalari` | `YonetimArayuzu` | Toprak / Abdü | Kart ve gönüllü dioramaları, kompakt paneller ve hedef seçerken gizlenen alt panel eklendi. Yerleşim tuval biriminde (yazı boyutuyla büyür, 1.5'te çakışmasız denendi); hedef seçerken istem ve Geri alttaki şeritte; kart bilgisi sağda kart panelinin üstünde. |
 | Kaynaklar (bütçe, gönüllü, halk desteği, bakım), rapor, kayıt | `Management` | `YonetimDurumu`, `YonetimAyarlari`; `Core/IOyunVerisi` | Toprak | Yapılıyor |
 | Paydaşlar (Otel, Belediye, Balıkçılar) | `Management` | `Paydas`, `YonetimDurumu`, `YonetimAyarlari` | Toprak | Yapılıyor (Unity'de bir turda denendi, 2026-11-01) |
 | Gönüllüler ve görevler | `Management` | `GorevTanimi`, `Etkiler` | Toprak | Yapılıyor |
@@ -262,7 +262,9 @@ Uyarılar: kameralardaki kulak `Core/TekKulak` ile tek (açılan kamera alır); 
 - **Su altı ışık hüzmeleri (`Core/SuIsiklari`):** deniz sahnelerinde yüzücünün çevresinde; suyun üstündeyken görünmez.
 - **Ara sahneler (`Core/AraSahne`):** Bölüm 1, yuva gecesi, kaçış gecesi ve Bölüm 5 başında kamera geniş bir açıdan oyuncunun gözüne süzülür; bu sırada tuşlar kilitli (`GameInput.Kilitli`).
 - **Final:** kamera yürüyüş boyunca kayar, yazılar belirir, sonra jenerik (`jenerik` metni) akar; tıklayınca ya da jenerik bitince oyun biter.
-- **Ayarlar:** yazı boyutu (bütün arayüz, `Core/ArayuzOlcegi`), ipuçları aç/kapa, tam ekran, çözünürlük, grafik kalitesi (düşük/orta/yüksek).
+- **Ayarlar:** yazı boyutu (bütün arayüz, `Core/ArayuzOlcegi`), ipuçları aç/kapa, tam ekran, çözünürlük, grafik kalitesi (düşük/orta/yüksek). Ayarlar paneli tam ekran koyu zeminde açılır; tuşları sıfırlama düğmesi tuş sütununda.
+- **Yazı boyutu ve taşma (`Core/ArayuzOlcegi`):** yazı boyutu 0.75–1.5 tuvali ölçekler (1.5'te tuval 1280x720 gibi davranır). Tuval her en-boy oranında en az referans kadar kalır (`Expand`). Tuvaldeki her yazı kutusuna sığmazsa kendi boyutunun %60'ına kadar küçülür (best fit); kodla kurulan yazılar `ArayuzOlcegi.Boyut(yazi, boyut)` ile boyut alır. **Kural:** yazıyla büyümesi gereken paneller ekran oranıyla (anchor yüzdesi) değil tuval birimiyle (sabit boy + köşe çapası) kurulur ve 1280x720'ye sığacak boyda seçilir; yoksa yazı büyür, kutu büyümez. Yönetim ekranı ve ipucu kutusu bu kurala göre; gece göstergeleri ve sonuç paneli hâlâ oranla, onlarda taşma koruması küçültür.
+- **İpucu kutusu:** üstte ortada (yönetimin üst çubuğunun altında), boyu yazıya göre; iki yanda 440 birim boş bırakır ki yönetimin sol paneli ve kart bilgisiyle çakışmasın.
 - **Oyun kolu:** sol çubuk hareket, sağ çubuk bakış, LT hızlı, A zıpla/dal, X etkileş, LB/RB kazma sol/sağ, Y ya da d-pad yukarı kazmada yukarı, sağ çubuğa basış termal, Start duraklat. Menülerde ilk düğme seçili gelir. İnsan kısmının harita ekranı (Toprak) oyun koluyla denenmedi.
 - **Performans:** deniz kamerasında uzak düzlem 150 m (sis zaten 100 m'de örter); insanlar, kayalar, deniz çayırı ve deniz tabanının süsleri ekranda çok küçülünce çizilmez (LODGroup), küçük süsler gölge atmaz.
 
