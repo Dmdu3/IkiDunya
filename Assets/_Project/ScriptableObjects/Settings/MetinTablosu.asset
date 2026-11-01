@@ -576,6 +576,10 @@ MonoBehaviour:
     metin: Kartlar
   - id: asama_olay
     metin: Olay
+  - id: asama_bitiyor
+    metin: Hafta bitiyor
+  - id: asama_kapali
+    metin: Kumsal
   - id: rapor_gelir
     metin: "Gelen b\xFCt\xE7e"
   - id: rapor_denize_ulasan
@@ -723,3 +727,26 @@ MonoBehaviour:
     metin: Halka
   - id: parkur_sel_kurtulan
     metin: "Denize ula\u015Fan"
+  - id: gosterge_enerji
+    metin: Enerji
+  - id: gosterge_nefes
+    metin: Nefes
+  - id: gosterge_yavaslik
+    metin: "Po\u015Fet: yava\u015Fs\u0131n"
+  - id: gosterge_kum_kesiti
+    metin: "\xDCstteki kum"
+  - id: gosterge_yuzey_sicakligi
+    metin: "Y\xFCzey"
+  - id: gosterge_cikis_enerjisi
+    metin: "Yavrular\u0131n g\xFCc\xFC"
+  - id: gosterge_gun_dogumu
+    metin: "G\xFCn do\u011Fumuna"
+  - id: tuslar_yuva
+    metin: "Y\xFCr\xFC {0}  \xB7  Kaz {1} {2}  \xB7  Termal {3}"
+  - id: tuslar_kum_alti
+    metin: "Yukar\u0131 kaz {0}  \xB7  Kum serinlemeden \xE7\u0131kma"
+  - id: tuslar_kacis
+    metin: "Y\xFCr\xFC {0}  \xB7  Tak\u0131lan\u0131 kurtar {1}  \xB7  Termal {2}"
+  - id: tuslar_deniz
+    metin: "Y\xFCz {0}  \xB7  Y\xFCzeye \xE7\u0131k / dal {1}  \xB7  H\u0131zlan
+      {2}"

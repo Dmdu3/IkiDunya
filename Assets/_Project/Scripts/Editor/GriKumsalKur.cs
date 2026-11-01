@@ -446,7 +446,12 @@ namespace IkiDunya.Editor
             golge = SaydamMalzeme("Golge", new Color(0f, 0f, 0f, 0.5f));
             siper = Malzeme("Siper", new Color(0.62f, 0.56f, 0.42f));
             tilki = Malzeme("Tilki", new Color(0.85f, 0.45f, 0.15f));
-            ayYolu = Malzeme("AyYolu", new Color(0.85f, 0.9f, 1f), "Universal Render Pipeline/Unlit");
+            // Ay yolu suya eklenen soluk bir parıltı: yanları erir (karanlık denizde sert kenarlı şerit gibi duruyordu).
+            ayYolu = Malzeme("AyYolu", new Color(0.85f, 0.9f, 1f, 0.45f), "IkiDunya/Gokyuzu");
+            ayYolu.shader = Shader.Find("IkiDunya/Gokyuzu");
+            ayYolu.SetColor("_BaseColor", new Color(0.85f, 0.9f, 1f, 0.45f));
+            ayYolu.SetFloat("_Yuvarlak", 1f);
+            ayYolu.SetFloat("_SadeceYan", 1f);
         }
 
         /// <summary>Kum, deniz, kumul, dalga çizgisi, bölgeler, kum sıcaklığı ve termal görünüm, kumsal yapıları.</summary>
