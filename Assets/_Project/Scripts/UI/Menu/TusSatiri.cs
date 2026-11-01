@@ -41,6 +41,7 @@ namespace IkiDunya.UI.Menu
         {
             InputAction e = GameInput.Eylem(eylem);
             if (e == null || islem != null) return;
+            Ses.Cal(SesTuru.DugmeTikla);
             e.Disable();
             GameInput.TusAtaniyor = true;
             tusYazisi.text = "…";

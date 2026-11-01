@@ -19,6 +19,8 @@ namespace IkiDunya.UI.Menu
 
         private void Awake()
         {
+            DugmeSesi.Bagla(dugmeler);
+            DugmeSesi.Bagla(geri);
             for (int i = 0; i < dugmeler.Length; i++)
             {
                 var tur = (ParkurTuru)i;

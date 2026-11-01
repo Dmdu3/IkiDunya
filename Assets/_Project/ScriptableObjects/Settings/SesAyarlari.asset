@@ -14,91 +14,136 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::IkiDunya.Core.SesAyarlari
   efektler:
   - tur: 0
-    klipler: []
+    klipler:
+    - {fileID: 8300000, guid: 4955e609ae877f24b84abf14fff74e90, type: 3}
     duzey: 1
   - tur: 1
-    klipler: []
+    klipler:
+    - {fileID: 8300000, guid: 04ecdc6671778ae47865bf06330cf71d, type: 3}
     duzey: 1
   - tur: 2
-    klipler: []
+    klipler:
+    - {fileID: 8300000, guid: 8c275a5c0bfe89a49a26724589dc86d8, type: 3}
     duzey: 1
   - tur: 3
-    klipler: []
+    klipler:
+    - {fileID: 8300000, guid: 6691414003d5e364ba2fadeda3a0cea4, type: 3}
     duzey: 1
   - tur: 4
-    klipler: []
+    klipler:
+    - {fileID: 8300000, guid: 5abae16a29889ee4db127a34585b4203, type: 3}
     duzey: 1
   - tur: 5
-    klipler: []
+    klipler:
+    - {fileID: 8300000, guid: aa372bffe422b29408015b3ac85f5082, type: 3}
     duzey: 1
   - tur: 6
-    klipler: []
+    klipler:
+    - {fileID: 8300000, guid: bba3e01ef21928c4a876253760ea7e1d, type: 3}
     duzey: 1
   - tur: 7
-    klipler: []
+    klipler:
+    - {fileID: 8300000, guid: 86723c38a2e81874499701e413174ea4, type: 3}
     duzey: 1
   - tur: 8
-    klipler: []
+    klipler:
+    - {fileID: 8300000, guid: a9bca5ea67adbf24d84a2e0e1cc32e81, type: 3}
     duzey: 1
   - tur: 9
-    klipler: []
+    klipler:
+    - {fileID: 8300000, guid: ee9d9312a4b657d4885ef20bd06cb0c1, type: 3}
     duzey: 1
   - tur: 10
-    klipler: []
+    klipler:
+    - {fileID: 8300000, guid: 15228f249d9397248aa3bde9a3eeecf6, type: 3}
     duzey: 1
   - tur: 11
-    klipler: []
+    klipler:
+    - {fileID: 8300000, guid: e02fdfc874e1b0f47b476f5dccfaf51e, type: 3}
     duzey: 1
   - tur: 12
-    klipler: []
+    klipler:
+    - {fileID: 8300000, guid: 409c1f97a7fada54eb48310577899e1d, type: 3}
     duzey: 1
   - tur: 13
-    klipler: []
+    klipler:
+    - {fileID: 8300000, guid: d5b77ba68eaa4a34498f45bc2d694524, type: 3}
     duzey: 1
   - tur: 14
-    klipler: []
+    klipler:
+    - {fileID: 8300000, guid: 19091dff9f27ada42abb1513fb9e6152, type: 3}
     duzey: 1
   - tur: 15
-    klipler: []
+    klipler:
+    - {fileID: 8300000, guid: 0ab01bb79c518b0458a63a0dcc7c29d2, type: 3}
     duzey: 1
   - tur: 16
-    klipler: []
+    klipler:
+    - {fileID: 8300000, guid: 383edc4f189cbb14f8cf28a2b8d83485, type: 3}
     duzey: 1
   - tur: 17
-    klipler: []
+    klipler:
+    - {fileID: 8300000, guid: baa3e5be7d3f2f543ace38d318f03f24, type: 3}
     duzey: 1
   - tur: 18
-    klipler: []
+    klipler:
+    - {fileID: 8300000, guid: dcd408eefb650ca4ea7a71f4f7b0efb4, type: 3}
     duzey: 1
   - tur: 19
-    klipler: []
+    klipler:
+    - {fileID: 8300000, guid: 856148bfca7b0de49a9970d91b0ae8bd, type: 3}
     duzey: 1
   - tur: 20
-    klipler: []
+    klipler:
+    - {fileID: 8300000, guid: c051c94734e5dc54eba8f9b80ee64e44, type: 3}
+    duzey: 1
+  - tur: 21
+    klipler:
+    - {fileID: 8300000, guid: 2e726ff92754bca4b88ee2768d159227, type: 3}
+    duzey: 1
+  - tur: 22
+    klipler:
+    - {fileID: 8300000, guid: d4cea18652ebead41a0ce9036be76c14, type: 3}
+    duzey: 1
+  - tur: 23
+    klipler:
+    - {fileID: 8300000, guid: 718535eba08d226449ee8eba43a50a94, type: 3}
+    - {fileID: 8300000, guid: a54b6bd35e34ea946a0cfb5333c22be6, type: 3}
+    - {fileID: 8300000, guid: 72565b23f4c200f4f9a3d436bbfb058b, type: 3}
+    - {fileID: 8300000, guid: 325626c1926d56342a13a14073ed3b4e, type: 3}
+    duzey: 1
+  - tur: 24
+    klipler:
+    - {fileID: 8300000, guid: 7698497fe03aa9c439dd62b2a31fd89b, type: 3}
+    duzey: 1
+  - tur: 25
+    klipler:
+    - {fileID: 8300000, guid: 231b6f9bb12c8be469d5cf51d53ea424, type: 3}
     duzey: 1
   adimSesleri:
   - adim: 0
-    ortam: {fileID: 0}
+    ortam: {fileID: 8300000, guid: 41d31fea7bb489a4db992505ddab0b76, type: 3}
     muzik: {fileID: 0}
   - adim: 1
-    ortam: {fileID: 0}
+    ortam: {fileID: 8300000, guid: ade668e31bd9bf14b9cdef2e5b7a296e, type: 3}
     muzik: {fileID: 0}
   - adim: 2
-    ortam: {fileID: 0}
+    ortam: {fileID: 8300000, guid: 3071901e260eeb24683a4fdf0cfd79e7, type: 3}
     muzik: {fileID: 0}
   - adim: 3
-    ortam: {fileID: 0}
+    ortam: {fileID: 8300000, guid: ade668e31bd9bf14b9cdef2e5b7a296e, type: 3}
     muzik: {fileID: 0}
   - adim: 4
-    ortam: {fileID: 0}
+    ortam: {fileID: 8300000, guid: 41d31fea7bb489a4db992505ddab0b76, type: 3}
     muzik: {fileID: 0}
   - adim: 5
-    ortam: {fileID: 0}
+    ortam: {fileID: 8300000, guid: 5f21efcf4a2d21d418ccfe926c126968, type: 3}
     muzik: {fileID: 0}
   - adim: 6
-    ortam: {fileID: 0}
+    ortam: {fileID: 8300000, guid: 41d31fea7bb489a4db992505ddab0b76, type: 3}
     muzik: {fileID: 0}
   menuMuzigi: {fileID: 0}
+  copSeliOrtami: {fileID: 8300000, guid: ade668e31bd9bf14b9cdef2e5b7a296e, type: 3}
   ortamDuzeyi: 0.6
   muzikDuzeyi: 0.4
   gecisSuresi: 1.5

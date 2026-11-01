@@ -12,6 +12,8 @@ namespace IkiDunya.Core
         [SerializeField] private UnityEngine.Camera[] kameralar;
         [Tooltip("Akışın olmadığı deneme sahnesinde gece mi başlasın.")]
         [SerializeField] private bool akisYoksaGece = true;
+        [Tooltip("İsteğe bağlı: gece açılan gökyüzü (yıldızlar, ay).")]
+        [SerializeField] private GameObject gokyuzu;
 
         private void OnEnable() => OyunAkisi.AdimBasladi += AdimBasladi;
         private void OnDisable() => OyunAkisi.AdimBasladi -= AdimBasladi;
@@ -28,6 +30,7 @@ namespace IkiDunya.Core
 
         private void Uygula(bool gece, bool renkVer = true)
         {
+            if (gokyuzu != null) gokyuzu.SetActive(gece);
             if (isik != null)
             {
                 if (renkVer) isik.color = gece ? ayarlar.GeceIsigi : ayarlar.GunduzIsigi;

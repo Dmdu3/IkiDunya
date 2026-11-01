@@ -39,6 +39,8 @@ namespace IkiDunya.Core
         private bool yukleniyor;
         private Gecis gecis;
         private bool performansGoster;
+        private bool panelAcik;
+        private Vector2 panelKaydirma;
         private float ortalamaKare = 1f / 60f;
 
         [RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.SubsystemRegistration)]
@@ -91,6 +93,12 @@ namespace IkiDunya.Core
         {
             if (ornek != this || !Debug.isDebugBuild) return;
             if (GameInput.GelistiriciPerformansBasildi) performansGoster = !performansGoster;
+            if (GameInput.GelistiriciPanelBasildi)
+            {
+                // Panel duraklatmanın üstünde açılır: zaman durur, imleç serbest.
+                panelAcik = !panelAcik;
+                if (panelAcik) Duraklatma.Ac();
+            }
             if (performansGoster) ortalamaKare = Mathf.Lerp(ortalamaKare, Time.unscaledDeltaTime, 0.05f);
             if (yukleniyor) return;
 
@@ -103,8 +111,34 @@ namespace IkiDunya.Core
         /// <summary>Geliştirici sürümünde F5: sol üstte kare hızı (FPS) ve kare süresi; performans kontrolü için.</summary>
         private void OnGUI()
         {
-            if (!performansGoster) return;
-            GUI.Label(new Rect(10f, 10f, 260f, 24f), $"{1f / ortalamaKare:0} FPS · {ortalamaKare * 1000f:0.0} ms");
+            if (performansGoster) GUI.Label(new Rect(10f, 10f, 260f, 24f), $"{1f / ortalamaKare:0} FPS · {ortalamaKare * 1000f:0.0} ms");
+            if (panelAcik && Debug.isDebugBuild) GelistiriciPaneli();
+        }
+
+        /// <summary>Geliştirici sürümünde F6: akışın her adımına ve parkurlara tek tıkla atlama (deneme için; oyuncu görmez).</summary>
+        private void GelistiriciPaneli()
+        {
+            GUILayout.BeginArea(new Rect(10f, 40f, 320f, Screen.height - 60f), GUI.skin.box);
+            GUILayout.Label("Geliştirici (F6): adıma atla");
+            panelKaydirma = GUILayout.BeginScrollView(panelKaydirma);
+            for (int i = 0; i < akis.Count; i++)
+            {
+                string isaret = i == sira ? "▶ " : "";
+                if (GUILayout.Button($"{isaret}{i}. {akis[i]}")) PaneldenGit(() => { if (sira < 0) KumsaliSifirla(); AdimaGec(i); });
+            }
+            GUILayout.Space(8f);
+            foreach (ParkurTuru tur in Enum.GetValues(typeof(ParkurTuru)))
+                if (GUILayout.Button($"Parkur: {tur}")) PaneldenGit(() => ParkurOyna(tur));
+            if (GUILayout.Button("Menü")) PaneldenGit(MenuyeDon);
+            GUILayout.EndScrollView();
+            GUILayout.EndArea();
+        }
+
+        private void PaneldenGit(Action git)
+        {
+            if (yukleniyor) return;
+            panelAcik = false;
+            git();
         }
 
         // ---- Diğer sistemlerin çağırdığı metotlar ----

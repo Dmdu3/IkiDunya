@@ -4,7 +4,7 @@ ozet: Mekanik tarafın durumu ve sistemlerin haritası. Bir sistem eklendikçe y
 
 # Durum
 
-Son güncelleme: 2026-11-01 — Alpha main'de, deneme listesi tamam (editörde 300+ FPS). Main'de: insan kısmı (yönetim ekranı, Faz 0–4). Main'de: Yusuf'un kumsalı (#40). Main'de: minigame sahneleri ve Yusuf'un canlıları (#43, #45). Dalda (`umut/metin-animasyon-kamera`): bütün metinlerin ilk taslağı, kodla animasyon, birinci şahısta kendi gövdesi gizli. Unity'de henüz denenmedi.
+Son güncelleme: 2026-11-01 — Dalda (`umut/cila`): Hepsini kur, PC build, F6 paneli, geri bildirim efektleri, kamera hissi, gece gökyüzü ve izler, ara sahneler, final jeneriği, yeni ayarlar, oyun kolu, performans, Kendini dene. Alpha main'de, deneme listesi tamam (editörde 300+ FPS). Main'de: insan kısmı (yönetim ekranı, Faz 0–4). Main'de: Yusuf'un kumsalı (#40). Main'de: minigame sahneleri ve Yusuf'un canlıları (#43, #45). Dalda (`umut/metin-animasyon-kamera`): bütün metinlerin ilk taslağı, kodla animasyon, birinci şahısta kendi gövdesi gizli. Unity'de henüz denenmedi.
 
 ## Sistem haritası
 
@@ -41,7 +41,7 @@ Son güncelleme: 2026-11-01 — Alpha main'de, deneme listesi tamam (editörde 3
 | Işık kaynakları | `Hazards` | `IsikKaynagi` | Umut | Yapılıyor |
 | Kayıp izleri | `Turtle`, `Hazards` | `KacisGecesi` yazar, `KumsalYapilari` kumda gösterir, `KayipIziHaritasi` insan turunda simge + kanıt | Umut | Yapılıyor |
 | İpuçları (ilk karşılaşmada bir kez) | `Core`, `UI/Night` | `Ipucu`, `IpucuPaneli` | Umut | Yapılıyor (yazılar Yusuf'ta) |
-| Ses: olaylar, ortam sesi, müzik | `Core` | `Ses`, `SesYoneticisi`, `SesAyarlari` | Umut | Yapılıyor (klipler Abdü'de) |
+| Ses: olaylar, ortam sesi, müzik | `Core` | `Ses`, `SesYoneticisi`, `SesAyarlari` | Umut | Yapılıyor (ilk klipler bağlı, kalanlar Yusuf'ta) |
 | Kumsal haritası ve tur akışı | `Management`, `UI/Management` | `InsanTuru`, `HaritaSecici`, `YuvaHaritasi`, `YonetimArayuzu` | Toprak | Yapılıyor |
 | Kaynaklar (bütçe, gönüllü, halk desteği, bakım), rapor, kayıt | `Management` | `YonetimDurumu`, `YonetimAyarlari`; `Core/IOyunVerisi` | Toprak | Yapılıyor |
 | Paydaşlar (Otel, Belediye, Balıkçılar) | `Management` | `Paydas`, `YonetimDurumu`, `YonetimAyarlari` | Toprak | Yapılıyor (Unity'de bir turda denendi, 2026-11-01) |
@@ -75,6 +75,10 @@ Bütçe, gönüllü ve halk desteği `KumsalDurumu`'nda değil; insan kısmını
 
 ## Araçlar
 
+- **İki Dünya → Hepsini kur:** sorusuz, sırayla Menü, Kumsal, Bölüm 1, Bölüm 5 ve üç parkur sahnesini kurar, Build Settings'teki sahne listesini düzeltir, Menü'yü açar. Model ya da metin değişince tek tık.
+- **İki Dünya → PC build al:** `Build/Windows/IkiDunya.exe` (Windows 64-bit). `Build/` repoya girmez.
+- **İki Dünya → Kendini dene:** oyunu açmadan kontroller (akış sırası, süreli etkilerin geri alınması, kayıp izi → kanıt, metinler.md'de tekrar eden id, kodda olup metinler.md'de olmayan id). Sonuç Console'da.
+- **F6 (oyunda, geliştirici paneli):** akıştaki herhangi bir adıma ya da parkura atlar, menüye döner. Sadece editörde ve development build'de.
 - **İki Dünya → Layer'ları kur:** README'deki layer'ları boş yuvalara ekler.
 - **İki Dünya → Gri kutu kumsalı kur (yuva gecesi):** `Scenes/Prototypes/GriKumsal.unity` — kumsal, termal görünüm, şezlong, çöp yığını, 2 insan (biri fenerli), anne (hareket, kazma), yuva gecesi, enerji ve kazma çubuğu.
 - **İki Dünya → Kumsal sahnesini kur (oyun):** `Scenes/Levels/Kumsal.unity` — iki gecenin hepsi ve geçici insan turu; her grup (`YuvaGecesiNesneleri`, `KacisGecesiNesneleri`, `InsanTuruNesneleri`) sadece kendi adımında açılır. `Sistemler` prefab'ı da konur.
@@ -115,7 +119,7 @@ Henüz yok: yok (animasyonlar modeller gelince).
 
 **Uyarılar.** Teknenin suyun hemen altına düşen gölgesi teknenin 6 m önünde gider, arkasında pervane köpüğü titrer; su altındaki oyuncu tekneyi gelmeden görür. Hayalet ağın kenarları ve misina yavaşça parıldar (`Parilti`), uzaktan seçilir.
 
-Henüz yok: pervane sesi klibi (Abdü).
+Pervane sesi klibi bağlı (`Audio/SFX/Pervane.wav`).
 
 ## Menü, kayıt, final (Faz 7)
 
@@ -170,6 +174,11 @@ Henüz yok: pervane sesi klibi (Abdü).
 | Yeme, AgdanKurtulma, KontrolNoktasi, DalgaVurdu | Denizde |
 | Pervane | Tekne (döngü) |
 | Ipucu | İpucu kutusu açılınca |
+| DugmeTikla | Menü ve yönetim düğmeleri (`UI/DugmeSesi`), tuş atama (`TusSatiri`), İleri ve Space (`InsanTuru`), hedefli kart seçimi, haritada görev verme |
+| KartOyna, KartDagit | Kart oynanınca, el dağıtılınca (`InsanTuru`) |
+| KanitBulundu | Haritada kayıp izine tıklanıp kanıt açılınca (`KayipIziHaritasi`) |
+
+**Klipler (2026-11-01, Yusuf).** Bütün efektler (26) ve bütün adımların ortam sesi bağlı (kaynak ve lisans `docs/varliklar.md`'de). Ortam: `Donus`, `IlkYuzus` ve `Parkur` su altı, `YuvaGecesi` ve `KacisGecesi` kumsal gecesi, `InsanTuru` gündüz kumsal, `Final` sakin deniz. Çöp Seli gece kumsalda geçtiği için `SesAyarlari`'ndaki kendi yuvasından (`copSeliOrtami`) kumsal gecesi sesini çalar. Henüz yok: müzikler.
 
 ## İnsan kısmı (yönetim ekranı)
 
@@ -192,7 +201,7 @@ Toprak'ın onayıyla Umut yazdı (2026-11-01); kodu artık Toprak sürdürür. S
 
 **Metinler.** Bütün yazılar id ile (kart ve görev adları metinler.md'de var; açıklamalar `Açıklama` sütunundan `id_aciklama`, olay seçenekleri `Seçenek A/B` sütunlarından `id_a`, `id_b` olarak aktarılır). Ekranın kendi yazıları için yeni id'ler Yusuf'ta.
 
-Henüz yok: kartların ve olay penceresinin görsel hali (Faz 9), arayüz sesleri, gönüllü atamasını geri alma.
+Henüz yok: kartların ve olay penceresinin görsel hali (Faz 9), gönüllü atamasını geri alma.
 
 ## Kumsal arazisi (Yusuf'un modelleri)
 
@@ -244,3 +253,14 @@ Uyarılar: kameralardaki kulak `Core/TekKulak` ile tek (açılan kamera alır); 
 - **Model dönüşü:** kalıbın kendi dönüşü korunur (Blender eksen düzeltmesi; tekne dik duruyordu). Denizanası artık sürekli yükselmez, aynı derinlik çevresinde kasılır.
 - **Poşet:** −10 enerji (`DenizTehlikeAyarlari.posetEnerjiKaybi`), yarı hız, `PosetYuttu` sesi, `ipucu_poset_yuttu`, deniz göstergesinde yavaşlık çubuğu.
 
+## Cila (dal `umut/cila`)
+
+- **Geri bildirim (`Core/Geribildirim`, `GeribildirimAyarlari`, `UI/Night/EkranEfektleri`):** çarpma ve yakalanmada kamera sarsıntısı ve kırmızı flaş; poşette kahverengi bulanma; yavru kurtulunca yeşil parıltı; enerji azalınca (`Turtle/EnerjiUyarisi`) ekran kenarı kararır ve kalp atışı sesi (`SesTuru.KalpAtisi`, ses yuvası boş; `SesTuru`'nda Yusuf'un seslerinden sonra, en sonda).
+- **Kamera:** yürürken/yüzerken hafif baş sallanması, Shift'te görüş açısı genişler, oyun kolunun sağ çubuğuyla bakış. Sayılar `KameraAyarlari` ve `GeribildirimAyarlari`'nda.
+- **Gece:** yıldızlar ve ay (`Core/GeceGokyuzu`, shader `IkiDunya/Gokyuzu`; `OrtamIsigi` gece açar); anne ve yavrular kumda iz bırakır (`Turtle/IzBirakici`, 25 sn'de silinir).
+- **Su altı ışık hüzmeleri (`Core/SuIsiklari`):** deniz sahnelerinde yüzücünün çevresinde; suyun üstündeyken görünmez.
+- **Ara sahneler (`Core/AraSahne`):** Bölüm 1, yuva gecesi, kaçış gecesi ve Bölüm 5 başında kamera geniş bir açıdan oyuncunun gözüne süzülür; bu sırada tuşlar kilitli (`GameInput.Kilitli`).
+- **Final:** kamera yürüyüş boyunca kayar, yazılar belirir, sonra jenerik (`jenerik` metni) akar; tıklayınca ya da jenerik bitince oyun biter.
+- **Ayarlar:** yazı boyutu (bütün arayüz, `Core/ArayuzOlcegi`), ipuçları aç/kapa, tam ekran, çözünürlük, grafik kalitesi (düşük/orta/yüksek).
+- **Oyun kolu:** sol çubuk hareket, sağ çubuk bakış, LT hızlı, A zıpla/dal, X etkileş, LB/RB kazma sol/sağ, Y ya da d-pad yukarı kazmada yukarı, sağ çubuğa basış termal, Start duraklat. Menülerde ilk düğme seçili gelir. İnsan kısmının harita ekranı (Toprak) oyun koluyla denenmedi.
+- **Performans:** deniz kamerasında uzak düzlem 150 m (sis zaten 100 m'de örter); insanlar, kayalar, deniz çayırı ve deniz tabanının süsleri ekranda çok küçülünce çizilmez (LODGroup), küçük süsler gölge atmaz.

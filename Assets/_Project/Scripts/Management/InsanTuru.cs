@@ -94,6 +94,7 @@ namespace IkiDunya.Management
             switch (SuAnki)
             {
                 case Asama.Rapor:
+                    Ses.Cal(SesTuru.DugmeTikla);
                     AsamayaGec(Asama.Gonulluler);
                     Ipucu.Goster("ipucu_gonullu");
                     break;
@@ -103,6 +104,7 @@ namespace IkiDunya.Management
                     Ipucu.Goster("ipucu_kart");
                     break;
                 case Asama.Kartlar:
+                    Ses.Cal(SesTuru.DugmeTikla);
                     OlayCek();
                     AsamayaGec(Asama.Olay);
                     break;
@@ -154,6 +156,7 @@ namespace IkiDunya.Management
                 el.Add(havuz[sec]);
                 havuz.RemoveAt(sec);
             }
+            Ses.Cal(el.Count > 0 ? SesTuru.KartDagit : SesTuru.DugmeTikla);
         }
 
         public bool KartOynanabilir(KartTanimi kart) =>
@@ -168,18 +171,27 @@ namespace IkiDunya.Management
             if (!KartOynanabilir(kart)) return;
             if (BekleyenKart == kart)
             {
+                Ses.Cal(SesTuru.DugmeTikla);
                 BekleyeniBirak();
                 Degisti?.Invoke();
                 return;
             }
             BekleyeniBirak();
-            if (kart.Hedef == Hedef.Yok) KartiOyna(kart, -1);
-            else BekleyenKart = kart;
+            if (kart.Hedef == Hedef.Yok)
+            {
+                KartiOyna(kart, -1);
+            }
+            else
+            {
+                Ses.Cal(SesTuru.DugmeTikla);
+                BekleyenKart = kart;
+            }
             Degisti?.Invoke();
         }
 
         private void KartiOyna(KartTanimi kart, int hedef)
         {
+            Ses.Cal(SesTuru.KartOyna);
             etkiler.KartOyna(kart, hedef);
             // Oynanan kart elden çıkar; oynanmayanlar tur sonunda havuza döner.
             el.Remove(kart);
@@ -249,6 +261,7 @@ namespace IkiDunya.Management
             {
                 // İşe yaramayacak hedefte gönüllü harcanmaz; görev bekler, oyuncu başka hedef seçer.
                 if (!etkiler.GorevIseYarar(BekleyenGorev, hedef)) return;
+                Ses.Cal(SesTuru.DugmeTikla);
                 etkiler.GorevVer(BekleyenGorev, hedef);
             }
             BekleyeniBirak();
