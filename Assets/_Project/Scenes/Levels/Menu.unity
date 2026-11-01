@@ -8474,6 +8474,54 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 0}
     m_Modifications:
+    - target: {fileID: 150644652515621423, guid: 3cb61e0b521daed4d9a0cf828a42336b, type: 3}
+      propertyPath: m_AnchorMax.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 150644652515621423, guid: 3cb61e0b521daed4d9a0cf828a42336b, type: 3}
+      propertyPath: m_AnchorMin.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 150644652515621423, guid: 3cb61e0b521daed4d9a0cf828a42336b, type: 3}
+      propertyPath: m_SizeDelta.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 150644652515621423, guid: 3cb61e0b521daed4d9a0cf828a42336b, type: 3}
+      propertyPath: m_SizeDelta.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 150644652515621423, guid: 3cb61e0b521daed4d9a0cf828a42336b, type: 3}
+      propertyPath: m_AnchoredPosition.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 150644652515621423, guid: 3cb61e0b521daed4d9a0cf828a42336b, type: 3}
+      propertyPath: m_AnchoredPosition.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 746236074757279967, guid: 3cb61e0b521daed4d9a0cf828a42336b, type: 3}
+      propertyPath: m_AnchorMax.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 746236074757279967, guid: 3cb61e0b521daed4d9a0cf828a42336b, type: 3}
+      propertyPath: m_AnchorMin.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 746236074757279967, guid: 3cb61e0b521daed4d9a0cf828a42336b, type: 3}
+      propertyPath: m_SizeDelta.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 746236074757279967, guid: 3cb61e0b521daed4d9a0cf828a42336b, type: 3}
+      propertyPath: m_SizeDelta.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 746236074757279967, guid: 3cb61e0b521daed4d9a0cf828a42336b, type: 3}
+      propertyPath: m_AnchoredPosition.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 746236074757279967, guid: 3cb61e0b521daed4d9a0cf828a42336b, type: 3}
+      propertyPath: m_AnchoredPosition.y
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 1394889848703041299, guid: 3cb61e0b521daed4d9a0cf828a42336b, type: 3}
       propertyPath: m_LocalPosition.x
       value: -0
@@ -8514,9 +8562,37 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 2534822247870664131, guid: 3cb61e0b521daed4d9a0cf828a42336b, type: 3}
+      propertyPath: m_AnchorMax.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 2534822247870664131, guid: 3cb61e0b521daed4d9a0cf828a42336b, type: 3}
+      propertyPath: m_AnchorMin.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 2534822247870664131, guid: 3cb61e0b521daed4d9a0cf828a42336b, type: 3}
+      propertyPath: m_SizeDelta.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 2534822247870664131, guid: 3cb61e0b521daed4d9a0cf828a42336b, type: 3}
+      propertyPath: m_SizeDelta.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 2534822247870664131, guid: 3cb61e0b521daed4d9a0cf828a42336b, type: 3}
+      propertyPath: m_AnchoredPosition.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 2534822247870664131, guid: 3cb61e0b521daed4d9a0cf828a42336b, type: 3}
+      propertyPath: m_AnchoredPosition.y
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 7469745652494700739, guid: 3cb61e0b521daed4d9a0cf828a42336b, type: 3}
       propertyPath: m_Name
       value: Sistemler
+      objectReference: {fileID: 0}
+    - target: {fileID: 9122596193214783783, guid: 3cb61e0b521daed4d9a0cf828a42336b, type: 3}
+      propertyPath: m_AnchoredPosition.x
+      value: -15.360107
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
@@ -11806,7 +11882,7 @@ MonoBehaviour:
     m_FontStyle: 0
     m_BestFit: 0
     m_MinSize: 10
-    m_MaxSize: 40
+    m_MaxSize: 56
     m_Alignment: 6
     m_AlignByGeometry: 0
     m_RichText: 1
@@ -13560,7 +13636,7 @@ MonoBehaviour:
     m_FontStyle: 0
     m_BestFit: 0
     m_MinSize: 10
-    m_MaxSize: 40
+    m_MaxSize: 96
     m_Alignment: 6
     m_AlignByGeometry: 0
     m_RichText: 1
