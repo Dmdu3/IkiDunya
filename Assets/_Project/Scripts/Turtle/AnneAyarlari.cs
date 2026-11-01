@@ -40,6 +40,8 @@ namespace IkiDunya.Turtle
         [SerializeField] private int denemeHakki = 2;
         [Tooltip("Denemeler bitince annenin kendiliğinden kazdığı yuvanın deniz kenarından uzaklığı (metre).")]
         [SerializeField] private float kendiligindenYuvaUzakligi = 2f;
+        [Tooltip("Son deneme bitince bildirimin okunması için sonuç ekranından önce beklenen süre (sn).")]
+        [SerializeField] private float kendiligindenYuvaBekleme = 2.5f;
 
         [Header("Engeller")]
         [Tooltip("Çöp yığınına takılınca durma süresi (GDD: 2 sn).")]
@@ -63,6 +65,7 @@ namespace IkiDunya.Turtle
         public int KuluckaHafta => kuluckaHafta;
         public int DenemeHakki => denemeHakki;
         public float KendiligindenYuvaUzakligi => kendiligindenYuvaUzakligi;
+        public float KendiligindenYuvaBekleme => kendiligindenYuvaBekleme;
         public float CopDurmaSuresi => copDurmaSuresi;
         public float CopEnerjiKaybi => copEnerjiKaybi;
     }

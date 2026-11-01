@@ -32,6 +32,8 @@ namespace IkiDunya.Core
         [SerializeField] private float baslikSuresi = 2.5f;
         [Tooltip("Bir ipucunun ekranda kaldığı süre (sn).")]
         [SerializeField] private float ipucuSuresi = 6f;
+        [Tooltip("Bir bildirimin (deneme bitti, kontrol noktasına dönüldü) ekranda kaldığı süre (sn).")]
+        [SerializeField] private float bildirimSuresi = 3.5f;
         [Tooltip("Oyuncunun gördüğü yazılar (İki Dünya → Metinleri aktar).")]
         [SerializeField] private MetinTablosu metinler;
         [Tooltip("Arayüzün yazı tipleri ve renkleri (Menü ve duraklatmayı kur bağlar).")]
@@ -47,6 +49,7 @@ namespace IkiDunya.Core
         public float GecisSuresi => gecisSuresi;
         public float BaslikSuresi => baslikSuresi;
         public float IpucuSuresi => ipucuSuresi;
+        public float BildirimSuresi => bildirimSuresi;
         public MetinTablosu Metinler => metinler;
         public ArayuzTemasi Tema => tema;
         public int BolgeSayisi => bolgeSayisi;

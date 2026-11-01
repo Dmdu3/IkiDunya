@@ -3,7 +3,7 @@ using UnityEngine;
 
 namespace IkiDunya.Core
 {
-    /// <summary>Oyunun duraklatılması: zaman durur; birinci şahıs kamera imleci serbest bırakır.</summary>
+    /// <summary>Oyunun duraklatılması: zaman ve oyun sesleri durur (menü düğmesi sesi çalar); birinci şahıs kamera imleci serbest bırakır.</summary>
     public static class Duraklatma
     {
         public static bool Acik { get; private set; }
@@ -19,6 +19,8 @@ namespace IkiDunya.Core
             Acik = false;
             KapanmaKaresi = -1;
             Degisti = null;
+            // Editörde duraklatılmışken Play kapatılırsa sonraki Play sessiz başlamasın.
+            AudioListener.pause = false;
         }
 
         public static void Ac() => Ayarla(true);
@@ -30,6 +32,8 @@ namespace IkiDunya.Core
             Acik = acik;
             if (!acik) KapanmaKaresi = Time.frameCount;
             Time.timeScale = acik ? 0f : 1f;
+            // Döngüdeki sesler (pervane), konumlu sesler ve ortam sesi de dursun; SesYoneticisi'nin efekt ve müzik kaynakları muaf.
+            AudioListener.pause = acik;
             Degisti?.Invoke(acik);
         }
     }

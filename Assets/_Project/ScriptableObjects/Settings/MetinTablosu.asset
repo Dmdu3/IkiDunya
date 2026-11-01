@@ -323,6 +323,21 @@ MonoBehaviour:
   - id: ipucu_cop_seli
     metin: "Ufukta k\xF6p\xFCk g\xF6r\xFCrsen dalga geliyor: kum tepesine \xE7\u0131k.
       Su \xE7ekilince denize ko\u015F."
+  - id: bildirim_deneme_insan
+    metin: "Bir insan seni g\xF6rd\xFC; anne \xFCrk\xFCp denize d\xF6nd\xFC. Kalan
+      deneme: {0}"
+  - id: bildirim_deneme_enerji
+    metin: "Annenin g\xFCc\xFC t\xFCkendi; denize d\xF6nd\xFC. Kalan deneme: {0}"
+  - id: bildirim_kendiliginden_yuva
+    metin: "Anne daha fazla dayanamad\u0131 ve yuvas\u0131n\u0131 oldu\u011Fu yere
+      kazd\u0131."
+  - id: bildirim_deniz_enerji
+    metin: "G\xFCc\xFCn t\xFCkendi. Son kontrol noktas\u0131ndan devam ediyorsun."
+  - id: bildirim_deniz_yakalandi
+    metin: "Bir avc\u0131 seni yakalad\u0131. Son kontrol noktas\u0131ndan devam
+      ediyorsun."
+  - id: bildirim_poset_enerji
+    metin: "G\xFCc\xFCn t\xFCkendi; bu a\u015Fama ba\u015Ftan ba\u015Fl\u0131yor."
   - id: final_30_yil
     metin: "30 y\u0131l sonra"
   - id: final_kurtarilan

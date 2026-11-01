@@ -108,6 +108,12 @@ Kısa yaz: kart açıklaması en fazla 2 satır, kanıt notu en fazla 3 satır. 
 | ipucu_poset_surusu | Akıntı bir sürü taşıyor. Denizanalarını ye, poşetlerden kaç. Yeterince yiyince önündeki akıntı açılır. |
 | ipucu_girdap | Girdaba kapıldın! Halkanın boşluğunu yakala; parlak şamandıralar yolu gösterir. |
 | ipucu_cop_seli | Ufukta köpük görürsen dalga geliyor: kum tepesine çık. Su çekilince denize koş. |
+| bildirim_deneme_insan | Bir insan seni gördü; anne ürküp denize döndü. Kalan deneme: {0} |
+| bildirim_deneme_enerji | Annenin gücü tükendi; denize döndü. Kalan deneme: {0} |
+| bildirim_kendiliginden_yuva | Anne daha fazla dayanamadı ve yuvasını olduğu yere kazdı. |
+| bildirim_deniz_enerji | Gücün tükendi. Son kontrol noktasından devam ediyorsun. |
+| bildirim_deniz_yakalandi | Bir avcı seni yakaladı. Son kontrol noktasından devam ediyorsun. |
+| bildirim_poset_enerji | Gücün tükendi; bu aşama baştan başlıyor. |
 | final_30_yil | 30 yıl sonra |
 | final_kurtarilan | Denize ulaşan yavru |
 | jenerik | İKİ DÜNYA, TEK YAŞAM\n\nBir öğrenci oyun projesi\n\nEkip\nUmut · Toprak · Yusuf · Abdü\n\nDeniz kaplumbağaları her yıl doğdukları kumsala döner.\nO kumsalın nasıl olacağı bizim elimizde.\n\nOynadığın için teşekkürler. |

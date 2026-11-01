@@ -12,6 +12,8 @@ namespace IkiDunya.Core
 
         /// <summary>Gösterilecek ipucunun id'si.</summary>
         public static event Action<string> Istendi;
+        /// <summary>Bildirimin id'si ve yazıya konacak değerler ({0}, {1}).</summary>
+        public static event Action<string, object[]> Bildirildi;
 
         private static HashSet<string> gosterilenler;
 
@@ -19,8 +21,13 @@ namespace IkiDunya.Core
         private static void StatikleriSifirla()
         {
             Istendi = null;
+            Bildirildi = null;
             gosterilenler = null;
         }
+
+        /// <summary>Oyuncuya o an olanı söyleyen kısa yazı (deneme bitti, kontrol noktasına dönüldü). İpucunun aksine her seferinde çıkar,
+        /// ayarlarda kapatılmaz ve sıradaki ipucunun önüne geçer.</summary>
+        public static void Bildir(string id, params object[] degerler) => Bildirildi?.Invoke(id, degerler);
 
         /// <summary>İpucu daha önce gösterilmediyse (ve ayarlarda kapalı değilse) gösterilmesini ister.</summary>
         public static void Goster(string id)

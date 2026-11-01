@@ -173,6 +173,8 @@ namespace IkiDunya.Editor
 
             var olay = new GameObject("EventSystem", typeof(EventSystem), typeof(InputSystemUIInputModule));
             olay.transform.SetParent(kok.transform, false);
+            // Kapalı kurulur; kalıcı OyunAkisi açar (sahnedeki ikinci Sistemler'inki hiç açılmasın).
+            olay.SetActive(false);
 
             Transform tuval = GriKumsalKur.TuvalKur("DuraklatmaMenusu", kok.transform);
             tuval.GetComponent<Canvas>().sortingOrder = 50;

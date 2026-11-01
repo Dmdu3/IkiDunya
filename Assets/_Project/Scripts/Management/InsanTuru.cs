@@ -84,6 +84,8 @@ namespace IkiDunya.Management
                 return;
             }
 
+            // Hedef seçilirken İleri düğmesi gizli; Space de bekleyen kartı ya da görevi bırakıp aşamayı geçmesin.
+            if (BeklenenHedef != Hedef.Yok) return;
             if (Time.frameCount != baslangicKaresi && GameInput.ZiplaDalBasildi) Ilerle();
         }
 

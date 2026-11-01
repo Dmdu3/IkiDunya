@@ -169,6 +169,9 @@ namespace IkiDunya.Turtle
         {
             if (!aktif) return;
             // Aşamanın başından (süre işlemeye devam eder).
+            Geribildirim.Darbe(0.5f);
+            Ses.Cal(SesTuru.YavruKaybedildi);
+            Ipucu.Bildir("bildirim_poset_enerji");
             AsamaBasi();
             Bilgi();
         }

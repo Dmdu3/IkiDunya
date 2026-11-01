@@ -150,7 +150,7 @@ Pervane sesi klibi bağlı (`Audio/SFX/Pervane.wav`).
 
 ## İpuçları ve ses
 
-**İpuçları (`Ipucu`, `IpucuPaneli`).** Oyuncu bir şeyle ilk karşılaştığında ekranın altında kısa bir yazı (6 sn, `OyunAyarlari.IpucuSuresi`); birden çok istenirse sırayla. Her ipucu bir oyunda bir kez çıkar (bu bilgisayarda saklanır, Yeni oyun sıfırlar); geçişte ve duraklatmada bekler. `OyunTercihleri.Ipuclari` kapatır (ayarlarda düğmesi henüz yok). Nerede çıkar:
+**İpuçları (`Ipucu`, `IpucuPaneli`).** Oyuncu bir şeyle ilk karşılaştığında ekranın altında kısa bir yazı (6 sn, `OyunAyarlari.IpucuSuresi`); birden çok istenirse sırayla. Her ipucu bir oyunda bir kez çıkar (bu bilgisayarda saklanır, Yeni oyun sıfırlar); geçişte ve duraklatmada bekler. `OyunTercihleri.Ipuclari` kapatır. Nerede çıkar:
 
 | id | Ne zaman |
 | --- | --- |
@@ -162,6 +162,12 @@ Pervane sesi klibi bağlı (`Audio/SFX/Pervane.wav`).
 | `ipucu_suru` | Yavrular yüzeye çıkınca |
 | `ipucu_takili` | Bir yavru ilk kez takılınca ya da ters dönünce |
 | `ipucu_tilki` | Tilkinin geldiği ilk gece |
+
+**Bildirimler (`Ipucu.Bildir(id, değerler)`).** O an olanı söyleyen kısa yazı, aynı kutuda: her seferinde çıkar, ayarlarda kapanmaz, görünen yazıyı keser (kesilen ipucu sonra yeniden çıkar, eski bildirim atılır), `OyunAyarlari.BildirimSuresi` kadar kalır. Sesini çağıran olay çalar. Nerede: yuva gecesinde deneme bitince (neden + kalan hak; son hak bitince annenin yuvayı kendisi kazdığı, sonuç paneli `AnneAyarlari.KendiligindenYuvaBekleme` sonra açılır), denizde enerji bitince ya da avcı yakalayınca (darbe + kayıp sesi, kontrol noktasına dönüş), poşet parkurunda enerji bitince. Metinler `bildirim_*`.
+
+**Duraklatma ve ses.** Duraklatınca `AudioListener.pause`: pervane, konumlu sesler ve ortam sesi durur; `SesYoneticisi`'nin efekt (düğme) ve müzik kaynakları sürer.
+
+**EventSystem.** `Sistemler` kalıbında kapalı durur, sadece kalıcı `OyunAkisi` açar; sahnedeki ikinci kopyanınki hiç açılmaz.
 
 **Ses (`Ses`, `SesYoneticisi`, `SesAyarlari`).** Sistemler bir kez `Ses.Cal(SesTuru, konum?)` der; klibi `ScriptableObjects/Settings/SesAyarlari`'ndaki yuvadan çalınır (birden çok klip varsa rastgele biri). Klip yoksa sessiz geçer. Konumlu sesler (yengeç, martı, tilki, kazma, yavru) 3B, geri kalanı ekrandan. Her adımın ortam sesi ve müziği aynı asset'te; adım değişince yumuşak geçişle değişir, menüde menü müziği. Teknenin pervanesi kendi AudioSource'unda döngüyle (`SesTuru.Pervane`). Ana ses düzeyi ayarlardan. **Menü ve duraklatmayı kur** her ses türü ve adım için boş yuva açar; Abdü klipleri `Audio/` altına koyup yuvalara sürükler.
 

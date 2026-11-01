@@ -5,19 +5,29 @@ using UnityEngine.UI;
 
 namespace IkiDunya.UI.Night
 {
-    /// <summary>Ekranın altında ipucu kutusu: istenen ipuçları sırayla, her biri ayarlardaki süre kadar görünür. Geçiş ve duraklatma sırasında bekler.</summary>
+    /// <summary>Ekranın altında ipucu kutusu: istenen ipuçları sırayla, her biri ayarlardaki süre kadar görünür. Bildirim hemen çıkar,
+    /// görünen yazıyı keser (kesilen ipucu bildirimden sonra yeniden çıkar, eski bildirim atılır). Geçiş ve duraklatma sırasında bekler.</summary>
     public class IpucuPaneli : MonoBehaviour
     {
         [SerializeField] private OyunAyarlari ayarlar;
         [SerializeField] private GameObject kutu;
         [SerializeField] private Text yazi;
 
-        private readonly Queue<string> sira = new Queue<string>();
+        private struct Yazi
+        {
+            public string Id;
+            public object[] Degerler;
+            public bool Bildirim;
+        }
+
+        private readonly List<Yazi> sira = new List<Yazi>();
+        private Yazi gosterilen;
         private float kalan;
 
         private void OnEnable()
         {
             Ipucu.Istendi += Ekle;
+            Ipucu.Bildirildi += Bildir;
             OyunAkisi.MenuyeDonuldu += Temizle;
             Temizle();
         }
@@ -25,10 +35,21 @@ namespace IkiDunya.UI.Night
         private void OnDisable()
         {
             Ipucu.Istendi -= Ekle;
+            Ipucu.Bildirildi -= Bildir;
             OyunAkisi.MenuyeDonuldu -= Temizle;
         }
 
-        private void Ekle(string id) => sira.Enqueue(id);
+        private void Ekle(string id) => sira.Add(new Yazi { Id = id });
+
+        private void Bildir(string id, object[] degerler)
+        {
+            // Yeni olan eskisini geçersiz kılar: bekleyen bildirimler atılır, görünen yazı kesilir.
+            sira.RemoveAll(y => y.Bildirim);
+            // Kesilen ipucu kaybolmaz, bildirimden sonra baştan gösterilir.
+            if (kalan > 0f && !gosterilen.Bildirim) sira.Insert(0, gosterilen);
+            kalan = 0f;
+            sira.Insert(0, new Yazi { Id = id, Degerler = degerler, Bildirim = true });
+        }
 
         private void Temizle()
         {
@@ -58,12 +79,16 @@ namespace IkiDunya.UI.Night
             if (sira.Count == 0) return;
 
             MetinTablosu tablo = ayarlar.Metinler != null ? ayarlar.Metinler : MetinTablosu.Yuklu;
-            string id = sira.Dequeue();
-            yazi.text = tablo != null ? tablo.Al(id) : $"[{id}]";
+            gosterilen = sira[0];
+            sira.RemoveAt(0);
+            string metin = tablo != null ? tablo.Al(gosterilen.Id) : $"[{gosterilen.Id}]";
+            if (gosterilen.Degerler != null && gosterilen.Degerler.Length > 0) metin = string.Format(metin, gosterilen.Degerler);
+            yazi.text = metin;
             Boyutla();
             kutu.SetActive(true);
-            kalan = ayarlar.IpucuSuresi;
-            Ses.Cal(SesTuru.Ipucu);
+            kalan = gosterilen.Bildirim ? ayarlar.BildirimSuresi : ayarlar.IpucuSuresi;
+            // Bildirimin sesini onu çağıran olay çalar (darbe, kayıp).
+            if (!gosterilen.Bildirim) Ses.Cal(SesTuru.Ipucu);
         }
 
         /// <summary>Kutu yazıyı tam alacak boyda; genişliği iki yandaki panellere (yönetimde sol panel, 400 birim) değmeyecek kadar.</summary>

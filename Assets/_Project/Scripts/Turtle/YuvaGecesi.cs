@@ -57,6 +57,8 @@ namespace IkiDunya.Turtle
 
         private void AdimBasladi(Adim adim)
         {
+            // Bekleyen sonuç (kendiliğinden yuva) yeni adıma taşmasın.
+            CancelInvoke(nameof(GeceBitti));
             // Anne ve gecenin nesneleri AdimNesneleri ile açılıp kapanır.
             if (adim.Tur == AdimTuru.YuvaGecesi) Basla();
             else durum = Durum.Kapali;
@@ -90,21 +92,27 @@ namespace IkiDunya.Turtle
             // Ürken anne denize döner; yuva örtüldüyse artık önemi yok.
             if (durum != Durum.Deneme || gorulen != anne.transform) return;
             Geribildirim.Darbe(0.5f);
-            DenemeBitti("insan gördü");
+            DenemeBitti("bildirim_deneme_insan");
         }
 
         private void EnerjiBitti()
         {
-            if (durum == Durum.Deneme) DenemeBitti("enerji bitti");
+            if (durum == Durum.Deneme)
+            {
+                Geribildirim.Darbe(0.3f);
+                DenemeBitti("bildirim_deneme_enerji");
+            }
             else if (durum == Durum.DenizeDonus) GeceBitti();
         }
 
-        private void DenemeBitti(string neden)
+        /// <summary>Deneme bitti; bildirim nedeni ve kalan hakkı söyler. Son hak da bittiyse anne yuvayı kendisi kazar; bu söylenir, kısa süre sonra sonuç gelir.</summary>
+        private void DenemeBitti(string bildirim)
         {
             kalanDeneme--;
-            Debug.Log($"YuvaGecesi: deneme bitti ({neden}), kalan {kalanDeneme}.");
+            Ses.Cal(SesTuru.YavruKaybedildi);
             if (kalanDeneme > 0)
             {
+                Ipucu.Bildir(bildirim, kalanDeneme);
                 DenemeBaslat();
                 return;
             }
@@ -112,7 +120,11 @@ namespace IkiDunya.Turtle
             // GDD: iki deneme de biterse anne kumsalın en yakın noktasına kendiliğinden yuva kazar.
             Vector3 yer = kum.BolgeNoktasi(kum.Bolge(anne.transform.position), ayarlar.KendiligindenYuvaUzakligi);
             YuvaKaydet(yer);
-            GeceBitti();
+            // Bekleme sırasında yeni deneme, ürkme ya da tıklama kabul edilmez.
+            durum = Durum.Kapali;
+            anne.Kilitli = true;
+            Ipucu.Bildir("bildirim_kendiliginden_yuva");
+            Invoke(nameof(GeceBitti), ayarlar.KendiligindenYuvaBekleme);
         }
 
         private void YuvaTamamlandi(Vector3 yer)

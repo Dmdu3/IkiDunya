@@ -69,6 +69,10 @@ namespace IkiDunya.Core
             }
             ornek = this;
             DontDestroyOnLoad(gameObject);
+            // Kalıpta EventSystem kapalı durur, sadece kalıcı kopya açar: sahnenin ikinci kopyasınınki hiç açılmaz
+            // (OnEnable'ı Awake sırasından önce gelebiliyor, "only one active Event System" uyarısı verirdi).
+            Transform olaySistemi = transform.Find("EventSystem");
+            if (olaySistemi != null) olaySistemi.gameObject.SetActive(true);
             akis = ayarlar.AkisiKur();
             foreach (ScriptableObject ek in ekVeriler)
             {
