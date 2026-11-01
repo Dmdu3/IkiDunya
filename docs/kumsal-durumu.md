@@ -15,7 +15,7 @@ Kod: `Assets/_Project/Scripts/Core/KumsalDurumu.cs`. Asset: `ScriptableObjects/S
 | Bölge sayısı | `BolgeSayisi` | Soldan sağa 0, 1, ... |
 | Bölgenin katmanı (0–3) | `BolgeAl(i).Seviye(BolgeKatmani.Cop / Isik / Sezlong / Insan)` | |
 | Bölgede yapı var mı | `BolgeAl(i).Var(BolgeYapisi.Golgelik / KumulOnarimi / TilkiCiti / AracIzi / Devriye)` | |
-| Yuvalar | `Yuvalar[i]`: `Bolge`, `Konum`, `Bant` (farklar dahil), `KazildigiBant`, `DalgaAltinda`, `Yumurta`, `CikisinaHafta`, `Kafesli` | Sırası Bölüm 2'deki geceler; kaçış gecesi n, n. yuvadan çıkar |
+| Yuvalar | `Yuvalar[i]`: `Bolge`, `Konum`, `Bant` (zemin + farklar, ısınma hariç), `KazildigiBant`; güncel bant `YuvaBandi(i)` (ısınma dahil), `DalgaAltinda`, `Yumurta`, `CikisinaHafta`, `Kafesli` | Sırası Bölüm 2'deki geceler; kaçış gecesi n, n. yuvadan çıkar |
 | Kayıp izleri | `KayipIzleri[i]`: `Bolge`, `Konum`, `Neden`, `Kanit` (Isi/Isik/Cop/Avci/Su), `KanitAcildi` | Haritada simge |
 | Denizdeki ağ seviyesi | `DenizdekiAg` | Bölüm 5'te ağ ve misina sayısı |
 | Bütün kumun ısınması | `KumIsinmasi` | Bant olarak |
@@ -27,14 +27,15 @@ Kod: `Assets/_Project/Scripts/Core/KumsalDurumu.cs`. Asset: `ScriptableObjects/S
 ### Kalıcı
 | Metot | Ne yapar |
 |---|---|
-| `KatmanDegistir(bolge, katman, fark)` | Katmanı 0–3 arasında değiştirir |
-| `YapiKoy(bolge, yapi)`, `YapiKaldir(bolge, yapi)` | Yapı koyar / kaldırır |
+| `KatmanDegistir(bolge, katman, fark)` | Katmanı 0–3 arasında değiştirir; sınırda kırpılan kısım aynı yöndeki süreli etkiden düşülür (kalıcıya geçer) |
+| `KatmanSifirla(bolge, katman)` | Katmanı kalıcı 0 yapar, bekleyen süreli etkilerini düşer |
+| `YapiKoy(bolge, yapi)`, `YapiKaldir(bolge, yapi)` | Yapı koyar / kaldırır; aynı yapının bekleyen süreli etkisi silinir (süreli yapı kalıcı olur) |
 | `DenizdekiAgDegistir(fark)` | |
 | `KumIsinmasiDegistir(fark)` | |
 | `IsikYasagiAyarla(var)`, `TemizEnerjiAyarla(var)` | |
-| `YuvaKafesle(yuva)`, `YuvaTasi(yuva, bolge, konum, dalgaAltinda)` | |
+| `YuvaKafesle(yuva)`, `YuvaTasi(yuva, bolge, konum, dalgaAltinda, zeminBandi)` | Bant yeni yerin zemininden (`KumSicakligi.ZeminBandi`) baştan kurulur; süreli farklar sürer |
 | `YuvaYumurtaKaybet(yuva, adet)` | Fırtına, tilki |
-| `YuvaBantDegistir(yuva, fark)` | Yuvanın sıcaklığını kalıcı değiştirir (ör. taşınınca) |
+| `YuvaBantDegistir(yuva, fark)` | Yuvanın sıcaklığını kalıcı değiştirir (ör. bölgesine gölgelik kondu) |
 | `KanitAc(iz)` | İzi açılmış yapar, `KanitAcildi(iz)` event'ini atar |
 | `BirHaftaGecti()` | **Her insan turunun başında insan kısmı çağırır** (geceden bu yana bir hafta geçti). Yuvaların çıkışına bir hafta yaklaşır; süreli etkiler azalır, biten geri alınır |
 
@@ -52,10 +53,10 @@ Süre tur sayısıdır. `1` = sıradaki `BirHaftaGecti()`'de, yani bir sonraki t
 
 | Kart | Çağrı |
 |---|---|
-| Gölgelik | `YapiKoy(bolge, Golgelik)` (kum 1 bant serin, kaçışta lekeler yarı boy) |
+| Gölgelik | Bölgede gölgelik yoksa oradaki yumurtalı yuvalara `YuvaBantDegistir(yuva, -1)`, sonra `YapiKoy(bolge, Golgelik)` (kum 1 bant serin, kaçışta lekeler yarı boy) |
 | Temizlik Kampanyası | 3 bölge (ikinci Çöp kanıtıyla 4) için `KatmanDegistir(bolge, Cop, -1)` |
 | Kumul Onarımı | `YapiKoy(bolge, KumulOnarimi)` (dalga çizgisi 4 m denize çekilir) |
-| Yuva Taşıma | `YuvaTasi(...)`; yeni yerin bandı farklıysa `YuvaBantDegistir` |
+| Yuva Taşıma | `YuvaTasi(...)` (bant yeni yerden) |
 | Işık Yasağı | `IsikYasagiAyarla(true)` (otel ve yol ışıkları söner) |
 | Araç Yasağı | Bütün bölgeler için `YapiKaldir(bolge, AracIzi)` |
 | Şezlong Düzenlemesi | Bölgelerde `KatmanDegistir(bolge, Sezlong, -n)` (yarıya) |
@@ -64,13 +65,13 @@ Süre tur sayısıdır. `1` = sıradaki `BirHaftaGecti()`'de, yani bir sonraki t
 | Temiz Enerji | `TemizEnerjiAyarla(true)` (final sahnesi değişir) |
 | Kaplumbağa Dostu Aydınlatma | `KatmanDegistir(bolge, Isik, -2)` |
 | Gözcü Kulübesi | `YapiKoy(bolge, Devriye)` (kalıcı devriye) |
-| Kuluçkahane | Yumurtalı her yuva için `YuvaTasi(...)` (seçilen bölgede yan yana), `YuvaBantDegistir`, `YuvaKafesle` |
+| Kuluçkahane | Yumurtalı her yuva için `YuvaTasi(...)` (seçilen bölgede yan yana), `YuvaKafesle` |
 | Plaj Tabelaları | Bütün bölgeler için `GeciciKatman(bolge, Insan, -1, 1)` |
-| Koruma Alanı | Bölgede `KatmanDegistir` ile Sezlong, Insan, Isik 0; `YapiKaldir(bolge, AracIzi)`; otel ve festival oraya bir daha gelmez (insan kısmı seçer) |
+| Koruma Alanı | Bölgede `KatmanSifirla` ile Sezlong, Insan, Isik 0 (Plaj Tabelaları bitince geri gelmez); `YapiKaldir(bolge, AracIzi)`; otel ve festival oraya bir daha gelmez (insan kısmı seçer) |
 | Otel Ortaklığı | Bütün bölgelerde `KatmanDegistir(bolge, Isik, -1)`, bir bölgede `KatmanDegistir(bolge, Sezlong, +1)` |
 | Balıkçı Kooperatifi | `DenizdekiAgDegistir(-1)` |
 | Kum Torbası Seddi | `GeciciYapi(bolge, KumulOnarimi, 1)` |
-| Yuva Tahliyesi | Dalga altındaki her yuva için `YuvaTasi(...)` ve `YuvaBantDegistir` |
+| Yuva Tahliyesi | Dalga altındaki her yuva için `YuvaTasi(...)` |
 | Acil Sulama | Yumurtalı her yuva için `GeciciYuvaBant(yuva, -1, 1)` |
 | Dron Taraması | Açılmamış her iz için `KanitAc(iz)` |
 | Bağış Kampanyası, Basın Bülteni, Belediye Lobisi, Üniversite Ortaklığı | Kumsala dokunmaz (insan kısmının kendi verisi) |

@@ -26,6 +26,8 @@ namespace IkiDunya.Editor
         private const string AyarKlasoru = "Assets/_Project/ScriptableObjects/Settings";
         private const string YavruKalibi = "Assets/_Project/Prefabs/Turtles/Yavru.prefab";
         private const string GolgelikKalibi = "Assets/_Project/Prefabs/Structures/Golgelik.prefab";
+        private const string TilkiCitiKalibi = "Assets/_Project/Prefabs/Structures/TilkiCiti.prefab";
+        private const string YuvaKafesiKalibi = "Assets/_Project/Prefabs/Structures/YuvaKafesi.prefab";
         private const string KayipIziKalibi = "Assets/_Project/Prefabs/Environment/KayipIzi.prefab";
         // Yusuf'un kumsal arazisi ve objeleri: önce kalıcı yerine, yoksa Yusuf'un deneme klasörüne bakılır.
         private static readonly string[] AraziKaliplari = { "Assets/_Project/Prefabs/Environment/KumsalArazi.prefab", "Assets/Sandbox/Yusuf/KumsalArazi/KumsalArazi.prefab" };
@@ -604,17 +606,19 @@ namespace IkiDunya.Editor
             animator.applyRootMotion = false;
         }
 
-        /// <summary>Kalıba Yusuf'un modelini ekler (varsa) ve gri kutunun görüntüsünü gizler; collider ve oynanış aynı kalır.</summary>
-        private static void ModelEkle(GameObject kok, string model)
+        /// <summary>Kalıba Yusuf'un modelini ekler (varsa) ve gri kutunun görüntüsünü gizler; collider ve oynanış aynı kalır.
+        /// boy: modelin en uzun kenarı (0 ise modelin gerçek boyu).</summary>
+        private static void ModelEkle(GameObject kok, string model, float boy = 0f)
         {
             if (ModelBul(model) == null) return;
             foreach (Renderer gri in kok.GetComponentsInChildren<Renderer>(true)) gri.enabled = false;
-            ModelYerlestir(kok.transform, model, Vector3.zero, 0f);
+            ModelYerlestir(kok.transform, model, Vector3.zero, boy);
         }
 
         /// <summary>Modeli ebeveynin altına koyar: en uzun boyu verilen boya ölçeklenir (0 ise gerçek boyu), tabanı verilen yerel noktaya oturur.
-        /// Collider'ı silinir, layer'ı ebeveynden alır. Model yoksa null.</summary>
-        internal static GameObject ModelYerlestir(Transform ebeveyn, string model, Vector3 taban, float boy)
+        /// Collider'ı silinir, layer'ı ebeveynden alır. Model yoksa null.
+        /// tabanaOtur false ise model kendi kökünü korur (kökü ortada olan modeller: yosun adası, plastik yığını).</summary>
+        internal static GameObject ModelYerlestir(Transform ebeveyn, string model, Vector3 taban, float boy, bool tabanaOtur = true)
         {
             GameObject kaynak = ModelBul(model);
             if (kaynak == null) return null;
@@ -632,7 +636,7 @@ namespace IkiDunya.Editor
                 float enUzun = Mathf.Max(once.size.x, once.size.y, once.size.z);
                 if (enUzun > 0.0001f) gorunus.transform.localScale *= boy / enUzun;
             }
-            if (Sinirlar(gorunus, out Bounds sonra))
+            if (tabanaOtur && Sinirlar(gorunus, out Bounds sonra))
             {
                 // Taban (yerel) dünyada nerede; modelin en altı oraya.
                 Vector3 hedef = ebeveyn.TransformPoint(taban);
@@ -686,10 +690,12 @@ namespace IkiDunya.Editor
             Bagla(yapilar, "kayipIziKalibi", KayipIziKalibiKur());
             Bagla(yapilar, "copYiginiKalibi", TuzakKalibi("CopYigini", new Vector3(1.2f, 0.4f, 1.2f), TrashTrap.Turu.CopYigini, "Cop_Yigini_1"));
             Bagla(yapilar, "agKalibi", TuzakKalibi("Ag", new Vector3(0.8f, 0.02f, 0.8f), TrashTrap.Turu.Ag));
-            Bagla(yapilar, "tekerlekIziKalibi", TuzakKalibi("TekerlekIzi", new Vector3(6f, 0.02f, 0.5f), TrashTrap.Turu.TekerlekIzi));
+            Bagla(yapilar, "tekerlekIziKalibi", TuzakKalibi("TekerlekIzi", new Vector3(6f, 0.02f, 0.5f), TrashTrap.Turu.TekerlekIzi, "Tekerlek_Izi", 6f));
             Bagla(yapilar, "siseKalibi", KutuKalibi("Sise", new Vector3(0.15f, 0.3f, 0.15f), cop, "Trash", "Sise"));
             Bagla(yapilar, "sezlongKalibi", KutuKalibi("Sezlong", new Vector3(0.7f, 0.5f, 2f), engel, "Obstacle", "Sezlong"));
             Bagla(yapilar, "isikKalibi", KalipKaydet(IsikKur("OtelIsigi", null, Vector3.zero, Ayar<KacisAyarlari>("KacisAyarlari"), kumsal), $"{KalipKlasoru}/OtelIsigi.prefab"));
+            Bagla(yapilar, "tilkiCitiKalibi", TilkiCitiKalibiKur());
+            Bagla(yapilar, "yuvaKafesiKalibi", YuvaKafesiKalibiKur());
             // Üç ayrı insan (Yusuf'un modelleri); kumsalda karışık görünür.
             Insan insan1 = InsanKalibiKur("Insan", "Insan");
             Bagla(yapilar, "insanKalibi", insan1);
@@ -734,7 +740,7 @@ namespace IkiDunya.Editor
         }
 
         /// <summary>Takan çöp kalıbı: kök yerde, collider ve TrashTrap çocukta.</summary>
-        private static GameObject TuzakKalibi(string ad, Vector3 boyut, TrashTrap.Turu tur, string model = null)
+        private static GameObject TuzakKalibi(string ad, Vector3 boyut, TrashTrap.Turu tur, string model = null, float modelBoy = 0f)
         {
             var kok = new GameObject(ad);
             kok.layer = LayerMask.NameToLayer("Trash");
@@ -752,7 +758,7 @@ namespace IkiDunya.Editor
             var so = new SerializedObject(bilesen);
             so.FindProperty("tur").enumValueIndex = (int)tur;
             so.ApplyModifiedPropertiesWithoutUndo();
-            if (model != null) ModelEkle(kok, model);
+            if (model != null) ModelEkle(kok, model, modelBoy);
             return KalipKaydet(kok, $"{KalipKlasoru}/{ad}.prefab");
         }
 
@@ -1085,7 +1091,25 @@ namespace IkiDunya.Editor
             foreach (Vector3 direk in direkler)
                 Kutu("Direk", golgelik.transform, direk, new Vector3(0.1f, 2f, 0.1f), beyaz, "Structure").isStatic = false;
             Kutu("Tente", golgelik.transform, new Vector3(0f, 2f, 0f), new Vector3(3.4f, 0.05f, 3.4f), beyaz, "Structure").isStatic = false;
+            // Yusuf'un gölgeliği varsa direk ve tentenin yerine geçer (3,4 m tente).
+            ModelEkle(golgelik, "Golgelik", 3.4f);
             return KalipKaydet(golgelik, GolgelikKalibi);
+        }
+
+        /// <summary>Tilki çiti parçası (4 m): bölgenin kara tarafına dizilir. Model yoksa kalıp kurulmaz.</summary>
+        private static GameObject TilkiCitiKalibiKur() => ModelKalibiKur("TilkiCiti", "Tilki_Citi", 4f, TilkiCitiKalibi);
+
+        /// <summary>Yuva kafesi (1,04 m tel kafes): kafesli yuvanın etrafına konur. Model yoksa kalıp kurulmaz.</summary>
+        private static GameObject YuvaKafesiKalibiKur() => ModelKalibiKur("YuvaKafesi", "Yuva_Kafesi", 1.04f, YuvaKafesiKalibi);
+
+        /// <summary>Sadece modelden oluşan yapı kalıbı. Model yoksa null döner; çağıran taraf yapıyı hiç kurmaz.</summary>
+        private static GameObject ModelKalibiKur(string ad, string model, float boy, string yol)
+        {
+            if (ModelBul(model) == null) return null;
+            var kok = new GameObject(ad);
+            kok.layer = LayerMask.NameToLayer("Structure");
+            ModelYerlestir(kok.transform, model, Vector3.zero, boy);
+            return KalipKaydet(kok, yol);
         }
 
         private static GameObject KayipIziKalibiKur()

@@ -234,6 +234,8 @@ namespace IkiDunya.Core
             int oncekiBolum = sira >= 0 ? akis[sira].Bolum : 0;
             yield return gecis.Solustur(1f, ayarlar.GecisSuresi);
 
+            // Yarıda bırakılan parkurun süresi menüde ve sonraki adımda işlemesin.
+            if (Parkur.Aktif.HasValue) Parkur.Birak(Parkur.Aktif.Value);
             parkur = false;
             sira = yeniSira;
             string sahne = sira >= 0 ? ayarlar.SahneAdi(akis[sira]) : ayarlar.MenuSahnesi;

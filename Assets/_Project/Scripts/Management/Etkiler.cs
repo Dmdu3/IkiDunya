@@ -31,6 +31,11 @@ namespace IkiDunya.Management
             switch (kart.Etki)
             {
                 case KartEtkisi.Golgelik:
+                    // Bölgedeki yuvalar da serinler; gölgelik zaten varsa ikinci kez serinletmez.
+                    if (!kumsal.BolgeAl(hedef).Var(BolgeYapisi.Golgelik))
+                        for (int i = 0; i < kumsal.Yuvalar.Count; i++)
+                            if (kumsal.Yuvalar[i].Bolge == hedef && kumsal.Yuvalar[i].Yumurta > 0)
+                                kumsal.YuvaBantDegistir(i, -kum.Ayarlar.GolgelikSerinletme);
                     kumsal.YapiKoy(hedef, BolgeYapisi.Golgelik);
                     break;
                 case KartEtkisi.TemizlikKampanyasi:
@@ -96,8 +101,9 @@ namespace IkiDunya.Management
                 case KartEtkisi.Lobi:
                     break;
                 case KartEtkisi.KorumaAlani:
+                    // Sıfırlama bekleyen süreli etkileri de düşer: Plaj Tabelaları bitince insan geri gelmez.
                     foreach (BolgeKatmani katman in new[] { BolgeKatmani.Sezlong, BolgeKatmani.Insan, BolgeKatmani.Isik })
-                        kumsal.KatmanDegistir(hedef, katman, -kumsal.BolgeAl(hedef).Seviye(katman));
+                        kumsal.KatmanSifirla(hedef, katman);
                     kumsal.YapiKaldir(hedef, BolgeYapisi.AracIzi);
                     yonetim.KorumaEkle(hedef);
                     break;
@@ -138,15 +144,11 @@ namespace IkiDunya.Management
             yonetim.KartOynandi(kart);
         }
 
-        /// <summary>Yuvayı verilen bölgede dalga çizgisinin üstüne, serin banda taşır; bant farkı yuvaya işlenir.</summary>
+        /// <summary>Yuvayı verilen bölgede dalga çizgisinin üstüne, serin banda taşır; bandı yeni yerin zemininden kurulur.</summary>
         private void YuvaTasi(int yuva, int bolge, float bolgeIcinde)
         {
-            Yuva y = kumsal.Yuvalar[yuva];
             Vector3 konum = kum.BolgeNoktasi(bolge, bolgeIcinde, Ayarlar.TasimaUzakligi);
-            SicaklikBandi eski = y.Bant;
-            kumsal.YuvaTasi(yuva, bolge, konum, kum.DalgaAltinda(konum));
-            int fark = (int)kum.Bant(konum) - (int)eski;
-            if (fark != 0) kumsal.YuvaBantDegistir(yuva, fark);
+            kumsal.YuvaTasi(yuva, bolge, konum, kum.DalgaAltinda(konum), kum.ZeminBandi(konum));
         }
 
         /// <summary>Taşıma hedefi: gölgelikli bir bölge varsa orası, yoksa yuvanın kendi bölgesi.</summary>
@@ -183,6 +185,24 @@ namespace IkiDunya.Management
         }
 
         // ---- Gönüllü görevleri ----
+
+        /// <summary>Görev bu hedefte bir şey değiştirir mi (çöpsüz bölgeye temizlik, zaten devriyeli bölgeye devriye, kafesli ya da çıkmış yuvaya kafes değiştirmez).</summary>
+        public bool GorevIseYarar(GorevTanimi gorev, int hedef)
+        {
+            switch (gorev.Etki)
+            {
+                case GorevEtkisi.Temizlik:
+                    return kumsal.BolgeAl(hedef).Seviye(BolgeKatmani.Cop) > 0;
+                case GorevEtkisi.Devriye:
+                    return !kumsal.BolgeAl(hedef).Var(BolgeYapisi.Devriye);
+                case GorevEtkisi.Kafes:
+                case GorevEtkisi.GolgeSulama:
+                    Yuva y = kumsal.Yuvalar[hedef];
+                    return y.Yumurta > 0 && y.CikisinaHafta > 0 && !(gorev.Etki == GorevEtkisi.Kafes && y.Kafesli);
+                default:
+                    return true;
+            }
+        }
 
         public void GorevVer(GorevTanimi gorev, int hedef)
         {

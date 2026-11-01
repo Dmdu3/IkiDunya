@@ -60,6 +60,11 @@ namespace IkiDunya.Turtle
         {
             kontrol.enabled = false;
             transform.SetPositionAndRotation(konum, yon);
+            // Işınlanınca eski yerin bölgelerinden çıkış gelmez; yeni yerdekilere giriş sonraki fizik adımında gelir.
+            akintilar.Clear();
+            tehlikeler.Clear();
+            isiklar.Clear();
+            siperSayisi = 0;
             kontrol.enabled = true;
             Enerji.Doldur(ayarlar.EnerjiEnFazla);
             Nefes = 1f;
@@ -138,28 +143,36 @@ namespace IkiDunya.Turtle
                 : Mathf.Max(0f, Nefes - Time.deltaTime / ayarlar.NefesSuresi);
         }
 
-        /// <summary>Önündeki besini yer: denizanası enerji verir, poşet yavaşlatır.</summary>
+        /// <summary>Önündeki besini yer (birden çoksa bakılan yöne en yakın olanı): denizanası enerji verir, poşet yavaşlatır.</summary>
         private void Ye()
         {
             Vector3 merkez = goz.position + goz.forward * ayarlar.YemeMesafesi * 0.5f;
             int sayi = Physics.OverlapSphereNonAlloc(merkez, ayarlar.YemeMesafesi, bulunan, ~0, QueryTriggerInteraction.Collide);
+            Yiyecek secilen = null;
+            float enIyi = 0f;
             for (int i = 0; i < sayi; i++)
             {
                 if (!bulunan[i].TryGetComponent(out Yiyecek yiyecek)) continue;
-                if (yiyecek.Ye() == Yiyecek.Turu.Denizanasi)
-                {
-                    Ses.Cal(SesTuru.Yeme);
-                    Enerji.Ekle(tehlikeAyarlari.DenizanasiEnerjisi);
-                    return;
-                }
-                // Poşet: enerji vermez, enerji alır ve uzun süre yavaşlatır (GDD: Beslenme).
-                Ses.Cal(SesTuru.PosetYuttu);
-                Enerji.Harca(tehlikeAyarlari.PosetEnerjiKaybi);
-                Yavasla(ayarlar.PosetYavas);
-                Geribildirim.Bulanma();
-                Ipucu.Goster("ipucu_poset_yuttu");
+                // Arkadaki sayılmaz; bakış çizgisine en yakın olan seçilir.
+                float bakis = Vector3.Dot(goz.forward, (yiyecek.transform.position - goz.position).normalized);
+                if (bakis <= enIyi) continue;
+                enIyi = bakis;
+                secilen = yiyecek;
+            }
+            if (secilen == null) return;
+
+            if (secilen.Ye() == Yiyecek.Turu.Denizanasi)
+            {
+                Ses.Cal(SesTuru.Yeme);
+                Enerji.Ekle(tehlikeAyarlari.DenizanasiEnerjisi);
                 return;
             }
+            // Poşet: enerji vermez, enerji alır ve uzun süre yavaşlatır (GDD: Beslenme).
+            Ses.Cal(SesTuru.PosetYuttu);
+            Enerji.Harca(tehlikeAyarlari.PosetEnerjiKaybi);
+            Yavasla(ayarlar.PosetYavas);
+            Geribildirim.Bulanma();
+            Ipucu.Goster("ipucu_poset_yuttu");
         }
 
         private void Yavasla(float sure)

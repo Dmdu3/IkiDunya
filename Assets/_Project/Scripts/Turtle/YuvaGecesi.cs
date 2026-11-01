@@ -24,6 +24,8 @@ namespace IkiDunya.Turtle
         private int bitisKaresi;
 
         public int KalanDeneme => kalanDeneme;
+        /// <summary>Yuvanın şu anki bandı (bu gecenin kum ısınması dahil); sonuç paneli gösterir.</summary>
+        public SicaklikBandi YuvaBandi(Yuva yuva) => kumsal.YuvaBandi(yuva);
 
         /// <summary>Gece bitince; kazılan yuvayla. Sonuç ekranı gösterir; oyuncu tıklayınca akış ilerler.</summary>
         public event Action<Yuva> SonucHazir;
@@ -74,6 +76,7 @@ namespace IkiDunya.Turtle
             anne.Isinla(baslangic.position, baslangic.rotation);
             anne.Enerji.Doldur(ayarlar.EnerjiEnFazla);
             kazma.Sifirla();
+            kazma.enabled = true;
         }
 
         private void Update()
@@ -123,7 +126,8 @@ namespace IkiDunya.Turtle
         {
             SicaklikBandi bant = kum.Bant(yer);
             int yumurta = bant == SicaklikBandi.Kirmizi ? ayarlar.KirmiziBantYumurta : ayarlar.YumurtaSayisi;
-            var yuva = new Yuva(kum.Bolge(yer), yer, bant, kum.DalgaAltinda(yer), yumurta, ayarlar.KuluckaHafta);
+            // Yuvaya ısınmasız zemin bandı yazılır; sıcak dalgası geçince yuva da serinler.
+            var yuva = new Yuva(kum.Bolge(yer), yer, kum.ZeminBandi(yer), kum.DalgaAltinda(yer), yumurta, ayarlar.KuluckaHafta);
             kumsal.YuvaEkle(yuva);
             sonYuva = yuva;
             Debug.Log($"YuvaGecesi: yuva kazıldı — bölge {yuva.Bolge}, {bant}, dalga altında: {yuva.DalgaAltinda}, {yumurta} yumurta.");
@@ -133,6 +137,9 @@ namespace IkiDunya.Turtle
         {
             durum = Durum.Bitti;
             bitisKaresi = Time.frameCount;
+            // Yarım kalan kazma sonuç ekranının arkasında sürmesin (örtme bitince anneyi açardı).
+            kazma.Sifirla();
+            kazma.enabled = false;
             anne.Kilitli = true;
             Debug.Log("YuvaGecesi: gece bitti.");
             SonucHazir?.Invoke(sonYuva);

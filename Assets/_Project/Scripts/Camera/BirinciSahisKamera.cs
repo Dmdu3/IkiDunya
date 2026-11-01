@@ -24,6 +24,12 @@ namespace IkiDunya.Camera
         private float sarsintiKalan;
         private float sarsintiGucu;
 
+        // Sahnede birden çok göz olabilir (anne, sürü); biri kapanınca açık kalanın imleci serbest kalmasın.
+        private static int acikSayisi;
+
+        [RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.SubsystemRegistration)]
+        private static void StatikleriSifirla() => acikSayisi = 0;
+
         private void Awake()
         {
             kamera = GetComponent<UnityEngine.Camera>();
@@ -39,6 +45,7 @@ namespace IkiDunya.Camera
 
         private void OnEnable()
         {
+            acikSayisi++;
             Duraklatma.Degisti += DuraklatmaDegisti;
             Geribildirim.Sarsildi += Sars;
             ImleciKilitle(!Duraklatma.Acik);
@@ -46,9 +53,10 @@ namespace IkiDunya.Camera
 
         private void OnDisable()
         {
+            acikSayisi--;
             Duraklatma.Degisti -= DuraklatmaDegisti;
             Geribildirim.Sarsildi -= Sars;
-            ImleciKilitle(false);
+            if (acikSayisi <= 0) ImleciKilitle(false);
         }
 
         private void Sars(float guc)
