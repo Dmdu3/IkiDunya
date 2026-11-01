@@ -60,6 +60,10 @@ namespace IkiDunya.UI.Management
         private readonly List<GameObject> yuvaKartlari = new List<GameObject>();
         private readonly List<Text> asamaSeritleri = new List<Text>();
         private Button hedefVazgec;
+        private GameObject kanitPaneli;
+        private Text kanitYazisi;
+        private KayipIzi sonKanit;
+        private bool kanitBekliyor;
         private Sprite panelSprite;
         private Texture2D panelDokusu;
         private int sonBolge = -2;
@@ -82,6 +86,8 @@ namespace IkiDunya.UI.Management
             tur.Degisti += Yenile;
             yonetim.Degisti += Yenile;
             kumsal.Degisti += Yenile;
+            kumsal.KanitAcildi += KanitGoster;
+            KayipIziHaritasi.AcilmisIzSecildi += KanitGoster;
             GameInput.BaglamalarDegisti += Yenile;
             ileriDugmesi.onClick.AddListener(tur.Ilerle);
             DugmeSesi.Bagla(aDugmesi, bDugmesi);
@@ -96,6 +102,8 @@ namespace IkiDunya.UI.Management
             // Sahne kapanırken tur bizden önce silinmiş olabilir; asset'lerden yine de çıkılır, yoksa silinmiş ekran güncellenmeye çalışır.
             if (yonetim != null) yonetim.Degisti -= Yenile;
             if (kumsal != null) kumsal.Degisti -= Yenile;
+            if (kumsal != null) kumsal.KanitAcildi -= KanitGoster;
+            KayipIziHaritasi.AcilmisIzSecildi -= KanitGoster;
             if (tur != null) tur.Degisti -= Yenile;
             if (ileriDugmesi != null) ileriDugmesi.onClick.RemoveAllListeners();
             if (aDugmesi != null) aDugmesi.onClick.RemoveAllListeners();
@@ -104,6 +112,11 @@ namespace IkiDunya.UI.Management
 
         private void Update()
         {
+            if (kanitBekliyor)
+            {
+                kanitBekliyor = false;
+                KanitPaneliniYenile();
+            }
             if (harita.Ustundeki == sonBolge) return;
             sonBolge = harita.Ustundeki;
             BolgeBilgisi();
@@ -339,6 +352,62 @@ namespace IkiDunya.UI.Management
             kartBilgiYazisi = KartMetni("Bilgi", kartBilgiPaneli.transform, new Vector2(.07f, .27f), new Vector2(.93f, .60f), 24, TextAnchor.UpperLeft);
             kartBilgiEk = KartMetni("Etki", kartBilgiPaneli.transform, new Vector2(.07f, .05f), new Vector2(.93f, .25f), 21, TextAnchor.UpperLeft);
             kartBilgiPaneli.SetActive(false);
+
+            kanitPaneli = new GameObject("KanitBilgisi", typeof(RectTransform), typeof(Image));
+            kanitPaneli.layer = LayerMask.NameToLayer("UI");
+            kanitPaneli.transform.SetParent(kok.transform, false);
+            Yuvarlak(kanitPaneli.GetComponent<Image>(), kagit);
+            kanitYazisi = KartMetni("KanitMetni", kanitPaneli.transform, new Vector2(.06f, .18f), new Vector2(.94f, .95f), 22, TextAnchor.UpperLeft);
+            var kapat = Instantiate(dugmeKalibi, kanitPaneli.transform);
+            kapat.name = "KanitKapat";
+            kapat.gameObject.SetActive(true);
+            Kenarlik((RectTransform)kapat.transform, new Vector2(.5f, 0f), new Vector2(.5f, 0f), -90f, 8f, -90f, -54f);
+            kapat.GetComponentInChildren<Text>(true).text = Al("kanit_bilgi_kapat");
+            kapat.onClick.RemoveAllListeners();
+            kapat.onClick.AddListener(() => kanitPaneli.SetActive(false));
+            kanitPaneli.SetActive(false);
+        }
+
+        private void KanitGoster(KayipIzi iz)
+        {
+            sonKanit = iz;
+            kanitBekliyor = true;
+        }
+
+        private void KanitPaneliniYenile()
+        {
+            if (sonKanit == null || kanitPaneli == null || tur.SuAnki == InsanTuru.Asama.Kapali || tur.SuAnki == InsanTuru.Asama.Bitiyor) return;
+            KanitTuru kanit = sonKanit.Kanit;
+            string id = $"kanit_{kanit.ToString().ToLowerInvariant()}";
+            var yazi = new StringBuilder();
+            yazi.AppendLine($"<b>{Al(id)}</b>  ·  {Al("kanit_bulunan")}: {yonetim.KanitSayisi(kanit)}");
+            yazi.AppendLine(Al($"kanit_neden_{sonKanit.Neden.ToString().ToLowerInvariant()}"));
+            yazi.AppendLine(Al(id + "_not"));
+            yazi.AppendLine($"\n<b>{Al("kanit_ilgili_kartlar")}</b>");
+            bool bulundu = false;
+            foreach (KartTanimi kart in yonetim.Ayarlar.Kartlar)
+            {
+                if (kart == null || kart.Kanit != kanit || (kart.Bastan && !kart.KanitUcuzlatir && kart.GucluDeger <= 0)) continue;
+                bulundu = true;
+                yazi.Append($"• {Al(kart.Id)}: ");
+                var etkiler = new List<string>();
+                if (!kart.Bastan) etkiler.Add(Al("kanit_kart_acildi"));
+                if (kart.Bastan && kart.KanitUcuzlatir) etkiler.Add(Al("kanit_kart_indirim"));
+                if (kart.GucluDeger > 0)
+                {
+                    string birim = kart.Etki == KartEtkisi.TemizlikKampanyasi ? Al("kanit_birim_bolge")
+                        : kart.Etki == KartEtkisi.PlajTabelalari ? Al("kanit_birim_kademe")
+                        : kart.Etki == KartEtkisi.AcilSulama ? Al("kanit_birim_bant") : "";
+                    etkiler.Add($"{Al(yonetim.Guclu(kart) ? "kanit_kart_guclendi" : "kanit_kart_guclenme")} ({kart.Deger} → {kart.GucluDeger} {birim})");
+                }
+                yazi.AppendLine(string.Join("; ", etkiler));
+            }
+            if (!bulundu) yazi.AppendLine(Al("kanit_kart_yok"));
+            kanitYazisi.text = yazi.ToString();
+            float alt = AltBosluk + (tur.SuAnki == InsanTuru.Asama.Kartlar ? KartPaneliYuksekligi : AltPaneliYuksekligi) + Aralik;
+            float bos = ((RectTransform)kok.transform).rect.height - alt - UstBosluk - UstYukseklik - Aralik;
+            Yerles((RectTransform)kanitPaneli.transform, new Vector2(1f, 0f), new Vector2(-Kenar, alt), new Vector2(BilgiGenisligi, Mathf.Max(160f, bos)));
+            kanitPaneli.SetActive(true);
         }
 
         private void PanelBasligi(GameObject panel, string id)

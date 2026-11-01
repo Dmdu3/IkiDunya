@@ -160,16 +160,55 @@ MonoBehaviour:
   - id: kanit_cop
     metin: "Kan\u0131t: \xC7\xF6p"
   - id: kanit_cop_not
-    metin: "Yavrular a\u011Fa, halkaya, tekerlek izine tak\u0131ld\u0131. Ara\xE7lar
-      ve \u015Fezlonglar d\xFCzenlenebilir."
+    metin: "Yavrular \xE7\xF6p ve a\u011Flara tak\u0131labilir. B\xF6lgeyi g\xF6n\xFCll\xFCyle
+      temizleyebilir; ara\xE7lar\u0131 ve \u015Fezlonglar\u0131 d\xFCzenleyebilirsin."
   - id: kanit_avci
     metin: "Kan\u0131t: Avc\u0131"
   - id: kanit_avci_not
-    metin: "Bir tilki yuvay\u0131 ya da s\xFCr\xFCy\xFC buldu. \xC7it onu uzak tutar."
+    metin: "Yuva veya yavrular bir avc\u0131yla kar\u015F\u0131la\u015Ft\u0131. Tilki
+      \xE7iti, tilkiye kar\u015F\u0131 koruma sa\u011Flar."
   - id: kanit_su
     metin: "Kan\u0131t: Su"
   - id: kanit_su_not
     metin: "Deniz yuvay\u0131 bast\u0131. Yuvalar ta\u015F\u0131nabilir."
+  - id: kanit_neden_sicakkum
+    metin: "Yavru s\u0131cak kumda kaybedildi."
+  - id: kanit_neden_cop
+    metin: "Yavru kumsaldaki \xE7\xF6pte kaybedildi."
+  - id: kanit_neden_ag
+    metin: "Yavru a\u011Fa tak\u0131ld\u0131."
+  - id: kanit_neden_isik
+    metin: "Yavru \u0131\u015F\u0131k nedeniyle yolunu kaybetti."
+  - id: kanit_neden_yengec
+    metin: "Yavru yenge\xE7 nedeniyle kaybedildi."
+  - id: kanit_neden_marti
+    metin: "Yavru mart\u0131 nedeniyle kaybedildi."
+  - id: kanit_neden_tilki
+    metin: Yuva veya yavru tilki nedeniyle kaybedildi.
+  - id: kanit_neden_dalga
+    metin: Yuva veya yavru su nedeniyle kaybedildi.
+  - id: kanit_bulunan
+    metin: "Bulunan kan\u0131t"
+  - id: kanit_ilgili_kartlar
+    metin: "\u0130lgili kartlar"
+  - id: kanit_kart_acildi
+    metin: "Kan\u0131tla havuza a\xE7\u0131l\u0131r"
+  - id: kanit_kart_indirim
+    metin: "Kan\u0131tla bedeli azal\u0131r"
+  - id: kanit_kart_guclenme
+    metin: "Daha fazla kan\u0131tla g\xFC\xE7lenir"
+  - id: kanit_kart_guclendi
+    metin: "Kan\u0131tla g\xFC\xE7lendi"
+  - id: kanit_birim_bolge
+    metin: "b\xF6lge"
+  - id: kanit_birim_kademe
+    metin: kademe
+  - id: kanit_birim_bant
+    metin: bant
+  - id: kanit_kart_yok
+    metin: "Bu kan\u0131ta ba\u011Fl\u0131 kart bulunamad\u0131."
+  - id: kanit_bilgi_kapat
+    metin: Kapat
   - id: olay_otel
     metin: "Otel kumsala yeni bir \u015Fezlong s\u0131ras\u0131 koymak istiyor."
   - id: olay_otel_a

@@ -8,6 +8,12 @@ namespace IkiDunya.Hazards
     /// <summary>İnsan turunda kayıp izlerini kumsalın üstünde kanıt rengiyle gösterir; simgeye tıklanınca kanıt açılır (KumsalDurumu.KanitAc).</summary>
     public class KayipIziHaritasi : MonoBehaviour
     {
+        /// <summary>Daha önce açılmış bir iz yeniden incelendiğinde; kanıt sayısını artırmaz.</summary>
+        public static event System.Action<KayipIzi> AcilmisIzSecildi;
+
+        [RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.SubsystemRegistration)]
+        private static void StatikleriSifirla() => AcilmisIzSecildi = null;
+
         [SerializeField] private KumsalDurumu kumsal;
         [SerializeField] private HaritaAyarlari ayarlar;
         [Tooltip("Kumsala tepeden bakan kamera.")]
@@ -64,14 +70,26 @@ namespace IkiDunya.Hazards
             RaycastHit[] carpanlar = Physics.RaycastAll(isin, kamera.farClipPlane, ~0, QueryTriggerInteraction.Ignore);
             int sira = -1;
             float enYakin = float.MaxValue;
+            int acikSira = -1;
+            float enYakinAcik = float.MaxValue;
             foreach (RaycastHit carpan in carpanlar)
             {
                 int s = simgeler.IndexOf(carpan.collider);
-                if (s < 0 || kumsal.KayipIzleri[s].KanitAcildi || carpan.distance >= enYakin) continue;
+                if (s < 0) continue;
+                if (kumsal.KayipIzleri[s].KanitAcildi)
+                {
+                    if (carpan.distance < enYakinAcik) { enYakinAcik = carpan.distance; acikSira = s; }
+                    continue;
+                }
+                if (carpan.distance >= enYakin) continue;
                 enYakin = carpan.distance;
                 sira = s;
             }
-            if (sira < 0) return;
+            if (sira < 0)
+            {
+                if (acikSira >= 0) AcilmisIzSecildi?.Invoke(kumsal.KayipIzleri[acikSira]);
+                return;
+            }
             Debug.Log($"KayipIziHaritasi: kanıt açıldı — {kumsal.KayipIzleri[sira].Kanit}.");
             Ses.Cal(SesTuru.KanitBulundu);
             kumsal.KanitAc(sira);
