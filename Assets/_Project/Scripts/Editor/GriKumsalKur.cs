@@ -951,6 +951,26 @@ namespace IkiDunya.Editor
             halkaGorunus.sharedMaterial = isikHalkasi;
             halkaGorunus.shadowCastingMode = ShadowCastingMode.Off;
             Bagla(isik, "halka", halka);
+
+            // Gece uzaktan yavrunun gözünde lamba ay sanılır: gökte, lambanın yönünde sahte bir ay belirir ve direk gizlenir.
+            // Gerçek ay denizin üstündedir; sahte ay yavruyu karaya yönlendirir. Yaklaşınca, uzun bakınca ya da Işık Yasağı'nda kırılır.
+            GameObject sahteAy = GameObject.CreatePrimitive(PrimitiveType.Sphere);
+            sahteAy.name = "Yanilgi_Ay";
+            Object.DestroyImmediate(sahteAy.GetComponent<Collider>());
+            sahteAy.transform.SetParent(kok, false);
+            var ayGorunus = sahteAy.GetComponent<Renderer>();
+            ayGorunus.sharedMaterial = Malzeme("Ay", new Color(1f, 0.97f, 0.85f, 1f), "IkiDunya/Gokyuzu");
+            ayGorunus.shadowCastingMode = ShadowCastingMode.Off;
+            sahteAy.SetActive(false);
+            var algi = kok.gameObject.AddComponent<AlgiNesnesi>();
+            Bagla(algi, "gercekGorunus", direk.transform);
+            Bagla(algi, "yanilgiGorunus", sahteAy);
+            Bagla(algi, "odak", lamba.transform);
+            Bagla(algi, "isikYasagiKumsali", kumsal);
+            var so = new SerializedObject(algi);
+            so.FindProperty("gokCismi").boolValue = true;
+            so.FindProperty("geceGerekli").boolValue = true;
+            so.ApplyModifiedPropertiesWithoutUndo();
             return kok.gameObject;
         }
 
@@ -1326,6 +1346,7 @@ namespace IkiDunya.Editor
             Bagla(bakis, "ayarlar", Ayar<KameraAyarlari>("KameraAyarlari"));
             Bagla(bakis, "geribildirim", Ayar<GeribildirimAyarlari>("GeribildirimAyarlari"));
             if (govde != null) Bagla(bakis, "govde", govde);
+            Bagla(goz.AddComponent<KaplumbagaAlgisi>(), "ayarlar", Ayar<AlgiAyarlari>("AlgiAyarlari"));
             return bakis;
         }
 

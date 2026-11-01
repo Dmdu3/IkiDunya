@@ -15,6 +15,12 @@ namespace IkiDunya.Core
         [Tooltip("İsteğe bağlı: gece açılan gökyüzü (yıldızlar, ay).")]
         [SerializeField] private GameObject gokyuzu;
 
+        /// <summary>Sahne şu an gece mi; kaplumbağanın algısı (sahte ay) bunu okur.</summary>
+        public static bool GeceMi { get; private set; }
+
+        [RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.SubsystemRegistration)]
+        private static void StatikleriSifirla() => GeceMi = false;
+
         private void OnEnable() => OyunAkisi.AdimBasladi += AdimBasladi;
         private void OnDisable() => OyunAkisi.AdimBasladi -= AdimBasladi;
 
@@ -30,6 +36,7 @@ namespace IkiDunya.Core
 
         private void Uygula(bool gece, bool renkVer = true)
         {
+            GeceMi = gece;
             if (gokyuzu != null) gokyuzu.SetActive(gece);
             if (isik != null)
             {

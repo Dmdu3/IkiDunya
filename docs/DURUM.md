@@ -36,6 +36,7 @@ Son güncelleme: 2026-11-01 — Dalda (`umut/cila`): Hepsini kur, PC build, F6 p
 | Sıcak kum lekesi, gün doğumu, dalga | `Hazards` | `HazardZone`, `GunDogumu`, `Dalga`, `KacisAyarlari` | Umut | Yapılıyor |
 | Kumsalı durumdan kurma (çöp, halka, şezlong, şemsiye, ışık, insan, araç izi, gölgelik, çit, gözcü kulübesi, kum torbası seddi, plaj tabelası, kayıp izleri) | `Hazards` | `KumsalYapilari` | Umut | Yapılıyor |
 | Kumsalın ilk hali | `Core` | `KumsalBaslangici`, `DenemeKumsali` | Umut | Yapılıyor |
+| Kaplumbağanın algı yanılgıları: uzaktan poşet denizanası (Bölüm 1), gece lamba sahte ay (kaçış gecesi); yaklaşınca, uzun bakınca, Işık Yasağı'nda kalıcı kırılır | `Turtle/Algi` | `AlgiNesnesi`, `KaplumbagaAlgisi`, `AlgiAyarlari`; `Core/OrtamIsigi.GeceMi` | Toprak | Yapılıyor (denendi) |
 | Kaçışta çöp (ağ, halka, tekerlek izi) | `Hazards` | `TrashTrap` | Umut | Yapılıyor |
 | Avcılar | `Hazards` | `Yengec`, `Marti`, `Tilki`, `AvciAyarlari`, `Cover`; `Core/IAvlanabilir` | Umut | Yapılıyor |
 | Işık kaynakları | `Hazards` | `IsikKaynagi` | Umut | Yapılıyor |
