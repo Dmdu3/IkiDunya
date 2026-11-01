@@ -2,6 +2,7 @@ using IkiDunya.Core;
 using IkiDunya.Hazards;
 using IkiDunya.Turtle;
 using UnityEngine;
+using UnityEngine.UI;
 
 namespace IkiDunya.UI.Night
 {
@@ -27,6 +28,10 @@ namespace IkiDunya.UI.Night
         [SerializeField] private Suru suru;
         [Tooltip("E basılıyken kurtarmanın doluluğu; ekranın ortasında.")]
         [SerializeField] private Cubuk yardimCubugu;
+        [Tooltip("Gün doğumu çubuğunun altında: kumda, denizde, kayıp yavru sayısı.")]
+        [SerializeField] private Text suruSayisi;
+
+        private int sonKalan = -1, sonKurtulan = -1, sonKayip = -1;
 
         private void Update()
         {
@@ -53,6 +58,22 @@ namespace IkiDunya.UI.Night
             {
                 gunDogumuCubugu.Ayarla(1f - gunDogumu.Oran);
             }
+            SuruSayisi(kosu);
+        }
+
+        /// <summary>Sayılar değişince yazılır (her karede yeni yazı kurulmasın).</summary>
+        private void SuruSayisi(bool kosu)
+        {
+            if (suruSayisi == null || suru == null) return;
+            if (suruSayisi.gameObject.activeSelf != kosu) suruSayisi.gameObject.SetActive(kosu);
+            if (!kosu) return;
+            if (suru.Kalan == sonKalan && suru.Kurtulan == sonKurtulan && suru.Kaybedilen == sonKayip) return;
+            sonKalan = suru.Kalan;
+            sonKurtulan = suru.Kurtulan;
+            sonKayip = suru.Kaybedilen;
+            MetinTablosu tablo = MetinTablosu.Yuklu;
+            string kalip = tablo != null ? tablo.Al("gosterge_suru") : "{0} · {1} · {2}";
+            suruSayisi.text = string.Format(kalip, sonKalan, sonKurtulan, sonKayip);
         }
 
         /// <summary>0–1 sıcaklığı dört banda böler; ölümcül sınırın üstü kırmızı.</summary>

@@ -231,6 +231,7 @@ namespace IkiDunya.Editor
             Bagla(gosterge, "gunDogumuCubugu", gunCubugu);
             Bagla(gosterge, "suru", suru);
             Bagla(gosterge, "yardimCubugu", yardimCubugu);
+            Bagla(gosterge, "suruSayisi", SuruSayisiKur(tuval));
 
             SonucPaneliKur(null, gece);
         }
@@ -980,7 +981,8 @@ namespace IkiDunya.Editor
             if (kacisGecesi != null)
             {
                 Bagla(panel, "kacisGecesi", kacisGecesi);
-                RectTransform kutu = PanelKur("KacisSonucu", tuval, "sonuc_kacis_baslik", 4);
+                RectTransform kutu = PanelKur("KacisSonucu", tuval, "sonuc_kacis_baslik", 4, SonucNedenSeridi);
+                Bagla(panel, "kayipNedenleri", KayipNedenleriKur(kutu, 4));
                 Bagla(panel, "kacisPaneli", kutu.gameObject);
                 Color[] renkler = { new Color(0.4f, 0.8f, 0.45f), new Color(0.85f, 0.25f, 0.2f), new Color(1f, 0.55f, 0.75f), new Color(0.4f, 0.65f, 1f) };
                 string[] alanlar = { "kurtulan", "kaybedilen", "disi", "erkek" };
@@ -994,10 +996,40 @@ namespace IkiDunya.Editor
         }
 
         // Sonuç paneli ölçüleri (tuval birimi): başlık şeridi, satır yüksekliği, alttaki "devam" şeridi. 4 satırlı panel 1280x720'ye sığar.
-        private const float SonucGenisligi = 650f, SonucBasligi = 100f, SonucSatiri = 100f, SonucAlti = 70f;
+        // Kaçış sonucunda satırların altındaki kayıp nedenleri şeridi; 4 satır + şerit 1280x720'ye sığar.
+        private const float SonucGenisligi = 650f, SonucBasligi = 100f, SonucSatiri = 100f, SonucAlti = 70f, SonucNedenSeridi = 56f;
 
-        /// <summary>Panel: üstte başlık, altta "devam etmek için…" satırı; aradaki satırlar renk, ad, sayı. Boyu satır sayısına göre, ekranın ortasında.</summary>
-        private static RectTransform PanelKur(string ad, Transform tuval, string baslikId, int satirSayisi)
+        /// <summary>Kaçış sonucunda son satırın altında, kayıpların nedenlerini yazan soluk şerit (yazıyı GeceSonucuPaneli kurar).</summary>
+        private static Text KayipNedenleriKur(RectTransform panel, int satirSayisi)
+        {
+            var nesne = new GameObject("KayipNedenleri", typeof(RectTransform), typeof(Text));
+            nesne.layer = LayerMask.NameToLayer("UI");
+            nesne.transform.SetParent(panel, false);
+            SatiraKoy((RectTransform)nesne.transform, 0f, 1f, 38f, 36f, SatirUstu(satirSayisi), SonucNedenSeridi);
+            var yazi = nesne.GetComponent<Text>();
+            TemaYazisi(yazi, false, Tema().SolukYazi);
+            yazi.fontSize = 24;
+            yazi.alignment = TextAnchor.MiddleLeft;
+            return yazi;
+        }
+
+        /// <summary>Koşuda gün doğumu çubuğunun altında kumda, denizde, kayıp yavru sayısı (yazıyı KacisGostergesi kurar).</summary>
+        private static Text SuruSayisiKur(Transform tuval)
+        {
+            var nesne = new GameObject("SuruSayisi", typeof(RectTransform), typeof(Text), typeof(Shadow));
+            nesne.layer = LayerMask.NameToLayer("UI");
+            nesne.transform.SetParent(tuval, false);
+            Yasla((RectTransform)nesne.transform, new Vector2(0.3f, 0.895f), new Vector2(0.7f, 0.935f));
+            var yazi = nesne.GetComponent<Text>();
+            TemaYazisi(yazi, false, Tema().Yazi);
+            yazi.fontSize = 26;
+            yazi.alignment = TextAnchor.MiddleCenter;
+            nesne.SetActive(false);
+            return yazi;
+        }
+
+        /// <summary>Panel: üstte başlık, altta "devam etmek için…" satırı; aradaki satırlar renk, ad, sayı (ve istenirse ek şerit). Boyu satır sayısına göre, ekranın ortasında.</summary>
+        private static RectTransform PanelKur(string ad, Transform tuval, string baslikId, int satirSayisi, float ekYukseklik = 0f)
         {
             var panel = new GameObject(ad, typeof(RectTransform), typeof(Image));
             panel.layer = LayerMask.NameToLayer("UI");
@@ -1005,7 +1037,7 @@ namespace IkiDunya.Editor
             var rect = (RectTransform)panel.transform;
             rect.anchorMin = rect.anchorMax = rect.pivot = new Vector2(0.5f, 0.5f);
             rect.anchoredPosition = Vector2.zero;
-            rect.sizeDelta = new Vector2(SonucGenisligi, SonucBasligi + satirSayisi * SonucSatiri + SonucAlti);
+            rect.sizeDelta = new Vector2(SonucGenisligi, SonucBasligi + satirSayisi * SonucSatiri + ekYukseklik + SonucAlti);
             ArayuzTemasi tema = Tema();
             panel.GetComponent<Image>().color = tema.Panel;
             // Başlık serif, solda; altında kısa vurgu çizgisi.

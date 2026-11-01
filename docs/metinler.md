@@ -192,6 +192,21 @@ Kısa yaz: kart açıklaması en fazla 2 satır, kanıt notu en fazla 3 satır. 
 | sonuc_disi | Dişi |
 | sonuc_erkek | Erkek |
 | sonuc_devam | Devam etmek için tıkla ya da Space'e bas |
+| kayip_sicakkum | Sıcak kum |
+| kayip_cop | Çöp |
+| kayip_ag | Ağ |
+| kayip_isik | Işık |
+| kayip_yengec | Yengeç |
+| kayip_marti | Martı |
+| kayip_tilki | Tilki |
+| kayip_dalga | Dalga |
+| gosterge_suru | Kumda {0}  ·  Denizde {1}  ·  Kayıp {2} |
+| bildirim_kum_alti_enerji | Yavruların gücü tükendi; kumu baştan kazıyorlar. |
+| bildirim_sicak_kum | Yüzey çok sıcaktı: {0} yavru kumdan çıkamadı. |
+| bildirim_gun_doguyor | Gün doğmak üzere! Kumda kalan {0} yavru denize ulaşmalı. |
+| bildirim_oncu_kurtuldu | Öncü denize ulaştı! Sıradaki yavruyu sen sürüyorsun. Kumda {0} kaldı. |
+| bildirim_oncu_kayip | Öncü kaybedildi. Sıradaki yavruyu sen sürüyorsun. Kumda {0} kaldı. |
+| bildirim_hepsi_kayip | Bu gece hiçbir yavru denize ulaşamadı. |
 | bant_mavi | Serin |
 | bant_yesil | Ilık |
 | bant_turuncu | Sıcak |

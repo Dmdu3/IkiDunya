@@ -1,3 +1,4 @@
+using System.Collections.Generic;
 using IkiDunya.Core;
 using IkiDunya.Hazards;
 using IkiDunya.Turtle;
@@ -28,6 +29,8 @@ namespace IkiDunya.UI.Night
         [SerializeField] private Text kaybedilen;
         [SerializeField] private Text disi;
         [SerializeField] private Text erkek;
+        [Tooltip("Kayıpların nedenleri (Sıcak kum 4 · Ağ 2 …); kayıp yoksa boş.")]
+        [SerializeField] private Text kayipNedenleri;
 
         /// <summary>Sonuç paneli ekranda (ipucu kutusu bu sırada bekler).</summary>
         public static bool Acik { get; private set; }
@@ -84,8 +87,26 @@ namespace IkiDunya.UI.Night
             kaybedilen.text = sonuc.Kaybedilen.ToString();
             disi.text = sonuc.Disi.ToString();
             erkek.text = sonuc.Erkek.ToString();
+            if (kayipNedenleri != null) kayipNedenleri.text = Nedenler(sonuc.Nedenler);
             kacisPaneli.SetActive(true);
             Acik = true;
+        }
+
+        /// <summary>"Sıcak kum 4 · Ağ 2"; çoktan aza, sıfırlar yazılmaz.</summary>
+        private string Nedenler(int[] sayilar)
+        {
+            if (sayilar == null) return "";
+            MetinTablosu tablo = metinler != null ? metinler : MetinTablosu.Yuklu;
+            var sira = new List<int>();
+            for (int i = 0; i < sayilar.Length; i++) if (sayilar[i] > 0) sira.Add(i);
+            sira.Sort((a, b) => sayilar[b].CompareTo(sayilar[a]));
+            var parcalar = new List<string>();
+            foreach (int i in sira)
+            {
+                string id = $"kayip_{((KayipNedeni)i).ToString().ToLowerInvariant()}";
+                parcalar.Add($"{(tablo != null ? tablo.Al(id) : id)} {sayilar[i]}");
+            }
+            return string.Join("  ·  ", parcalar);
         }
 
         private void Kapat()

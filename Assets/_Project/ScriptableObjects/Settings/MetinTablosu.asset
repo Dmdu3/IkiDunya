@@ -473,6 +473,38 @@ MonoBehaviour:
     metin: Erkek
   - id: sonuc_devam
     metin: "Devam etmek i\xE7in t\u0131kla ya da Space'e bas"
+  - id: kayip_sicakkum
+    metin: "S\u0131cak kum"
+  - id: kayip_cop
+    metin: "\xC7\xF6p"
+  - id: kayip_ag
+    metin: "A\u011F"
+  - id: kayip_isik
+    metin: "I\u015F\u0131k"
+  - id: kayip_yengec
+    metin: "Yenge\xE7"
+  - id: kayip_marti
+    metin: "Mart\u0131"
+  - id: kayip_tilki
+    metin: Tilki
+  - id: kayip_dalga
+    metin: Dalga
+  - id: gosterge_suru
+    metin: "Kumda {0}  \xB7  Denizde {1}  \xB7  Kay\u0131p {2}"
+  - id: bildirim_kum_alti_enerji
+    metin: "Yavrular\u0131n g\xFCc\xFC t\xFCkendi; kumu ba\u015Ftan kaz\u0131yorlar."
+  - id: bildirim_sicak_kum
+    metin: "Y\xFCzey \xE7ok s\u0131cakt\u0131: {0} yavru kumdan \xE7\u0131kamad\u0131."
+  - id: bildirim_gun_doguyor
+    metin: "G\xFCn do\u011Fmak \xFCzere! Kumda kalan {0} yavru denize ula\u015Fmal\u0131."
+  - id: bildirim_oncu_kurtuldu
+    metin: "\xD6nc\xFC denize ula\u015Ft\u0131! S\u0131radaki yavruyu sen s\xFCr\xFCyorsun.
+      Kumda {0} kald\u0131."
+  - id: bildirim_oncu_kayip
+    metin: "\xD6nc\xFC kaybedildi. S\u0131radaki yavruyu sen s\xFCr\xFCyorsun. Kumda
+      {0} kald\u0131."
+  - id: bildirim_hepsi_kayip
+    metin: "Bu gece hi\xE7bir yavru denize ula\u015Famad\u0131."
   - id: bant_mavi
     metin: Serin
   - id: bant_yesil

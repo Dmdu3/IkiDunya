@@ -17,12 +17,15 @@ namespace IkiDunya.Turtle
             public int Kaybedilen { get; }
             public int Disi { get; }
             public int Erkek => Kurtulan - Disi;
+            /// <summary>Kayıpların nedene göre sayısı; KayipNedeni sırasıyla.</summary>
+            public int[] Nedenler { get; }
 
-            public Sonuc(int kurtulan, int kaybedilen, int disi)
+            public Sonuc(int kurtulan, int kaybedilen, int disi, int[] nedenler)
             {
                 Kurtulan = kurtulan;
                 Kaybedilen = kaybedilen;
                 Disi = disi;
+                Nedenler = nedenler;
             }
         }
 
@@ -43,6 +46,8 @@ namespace IkiDunya.Turtle
         private bool suruKuruldu;
         private float gecen;
         private readonly SonucKapisi sonucKapisi = new SonucKapisi();
+        private int[] nedenler = new int[Enum.GetValues(typeof(KayipNedeni)).Length];
+        private bool gunUyarildi;
 
         public Asama SuAnki { get; private set; }
         /// <summary>Yavruların üstünde kalan kum katı.</summary>
@@ -101,6 +106,8 @@ namespace IkiDunya.Turtle
             yavruSayisi = yuvaVar ? kumsal.Yuvalar[gece - 1].Yumurta : ayarlar.VarsayilanYavruSayisi;
             kumdaKalan = 0;
             suruKuruldu = false;
+            nedenler = new int[nedenler.Length];
+            gunUyarildi = false;
             CikisiBaslat();
         }
 
@@ -116,7 +123,11 @@ namespace IkiDunya.Turtle
         private void Update()
         {
             if (SuAnki == Asama.Cikis) CikisGuncelle();
-            else if (SuAnki == Asama.Kosu) DalgayaBak();
+            else if (SuAnki == Asama.Kosu)
+            {
+                DalgayaBak();
+                GunDogumunaBak();
+            }
             else if (SuAnki == Asama.Bitti && sonucKapisi.KapatIstendi()) SonucuKapat();
         }
 
@@ -126,8 +137,10 @@ namespace IkiDunya.Turtle
             CikisEnerjisi -= ayarlar.KumAltiEnerjiKaybi / ayarlar.EnerjiEnFazla * Time.deltaTime;
             if (CikisEnerjisi <= 0f)
             {
-                // GDD: enerji biterse son kontrol noktasından devam; burada çıkışın başı.
-                Debug.Log("KacisGecesi: kum altında enerji bitti, çıkış baştan.");
+                // GDD: enerji biterse son kontrol noktasından devam; burada çıkışın başı. Kumun soğuması da baştan
+                // (korunsaydı enerjiyi bilerek bitirip serin kumdan çıkmak bedava olurdu).
+                Geribildirim.Darbe(Siddet.Hafif);
+                Ipucu.Bildir("bildirim_kum_alti_enerji");
                 CikisiBaslat();
                 return;
             }
@@ -146,9 +159,11 @@ namespace IkiDunya.Turtle
             int bolge = kum.Bolge(yuvaKonumu);
             for (int i = 0; i < kumdaKalan; i++)
                 kumsal.KayipIziEkle(new KayipIzi(bolge, yuvaKonumu, KayipNedeni.SicakKum));
-            Debug.Log($"KacisGecesi: yüzeye çıkıldı, {kumdaKalan} yavru sıcak kumda kaldı.");
+            nedenler[(int)KayipNedeni.SicakKum] += kumdaKalan;
 
             int kalan = yavruSayisi - kumdaKalan;
+            // Hepsi kaldıysa sonuç paneli nedeni söyler; bir kısmıysa koşu başlarken söylenir.
+            if (kumdaKalan > 0 && kalan > 0) Ipucu.Bildir("bildirim_sicak_kum", kumdaKalan);
             if (kalan <= 0)
             {
                 GeceBitti();
@@ -185,8 +200,17 @@ namespace IkiDunya.Turtle
             }
         }
 
+        /// <summary>Gün doğumu yaklaşınca bir kez uyarır (kumda kalanlar kaybedilecek).</summary>
+        private void GunDogumunaBak()
+        {
+            if (gunUyarildi || gunDogumu.Oran < kacisAyarlari.GunDogumuUyarisi) return;
+            gunUyarildi = true;
+            Ipucu.Bildir("bildirim_gun_doguyor", suru.Kalan);
+        }
+
         private void YavruKaybedildi(Yavru yavru, KayipNedeni neden)
         {
+            nedenler[(int)neden]++;
             Vector3 yer = yavru.transform.position;
             kumsal.KayipIziEkle(new KayipIzi(kum.Bolge(yer), yer, neden));
         }
@@ -211,7 +235,7 @@ namespace IkiDunya.Turtle
             int kurtulan = suruKuruldu ? suru.Kurtulan : 0;
             int kaybedilen = kumdaKalan + (suruKuruldu ? suru.Kaybedilen : 0);
             int disi = Mathf.RoundToInt(kurtulan * ayarlar.DisiOrani(yuvaBandi));
-            var sonuc = new Sonuc(kurtulan, kaybedilen, disi);
+            var sonuc = new Sonuc(kurtulan, kaybedilen, disi, (int[])nedenler.Clone());
             Debug.Log($"KacisGecesi: gece bitti — kurtulan {sonuc.Kurtulan} (dişi {sonuc.Disi}, erkek {sonuc.Erkek}), kaybedilen {sonuc.Kaybedilen}.");
             SonucHazir?.Invoke(sonuc);
         }

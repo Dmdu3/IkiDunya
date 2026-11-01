@@ -6,7 +6,7 @@ using UnityEngine.UI;
 namespace IkiDunya.UI.Night
 {
     /// <summary>Ekranın altında ipucu kutusu: istenen ipuçları sırayla, her biri ayarlardaki süre kadar görünür. Bildirim hemen çıkar,
-    /// görünen yazıyı keser (kesilen ipucu bildirimden sonra yeniden çıkar, eski bildirim atılır). Geçiş ve duraklatma sırasında bekler.</summary>
+    /// görünen yazıyı keser (yarısı görünmeden kesilen ipucu bildirimden sonra yeniden çıkar, eski bildirim atılır). Geçiş ve duraklatma sırasında bekler.</summary>
     public class IpucuPaneli : MonoBehaviour
     {
         [SerializeField] private OyunAyarlari ayarlar;
@@ -45,8 +45,9 @@ namespace IkiDunya.UI.Night
         {
             // Yeni olan eskisini geçersiz kılar: bekleyen bildirimler atılır, görünen yazı kesilir.
             sira.RemoveAll(y => y.Bildirim);
-            // Kesilen ipucu kaybolmaz, bildirimden sonra baştan gösterilir.
-            if (kalan > 0f && !gosterilen.Bildirim) sira.Insert(0, gosterilen);
+            // Yarısı bile görünmeden kesilen ipucu bildirimden sonra baştan gösterilir; çoğu okunduysa geri gelmez
+            // (an geçmiş olur: kumdan çıkış ipucu koşuda çıkmasın).
+            if (kalan > ayarlar.IpucuSuresi / 2f && !gosterilen.Bildirim) sira.Insert(0, gosterilen);
             kalan = 0f;
             sira.Insert(0, new Yazi { Id = id, Degerler = degerler, Bildirim = true });
         }
