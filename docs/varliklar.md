@@ -18,6 +18,7 @@ ozet: Repoya giren hazır model, ses, font ve görsellerin listesi ve lisansı. 
 | `Audio/SFX/Yeme.wav` | Denizde yeme | [Apple Biting and Chewing](https://freesound.org/people/RoofDog/sounds/79243/) (RoofDog) | CC0 | Yusuf |
 | `Audio/SFX/DalgaVurdu.wav` | Dalga çarpması (kırpıldı) | [onegentlewavecrash_at30secs](https://freesound.org/people/nofeedbak/sounds/431851/) (nofeedbak) | CC0 | Yusuf |
 | `Audio/SFX/PosetYuttu.wav` | Poşet yutma | [plastic bag](https://freesound.org/people/Hankof/sounds/655630/) (Hankof) | CC0 | Yusuf |
+| `Audio/SFX/YanilgiPoset.wav`, `YanilgiIsik.wav`, `Kiyi.wav` | Yanılgı kırılması (boğuk plastik hışırtısı, lamba vızıltısı), kıyının dalga uğultusu (döngü). Geçici: gerçek kayıtla değiştirilebilir | Proje içinde kodla sentezlendi (Unity, gürültü + süzgeç) | Proje için üretilmiş özgün çalışma | Toprak / Claude |
 | `Audio/SFX/AgdanKurtulma.wav` | Ağdan kurtulma | [cut rope](https://freesound.org/people/zepurple/sounds/540266/) (zepurple) | CC0 | Yusuf |
 | `Audio/SFX/Takilma.wav` | Yavru ya da yüzücü takılınca (kırpıldı, sesi yükseltildi) | [Rope Tightening](https://freesound.org/people/EugeneEverett/sounds/596513/) (EugeneEverett) | CC0 | Yusuf |
 | `Audio/SFX/ParkurBitti.ogg`, `YuvaTamam.ogg`, `ParkurAsama.ogg`, `KontrolNoktasi.ogg`, `Kombo.ogg` | Ödül ve bitiş sesleri | [Music Jingles](https://kenney.nl/assets/music-jingles) (Kenney; STEEL07, 02, 00, 09, 08) | CC0 | Yusuf |
