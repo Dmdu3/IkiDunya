@@ -77,6 +77,7 @@ namespace IkiDunya.UI.Night
             if (bantAdi != null && tablo != null) bantAdi.text = tablo.Al($"bant_{bant.ToString().ToLowerInvariant()}");
             yumurtaSayisi.text = yuva.Yumurta.ToString();
             yuvaPaneli.SetActive(true);
+            DevamYazisi(yuvaPaneli);
             Acik = true;
         }
 
@@ -89,7 +90,17 @@ namespace IkiDunya.UI.Night
             erkek.text = sonuc.Erkek.ToString();
             if (kayipNedenleri != null) kayipNedenleri.text = Nedenler(sonuc.Nedenler);
             kacisPaneli.SetActive(true);
+            DevamYazisi(kacisPaneli);
             Acik = true;
+        }
+
+        /// <summary>"Devam" satırına son kullanılan cihazın tuşunu koyar (Space ya da A). Panel açıldıktan sonra: MetinYazisi açılınca ham metni yazar.</summary>
+        private void DevamYazisi(GameObject panel)
+        {
+            Transform devam = panel.transform.Find("Devam");
+            MetinTablosu tablo = metinler != null ? metinler : MetinTablosu.Yuklu;
+            if (devam == null || tablo == null || !devam.TryGetComponent(out Text yazi)) return;
+            yazi.text = string.Format(tablo.Al("sonuc_devam"), GameInput.TusYazisi("ZiplaDal"));
         }
 
         /// <summary>"Sıcak kum 4 · Ağ 2"; çoktan aza, sıfırlar yazılmaz.</summary>

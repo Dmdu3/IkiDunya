@@ -381,6 +381,8 @@ MonoBehaviour:
     metin: "30 y\u0131l sonra"
   - id: final_kurtarilan
     metin: "Denize ula\u015Fan yavru"
+  - id: bildirim_jenerik_gec
+    metin: "Ge\xE7mek i\xE7in t\u0131kla ya da {0} tu\u015Funa bas."
   - id: jenerik
     metin: "\u0130K\u0130 D\xDCNYA, TEK YA\u015EAM\\n\\nBir \xF6\u011Frenci oyun
       projesi\\n\\nEkip\\nUmut \xB7 Toprak \xB7 Yusuf \xB7 Abd\xFC\\n\\nDeniz kaplumba\u011Falar\u0131
@@ -411,6 +413,8 @@ MonoBehaviour:
     metin: Geri
   - id: menu_varsayilan
     metin: "Varsay\u0131lan tu\u015Flar"
+  - id: menu_varsayilan_onay
+    metin: "Tu\u015Flar s\u0131f\u0131rlans\u0131n m\u0131? Tekrar bas"
   - id: ayar_ses
     metin: Ses
   - id: ayar_fare
@@ -472,7 +476,7 @@ MonoBehaviour:
   - id: sonuc_erkek
     metin: Erkek
   - id: sonuc_devam
-    metin: "Devam etmek i\xE7in t\u0131kla ya da Space'e bas"
+    metin: "Devam etmek i\xE7in t\u0131kla ya da {0} tu\u015Funa bas"
   - id: kayip_sicakkum
     metin: "S\u0131cak kum"
   - id: kayip_cop

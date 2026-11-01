@@ -79,6 +79,8 @@ namespace IkiDunya.Core
             || (ziplaDal.WasPressedThisFrame() && !(ziplaDal.activeControl?.device is Gamepad)));
         /// <summary>Hedef seçiminden vazgeç: oyun kolunda B, farede sağ tık.</summary>
         public static bool VazgecBasildi => Oyunda ? vazgec.WasPressedThisFrame() : false;
+        /// <summary>Vazgeç, duraklatma menüsünde de (ayarlarda tuş atamadan çıkmak için).</summary>
+        public static bool VazgecMenudeBasildi => vazgec.WasPressedThisFrame();
 
         // Geliştirici (F1–F6)
         public static bool GelistiriciBolum1Basildi => gelistiriciBolum1.WasPressedThisFrame();

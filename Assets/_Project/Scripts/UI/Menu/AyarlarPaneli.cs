@@ -25,13 +25,15 @@ namespace IkiDunya.UI.Menu
         [SerializeField] private Dropdown kalite;
         [SerializeField] private Slider arayuzOlcegi;
 
+        private bool varsayilanOnayi;
+
         private void Awake()
         {
             ses.onValueChanged.AddListener(deger => OyunTercihleri.Ses = deger);
             hassasiyet.onValueChanged.AddListener(deger => OyunTercihleri.HassasiyetCarpani = deger);
             DugmeSesi.Bagla(geri, varsayilanTuslar);
             geri.onClick.AddListener(Kapat);
-            if (varsayilanTuslar != null) varsayilanTuslar.onClick.AddListener(GameInput.VarsayilanaDon);
+            if (varsayilanTuslar != null) varsayilanTuslar.onClick.AddListener(VarsayilanaBasildi);
             if (ipuclari != null) ipuclari.onValueChanged.AddListener(acik => OyunTercihleri.Ipuclari = acik);
             if (tamEkran != null) tamEkran.onValueChanged.AddListener(acik => OyunTercihleri.TamEkran = acik);
             if (cozunurluk != null) cozunurluk.onValueChanged.AddListener(i => OyunTercihleri.Cozunurluk = i);
@@ -81,8 +83,38 @@ namespace IkiDunya.UI.Menu
             if (EventSystem.current != null) EventSystem.current.SetSelectedGameObject(ses.gameObject);
         }
 
+        private void Update()
+        {
+            // Onay beklerken başka seçeneğe geçilirse soru kalkar.
+            if (varsayilanOnayi && (EventSystem.current == null || EventSystem.current.currentSelectedGameObject != varsayilanTuslar.gameObject)) OnayiBirak();
+        }
+
+        /// <summary>İlk basış sorar, ikincisi bütün tuşları varsayılana döndürür ve satırları vurgular.</summary>
+        private void VarsayilanaBasildi()
+        {
+            if (!varsayilanOnayi)
+            {
+                varsayilanOnayi = true;
+                VarsayilanYazisi()?.Goster("menu_varsayilan_onay");
+                return;
+            }
+            OnayiBirak();
+            GameInput.VarsayilanaDon();
+            foreach (TusSatiri satir in GetComponentsInChildren<TusSatiri>()) satir.Vurgula();
+        }
+
+        private void OnayiBirak()
+        {
+            if (!varsayilanOnayi) return;
+            varsayilanOnayi = false;
+            VarsayilanYazisi()?.Goster(null);
+        }
+
+        private MetinYazisi VarsayilanYazisi() => varsayilanTuslar != null ? varsayilanTuslar.GetComponentInChildren<MetinYazisi>(true) : null;
+
         private void Kapat()
         {
+            OnayiBirak();
             gameObject.SetActive(false);
             oncekiPanel.SetActive(true);
             MenuSecenegi.IlkiniSec(oncekiPanel);

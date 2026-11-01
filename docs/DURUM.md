@@ -142,7 +142,8 @@ Pervane sesi klibi bağlı (`Audio/SFX/Pervane.wav`).
 - **Su (`SuDalgalanmasi`, `SuAltiGorunumu`):** su yüzeyi dalga dalga oynar (iki yüzlü malzeme, alttan da görünür); denizde göz suya girince sis koyu ve yoğun olur.
 - **Işık halkası:** otel ışığının kumda çekim alanı kadar sarı bir halkası var; Işık Yasağı ile söner.
 - **Termal görünüm:** şeritler yarı saydam; her bandın ayrı deseni var (Mavi yatay çizgi, Yeşil nokta, Turuncu çapraz, Kırmızı dama), renk ayırt edemeyenler için.
-- **Tuş atama:** Ayarlar'da 11 eylemin tuşu değiştirilir (`TusSatiri`), `PlayerPrefs`'te saklanır, "varsayılan" ile geri döner.
+- **Tuş atama:** Ayarlar'da 11 eylemin klavye tuşu değiştirilir (`TusSatiri`; oyun kolu tuşları sabit, atamada yok sayılır), `PlayerPrefs`'te saklanır. Esc, B ya da sağ tık atamadan çıkar. Yeni tuş başka satırdaysa yer değiştirirler, diğer satır kısa süre vurgulanır; yürüme ile kazmanın ortak A/D/W'si çakışma sayılmaz. "Varsayılan tuşlar" ilk basışta sorar (`menu_varsayilan_onay`), ikincide sıfırlar ve satırları vurgular.
+- **Cihaza göre tuş yazısı:** gece sonucunun "devam" satırı (`sonuc_devam`, `{0}`) ve finaldeki jenerik ipucu (`bildirim_jenerik_gec`) son kullanılan cihazın tuşunu yazar. Jenerik tıklama, Space/A ya da kolun Y'siyle geçilir.
 - **Geliştirici:** F5 kare hızı (FPS) göstergesi.
 - **Editör:** `KumsalDurumu` asset'i Play bitince Play öncesi haline döner; Play'deki yuvalar ve izler git'e değişiklik olarak düşmez.
 

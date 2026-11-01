@@ -138,6 +138,7 @@ Kısa yaz: kart açıklaması en fazla 2 satır, kanıt notu en fazla 3 satır. 
 | bildirim_poset_enerji | Gücün tükendi; bu aşama baştan başlıyor. |
 | final_30_yil | 30 yıl sonra |
 | final_kurtarilan | Denize ulaşan yavru |
+| bildirim_jenerik_gec | Geçmek için tıkla ya da {0} tuşuna bas. |
 | jenerik | İKİ DÜNYA, TEK YAŞAM\n\nBir öğrenci oyun projesi\n\nEkip\nUmut · Toprak · Yusuf · Abdü\n\nDeniz kaplumbağaları her yıl doğdukları kumsala döner.\nO kumsalın nasıl olacağı bizim elimizde.\n\nOynadığın için teşekkürler. |
 
 ## Menü ve ayarlar
@@ -156,6 +157,7 @@ Kısa yaz: kart açıklaması en fazla 2 satır, kanıt notu en fazla 3 satır. 
 | menu_ana_menu | Ana menü |
 | menu_geri | Geri |
 | menu_varsayilan | Varsayılan tuşlar |
+| menu_varsayilan_onay | Tuşlar sıfırlansın mı? Tekrar bas |
 | ayar_ses | Ses |
 | ayar_fare | Fare hassasiyeti |
 | ayar_tuslar | Tuşlar |
@@ -191,7 +193,7 @@ Kısa yaz: kart açıklaması en fazla 2 satır, kanıt notu en fazla 3 satır. 
 | sonuc_kaybedilen | Kaybedilen |
 | sonuc_disi | Dişi |
 | sonuc_erkek | Erkek |
-| sonuc_devam | Devam etmek için tıkla ya da Space'e bas |
+| sonuc_devam | Devam etmek için tıkla ya da {0} tuşuna bas |
 | kayip_sicakkum | Sıcak kum |
 | kayip_cop | Çöp |
 | kayip_ag | Ağ |
