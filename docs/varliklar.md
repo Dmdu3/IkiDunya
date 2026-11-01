@@ -12,8 +12,8 @@ ozet: Repoya giren hazır model, ses, font ve görsellerin listesi ve lisansı. 
 | `Audio/SFX/TilkiUyari.wav` | Tilki uyarısı | [foxBark2](https://freesound.org/people/Setzilla/sounds/173208/) (Setzilla) | CC0 | Yusuf |
 | `Audio/SFX/TilkiEseliyor.wav` | Tilki yuva eşeliyor | [Dig wet sand-01](https://freesound.org/people/RUncELL/sounds/349456/) (RUncELL) | CC0 | Yusuf |
 | `Audio/SFX/Pervane.wav` | Tekne pervanesi | [S34-28 Submarine propeller under water](https://freesound.org/people/craigsmith/sounds/675797/) (craigsmith) | CC0 | Yusuf |
-| `Audio/SFX/SelGeliyor.wav` | Sel uyarısı | [S35-20 Flood waters; big](https://freesound.org/people/craigsmith/sounds/675579/) (craigsmith) | CC0 | Yusuf |
-| `Audio/SFX/Kazma.mp3` | Anne kazıyor | [digging in sand](https://freesound.org/people/DigPro120/sounds/859916/) (DigPro120) | CC0 | Yusuf |
+| `Audio/SFX/SelGeliyor.wav` | Sel uyarısı (kırpıldı) | [S35-20 Flood waters; big](https://freesound.org/people/craigsmith/sounds/675579/) (craigsmith) | CC0 | Yusuf |
+| `Audio/SFX/Kazma.mp3` | Anne kazıyor (kırpıldı) | [digging in sand](https://freesound.org/people/DigPro120/sounds/859916/) (DigPro120) | CC0 | Yusuf |
 | `Audio/SFX/KumKazma.wav` | Yavru kumdan çıkıyor | [Dig wet sand-05](https://freesound.org/people/RUncELL/sounds/349460/) (RUncELL) | CC0 | Yusuf |
 | `Audio/SFX/Yeme.wav` | Denizde yeme | [Apple Biting and Chewing](https://freesound.org/people/RoofDog/sounds/79243/) (RoofDog) | CC0 | Yusuf |
 | `Audio/SFX/DalgaVurdu.wav` | Dalga çarpması (kırpıldı) | [onegentlewavecrash_at30secs](https://freesound.org/people/nofeedbak/sounds/431851/) (nofeedbak) | CC0 | Yusuf |
