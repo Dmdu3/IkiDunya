@@ -1,5 +1,6 @@
 using IkiDunya.Core;
 using UnityEngine;
+using UnityEngine.EventSystems;
 using UnityEngine.UI;
 
 namespace IkiDunya.UI.Menu
@@ -29,6 +30,8 @@ namespace IkiDunya.UI.Menu
             devamEt.interactable = OyunAkisi.KayitVar;
             Cursor.lockState = CursorLockMode.None;
             Cursor.visible = true;
+            // Oyun koluyla gezilebilsin: ilk düğme seçili.
+            if (EventSystem.current != null) EventSystem.current.SetSelectedGameObject(yeniOyun.gameObject);
         }
 
         private static void Cik()

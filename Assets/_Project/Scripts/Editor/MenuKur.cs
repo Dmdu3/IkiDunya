@@ -110,7 +110,7 @@ namespace IkiDunya.Editor
         {
             GameObject kok = PrefabUtility.LoadPrefabContents(SistemlerKalibi);
 
-            foreach (string eski in new[] { "EventSystem", "DuraklatmaMenusu", "IpucuArayuzu", "SesYoneticisi", "ParkurArayuzu" })
+            foreach (string eski in new[] { "EventSystem", "DuraklatmaMenusu", "IpucuArayuzu", "SesYoneticisi", "ParkurArayuzu", "EkranEfektleri" })
             {
                 Transform mevcut = kok.transform.Find(eski);
                 if (mevcut != null) Object.DestroyImmediate(mevcut.gameObject);
@@ -144,6 +144,7 @@ namespace IkiDunya.Editor
 
             IpucuKur(kok.transform);
             ParkurGostergesiKur(kok.transform);
+            EkranEfektleriKur(kok.transform);
             SesKur(kok.transform);
 
             // İnsan kısmının durumu da kayda girer.
@@ -207,26 +208,84 @@ namespace IkiDunya.Editor
 
         private static AyarlarPaneli AyarlarKur(Transform ebeveyn, GameObject oncekiPanel, MetinTablosu metinler)
         {
-            Transform kutu = Liste("AyarlarPaneli", ebeveyn, new Vector2(0.3f, 0.03f), new Vector2(0.7f, 0.97f));
-            kutu.GetComponent<VerticalLayoutGroup>().spacing = 6f;
-            Yazi("SesYazisi", kutu, Vector2.zero, Vector2.zero, 24, "ayar_ses", metinler);
-            Slider ses = Kaydirici(kutu, 0f, 1f);
-            Yazi("FareYazisi", kutu, Vector2.zero, Vector2.zero, 24, "ayar_fare", metinler);
-            Slider fare = Kaydirici(kutu, 0.2f, 3f);
+            // İki sütun: solda ses, fare, ekran ve erişilebilirlik; sağda tuşlar.
+            var kok = new GameObject("AyarlarPaneli", typeof(RectTransform));
+            kok.layer = LayerMask.NameToLayer("UI");
+            kok.transform.SetParent(ebeveyn, false);
+            GriKumsalKur.Yasla((RectTransform)kok.transform, new Vector2(0.08f, 0.03f), new Vector2(0.92f, 0.97f));
 
-            Yazi("TuslarYazisi", kutu, Vector2.zero, Vector2.zero, 24, "ayar_tuslar", metinler);
-            foreach ((string id, string eylem, int sira) in TusSatirlari) TusSatiriKur(kutu, id, eylem, sira, metinler);
-            Button varsayilan = Dugme(kutu, "menu_varsayilan", metinler);
-            Button geri = Dugme(kutu, "menu_geri", metinler);
+            Transform sol = Liste("Genel", kok.transform, new Vector2(0f, 0f), new Vector2(0.48f, 1f));
+            sol.GetComponent<VerticalLayoutGroup>().spacing = 6f;
+            Yazi("SesYazisi", sol, Vector2.zero, Vector2.zero, 24, "ayar_ses", metinler);
+            Slider ses = Kaydirici(sol, 0f, 1f);
+            Yazi("FareYazisi", sol, Vector2.zero, Vector2.zero, 24, "ayar_fare", metinler);
+            Slider fare = Kaydirici(sol, 0.2f, 3f);
+            Yazi("YaziBoyuYazisi", sol, Vector2.zero, Vector2.zero, 24, "ayar_yazi_boyutu", metinler);
+            Slider yaziBoyu = Kaydirici(sol, 0.75f, 1.5f);
+            Toggle ipuclari = Secim(sol, "ayar_ipuclari", metinler);
+            Toggle tamEkran = Secim(sol, "ayar_tam_ekran", metinler);
+            Yazi("CozunurlukYazisi", sol, Vector2.zero, Vector2.zero, 24, "ayar_cozunurluk", metinler);
+            Dropdown cozunurluk = Acilir(sol);
+            Yazi("KaliteYazisi", sol, Vector2.zero, Vector2.zero, 24, "ayar_kalite", metinler);
+            Dropdown kalite = Acilir(sol);
+            Button varsayilan = Dugme(sol, "menu_varsayilan", metinler);
+            Button geri = Dugme(sol, "menu_geri", metinler);
 
-            var panel = kutu.gameObject.AddComponent<AyarlarPaneli>();
+            Transform sag = Liste("Tuslar", kok.transform, new Vector2(0.52f, 0f), new Vector2(1f, 1f));
+            sag.GetComponent<VerticalLayoutGroup>().spacing = 6f;
+            Yazi("TuslarYazisi", sag, Vector2.zero, Vector2.zero, 24, "ayar_tuslar", metinler);
+            foreach ((string id, string eylem, int sira) in TusSatirlari) TusSatiriKur(sag, id, eylem, sira, metinler);
+
+            var panel = kok.AddComponent<AyarlarPaneli>();
             GriKumsalKur.Bagla(panel, "ses", ses);
             GriKumsalKur.Bagla(panel, "hassasiyet", fare);
             GriKumsalKur.Bagla(panel, "geri", geri);
             GriKumsalKur.Bagla(panel, "varsayilanTuslar", varsayilan);
             GriKumsalKur.Bagla(panel, "oncekiPanel", oncekiPanel);
-            kutu.gameObject.SetActive(false);
+            GriKumsalKur.Bagla(panel, "metinler", metinler);
+            GriKumsalKur.Bagla(panel, "ipuclari", ipuclari);
+            GriKumsalKur.Bagla(panel, "tamEkran", tamEkran);
+            GriKumsalKur.Bagla(panel, "cozunurluk", cozunurluk);
+            GriKumsalKur.Bagla(panel, "kalite", kalite);
+            GriKumsalKur.Bagla(panel, "arayuzOlcegi", yaziBoyu);
+            kok.SetActive(false);
             return panel;
+        }
+
+        /// <summary>Yanında yazısı olan aç/kapa kutusu.</summary>
+        private static Toggle Secim(Transform ebeveyn, string id, MetinTablosu metinler)
+        {
+            GameObject nesne = DefaultControls.CreateToggle(new DefaultControls.Resources());
+            nesne.transform.SetParent(ebeveyn, false);
+            Katman(nesne);
+            nesne.AddComponent<LayoutElement>().preferredHeight = 36f;
+            Text yazi = nesne.GetComponentInChildren<Text>();
+            YaziAyarla(yazi, 24, id, metinler);
+            yazi.alignment = TextAnchor.MiddleLeft;
+            yazi.color = Color.white;
+            return nesne.GetComponent<Toggle>();
+        }
+
+        /// <summary>Açılır liste (seçenekleri panel kurar).</summary>
+        private static Dropdown Acilir(Transform ebeveyn)
+        {
+            GameObject nesne = DefaultControls.CreateDropdown(new DefaultControls.Resources());
+            nesne.transform.SetParent(ebeveyn, false);
+            Katman(nesne);
+            nesne.AddComponent<LayoutElement>().preferredHeight = 40f;
+            foreach (Text yazi in nesne.GetComponentsInChildren<Text>(true))
+            {
+                yazi.font = Resources.GetBuiltinResource<Font>("LegacyRuntime.ttf");
+                yazi.fontSize = 22;
+                yazi.color = new Color(0.1f, 0.1f, 0.1f);
+            }
+            return nesne.GetComponent<Dropdown>();
+        }
+
+        private static void Katman(GameObject nesne)
+        {
+            int ui = LayerMask.NameToLayer("UI");
+            foreach (Transform t in nesne.GetComponentsInChildren<Transform>(true)) t.gameObject.layer = ui;
         }
 
         /// <summary>Parkurlar paneli: her parkur için bir düğme (yazısı rekorla birlikte kodda kurulur) ve Geri.</summary>
@@ -251,6 +310,28 @@ namespace IkiDunya.Editor
             GriKumsalKur.Bagla(panel, "oncekiPanel", oncekiPanel);
             kutu.gameObject.SetActive(false);
             return panel;
+        }
+
+        /// <summary>Ekran efektleri: tam ekran flaş ve tehlikede kararan kenar (tıklamayı engellemez).</summary>
+        private static void EkranEfektleriKur(Transform kok)
+        {
+            Transform tuval = GriKumsalKur.TuvalKur("EkranEfektleri", kok);
+            tuval.GetComponent<Canvas>().sortingOrder = 30;
+            var kenar = new GameObject("Kenar", typeof(RectTransform), typeof(RawImage));
+            kenar.layer = LayerMask.NameToLayer("UI");
+            kenar.transform.SetParent(tuval, false);
+            GriKumsalKur.Yasla((RectTransform)kenar.transform, Vector2.zero, Vector2.one);
+            kenar.GetComponent<RawImage>().raycastTarget = false;
+            var flas = new GameObject("Flas", typeof(RectTransform), typeof(Image));
+            flas.layer = LayerMask.NameToLayer("UI");
+            flas.transform.SetParent(tuval, false);
+            GriKumsalKur.Yasla((RectTransform)flas.transform, Vector2.zero, Vector2.one);
+            flas.GetComponent<Image>().raycastTarget = false;
+
+            var efektler = tuval.gameObject.AddComponent<IkiDunya.UI.Night.EkranEfektleri>();
+            GriKumsalKur.Bagla(efektler, "ayarlar", GriKumsalKur.Ayar<GeribildirimAyarlari>("GeribildirimAyarlari"));
+            GriKumsalKur.Bagla(efektler, "flas", flas.GetComponent<Image>());
+            GriKumsalKur.Bagla(efektler, "kenar", kenar.GetComponent<RawImage>());
         }
 
         /// <summary>Parkur süresi (sağ üst) ve sonucu (ortada) gösteren kutular.</summary>
@@ -453,6 +534,30 @@ namespace IkiDunya.Editor
             Transform tuval = GriKumsalKur.TuvalKur("FinalArayuzu", grup);
             Text baslik = FinalYazisi("Baslik", tuval, new Vector2(0.1f, 0.75f), new Vector2(0.9f, 0.9f), 56);
             Text kurtarilan = FinalYazisi("Kurtarilan", tuval, new Vector2(0.1f, 0.08f), new Vector2(0.9f, 0.18f), 36);
+            // Başlık ve kurtarılan bir grupta belirir: ikisini bir CanvasGroup'un altına al.
+            var yazilar = new GameObject("Yazilar", typeof(RectTransform), typeof(CanvasGroup));
+            yazilar.layer = LayerMask.NameToLayer("UI");
+            yazilar.transform.SetParent(tuval, false);
+            GriKumsalKur.Yasla((RectTransform)yazilar.transform, Vector2.zero, Vector2.one);
+            baslik.transform.SetParent(yazilar.transform, false);
+            kurtarilan.transform.SetParent(yazilar.transform, false);
+            CanvasGroup yaziGrubu = yazilar.GetComponent<CanvasGroup>();
+            yaziGrubu.alpha = 0f;
+            yaziGrubu.blocksRaycasts = false;
+
+            // Jenerik: ekranın altından başlar, yukarı akar.
+            Text jenerik = FinalYazisi("Jenerik", tuval, new Vector2(0.15f, 0f), new Vector2(0.85f, 0f), 32);
+            var jenerikKutusu = (RectTransform)jenerik.transform;
+            jenerikKutusu.pivot = new Vector2(0.5f, 1f);
+            jenerikKutusu.anchoredPosition = Vector2.zero;
+            jenerikKutusu.sizeDelta = new Vector2(0f, 1400f);
+            jenerik.alignment = TextAnchor.UpperCenter;
+            jenerik.lineSpacing = 1.3f;
+            jenerik.gameObject.SetActive(false);
+
+            // Kamera yürüyüş boyunca kaplumbağanın arkasından kumsala doğru kayar.
+            Transform kameraSon = GriKumsalKur.Bos("KameraSon", grup);
+            kameraSon.SetPositionAndRotation(new Vector3(-2.5f, 1.6f, 16f), Quaternion.LookRotation(new Vector3(2.5f, -0.8f, -8f)));
 
             // Grubun çocukları adımına göre açılıp kapanır; sahne de çocukta olmalı ki sadece finalde çalışsın.
             var final = GriKumsalKur.Bos("Final", grup).gameObject.AddComponent<FinalSahnesi>();
@@ -464,6 +569,10 @@ namespace IkiDunya.Editor
             GriKumsalKur.Bagla(final, "sicakIzler", izler.gameObject);
             GriKumsalKur.Bagla(final, "baslik", baslik);
             GriKumsalKur.Bagla(final, "kurtarilan", kurtarilan);
+            GriKumsalKur.Bagla(final, "kamera", kamera.transform);
+            GriKumsalKur.Bagla(final, "kameraSon", kameraSon);
+            GriKumsalKur.Bagla(final, "yazilar", yaziGrubu);
+            GriKumsalKur.Bagla(final, "jenerik", jenerikKutusu);
         }
 
         private static Text FinalYazisi(string ad, Transform tuval, Vector2 enAz, Vector2 enCok, int boyut)

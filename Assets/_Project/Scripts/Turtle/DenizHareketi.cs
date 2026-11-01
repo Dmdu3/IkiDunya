@@ -156,6 +156,7 @@ namespace IkiDunya.Turtle
                 Ses.Cal(SesTuru.PosetYuttu);
                 Enerji.Harca(tehlikeAyarlari.PosetEnerjiKaybi);
                 Yavasla(ayarlar.PosetYavas);
+                Geribildirim.Bulanma();
                 Ipucu.Goster("ipucu_poset_yuttu");
                 return;
             }
@@ -191,6 +192,7 @@ namespace IkiDunya.Turtle
             else if (tur == TrashTrap.Turu.Misina) ToplamBasis = KalanBasis = ayarlar.MisinaBasisi;
             if (Takili)
             {
+                Geribildirim.Sars(0.35f);
                 Ses.Cal(SesTuru.Takilma);
                 Ipucu.Goster("ipucu_ag");
             }

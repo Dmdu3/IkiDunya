@@ -1,5 +1,6 @@
 using IkiDunya.Core;
 using UnityEngine;
+using UnityEngine.EventSystems;
 using UnityEngine.UI;
 
 namespace IkiDunya.UI.Menu
@@ -39,6 +40,8 @@ namespace IkiDunya.UI.Menu
             panel.SetActive(acik);
             dugmeler.SetActive(true);
             ayarlarPaneli.gameObject.SetActive(false);
+            // Oyun koluyla gezilebilsin: ilk düğme seçili.
+            if (acik && EventSystem.current != null) EventSystem.current.SetSelectedGameObject(oyunaDon.gameObject);
         }
     }
 }

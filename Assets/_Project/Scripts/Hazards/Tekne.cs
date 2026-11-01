@@ -70,6 +70,7 @@ namespace IkiDunya.Hazards
             {
                 if (!bulunan[i].TryGetComponent(out IYuzucu yuzucu) || !yuzucu.Yuzeyde) continue;
                 yuzucu.EnerjiKaybet(ayarlar.TekneHasari);
+                Geribildirim.Darbe(0.9f);
                 bekleme = ayarlar.TekneBekleme;
             }
         }

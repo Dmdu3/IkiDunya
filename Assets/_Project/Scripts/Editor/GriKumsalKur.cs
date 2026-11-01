@@ -87,6 +87,9 @@ namespace IkiDunya.Editor
             KacisKur(kumSicakligi, Grup("KacisGecesiNesneleri", AdimTuru.KacisGecesi));
             InsanTuruKur(kumSicakligi, Grup("InsanTuruNesneleri", AdimTuru.InsanTuru));
             MenuKur.FinalKur(Grup("FinalNesneleri", AdimTuru.Final), sahne, kaplumbaga, leke);
+            // Ara sahneler: anne denizden kumsala bakarken; yavrular yuvadan çıkmadan kumsala tepeden.
+            AraSahneKur("AraSahne_YuvaGecesi", new Vector3(0f, 7f, -16f), new Vector3(0f, 0f, 8f), -1, AdimTuru.YuvaGecesi);
+            AraSahneKur("AraSahne_KacisGecesi", new Vector3(-6f, 12f, 4f), new Vector3(0f, 0f, 24f), -1, AdimTuru.KacisGecesi);
             PrefabUtility.InstantiatePrefab(AssetDatabase.LoadAssetAtPath<GameObject>(SistemlerKalibi));
             AraziyeOturt(sahne);
             OrtamKur(sahne);
@@ -368,11 +371,14 @@ namespace IkiDunya.Editor
 
         // ---- Ortak ----
 
+        /// <summary>Hepsini kur sırasında true: sahneler sormadan baştan kurulur.</summary>
+        internal static bool SormadanKur;
+
         internal static bool SahneAc(string yol, out Scene sahne)
         {
             sahne = default;
-            if (!EditorSceneManager.SaveCurrentModifiedScenesIfUserWantsTo()) return false;
-            if (AssetDatabase.LoadAssetAtPath<SceneAsset>(yol) != null &&
+            if (!SormadanKur && !EditorSceneManager.SaveCurrentModifiedScenesIfUserWantsTo()) return false;
+            if (!SormadanKur && AssetDatabase.LoadAssetAtPath<SceneAsset>(yol) != null &&
                 !EditorUtility.DisplayDialog("Gri kutu", $"{yol} var. Baştan kurulsun mu?", "Kur", "Vazgeç"))
                 return false;
 
@@ -574,6 +580,18 @@ namespace IkiDunya.Editor
             return nesne;
         }
 
+        /// <summary>Performans: obje ekranda çok küçük kalınca çizilmez (tek seviyeli LODGroup). Ayrıca gölgeyi istenirse kapatır.</summary>
+        internal static void UzaktaGizle(GameObject kok, float ekranOrani, bool golgeYok = false)
+        {
+            if (kok == null) return;
+            Renderer[] gorunusler = kok.GetComponentsInChildren<Renderer>(true);
+            if (golgeYok) foreach (Renderer r in gorunusler) r.shadowCastingMode = ShadowCastingMode.Off;
+            LODGroup grup = kok.GetComponent<LODGroup>();
+            if (grup == null) grup = kok.AddComponent<LODGroup>();
+            grup.SetLODs(new[] { new LOD(ekranOrani, gorunusler) });
+            grup.RecalculateBounds();
+        }
+
         /// <summary>Modele animasyon denetleyicisi bağlar (ör. denizanasının kasılması); denetleyici yoksa dokunmaz.</summary>
         internal static void AnimasyonBagla(GameObject model, string denetleyiciYolu)
         {
@@ -708,6 +726,9 @@ namespace IkiDunya.Editor
 
             Transform anneGorunusu = Govde(anne.transform, new Vector3(0f, 0.2f, 0f), new Vector3(0.9f, 0.35f, 1.1f), "Anne_Caretta");
             SalinimEkle(anne, anneGorunusu, SalinimTuru.Kara, anne.GetComponent<AnneKazma>());
+            IzEkle(anne, new Vector2(0.35f, 0.2f), 0.35f, 0.4f, 60);
+            anne.AddComponent<EnerjiUyarisi>();
+            Bagla(anne.GetComponent<EnerjiUyarisi>(), "ayarlar", Ayar<GeribildirimAyarlari>("GeribildirimAyarlari"));
             KameraKur(anne.transform, new Vector3(0f, 0.35f, 0.6f), anne.transform);
             return anne;
         }
@@ -763,6 +784,7 @@ namespace IkiDunya.Editor
                 insanGorunusu = ModelYerlestir(kok.transform, model, Vector3.zero, 0f).transform;
             }
             SalinimEkle(kok, insanGorunusu, SalinimTuru.Kara);
+            UzaktaGizle(kok, 0.015f);
 
             var insanBileseni = kok.AddComponent<Insan>();
             Bagla(insanBileseni, "ayarlar", Ayar<InsanAyarlari>("InsanAyarlari"));
@@ -1050,6 +1072,7 @@ namespace IkiDunya.Editor
             yavru.AddComponent<Yavru>();
             Transform yavruGorunusu = Govde(yavru.transform, new Vector3(0f, 0.04f, 0f), new Vector3(0.16f, 0.06f, 0.2f), "Yavru_Caretta");
             SalinimEkle(yavru, yavruGorunusu, SalinimTuru.Kara);
+            IzEkle(yavru, new Vector2(0.06f, 0.04f), 0.12f, 0.06f, 12);
             return KalipKaydet(yavru, YavruKalibi);
         }
 
@@ -1087,6 +1110,7 @@ namespace IkiDunya.Editor
         {
             var ortam = new GameObject("OrtamIsigi").AddComponent<OrtamIsigi>();
             Bagla(ortam, "ayarlar", Ayar<OrtamAyarlari>("OrtamAyarlari"));
+            Bagla(ortam, "gokyuzu", GokyuzuKur());
             foreach (GameObject kok in sahne.GetRootGameObjects())
                 if (kok.TryGetComponent(out Light isik) && isik.type == LightType.Directional)
                 {
@@ -1101,6 +1125,53 @@ namespace IkiDunya.Editor
             SerializedProperty dizi = so.FindProperty("kameralar");
             dizi.arraySize = kameralar.Count;
             for (int i = 0; i < kameralar.Count; i++) dizi.GetArrayElementAtIndex(i).objectReferenceValue = kameralar[i];
+            so.ApplyModifiedPropertiesWithoutUndo();
+        }
+
+        /// <summary>Bölüm başı ara sahne kamerası: verilen yerden verilen noktaya bakar, oyuncunun gözüne süzülür.</summary>
+        internal static void AraSahneKur(string ad, Vector3 yer, Vector3 bakis, int sira, params AdimTuru[] turler)
+        {
+            var nesne = new GameObject(ad);
+            nesne.transform.SetPositionAndRotation(yer, Quaternion.LookRotation(bakis - yer));
+            var kamera = nesne.AddComponent<UnityEngine.Camera>();
+            kamera.enabled = false;
+            var ara = nesne.AddComponent<AraSahne>();
+            var so = new SerializedObject(ara);
+            so.FindProperty("sira").intValue = sira;
+            SerializedProperty dizi = so.FindProperty("turler");
+            dizi.arraySize = turler.Length;
+            for (int i = 0; i < turler.Length; i++) dizi.GetArrayElementAtIndex(i).enumValueIndex = (int)turler[i];
+            so.ApplyModifiedPropertiesWithoutUndo();
+        }
+
+        /// <summary>Gece gökyüzü: yıldızlar ve ay (sissiz shader); OrtamIsigi gece açar.</summary>
+        private static GameObject GokyuzuKur()
+        {
+            var gok = new GameObject("GeceGokyuzu", typeof(MeshFilter), typeof(MeshRenderer));
+            gok.GetComponent<MeshRenderer>().sharedMaterial = Malzeme("Yildizlar", Color.white, "IkiDunya/Gokyuzu");
+            gok.GetComponent<MeshRenderer>().shadowCastingMode = ShadowCastingMode.Off;
+            GameObject ay = GameObject.CreatePrimitive(PrimitiveType.Sphere);
+            ay.name = "Ay";
+            Object.DestroyImmediate(ay.GetComponent<Collider>());
+            ay.transform.SetParent(gok.transform, false);
+            ay.transform.localScale = Vector3.one * 10f;
+            var ayGorunus = ay.GetComponent<Renderer>();
+            ayGorunus.sharedMaterial = Malzeme("Ay", new Color(1f, 0.97f, 0.85f, 1f), "IkiDunya/Gokyuzu");
+            ayGorunus.shadowCastingMode = ShadowCastingMode.Off;
+            Bagla(gok.AddComponent<GeceGokyuzu>(), "ay", ay.transform);
+            return gok;
+        }
+
+        /// <summary>Kumda yüzgeç izi bırakır (boy kaplumbağaya göre).</summary>
+        private static void IzEkle(GameObject kaplumbaga, Vector2 boy, float aralik, float yanAcikligi, int enFazla)
+        {
+            var iz = kaplumbaga.AddComponent<IzBirakici>();
+            Bagla(iz, "malzeme", SaydamMalzeme("KumIzi", new Color(0.32f, 0.25f, 0.16f, 0.5f)));
+            var so = new SerializedObject(iz);
+            so.FindProperty("boy").vector2Value = boy;
+            so.FindProperty("aralik").floatValue = aralik;
+            so.FindProperty("yanAcikligi").floatValue = yanAcikligi;
+            so.FindProperty("enFazla").intValue = enFazla;
             so.ApplyModifiedPropertiesWithoutUndo();
         }
 
@@ -1169,6 +1240,7 @@ namespace IkiDunya.Editor
             goz.AddComponent<TekKulak>();
             var bakis = goz.AddComponent<BirinciSahisKamera>();
             Bagla(bakis, "ayarlar", Ayar<KameraAyarlari>("KameraAyarlari"));
+            Bagla(bakis, "geribildirim", Ayar<GeribildirimAyarlari>("GeribildirimAyarlari"));
             if (govde != null) Bagla(bakis, "govde", govde);
             return bakis;
         }
@@ -1183,6 +1255,8 @@ namespace IkiDunya.Editor
             var olcek = tuval.GetComponent<CanvasScaler>();
             olcek.uiScaleMode = CanvasScaler.ScaleMode.ScaleWithScreenSize;
             olcek.referenceResolution = new Vector2(1920f, 1080f);
+            // Oyuncunun yazı boyutu ayarı bütün tuvallere uygulanır.
+            tuval.AddComponent<ArayuzOlcegi>();
             return tuval.transform;
         }
 

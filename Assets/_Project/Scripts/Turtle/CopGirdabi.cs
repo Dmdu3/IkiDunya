@@ -114,6 +114,7 @@ namespace IkiDunya.Turtle
                 Vector3 fark = yuzucu.Konum - cop.position;
                 if (fark.magnitude > ayarlar.CarpmaMesafesi) continue;
                 yuzucu.EnerjiKaybet(ayarlar.CarpmaHasari);
+                Geribildirim.Darbe(0.6f);
                 yuzucu.Savrul(fark.normalized * ayarlar.CarpmaSavrulma);
                 Ses.Cal(SesTuru.DalgaVurdu);
                 carpmaKalan = ayarlar.CarpmaBekleme;

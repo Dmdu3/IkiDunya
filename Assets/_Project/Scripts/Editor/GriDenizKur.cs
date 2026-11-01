@@ -68,6 +68,7 @@ namespace IkiDunya.Editor
             SuslerKur(new[] { new Vector3(-20f, 0f, -178f), new Vector3(22f, 0f, -150f), new Vector3(-24f, 0f, -100f), new Vector3(18f, 0f, -82f), new Vector3(-14f, 0f, -66f) },
                 new[] { new Vector3(14f, 0f, -104f), new Vector3(-18f, 0f, -86f), new Vector3(22f, 0f, -62f), new Vector3(-22f, 0f, -170f) });
 
+            GriKumsalKur.AraSahneKur("AraSahne_Bolum1", new Vector3(0f, 4f, -215f), new Vector3(0f, -3f, -190f), -1, AdimTuru.Donus);
             BolumKur(AdimTuru.Donus, ayarlar, anne, baslangic, false, null);
             GriKumsalKur.Kaydet(sahne, Bolum1Sahnesi);
         }
@@ -135,6 +136,8 @@ namespace IkiDunya.Editor
             // Girdaba kapılma: Bölüm 5'in ilk parçası burada biter, çöp girdabı parkuru gelir; sonra açık denizden devam.
             Transform devam = Nokta("Devam", new Vector3(0f, -4f, -118f), denize);
 
+            // Ara sahne sadece ilk parçada: kumsaldan denize, dalgalara bakarak.
+            GriKumsalKur.AraSahneKur("AraSahne_Bolum5", new Vector3(0f, 4f, 10f), new Vector3(0f, -0.5f, -10f), 0, AdimTuru.IlkYuzus);
             BolumKur(AdimTuru.IlkYuzus, ayarlar, yavru, baslangic, true, devam);
             GriKumsalKur.Kaydet(sahne, Bolum5Sahnesi);
         }
@@ -307,10 +310,11 @@ namespace IkiDunya.Editor
             for (int i = 0; i < kayalar.Length; i++)
             {
                 GameObject kaya = GriKumsalKur.KalibiKoy($"Kaya_{i % 3 + 1}", kok, Tabana(kayalar[i]));
+                GriKumsalKur.UzaktaGizle(kaya, 0.01f);
                 if (kaya != null) kaya.transform.rotation *= Quaternion.Euler(0f, i * 71f, 0f);
             }
             for (int i = 0; i < cayirlar.Length; i++)
-                GriKumsalKur.KalibiKoy(cayirAdlari[i % cayirAdlari.Length], kok, Tabana(cayirlar[i]));
+                GriKumsalKur.UzaktaGizle(GriKumsalKur.KalibiKoy(cayirAdlari[i % cayirAdlari.Length], kok, Tabana(cayirlar[i])), 0.02f, true);
         }
 
         /// <summary>Noktayı deniz tabanına indirir (taban yoksa açık deniz derinliği).</summary>
@@ -381,7 +385,13 @@ namespace IkiDunya.Editor
             GriKumsalKur.SuYuzeyiKur("SuYuzeyi", deniz, new Vector3(0f, 0f, -DenizUzunlugu / 2f), new Vector2(DenizGenisligi, DenizUzunlugu), su);
 
             // Taban: Yusuf'un deniz tabanı varsa o (aynı ölçüler: sığ düzlük y −6, açık deniz y −15, kayalık şev, mercanlar, çayır); yoksa üç gri basamak.
-            if (GriKumsalKur.KalibiKoy("DenizTabani", deniz, Vector3.zero) == null)
+            GameObject denizTabani = GriKumsalKur.KalibiKoy("DenizTabani", deniz, Vector3.zero);
+            // Performans: mercan ve çayır gibi küçük süsler gölge atmaz, uzakta çizilmez.
+            if (denizTabani != null)
+                foreach (Transform cocuk in denizTabani.transform)
+                    if (cocuk.name.Contains("Mercan") || cocuk.name.Contains("Cayir") || cocuk.name.Contains("Dekor"))
+                        GriKumsalKur.UzaktaGizle(cocuk.gameObject, 0.01f, true);
+            if (denizTabani == null)
             {
                 GriKumsalKur.Kutu("AcikDeniz", deniz, new Vector3(0f, -15.5f, -160f), new Vector3(DenizGenisligi, 1f, 80f), taban, "Ground");
                 GriKumsalKur.Kutu("SigSular", deniz, new Vector3(0f, -6.5f, -85f), new Vector3(DenizGenisligi, 1f, 70f), taban, "Ground");
@@ -410,7 +420,17 @@ namespace IkiDunya.Editor
 
             Transform gorunus = GriKumsalKur.Govde(nesne.transform, Vector3.zero, govdeOlcegi, model);
             GriKumsalKur.SalinimEkle(nesne, gorunus, SalinimTuru.Deniz);
+            GriKumsalKur.Bagla(nesne.AddComponent<EnerjiUyarisi>(), "ayarlar", GriKumsalKur.Ayar<GeribildirimAyarlari>("GeribildirimAyarlari"));
             BirinciSahisKamera goz = GriKumsalKur.KameraKur(nesne.transform, gozYeri, nesne.transform);
+            // Su altı sisi ~100 m'de her şeyi örter; ötesini çizmeye gerek yok.
+            goz.GetComponent<UnityEngine.Camera>().farClipPlane = 150f;
+
+            // Su altı ışık hüzmeleri: gözün çevresinde, yüzeyden aşağı.
+            var isiklar = new GameObject("SuIsiklari", typeof(MeshFilter), typeof(MeshRenderer));
+            var isikGorunusu = isiklar.GetComponent<MeshRenderer>();
+            isikGorunusu.sharedMaterial = GriKumsalKur.Malzeme("SuIsigi", Color.white, "IkiDunya/Gokyuzu");
+            isikGorunusu.shadowCastingMode = UnityEngine.Rendering.ShadowCastingMode.Off;
+            GriKumsalKur.Bagla(isiklar.AddComponent<SuIsiklari>(), "hedef", goz.transform);
             GriKumsalKur.Bagla(goz.gameObject.AddComponent<SuAltiGorunumu>(), "ayarlar", GriKumsalKur.Ayar<OrtamAyarlari>("OrtamAyarlari"));
             GriKumsalKur.Bagla(goz, "ayarlar", AyarAdla<KameraAyarlari>("DenizKameraAyarlari", so =>
             {

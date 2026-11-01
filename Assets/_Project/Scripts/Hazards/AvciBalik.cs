@@ -44,6 +44,7 @@ namespace IkiDunya.Hazards
                     Git(av.Konum, ayarlar.AvciKosuHizi);
                     if (Vector3.Distance(av.Konum, transform.position) > ayarlar.AvciYakalamaMesafesi) break;
                     av.Yakala();
+                    Geribildirim.Darbe(1f);
                     Bekle();
                     break;
                 case Durum.Bekliyor:

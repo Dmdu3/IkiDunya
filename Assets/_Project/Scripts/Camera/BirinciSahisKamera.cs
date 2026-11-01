@@ -10,22 +10,51 @@ namespace IkiDunya.Camera
         [SerializeField] private KameraAyarlari ayarlar;
         [Tooltip("Sağa-sola dönen gövde (kaplumbağanın kökü).")]
         [SerializeField] private Transform govde;
+        [Tooltip("Sarsıntının genliği ve süresi.")]
+        [SerializeField] private GeribildirimAyarlari geribildirim;
 
         private float egim;
         private Transform gizlenen;
+        private UnityEngine.Camera kamera;
+        private float ilkGorus;
+        private Vector3 tabanYer;
+        private Vector3 oncekiGovde;
+        private float sallanmaFazi;
+        private float sallanma;
+        private float sarsintiKalan;
+        private float sarsintiGucu;
 
-        private void Start() => KendiniGizle(govde);
+        private void Awake()
+        {
+            kamera = GetComponent<UnityEngine.Camera>();
+            if (kamera != null) ilkGorus = kamera.fieldOfView;
+            tabanYer = transform.localPosition;
+        }
+
+        private void Start()
+        {
+            KendiniGizle(govde);
+            if (govde != null) oncekiGovde = govde.position;
+        }
 
         private void OnEnable()
         {
             Duraklatma.Degisti += DuraklatmaDegisti;
+            Geribildirim.Sarsildi += Sars;
             ImleciKilitle(!Duraklatma.Acik);
         }
 
         private void OnDisable()
         {
             Duraklatma.Degisti -= DuraklatmaDegisti;
+            Geribildirim.Sarsildi -= Sars;
             ImleciKilitle(false);
+        }
+
+        private void Sars(float guc)
+        {
+            sarsintiGucu = Mathf.Max(guc, sarsintiKalan > 0f ? sarsintiGucu : 0f);
+            sarsintiKalan = geribildirim != null ? geribildirim.SarsintiSuresi : 0.3f;
         }
 
         private void DuraklatmaDegisti(bool acik) => ImleciKilitle(!acik);
@@ -34,10 +63,41 @@ namespace IkiDunya.Camera
         {
             if (Duraklatma.Acik || govde == null) return;
 
-            Vector2 bakis = GameInput.Bakis * ayarlar.Hassasiyet * OyunTercihleri.HassasiyetCarpani;
+            // Fare (piksel/kare) ve oyun kolunun sağ çubuğu (−1..1, saniyede derece).
+            Vector2 bakis = (GameInput.Bakis * ayarlar.Hassasiyet + GameInput.BakisCubugu * ayarlar.CubukHizi * Time.deltaTime) * OyunTercihleri.HassasiyetCarpani;
             govde.Rotate(0f, bakis.x, 0f, Space.World);
             egim = Mathf.Clamp(egim - bakis.y, -ayarlar.YukariSinir, -ayarlar.AsagiSinir);
             transform.localRotation = Quaternion.Euler(egim, 0f, 0f);
+        }
+
+        /// <summary>Baş sallanması (gövde yürüdükçe), hızlanınca geniş görüş, darbede sarsıntı. Bakış açısı Update'te; bunlar üstüne eklenir.</summary>
+        private void LateUpdate()
+        {
+            float dt = Time.deltaTime;
+            // Göz başka biri tarafından yönetiliyorsa (final kamerası gövdeden ayırdı) dokunma.
+            if (transform.parent == null || govde == null || dt <= 0f) return;
+
+            Vector3 fark = govde.position - oncekiGovde;
+            oncekiGovde = govde.position;
+            fark.y = 0f;
+            float oran = Mathf.Clamp01(fark.magnitude / dt / Mathf.Max(0.01f, ayarlar.SallanmaTamHiz));
+            sallanma = Mathf.MoveTowards(sallanma, oran, dt * 4f);
+            sallanmaFazi += dt * ayarlar.SallanmaSikligi * Mathf.PI * 2f * Mathf.Max(0.3f, oran);
+            Vector3 yer = tabanYer + Vector3.up * Mathf.Sin(sallanmaFazi) * ayarlar.SallanmaGenligi * sallanma;
+
+            if (sarsintiKalan > 0f && geribildirim != null)
+            {
+                sarsintiKalan -= dt;
+                float g = sarsintiGucu * Mathf.Clamp01(sarsintiKalan / geribildirim.SarsintiSuresi);
+                yer += Random.insideUnitSphere * geribildirim.SarsintiKaymasi * g;
+                transform.localRotation *= Quaternion.Euler(Random.Range(-1f, 1f) * geribildirim.SarsintiDonmesi * g, 0f, Random.Range(-1f, 1f) * geribildirim.SarsintiDonmesi * g);
+            }
+            transform.localPosition = yer;
+
+            if (kamera == null) return;
+            bool hizli = GameInput.HizliBasili && oran > 0.5f;
+            float hedef = ilkGorus + (hizli ? ayarlar.HizGorusArtisi : 0f);
+            kamera.fieldOfView = Mathf.Lerp(kamera.fieldOfView, hedef, dt * ayarlar.GorusGecisi);
         }
 
         /// <summary>Gövdeyi değiştirir (ör. öncü yavru değişince).</summary>
@@ -45,6 +105,9 @@ namespace IkiDunya.Camera
         {
             govde = yeniGovde;
             egim = 0f;
+            // Göz yeni gövdeye taşındı (öncü değişti): sallanmanın tabanı yeni yer.
+            tabanYer = transform.localPosition;
+            if (govde != null) oncekiGovde = govde.position;
             KendiniGizle(govde);
         }
 

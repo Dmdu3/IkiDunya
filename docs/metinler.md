@@ -110,6 +110,7 @@ Kısa yaz: kart açıklaması en fazla 2 satır, kanıt notu en fazla 3 satır. 
 | ipucu_cop_seli | Ufukta köpük görürsen dalga geliyor: kum tepesine çık. Su çekilince denize koş. |
 | final_30_yil | 30 yıl sonra |
 | final_kurtarilan | Denize ulaşan yavru |
+| jenerik | İKİ DÜNYA, TEK YAŞAM\n\nBir öğrenci oyun projesi\n\nEkip\nUmut · Toprak · Yusuf · Abdü\n\nDeniz kaplumbağaları her yıl doğdukları kumsala döner.\nO kumsalın nasıl olacağı bizim elimizde.\n\nOynadığın için teşekkürler. |
 
 ## Menü ve ayarlar
 
@@ -128,6 +129,14 @@ Kısa yaz: kart açıklaması en fazla 2 satır, kanıt notu en fazla 3 satır. 
 | ayar_ses | Ses |
 | ayar_fare | Fare hassasiyeti |
 | ayar_tuslar | Tuşlar |
+| ayar_yazi_boyutu | Yazı boyutu |
+| ayar_ipuclari | İpuçları |
+| ayar_tam_ekran | Tam ekran |
+| ayar_cozunurluk | Çözünürlük |
+| ayar_kalite | Grafik kalitesi |
+| ayar_kalite_dusuk | Düşük |
+| ayar_kalite_orta | Orta |
+| ayar_kalite_yuksek | Yüksek |
 | tus_ileri | İleri |
 | tus_geri | Geri |
 | tus_sol | Sol |

@@ -4,7 +4,7 @@ ozet: Mekanik tarafın durumu ve sistemlerin haritası. Bir sistem eklendikçe y
 
 # Durum
 
-Son güncelleme: 2026-11-01 — Alpha main'de, deneme listesi tamam (editörde 300+ FPS). Main'de: insan kısmı (yönetim ekranı, Faz 0–4). Main'de: Yusuf'un kumsalı (#40). Main'de: minigame sahneleri ve Yusuf'un canlıları (#43, #45). Dalda (`umut/metin-animasyon-kamera`): bütün metinlerin ilk taslağı, kodla animasyon, birinci şahısta kendi gövdesi gizli. Unity'de henüz denenmedi.
+Son güncelleme: 2026-11-01 — Dalda (`umut/cila`): Hepsini kur, PC build, F6 paneli, geri bildirim efektleri, kamera hissi, gece gökyüzü ve izler, ara sahneler, final jeneriği, yeni ayarlar, oyun kolu, performans, Kendini dene. Alpha main'de, deneme listesi tamam (editörde 300+ FPS). Main'de: insan kısmı (yönetim ekranı, Faz 0–4). Main'de: Yusuf'un kumsalı (#40). Main'de: minigame sahneleri ve Yusuf'un canlıları (#43, #45). Dalda (`umut/metin-animasyon-kamera`): bütün metinlerin ilk taslağı, kodla animasyon, birinci şahısta kendi gövdesi gizli. Unity'de henüz denenmedi.
 
 ## Sistem haritası
 
@@ -75,6 +75,10 @@ Bütçe, gönüllü ve halk desteği `KumsalDurumu`'nda değil; insan kısmını
 
 ## Araçlar
 
+- **İki Dünya → Hepsini kur:** sorusuz, sırayla Menü, Kumsal, Bölüm 1, Bölüm 5 ve üç parkur sahnesini kurar, Build Settings'teki sahne listesini düzeltir, Menü'yü açar. Model ya da metin değişince tek tık.
+- **İki Dünya → PC build al:** `Build/Windows/IkiDunya.exe` (Windows 64-bit). `Build/` repoya girmez.
+- **İki Dünya → Kendini dene:** oyunu açmadan kontroller (akış sırası, süreli etkilerin geri alınması, kayıp izi → kanıt, metinler.md'de tekrar eden id, kodda olup metinler.md'de olmayan id). Sonuç Console'da.
+- **F6 (oyunda, geliştirici paneli):** akıştaki herhangi bir adıma ya da parkura atlar, menüye döner. Sadece editörde ve development build'de.
 - **İki Dünya → Layer'ları kur:** README'deki layer'ları boş yuvalara ekler.
 - **İki Dünya → Gri kutu kumsalı kur (yuva gecesi):** `Scenes/Prototypes/GriKumsal.unity` — kumsal, termal görünüm, şezlong, çöp yığını, 2 insan (biri fenerli), anne (hareket, kazma), yuva gecesi, enerji ve kazma çubuğu.
 - **İki Dünya → Kumsal sahnesini kur (oyun):** `Scenes/Levels/Kumsal.unity` — iki gecenin hepsi ve geçici insan turu; her grup (`YuvaGecesiNesneleri`, `KacisGecesiNesneleri`, `InsanTuruNesneleri`) sadece kendi adımında açılır. `Sistemler` prefab'ı da konur.
@@ -244,3 +248,14 @@ Uyarılar: kameralardaki kulak `Core/TekKulak` ile tek (açılan kamera alır); 
 - **Model dönüşü:** kalıbın kendi dönüşü korunur (Blender eksen düzeltmesi; tekne dik duruyordu). Denizanası artık sürekli yükselmez, aynı derinlik çevresinde kasılır.
 - **Poşet:** −10 enerji (`DenizTehlikeAyarlari.posetEnerjiKaybi`), yarı hız, `PosetYuttu` sesi, `ipucu_poset_yuttu`, deniz göstergesinde yavaşlık çubuğu.
 
+## Cila (dal `umut/cila`)
+
+- **Geri bildirim (`Core/Geribildirim`, `GeribildirimAyarlari`, `UI/Night/EkranEfektleri`):** çarpma ve yakalanmada kamera sarsıntısı ve kırmızı flaş; poşette kahverengi bulanma; yavru kurtulunca yeşil parıltı; enerji azalınca (`Turtle/EnerjiUyarisi`) ekran kenarı kararır ve kalp atışı sesi (`SesTuru.KalpAtisi`, ses yuvası boş).
+- **Kamera:** yürürken/yüzerken hafif baş sallanması, Shift'te görüş açısı genişler, oyun kolunun sağ çubuğuyla bakış. Sayılar `KameraAyarlari` ve `GeribildirimAyarlari`'nda.
+- **Gece:** yıldızlar ve ay (`Core/GeceGokyuzu`, shader `IkiDunya/Gokyuzu`; `OrtamIsigi` gece açar); anne ve yavrular kumda iz bırakır (`Turtle/IzBirakici`, 25 sn'de silinir).
+- **Su altı ışık hüzmeleri (`Core/SuIsiklari`):** deniz sahnelerinde yüzücünün çevresinde; suyun üstündeyken görünmez.
+- **Ara sahneler (`Core/AraSahne`):** Bölüm 1, yuva gecesi, kaçış gecesi ve Bölüm 5 başında kamera geniş bir açıdan oyuncunun gözüne süzülür; bu sırada tuşlar kilitli (`GameInput.Kilitli`).
+- **Final:** kamera yürüyüş boyunca kayar, yazılar belirir, sonra jenerik (`jenerik` metni) akar; tıklayınca ya da jenerik bitince oyun biter.
+- **Ayarlar:** yazı boyutu (bütün arayüz, `Core/ArayuzOlcegi`), ipuçları aç/kapa, tam ekran, çözünürlük, grafik kalitesi (düşük/orta/yüksek).
+- **Oyun kolu:** sol çubuk hareket, sağ çubuk bakış, LT hızlı, A zıpla/dal, X etkileş, LB/RB kazma sol/sağ, Y ya da d-pad yukarı kazmada yukarı, sağ çubuğa basış termal, Start duraklat. Menülerde ilk düğme seçili gelir. İnsan kısmının harita ekranı (Toprak) oyun koluyla denenmedi.
+- **Performans:** deniz kamerasında uzak düzlem 150 m (sis zaten 100 m'de örter); insanlar, kayalar, deniz çayırı ve deniz tabanının süsleri ekranda çok küçülünce çizilmez (LODGroup), küçük süsler gölge atmaz.
