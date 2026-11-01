@@ -97,7 +97,7 @@ namespace IkiDunya.Turtle
         {
             bool yuvaVar = gece >= 1 && gece <= kumsal.Yuvalar.Count;
             yuvaKonumu = yuvaVar ? kumsal.Yuvalar[gece - 1].Konum : varsayilanYuva.position;
-            yuvaBandi = yuvaVar ? kumsal.Yuvalar[gece - 1].Bant : kum.Bant(yuvaKonumu);
+            yuvaBandi = yuvaVar ? kumsal.YuvaBandi(gece - 1) : kum.Bant(yuvaKonumu);
             yavruSayisi = yuvaVar ? kumsal.Yuvalar[gece - 1].Yumurta : ayarlar.VarsayilanYavruSayisi;
             kumdaKalan = 0;
             suruKuruldu = false;

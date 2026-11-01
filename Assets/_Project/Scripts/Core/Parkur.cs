@@ -53,7 +53,12 @@ namespace IkiDunya.Core
         }
 
         /// <summary>Süre "dk:sn.d" biçiminde (sayı, yazı değil).</summary>
-        public static string Bicim(float saniye) => $"{(int)(saniye / 60f)}:{saniye % 60f:00.0}";
+        public static string Bicim(float saniye)
+        {
+            // Önce onda bire yuvarlanır: 119.97 "1:60.0" değil "2:00.0" olsun.
+            int onda = Mathf.RoundToInt(saniye * 10f);
+            return $"{onda / 600}:{onda % 600 / 10f:00.0}";
+        }
 
         public static bool Acik(ParkurTuru tur) => PlayerPrefs.GetInt(AcikAnahtari + (int)tur, 0) == 1;
 

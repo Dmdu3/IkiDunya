@@ -76,7 +76,12 @@ namespace IkiDunya.Hazards
             return Zemin.Oturt(transform.TransformPoint(new Vector3(x, 0f, KiyiZ(x) + kiyidanUzaklik)));
         }
 
-        public SicaklikBandi Bant(int bolge, float kiyidanUzaklik)
+        public SicaklikBandi Bant(int bolge, float kiyidanUzaklik) => Bant(bolge, kiyidanUzaklik, true);
+
+        /// <summary>Noktanın zemin bandı, bütün kumun ısınması hariç; yuvaya bu yazılır (ısınma geçicidir, KumsalDurumu.YuvaBandi ekler).</summary>
+        public SicaklikBandi ZeminBandi(Vector3 konum) => Bant(Bolge(konum), KiyidanUzaklik(konum), false);
+
+        private SicaklikBandi Bant(int bolge, float kiyidanUzaklik, bool isinmaDahil)
         {
             int bant = 0;
             foreach (float sinir in ayarlar.BantSinirlari)
@@ -84,7 +89,7 @@ namespace IkiDunya.Hazards
 
             if (bolge < kumsal.BolgeSayisi && kumsal.BolgeAl(bolge).Var(BolgeYapisi.Golgelik))
                 bant -= ayarlar.GolgelikSerinletme;
-            bant += kumsal.KumIsinmasi;
+            if (isinmaDahil) bant += kumsal.KumIsinmasi;
 
             return (SicaklikBandi)Mathf.Clamp(bant, (int)SicaklikBandi.Mavi, (int)SicaklikBandi.Kirmizi);
         }

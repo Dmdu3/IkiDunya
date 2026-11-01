@@ -72,7 +72,8 @@ namespace IkiDunya.UI.Night
                 sureYazisi.text = $"{Al("parkur_sure")} {Parkur.Bicim(Parkur.Gecen)}" + (rekor > 0f ? $"   {Al("parkur_rekor")} {Parkur.Bicim(rekor)}" : "");
             }
 
-            if (sonucKalan <= 0f) return;
+            // Duraklatma açıkken sonuç beklemesi de durur; menü açıkken akış ilerlemesin.
+            if (sonucKalan <= 0f || Duraklatma.Acik) return;
             sonucKalan -= Time.unscaledDeltaTime;
             if (sonucKalan > 0f) return;
             sonucKutusu.SetActive(false);

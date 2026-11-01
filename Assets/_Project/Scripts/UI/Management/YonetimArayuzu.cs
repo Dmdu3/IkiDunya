@@ -255,7 +255,7 @@ namespace IkiDunya.UI.Management
             for (int i = 0; i < yuvalar.Count; i++)
             {
                 Yuva y = yuvalar[i];
-                sb.Append($"{Al("yuva")} {i + 1}: {Al($"bant_{y.Bant.ToString().ToLowerInvariant()}")} · {Al("yuva_yumurta")} {y.Yumurta} · {Al("yuva_hafta")} {y.CikisinaHafta}");
+                sb.Append($"{Al("yuva")} {i + 1}: {Al($"bant_{tur.Kumsal.YuvaBandi(i).ToString().ToLowerInvariant()}")} · {Al("yuva_yumurta")} {y.Yumurta} · {Al("yuva_hafta")} {y.CikisinaHafta}");
                 if (y.Kafesli) sb.Append($" · {Al("yuva_kafesli")}");
                 float risk = tur.AvciRiski(i);
                 if (risk > 0f) sb.Append($" · {Al("yuva_avci_riski")} %{Mathf.RoundToInt(risk * 100f)}");
