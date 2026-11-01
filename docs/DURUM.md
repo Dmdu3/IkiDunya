@@ -41,7 +41,7 @@ Son güncelleme: 2026-11-01 — Dalda (`umut/cila`): Hepsini kur, PC build, F6 p
 | Işık kaynakları | `Hazards` | `IsikKaynagi` | Umut | Yapılıyor |
 | Kayıp izleri | `Turtle`, `Hazards` | `KacisGecesi` yazar, `KumsalYapilari` kumda gösterir, `KayipIziHaritasi` insan turunda simge + kanıt | Umut | Yapılıyor |
 | İpuçları (ilk karşılaşmada bir kez) | `Core`, `UI/Night` | `Ipucu`, `IpucuPaneli` | Umut | Yapılıyor (yazılar Yusuf'ta) |
-| Ses: olaylar, ortam sesi, müzik | `Core` | `Ses`, `SesYoneticisi`, `SesAyarlari` | Umut | Yapılıyor (klipler Abdü'de) |
+| Ses: olaylar, ortam sesi, müzik | `Core` | `Ses`, `SesYoneticisi`, `SesAyarlari` | Umut | Yapılıyor (ilk klipler bağlı, kalanlar Yusuf'ta) |
 | Kumsal haritası ve tur akışı | `Management`, `UI/Management` | `InsanTuru`, `HaritaSecici`, `YuvaHaritasi`, `YonetimArayuzu` | Toprak | Yapılıyor |
 | Kaynaklar (bütçe, gönüllü, halk desteği, bakım), rapor, kayıt | `Management` | `YonetimDurumu`, `YonetimAyarlari`; `Core/IOyunVerisi` | Toprak | Yapılıyor |
 | Paydaşlar (Otel, Belediye, Balıkçılar) | `Management` | `Paydas`, `YonetimDurumu`, `YonetimAyarlari` | Toprak | Yapılıyor (Unity'de bir turda denendi, 2026-11-01) |
@@ -119,7 +119,7 @@ Henüz yok: yok (animasyonlar modeller gelince).
 
 **Uyarılar.** Teknenin suyun hemen altına düşen gölgesi teknenin 6 m önünde gider, arkasında pervane köpüğü titrer; su altındaki oyuncu tekneyi gelmeden görür. Hayalet ağın kenarları ve misina yavaşça parıldar (`Parilti`), uzaktan seçilir.
 
-Henüz yok: pervane sesi klibi (Abdü).
+Pervane sesi klibi bağlı (`Audio/SFX/Pervane.wav`).
 
 ## Menü, kayıt, final (Faz 7)
 
@@ -174,6 +174,11 @@ Henüz yok: pervane sesi klibi (Abdü).
 | Yeme, AgdanKurtulma, KontrolNoktasi, DalgaVurdu | Denizde |
 | Pervane | Tekne (döngü) |
 | Ipucu | İpucu kutusu açılınca |
+| DugmeTikla | Menü ve yönetim düğmeleri (`UI/DugmeSesi`), tuş atama (`TusSatiri`), İleri ve Space (`InsanTuru`), hedefli kart seçimi, haritada görev verme |
+| KartOyna, KartDagit | Kart oynanınca, el dağıtılınca (`InsanTuru`) |
+| KanitBulundu | Haritada kayıp izine tıklanıp kanıt açılınca (`KayipIziHaritasi`) |
+
+**Klipler (2026-11-01, Yusuf).** Bütün efektler (26) ve bütün adımların ortam sesi bağlı (kaynak ve lisans `docs/varliklar.md`'de). Ortam: `Donus`, `IlkYuzus` ve `Parkur` su altı, `YuvaGecesi` ve `KacisGecesi` kumsal gecesi, `InsanTuru` gündüz kumsal, `Final` sakin deniz. Çöp Seli gece kumsalda geçtiği için `SesAyarlari`'ndaki kendi yuvasından (`copSeliOrtami`) kumsal gecesi sesini çalar. Henüz yok: müzikler.
 
 ## İnsan kısmı (yönetim ekranı)
 
@@ -196,7 +201,7 @@ Toprak'ın onayıyla Umut yazdı (2026-11-01); kodu artık Toprak sürdürür. S
 
 **Metinler.** Bütün yazılar id ile (kart ve görev adları metinler.md'de var; açıklamalar `Açıklama` sütunundan `id_aciklama`, olay seçenekleri `Seçenek A/B` sütunlarından `id_a`, `id_b` olarak aktarılır). Ekranın kendi yazıları için yeni id'ler Yusuf'ta.
 
-Henüz yok: kartların ve olay penceresinin görsel hali (Faz 9), arayüz sesleri, gönüllü atamasını geri alma.
+Henüz yok: kartların ve olay penceresinin görsel hali (Faz 9), gönüllü atamasını geri alma.
 
 ## Kumsal arazisi (Yusuf'un modelleri)
 
@@ -250,7 +255,7 @@ Uyarılar: kameralardaki kulak `Core/TekKulak` ile tek (açılan kamera alır); 
 
 ## Cila (dal `umut/cila`)
 
-- **Geri bildirim (`Core/Geribildirim`, `GeribildirimAyarlari`, `UI/Night/EkranEfektleri`):** çarpma ve yakalanmada kamera sarsıntısı ve kırmızı flaş; poşette kahverengi bulanma; yavru kurtulunca yeşil parıltı; enerji azalınca (`Turtle/EnerjiUyarisi`) ekran kenarı kararır ve kalp atışı sesi (`SesTuru.KalpAtisi`, ses yuvası boş).
+- **Geri bildirim (`Core/Geribildirim`, `GeribildirimAyarlari`, `UI/Night/EkranEfektleri`):** çarpma ve yakalanmada kamera sarsıntısı ve kırmızı flaş; poşette kahverengi bulanma; yavru kurtulunca yeşil parıltı; enerji azalınca (`Turtle/EnerjiUyarisi`) ekran kenarı kararır ve kalp atışı sesi (`SesTuru.KalpAtisi`, ses yuvası boş; `SesTuru`'nda Yusuf'un seslerinden sonra, en sonda).
 - **Kamera:** yürürken/yüzerken hafif baş sallanması, Shift'te görüş açısı genişler, oyun kolunun sağ çubuğuyla bakış. Sayılar `KameraAyarlari` ve `GeribildirimAyarlari`'nda.
 - **Gece:** yıldızlar ve ay (`Core/GeceGokyuzu`, shader `IkiDunya/Gokyuzu`; `OrtamIsigi` gece açar); anne ve yavrular kumda iz bırakır (`Turtle/IzBirakici`, 25 sn'de silinir).
 - **Su altı ışık hüzmeleri (`Core/SuIsiklari`):** deniz sahnelerinde yüzücünün çevresinde; suyun üstündeyken görünmez.

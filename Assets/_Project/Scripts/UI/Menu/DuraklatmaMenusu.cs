@@ -18,6 +18,7 @@ namespace IkiDunya.UI.Menu
 
         private void Awake()
         {
+            DugmeSesi.Bagla(oyunaDon, ayarlar, anaMenu);
             oyunaDon.onClick.AddListener(Duraklatma.Kapat);
             ayarlar.onClick.AddListener(ayarlarPaneli.Ac);
             anaMenu.onClick.AddListener(OyunAkisi.MenuyeDon);
