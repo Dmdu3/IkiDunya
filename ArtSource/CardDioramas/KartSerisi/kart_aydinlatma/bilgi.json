@@ -1,0 +1,9 @@
+{
+  "id": "kart_aydinlatma",
+  "ad": "Kaplumbağa Dostu Aydınlatma",
+  "tur": "Altyapı",
+  "butce": 2,
+  "bakim": 0,
+  "aciklama": "Seçilen bölgenin lambaları kısık, kırmızı ışıklıya değişir.",
+  "ek": "Işık kanıtı temel maliyeti 1 azaltır."
+}

@@ -1,0 +1,14 @@
+{
+  "listedeki_kart": 27,
+  "basarili": 27,
+  "hatalar": [],
+  "kontroller": [
+    "gerekli dosyalar",
+    "bilgi alanları",
+    "512×320 RGBA",
+    "1024×1536 kart",
+    "saydam piksel",
+    "alfa kenar güvenliği"
+  ],
+  "sinirlar": "Görsel anlam, estetik ve küçük metin okunurluğu otomatik doğrulanmaz."
+}

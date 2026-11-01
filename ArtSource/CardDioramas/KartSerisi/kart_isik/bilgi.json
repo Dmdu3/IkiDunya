@@ -1,0 +1,9 @@
+{
+  "id": "kart_isik",
+  "ad": "Işık Yasağı",
+  "tur": "Politika",
+  "butce": 3,
+  "bakim": 0,
+  "aciklama": "Otel ve yol ışıkları geceleri kapanır, kalıcı.",
+  "ek": "Otel −2; Belediye ilişkisi en az 0 olmalı."
+}

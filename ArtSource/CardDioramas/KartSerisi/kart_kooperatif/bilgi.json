@@ -1,0 +1,9 @@
+{
+  "id": "kart_kooperatif",
+  "ad": "Balıkçı Kooperatifi",
+  "tur": "Politika",
+  "butce": 3,
+  "bakim": 0,
+  "aciklama": "Balıkçılarla ağ değişimine ortak olunur.",
+  "ek": "Balıkçılar +2; denizde ağ azalır."
+}

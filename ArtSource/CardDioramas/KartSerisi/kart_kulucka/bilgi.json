@@ -1,0 +1,9 @@
+{
+  "id": "kart_kulucka",
+  "ad": "Kuluçkahane",
+  "tur": "Altyapı",
+  "butce": 5,
+  "bakim": 0,
+  "aciklama": "Bütün yuvalar seçilen bölgeye taşınır ve kafeslenir. Hepsi tek yerde olur.",
+  "ek": "Halk +1; bütün yumurtalar tek bölgede."
+}

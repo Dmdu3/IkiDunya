@@ -6,6 +6,7 @@ ozet: Repoya giren hazır model, ses, font ve görsellerin listesi ve lisansı. 
 
 | Dosya / paket | Ne için | Kaynak (link) | Lisans | Ekleyen |
 |---|---|---|---|---|
+| `Assets/_Project/Art/UI/Resources/KartDioramalari/*.png` | Yönetim ekranında 27 kartın diorama görseli | Proje için Blender'da üretilen kaynaklar: `ArtSource/CardDioramas/KartSerisi` | Proje için üretilmiş özgün çalışma | Abdü / Codex |
 | `Audio/SFX/MartiUyari.wav` | Martı uyarısı (kırpıldı) | [Seagulls_short](https://freesound.org/people/Lydmakeren/sounds/510917/) (Lydmakeren) | CC0 | Yusuf |
 | `Audio/SFX/YengecUyari.wav` | Yengeç uyarısı | [crab walking](https://freesound.org/people/stuniverso/sounds/761559/) (stuniverso) | CC0 | Yusuf |
 | `Audio/SFX/TilkiUyari.wav` | Tilki uyarısı | [foxBark2](https://freesound.org/people/Setzilla/sounds/173208/) (Setzilla) | CC0 | Yusuf |

@@ -1,0 +1,18 @@
+{
+  "blender": "5.2.3 LTS",
+  "size": [
+    512,
+    320
+  ],
+  "channels": 4,
+  "transparent_pixels": 112012,
+  "bbox": [
+    100,
+    17,
+    411,
+    302
+  ],
+  "camera_azimuth": -45,
+  "camera_elevation": 35,
+  "orthographic_scale": 4.452130317687988
+}
