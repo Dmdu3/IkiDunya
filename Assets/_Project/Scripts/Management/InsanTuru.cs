@@ -245,7 +245,12 @@ namespace IkiDunya.Management
         private void Uygula(int hedef)
         {
             if (BekleyenKart != null) KartiOyna(BekleyenKart, hedef);
-            else if (BekleyenGorev != null && yonetim.BosGonullu(kumsal) > 0) etkiler.GorevVer(BekleyenGorev, hedef);
+            else if (BekleyenGorev != null && yonetim.BosGonullu(kumsal) > 0)
+            {
+                // İşe yaramayacak hedefte gönüllü harcanmaz; görev bekler, oyuncu başka hedef seçer.
+                if (!etkiler.GorevIseYarar(BekleyenGorev, hedef)) return;
+                etkiler.GorevVer(BekleyenGorev, hedef);
+            }
             BekleyeniBirak();
             Degisti?.Invoke();
         }

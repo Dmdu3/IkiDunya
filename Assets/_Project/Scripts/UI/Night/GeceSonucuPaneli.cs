@@ -61,9 +61,10 @@ namespace IkiDunya.UI.Night
         private void YuvaSonucu(Yuva yuva)
         {
             if (yuva == null || yuvaPaneli == null) return;
-            yuvaBandi.color = termal.Renk(yuva.Bant);
+            SicaklikBandi bant = yuvaGecesi.YuvaBandi(yuva);
+            yuvaBandi.color = termal.Renk(bant);
             MetinTablosu tablo = metinler != null ? metinler : MetinTablosu.Yuklu;
-            if (bantAdi != null && tablo != null) bantAdi.text = tablo.Al($"bant_{yuva.Bant.ToString().ToLowerInvariant()}");
+            if (bantAdi != null && tablo != null) bantAdi.text = tablo.Al($"bant_{bant.ToString().ToLowerInvariant()}");
             yumurtaSayisi.text = yuva.Yumurta.ToString();
             yuvaPaneli.SetActive(true);
         }

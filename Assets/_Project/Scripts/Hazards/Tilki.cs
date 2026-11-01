@@ -57,9 +57,18 @@ namespace IkiDunya.Hazards
             gezmeSuresi = 0f;
             yuvaDenendi = false;
             hedefYuva = -1;
+            // Eşelerken gece biterse gövde eğik kalmasın.
+            govde.transform.localRotation = Quaternion.identity;
             if (noktalar.Length > 0) transform.position = noktalar[0].position;
-            if (geldi) Ipucu.Goster("ipucu_tilki");
+            // Sahne yüklenirken her grup bir an açık olur; ipucu sadece tilkinin gerçekten geldiği adımda harcanır.
+            if (geldi && GercekGece()) Ipucu.Goster("ipucu_tilki");
         }
+
+        private static bool GercekGece() =>
+            !OyunAkisi.Var || OyunAkisi.SuAnkiAdim.Tur == AdimTuru.KacisGecesi || OyunAkisi.SuAnkiAdim.Tur == AdimTuru.Parkur;
+
+        /// <summary>Kovalamaca bitince: yuvaya gidiyorduysa yarım kalan baskına döner, yoksa gezdiği yola.</summary>
+        private void IseDon() => durum = hedefYuva >= 0 ? Durum.YuvayaGidiyor : Durum.Donuyor;
 
         private bool CitVar()
         {
@@ -160,6 +169,7 @@ namespace IkiDunya.Hazards
             kumsal.YuvaYumurtaKaybet(hedefYuva, kayip);
             kumsal.KayipIziEkle(new KayipIzi(yuva.Bolge, yuva.Konum, KayipNedeni.Tilki));
             Debug.Log($"Tilki: {hedefYuva + 1}. yuvayı bozdu, {kayip} yumurta kaybedildi.");
+            hedefYuva = -1;
             durum = Durum.Donuyor;
         }
 
@@ -167,13 +177,13 @@ namespace IkiDunya.Hazards
         {
             if (av == null || !av.Yakalanabilir)
             {
-                durum = Durum.Donuyor;
+                IseDon();
                 return;
             }
             if (!Git(av.Konum, ayarlar.TilkiKosuHizi)) return;
             av.Yakala(KayipNedeni.Tilki);
             av = null;
-            durum = Durum.Donuyor;
+            IseDon();
         }
 
         /// <summary>Hedefe yürür; vardıysa true.</summary>

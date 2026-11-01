@@ -38,6 +38,7 @@ namespace IkiDunya.Hazards
 
         private readonly List<GameObject> yapilar = new List<GameObject>();
         private readonly List<GameObject> izler = new List<GameObject>();
+        private string kurulanImza;
 
         private void OnEnable()
         {
@@ -67,12 +68,29 @@ namespace IkiDunya.Hazards
         {
             IzleriKur();
             // Gece ortasında tuzaklar yeniden kurulursa içindeki yavru tekrar takılır; yapılar sadece insan turunda güncellenir.
-            if (!OyunAkisi.Var || (!OyunAkisi.MenudeMi && OyunAkisi.SuAnkiAdim.Tur == AdimTuru.InsanTuru)) YapilariKur();
+            if (OyunAkisi.Var && (OyunAkisi.MenudeMi || OyunAkisi.SuAnkiAdim.Tur != AdimTuru.InsanTuru)) return;
+            // Kayıp izi gibi bölgeleri değiştirmeyen bir değişiklikte (akışsız deneme sahnesinde gece de buradan geçer) yapılar yerinde kalır.
+            if (Imza() != kurulanImza) YapilariKur();
+        }
+
+        /// <summary>Bölgelerin katman ve yapı durumu; aynıysa yapılar yeniden kurulmaz.</summary>
+        private string Imza()
+        {
+            var imza = new System.Text.StringBuilder();
+            for (int i = 0; i < kumsal.BolgeSayisi; i++)
+            {
+                Bolge bolge = kumsal.BolgeAl(i);
+                foreach (BolgeKatmani katman in System.Enum.GetValues(typeof(BolgeKatmani))) imza.Append(bolge.Seviye(katman)).Append(',');
+                foreach (BolgeYapisi yapi in System.Enum.GetValues(typeof(BolgeYapisi))) imza.Append(bolge.Var(yapi) ? '1' : '0');
+                imza.Append('|');
+            }
+            return imza.ToString();
         }
 
         private void YapilariKur()
         {
             Temizle(yapilar);
+            kurulanImza = Imza();
             for (int i = 0; i < kumsal.BolgeSayisi && i < kum.BolgeSayisi; i++)
             {
                 Bolge bolge = kumsal.BolgeAl(i);

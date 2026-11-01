@@ -28,8 +28,8 @@ namespace IkiDunya.UI.Menu
 
         private void Update()
         {
-            // Menüde duraklatma yok.
-            if (!GameInput.DuraklatBasildi || OyunAkisi.MenudeMi) return;
+            // Menüde ve geçiş sırasında duraklatma yok (kararırken açılırsa sonraki sahne duraklatılmış gelir).
+            if (!GameInput.DuraklatBasildi || OyunAkisi.MenudeMi || OyunAkisi.GecisSuruyor) return;
             if (Duraklatma.Acik) Duraklatma.Kapat();
             else Duraklatma.Ac();
         }
