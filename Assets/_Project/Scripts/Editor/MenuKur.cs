@@ -418,7 +418,53 @@ namespace IkiDunya.Editor
             ok.localRotation = Quaternion.Euler(0f, 0f, 45f);
             Toggle oge = acilir.template.GetComponentInChildren<Toggle>(true);
             if (oge != null) Renkler(oge);
+            ListeSablonu(acilir, tema);
             return acilir;
+        }
+
+        // Açılan listenin satır boyu ve en fazla boyu (tuval birimi). Unity'nin hazır şablonu 20'lik satır kurar, yazı okunmaz.
+        private const float ListeSatiri = 40f, ListeBoyu = 280f;
+
+        /// <summary>Açılan liste: okunur boyda satırlar, seçili satırın solunda ince vurgu çubuğu, ince kaydırma çubuğu.</summary>
+        private static void ListeSablonu(Dropdown acilir, ArayuzTemasi tema)
+        {
+            RectTransform sablon = acilir.template;
+            sablon.sizeDelta = new Vector2(sablon.sizeDelta.x, ListeBoyu);
+            sablon.anchoredPosition = new Vector2(0f, -4f);
+            var icerik = (RectTransform)sablon.Find("Viewport/Content");
+            icerik.sizeDelta = new Vector2(icerik.sizeDelta.x, ListeSatiri);
+            var satir = (RectTransform)icerik.Find("Item");
+            satir.sizeDelta = new Vector2(satir.sizeDelta.x, ListeSatiri);
+
+            var isaret = (RectTransform)satir.Find("Item Checkmark");
+            isaret.anchorMin = new Vector2(0f, 0.5f);
+            isaret.anchorMax = new Vector2(0f, 0.5f);
+            isaret.pivot = new Vector2(0f, 0.5f);
+            isaret.anchoredPosition = new Vector2(8f, 0f);
+            isaret.sizeDelta = new Vector2(4f, ListeSatiri - 16f);
+
+            var etiket = (RectTransform)satir.Find("Item Label");
+            etiket.offsetMin = new Vector2(24f, 2f);
+            etiket.offsetMax = new Vector2(-12f, -2f);
+            Text etiketYazisi = etiket.GetComponent<Text>();
+            etiketYazisi.fontSize = 24;
+            etiketYazisi.alignment = TextAnchor.MiddleLeft;
+
+            // Kaydırma çubuğu ince; listede çok çözünürlük olunca görünür.
+            var kaydirma = (RectTransform)sablon.Find("Scrollbar");
+            kaydirma.sizeDelta = new Vector2(6f, kaydirma.sizeDelta.y);
+            var tutamak = (RectTransform)kaydirma.Find("Sliding Area/Handle");
+            tutamak.sizeDelta = new Vector2(6f, 6f);
+            ((RectTransform)kaydirma.Find("Sliding Area")).sizeDelta = new Vector2(-6f, -6f);
+            ((RectTransform)sablon.Find("Viewport")).sizeDelta = new Vector2(-8f, 0f);
+            // Fare tekerleği bir satır kadar kaydırsın (varsayılan 1 birim, liste yerinden oynamıyor gibi görünür).
+            sablon.GetComponent<ScrollRect>().scrollSensitivity = ListeSatiri;
+
+            Text baslik = acilir.captionText;
+            baslik.fontSize = 24;
+            baslik.color = tema.Yazi;
+            var baslikAlani = (RectTransform)baslik.transform;
+            baslikAlani.offsetMin = new Vector2(14f, baslikAlani.offsetMin.y);
         }
 
         private static void Katman(GameObject nesne)
