@@ -63,7 +63,7 @@ Sahneye bir şey koyarken layer'ını doğru seç; yanlış layer en sık karş�
 | `Water` | Deniz yüzeyi, dalga alanı | Hayır (yüzülür) | Dalga çizgisi `KumsalDurumu`'ndan gelir |
 | `Obstacle` | Şezlong, şemsiye, kaya, duvar | Hayır (etrafından dolaşılır) | Yavru üstünden atlayamaz |
 | `Trash` | Şişe, kum kalesi, ağ parçası, halka | Kısmen | Küçükler atlanır; ağ ve halka takar (`TrashTrap` bileşeni) |
-| `Hazard` | Sıcak leke, ışık alanı, sıcak su, hayalet ağ | – | Collider **Is Trigger** olmalı ve `HazardZone` bileşeni taşımalı |
+| `Hazard` | Sıcak leke, ışık alanı, hayalet ağ | – | Collider **Is Trigger** olmalı ve `HazardZone` bileşeni taşımalı |
 | `Cover` | Kumul gölgesi, deniz çayırı, kaya arası | – | **Is Trigger** + `Cover` bileşeni; avcıdan saklanma |
 | `Structure` | Gündüz kurulan yapılar: gölgelik, kafes, çit | Hayır | Kartların sahnedeki hali |
 | `Turtle` | Anne ve yavrular | – | |

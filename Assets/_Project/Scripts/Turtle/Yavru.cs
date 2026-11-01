@@ -130,7 +130,7 @@ namespace IkiDunya.Turtle
             if (SuAnki != Durum.Suruyor) return;
 
             foreach (HazardZone bolge in tehlikeler)
-                if (bolge.Tur == HazardZone.Turu.SicakLeke) enerji.Harca(bolge.SaniyeHasari * Time.deltaTime);
+                enerji.Harca(bolge.SaniyeHasari * Time.deltaTime);
             if (enerji.BittiMi)
             {
                 Kaybet(KayipNedeni.SicakKum);

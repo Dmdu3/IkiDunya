@@ -6,6 +6,7 @@ ozet: Ekipçe alınan kararlar, tarih ve nedeniyle. En yeni en üstte. GDD'yi de
 
 | Tarih | Karar | Neden | Kim |
 |---|---|---|---|
+| 2026-11-01 | Bölüm 1'den sıcak su lekesi çıkarıldı (GDD tehditler tablosu, `HazardZone.Turu.SicakSu`, `DenizTehlikeAyarlari.sicakSuHasari`); `HazardZone` artık sadece sıcak kum lekesi | Ekip kararı: denizde sıcak su olmayacak | Umut |
 | 2026-11-01 | Oyun kolu desteği (Input System bağları `GameInput`'ta) ve bölüm başında kısa ara sahne; ara sahne sırasında tuşlar kilitli | Bitmiş oyun hissi; yeni bölüme girerken oyuncu nerede olduğunu görsün | Umut |
 | 2026-11-01 | Çöp Seli'nin ortam sesi `SesAyarlari`'nda ayrı yuva (`copSeliOrtami`), öteki parkurlar `Parkur` adımının sesini paylaşır | Parkur adımı tek yuvaydı; Çöp Seli gece kumsalda geçtiği halde su altı sesiyle çalıyordu | Yusuf |
 | 2026-11-01 | Düğme ve kart sesleri: `SesTuru`'na `DugmeTikla`, `KartOyna`, `KartDagit`; menü düğmeleri `UI/DugmeSesi` ile bağlanır, İleri ve kart sesleri `InsanTuru`'nda çalar | Space düğmeden geçmediği için ses onda da çıksın; anında oynanan kartta tıklama ve kart sesi üst üste binmesin | Yusuf |

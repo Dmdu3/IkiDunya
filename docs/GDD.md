@@ -51,7 +51,6 @@ Bütün kaplumbağa bölümleri aynı kamerada, aynı tuşlarla ve aynı enerji 
 | --- | --- | --- | --- |
 | Hayalet ağ | Ağın kenarları hafif parlar | Takılır, durur | E'ye 8 kez bas; sonra 5 sn yavaş |
 | Tekne | Pervane sesi, suyun üstünde gölge | Yüzeyde çarparsa −25 enerji | Tekne geçene kadar derinde kal |
-| Sıcak su lekesi | Su titrer, renk koyulaşır | İçinde saniyede −3 enerji | Etrafından dolaş |
 
 ### Minigame: Poşet sürüsü (zorunlu, kendi sahnesi)
 

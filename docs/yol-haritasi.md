@@ -33,7 +33,7 @@ Hedef: bir yuva gecesi → bir insan turu → bir kaçış gecesi uçtan uca oyn
 - [ ] **Abdü:** Avcı ve tehdit sesleri; playtest.
 
 ## Faz 4 — Deniz (Bölüm 1 ve 5)
-- [ ] **Umut:** Deniz hareketi, nefes, akıntılar, beslenme (denizanası ve poşet), ağ, tekne, sıcak su lekesi.
+- [ ] **Umut:** Deniz hareketi, nefes, akıntılar, beslenme (denizanası ve poşet), ağ, tekne.
 - [ ] **Umut:** İlk yüzüş: dalga altından dalma, avcı balık ve saklanma, misina, plastik, ışıklı tekne, yosun adası.
 - [ ] **Toprak:** Hayalet Ağ Temizliği ve balıkçı olayının denize etkisi.
 - [ ] **Abdü:** Su altı sesleri, deniz modelleri.

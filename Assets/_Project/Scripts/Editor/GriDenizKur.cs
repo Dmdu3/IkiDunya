@@ -27,7 +27,7 @@ namespace IkiDunya.Editor
         private const float DenizUzunlugu = 200f;
         private const float DenizGenisligi = 60f;
 
-        private static Material su, taban, kaya, cayir, ag, misina, denizanasi, poset, tekne, avci, sicakSu, akinti, yosun, isaret, plastik, dalga, agKenari, tekneGolgesi, kopuk, girdapCopu;
+        private static Material su, taban, kaya, cayir, ag, misina, denizanasi, poset, tekne, avci, akinti, yosun, isaret, plastik, dalga, agKenari, tekneGolgesi, kopuk, girdapCopu;
 
         [MenuItem("İki Dünya/Bölüm 1 sahnesini kur (deniz)")]
         public static void Bolum1Kur()
@@ -61,8 +61,6 @@ namespace IkiDunya.Editor
             Object.Instantiate(HayaletAgKalibi(), new Vector3(-8f, -3f, -75f), Quaternion.Euler(0f, -20f, 0f));
             TekneKur("Tekne_0", -140f, false, tehlike, null);
             TekneKur("Tekne_1", -80f, false, tehlike, null);
-            SicakSuKur(new Vector3(-12f, -5f, -125f), 5f, tehlike);
-            SicakSuKur(new Vector3(10f, -2f, -40f), 4f, tehlike);
 
             // Süs: oyun şeridinin kenarlarında kayalar ve deniz çayırı (Yusuf'un deniz tabanı modelleri)
             SuslerKur(new[] { new Vector3(-20f, 0f, -178f), new Vector3(22f, 0f, -150f), new Vector3(-24f, 0f, -100f), new Vector3(18f, 0f, -82f), new Vector3(-14f, 0f, -66f) },
@@ -370,7 +368,6 @@ namespace IkiDunya.Editor
             poset = GriKumsalKur.SaydamMalzeme("Poset", new Color(0.95f, 0.95f, 0.95f, 0.7f));
             tekne = GriKumsalKur.Malzeme("Tekne", new Color(0.9f, 0.9f, 0.9f));
             avci = GriKumsalKur.Malzeme("AvciBalik", new Color(0.15f, 0.18f, 0.22f));
-            sicakSu = GriKumsalKur.SaydamMalzeme("SicakSu", new Color(0.5f, 0.15f, 0.1f, 0.35f));
             akinti = GriKumsalKur.SaydamMalzeme("Akinti", new Color(0.8f, 0.9f, 1f, 0.25f));
             yosun = GriKumsalKur.Malzeme("YosunAdasi", new Color(0.45f, 0.4f, 0.15f));
             isaret = GriKumsalKur.Malzeme("KontrolIsareti", new Color(1f, 0.85f, 0.2f));
@@ -668,22 +665,6 @@ namespace IkiDunya.Editor
 
             if (!isikli) return;
             IsikAlaniKur(kok.transform, Vector3.down * 0.5f, 10f, 6f, kumsal);
-        }
-
-        private static void SicakSuKur(Vector3 yer, float yaricap, DenizTehlikeAyarlari tehlike)
-        {
-            GameObject alan = GameObject.CreatePrimitive(PrimitiveType.Sphere);
-            alan.name = "SicakSu";
-            alan.layer = LayerMask.NameToLayer("Hazard");
-            alan.transform.position = yer;
-            alan.transform.localScale = Vector3.one * yaricap * 2f;
-            alan.GetComponent<Collider>().isTrigger = true;
-            alan.GetComponent<Renderer>().sharedMaterial = sicakSu;
-            var bolge = alan.AddComponent<HazardZone>();
-            var so = new SerializedObject(bolge);
-            so.FindProperty("tur").enumValueIndex = (int)HazardZone.Turu.SicakSu;
-            so.ApplyModifiedPropertiesWithoutUndo();
-            GriKumsalKur.Bagla(bolge, "denizAyarlari", tehlike);
         }
 
         private static void CayirKur(Vector3 yer, Vector3 boyut)

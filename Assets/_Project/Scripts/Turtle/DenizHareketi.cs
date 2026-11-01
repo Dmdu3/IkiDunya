@@ -20,7 +20,6 @@ namespace IkiDunya.Turtle
         private CharacterController kontrol;
         private Enerji enerji;
         private readonly List<Akinti> akintilar = new List<Akinti>();
-        private readonly List<HazardZone> tehlikeler = new List<HazardZone>();
         private readonly List<IsikKaynagi> isiklar = new List<IsikKaynagi>();
         private readonly Collider[] bulunan = new Collider[16];
         private int siperSayisi;
@@ -62,7 +61,6 @@ namespace IkiDunya.Turtle
             transform.SetPositionAndRotation(konum, yon);
             // Işınlanınca eski yerin bölgelerinden çıkış gelmez; yeni yerdekilere giriş sonraki fizik adımında gelir.
             akintilar.Clear();
-            tehlikeler.Clear();
             isiklar.Clear();
             siperSayisi = 0;
             kontrol.enabled = true;
@@ -83,7 +81,6 @@ namespace IkiDunya.Turtle
             if (Kilitli || Enerji.BittiMi) return;
 
             float harcama = ayarlar.SurekliEnerji;
-            foreach (HazardZone bolge in tehlikeler) harcama += bolge.SaniyeHasari;
 
             if (Takili)
             {
@@ -184,7 +181,6 @@ namespace IkiDunya.Turtle
         private void OnTriggerEnter(Collider diger)
         {
             if (diger.TryGetComponent(out Akinti akinti) && !akintilar.Contains(akinti)) akintilar.Add(akinti);
-            if (diger.TryGetComponent(out HazardZone bolge) && !tehlikeler.Contains(bolge)) tehlikeler.Add(bolge);
             if (diger.TryGetComponent(out IsikKaynagi isik) && !isiklar.Contains(isik)) isiklar.Add(isik);
             if (diger.TryGetComponent(out Cover _)) siperSayisi++;
             if (diger.TryGetComponent(out TrashTrap tuzak)) Takil(tuzak.Tur);
@@ -193,7 +189,6 @@ namespace IkiDunya.Turtle
         private void OnTriggerExit(Collider diger)
         {
             if (diger.TryGetComponent(out Akinti akinti)) akintilar.Remove(akinti);
-            if (diger.TryGetComponent(out HazardZone bolge)) tehlikeler.Remove(bolge);
             if (diger.TryGetComponent(out IsikKaynagi isik)) isiklar.Remove(isik);
             if (diger.TryGetComponent(out Cover _)) siperSayisi = Mathf.Max(0, siperSayisi - 1);
         }

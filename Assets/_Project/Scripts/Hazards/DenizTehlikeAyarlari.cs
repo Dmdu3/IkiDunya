@@ -2,14 +2,12 @@ using UnityEngine;
 
 namespace IkiDunya.Hazards
 {
-    /// <summary>Denizdeki tehlikelerin ve canlıların ayarları: akıntı, sıcak su, tekne, besin, avcı balık, Bölüm 5 dalgaları, ağ yoğunluğu (GDD: Bölüm 1 ve 5).</summary>
+    /// <summary>Denizdeki tehlikelerin ve canlıların ayarları: akıntı, tekne, besin, avcı balık, Bölüm 5 dalgaları, ağ yoğunluğu (GDD: Bölüm 1 ve 5).</summary>
     [CreateAssetMenu(menuName = "İki Dünya/Deniz Tehlike Ayarları", fileName = "DenizTehlikeAyarlari")]
     public class DenizTehlikeAyarlari : ScriptableObject
     {
-        [Header("Akıntı ve sıcak su")]
+        [Header("Akıntı")]
         [SerializeField] private float akintiHizi = 1.5f;
-        [Tooltip("Sıcak su lekesinde saniyede kaybedilen enerji (GDD: 3).")]
-        [SerializeField] private float sicakSuHasari = 3f;
 
         [Header("Tekne")]
         [SerializeField] private float tekneHizi = 6f;
@@ -59,7 +57,6 @@ namespace IkiDunya.Hazards
         [Range(0f, 1f)] [SerializeField] private float parildamaEnAz = 0.35f;
 
         public float AkintiHizi => akintiHizi;
-        public float SicakSuHasari => sicakSuHasari;
         public float TekneHizi => tekneHizi;
         public float TekneHasari => tekneHasari;
         public float TekneYaricapi => tekneYaricapi;

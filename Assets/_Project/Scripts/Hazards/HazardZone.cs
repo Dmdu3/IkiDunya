@@ -3,26 +3,20 @@ using UnityEngine;
 
 namespace IkiDunya.Hazards
 {
-    /// <summary>Tehlike bölgesi (Hazard layer, Is Trigger). Sıcak kum lekesi gün doğdukça büyür, gölgelikli bölgede küçük kalır; denizde sıcak su lekesi sabittir.</summary>
+    /// <summary>Tehlike bölgesi (Hazard layer, Is Trigger): sıcak kum lekesi. Gün doğdukça büyür, gölgelikli bölgede küçük kalır.</summary>
     [RequireComponent(typeof(Collider))]
     public class HazardZone : MonoBehaviour
     {
-        public enum Turu { SicakLeke, SicakSu }
-
-        [SerializeField] private Turu tur = Turu.SicakLeke;
         [SerializeField] private KacisAyarlari ayarlar;
         [SerializeField] private GunDogumu gunDogumu;
         [SerializeField] private KumSicakligi kum;
         [SerializeField] private KumsalDurumu kumsal;
-        [Tooltip("Sadece denizdeki sıcak su lekesi için.")]
-        [SerializeField] private DenizTehlikeAyarlari denizAyarlari;
 
         private Vector3 ilkOlcek;
         private int bolge;
 
-        public Turu Tur => tur;
         /// <summary>İçindeki yavrunun saniyede kaybettiği enerji.</summary>
-        public float SaniyeHasari => tur == Turu.SicakSu ? denizAyarlari.SicakSuHasari : ayarlar.SicakLekeHasari;
+        public float SaniyeHasari => ayarlar.SicakLekeHasari;
 
         private void Awake()
         {
@@ -32,7 +26,6 @@ namespace IkiDunya.Hazards
 
         private void Update()
         {
-            if (tur != Turu.SicakLeke) return;
             float carpan = Mathf.Lerp(ayarlar.LekeBaslangicOlcegi, ayarlar.LekeSonOlcegi, gunDogumu.Oran);
             if (bolge < kumsal.BolgeSayisi && kumsal.BolgeAl(bolge).Var(BolgeYapisi.Golgelik))
                 carpan *= ayarlar.GolgelikLekeCarpani;
