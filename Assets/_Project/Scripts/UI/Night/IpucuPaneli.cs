@@ -41,9 +41,16 @@ namespace IkiDunya.UI.Night
         {
             // Duraklatmada zaman durur (deltaTime 0); geçişte ekran karanlık, ipucu beklesin.
             if (OyunAkisi.GecisSuruyor) return;
+            // Gece sonucu ekrandayken ipucu panelin arkasında kalmasın: gizlenir, süresi işlemez; panel kapanınca kaldığı yerden görünür.
+            if (GeceSonucuPaneli.Acik)
+            {
+                if (kutu.activeSelf) kutu.SetActive(false);
+                return;
+            }
 
             if (kalan > 0f)
             {
+                if (!kutu.activeSelf) kutu.SetActive(true);
                 kalan -= Time.deltaTime;
                 if (kalan <= 0f) kutu.SetActive(false);
                 return;

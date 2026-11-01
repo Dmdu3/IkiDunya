@@ -32,6 +32,15 @@ namespace IkiDunya.Core
             metin.fontSize = 48;
             metin.alignment = TextAnchor.MiddleCenter;
             metin.color = Color.white;
+            // Uzun başlık kenara yapışmasın.
+            ((RectTransform)yazi.transform).offsetMin = new Vector2(120f, 0f);
+            ((RectTransform)yazi.transform).offsetMax = new Vector2(-120f, 0f);
+
+            // Öteki tuvaller gibi çözünürlüğe ve yazı boyutu ayarına uyar (ölçekleyici yazıdan sonra eklenir ki taşma koruması onu da görsün).
+            var olcek = nesne.AddComponent<CanvasScaler>();
+            olcek.uiScaleMode = CanvasScaler.ScaleMode.ScaleWithScreenSize;
+            olcek.referenceResolution = new Vector2(1920f, 1080f);
+            nesne.AddComponent<ArayuzOlcegi>();
 
             var gecis = nesne.AddComponent<Gecis>();
             gecis.grup = nesne.GetComponent<CanvasGroup>();

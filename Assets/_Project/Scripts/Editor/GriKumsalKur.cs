@@ -212,9 +212,10 @@ namespace IkiDunya.Editor
             Yasla((RectTransform)panel.transform, Vector2.zero, Vector2.one);
             panel.GetComponent<Image>().color = new Color(0.12f, 0.09f, 0.05f, 0.92f);
 
-            Cubuk kesit = CubukKur("KumKesiti", panel.transform, new Vector2(0.44f, 0.2f), new Vector2(0.49f, 0.8f), new Color(0.86f, 0.78f, 0.6f), true);
-            Cubuk sicaklik = CubukKur("YuzeySicakligi", panel.transform, new Vector2(0.53f, 0.2f), new Vector2(0.56f, 0.8f), Color.red, true);
-            Cubuk cikisEnerjisi = CubukKur("CikisEnerjisi", panel.transform, new Vector2(0.35f, 0.1f), new Vector2(0.65f, 0.125f), new Color(0.4f, 0.8f, 0.45f), false);
+            // Çubuklar alttan başlar (en büyük yazı boyutunda da üstteki ipucu kutusuna değmez); altında çıkış enerjisi.
+            Cubuk kesit = CubukKur("KumKesiti", panel.transform, new Vector2(0.44f, 0.1f), new Vector2(0.49f, 0.4f), new Color(0.86f, 0.78f, 0.6f), true);
+            Cubuk sicaklik = CubukKur("YuzeySicakligi", panel.transform, new Vector2(0.53f, 0.1f), new Vector2(0.56f, 0.4f), Color.red, true);
+            Cubuk cikisEnerjisi = CubukKur("CikisEnerjisi", panel.transform, new Vector2(0.35f, 0.06f), new Vector2(0.65f, 0.085f), new Color(0.4f, 0.8f, 0.45f), false);
             Cubuk gunCubugu = CubukKur("GunDogumuCubugu", tuval, new Vector2(0.3f, 0.94f), new Vector2(0.7f, 0.96f), new Color(1f, 0.75f, 0.3f), false);
             Cubuk yardimCubugu = CubukKur("YardimCubugu", tuval, new Vector2(0.42f, 0.42f), new Vector2(0.58f, 0.445f), Color.white, false);
 
@@ -955,7 +956,8 @@ namespace IkiDunya.Editor
         private static void SonucPaneliKur(YuvaGecesi yuvaGecesi, KacisGecesi kacisGecesi)
         {
             Transform tuval = TuvalKur("SonucArayuzu", null);
-            tuval.GetComponent<Canvas>().sortingOrder = 10;
+            // İpucu kutusunun (40) üstünde: sonuç açıkken gelen ipucu panelin altında kalır.
+            tuval.GetComponent<Canvas>().sortingOrder = 46;
             var panel = tuval.gameObject.AddComponent<GeceSonucuPaneli>();
             Bagla(panel, "termal", Ayar<TermalAyarlari>("TermalAyarlari"));
             Bagla(panel, "metinler", Ayar<MetinTablosu>("MetinTablosu"));
@@ -963,7 +965,7 @@ namespace IkiDunya.Editor
             if (yuvaGecesi != null)
             {
                 Bagla(panel, "yuvaGecesi", yuvaGecesi);
-                RectTransform kutu = PanelKur("YuvaSonucu", tuval, "sonuc_yuva_baslik");
+                RectTransform kutu = PanelKur("YuvaSonucu", tuval, "sonuc_yuva_baslik", 2);
                 Bagla(panel, "yuvaPaneli", kutu.gameObject);
                 // 1. satır: bandın rengi ve adı; 2. satır: yumurta sayısı
                 Bagla(panel, "yuvaBandi", RenkKaresi(kutu, 0, Color.white));
@@ -976,7 +978,7 @@ namespace IkiDunya.Editor
             if (kacisGecesi != null)
             {
                 Bagla(panel, "kacisGecesi", kacisGecesi);
-                RectTransform kutu = PanelKur("KacisSonucu", tuval, "sonuc_kacis_baslik");
+                RectTransform kutu = PanelKur("KacisSonucu", tuval, "sonuc_kacis_baslik", 4);
                 Bagla(panel, "kacisPaneli", kutu.gameObject);
                 Color[] renkler = { new Color(0.4f, 0.8f, 0.45f), new Color(0.85f, 0.25f, 0.2f), new Color(1f, 0.55f, 0.75f), new Color(0.4f, 0.65f, 1f) };
                 string[] alanlar = { "kurtulan", "kaybedilen", "disi", "erkek" };
@@ -989,22 +991,39 @@ namespace IkiDunya.Editor
             }
         }
 
-        /// <summary>Panel: üstte başlık, altta "devam etmek için…" satırı; aradaki satırlar renk, ad, sayı.</summary>
-        private static RectTransform PanelKur(string ad, Transform tuval, string baslikId)
+        // Sonuç paneli ölçüleri (tuval birimi): başlık şeridi, satır yüksekliği, alttaki "devam" şeridi. 4 satırlı panel 1280x720'ye sığar.
+        private const float SonucGenisligi = 650f, SonucBasligi = 100f, SonucSatiri = 100f, SonucAlti = 70f;
+
+        /// <summary>Panel: üstte başlık, altta "devam etmek için…" satırı; aradaki satırlar renk, ad, sayı. Boyu satır sayısına göre, ekranın ortasında.</summary>
+        private static RectTransform PanelKur(string ad, Transform tuval, string baslikId, int satirSayisi)
         {
             var panel = new GameObject(ad, typeof(RectTransform), typeof(Image));
             panel.layer = LayerMask.NameToLayer("UI");
             panel.transform.SetParent(tuval, false);
             var rect = (RectTransform)panel.transform;
-            Yasla(rect, new Vector2(0.33f, 0.22f), new Vector2(0.67f, 0.78f));
-            panel.GetComponent<Image>().color = new Color(0f, 0f, 0f, 0.75f);
-            PanelYazisi(rect, "Baslik", new Vector2(0.05f, 0.86f), new Vector2(0.95f, 0.98f), 40, TextAnchor.MiddleCenter, baslikId);
-            PanelYazisi(rect, "Devam", new Vector2(0.05f, 0.02f), new Vector2(0.95f, 0.1f), 24, TextAnchor.MiddleCenter, "sonuc_devam");
+            rect.anchorMin = rect.anchorMax = rect.pivot = new Vector2(0.5f, 0.5f);
+            rect.anchoredPosition = Vector2.zero;
+            rect.sizeDelta = new Vector2(SonucGenisligi, SonucBasligi + satirSayisi * SonucSatiri + SonucAlti);
+            panel.GetComponent<Image>().color = new Color(0f, 0f, 0f, 0.85f);
+            Text baslik = PanelYazisi(rect, "Baslik", new Vector2(0f, 1f), Vector2.one, 40, TextAnchor.MiddleCenter, baslikId);
+            SatiraKoy((RectTransform)baslik.transform, 0f, 1f, 32f, 32f, 0f, SonucBasligi - 10f);
+            Text devam = PanelYazisi(rect, "Devam", Vector2.zero, new Vector2(1f, 0f), 24, TextAnchor.MiddleCenter, "sonuc_devam");
+            ((RectTransform)devam.transform).offsetMin = new Vector2(32f, 8f);
+            ((RectTransform)devam.transform).offsetMax = new Vector2(-32f, SonucAlti - 8f);
             panel.SetActive(false);
             return rect;
         }
 
-        private static float SatirUstu(int satir) => 0.82f - satir * 0.17f;
+        /// <summary>Kutuyu panelin üstünden ust birim aşağıda, yukseklik boyunda, yatayda solCapa..sagCapa arasına (kenar boşluklarıyla) koyar.</summary>
+        private static void SatiraKoy(RectTransform r, float solCapa, float sagCapa, float sol, float sag, float ust, float yukseklik)
+        {
+            r.anchorMin = new Vector2(solCapa, 1f);
+            r.anchorMax = new Vector2(sagCapa, 1f);
+            r.offsetMin = new Vector2(sol, -ust - yukseklik);
+            r.offsetMax = new Vector2(-sag, -ust);
+        }
+
+        private static float SatirUstu(int satir) => SonucBasligi + satir * SonucSatiri;
 
         /// <summary>Panelde i. satırın solundaki renkli kare.</summary>
         private static Image RenkKaresi(RectTransform panel, int satir, Color renk)
@@ -1012,8 +1031,7 @@ namespace IkiDunya.Editor
             var kare = new GameObject($"Renk_{satir}", typeof(RectTransform), typeof(Image));
             kare.layer = LayerMask.NameToLayer("UI");
             kare.transform.SetParent(panel, false);
-            float ust = SatirUstu(satir);
-            Yasla((RectTransform)kare.transform, new Vector2(0.05f, ust - 0.11f), new Vector2(0.13f, ust - 0.02f));
+            SatiraKoy((RectTransform)kare.transform, 0f, 0f, 36f, -96f, SatirUstu(satir) + 20f, 60f);
             var resim = kare.GetComponent<Image>();
             resim.color = renk;
             return resim;
@@ -1022,8 +1040,8 @@ namespace IkiDunya.Editor
         /// <summary>Panelde i. satırın adı (metinler.md'den).</summary>
         private static void SatirAdi(RectTransform panel, int satir, string id)
         {
-            float ust = SatirUstu(satir);
-            PanelYazisi(panel, $"Ad_{satir}", new Vector2(0.17f, ust - 0.13f), new Vector2(0.6f, ust), 30, TextAnchor.MiddleLeft, id);
+            Text ad = PanelYazisi(panel, $"Ad_{satir}", Vector2.zero, Vector2.one, 30, TextAnchor.MiddleLeft, id);
+            SatiraKoy((RectTransform)ad.transform, 0f, 0.6f, 120f, 0f, SatirUstu(satir), SonucSatiri);
         }
 
         /// <summary>Panelde i. satırın sağındaki sayı (ya da bant adı).</summary>
@@ -1032,8 +1050,7 @@ namespace IkiDunya.Editor
             var nesne = new GameObject($"Sayi_{satir}", typeof(RectTransform), typeof(Text));
             nesne.layer = LayerMask.NameToLayer("UI");
             nesne.transform.SetParent(panel, false);
-            float ust = SatirUstu(satir);
-            Yasla((RectTransform)nesne.transform, new Vector2(0.6f, ust - 0.14f), new Vector2(0.95f, ust + 0.01f));
+            SatiraKoy((RectTransform)nesne.transform, 0.6f, 1f, 0f, 36f, SatirUstu(satir), SonucSatiri);
             var yazi = nesne.GetComponent<Text>();
             yazi.font = Resources.GetBuiltinResource<Font>("LegacyRuntime.ttf");
             yazi.fontSize = boyut;
@@ -1313,7 +1330,7 @@ namespace IkiDunya.Editor
             var arka = new GameObject(ad, typeof(RectTransform), typeof(Image));
             arka.layer = ui;
             arka.transform.SetParent(ebeveyn, false);
-            Yasla((RectTransform)arka.transform, enAz, enCok);
+            Sabitle((RectTransform)arka.transform, enAz, enCok);
             arka.GetComponent<Image>().color = new Color(0f, 0f, 0f, 0.5f);
 
             var dolgu = new GameObject("Dolgu", typeof(RectTransform), typeof(Image));
@@ -1338,6 +1355,22 @@ namespace IkiDunya.Editor
             rect.anchorMax = enCok;
             rect.offsetMin = rect.offsetMax = Vector2.zero;
         }
+
+        /// <summary>Ekran oranıyla verilen kutuyu (1920x1080'de) aynı yerde ama tuval biriminde sabit boyla kurar: en yakın kenara ya da ortaya çapalanır.
+        /// Yazı boyutu ayarı tuvali büyütünce kutu da büyür ve o kenardan içeri doğru büyür (ekrandan taşmaz).</summary>
+        internal static void Sabitle(RectTransform rect, Vector2 enAz, Vector2 enCok)
+        {
+            Vector2 referans = new Vector2(1920f, 1080f);
+            Vector2 orta = (enAz + enCok) * 0.5f;
+            Vector2 capa = new Vector2(Kenari(orta.x), Kenari(orta.y));
+            rect.anchorMin = rect.anchorMax = rect.pivot = capa;
+            // Pivot çapayla aynı: kutunun çapa tarafındaki kenarı (ortadaysa ortası) referanstaki yerinde.
+            Vector2 kenar = new Vector2(Mathf.Lerp(enAz.x, enCok.x, capa.x), Mathf.Lerp(enAz.y, enCok.y, capa.y));
+            rect.anchoredPosition = Vector2.Scale(kenar - capa, referans);
+            rect.sizeDelta = Vector2.Scale(enCok - enAz, referans);
+        }
+
+        private static float Kenari(float orta) => orta < 0.34f ? 0f : orta > 0.66f ? 1f : 0.5f;
 
         internal static GameObject Kutu(string ad, Transform ebeveyn, Vector3 konum, Vector3 boyut, Material malzeme, string katman)
         {

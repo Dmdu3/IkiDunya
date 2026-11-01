@@ -82,9 +82,12 @@ namespace IkiDunya.Editor
             PrefabUtility.InstantiatePrefab(AssetDatabase.LoadAssetAtPath<GameObject>(SistemlerKalibi));
 
             Transform tuval = GriKumsalKur.TuvalKur("AnaMenu", null);
+            // Başlık üstte, düğmeler ortanın biraz altında; en büyük yazı boyutunda (tuval 1280x720) da üst üste binmezler.
             Yazi("Baslik", tuval, new Vector2(0.2f, 0.72f), new Vector2(0.8f, 0.88f), 64, "oyun_adi", metinler);
+            GriKumsalKur.Sabitle((RectTransform)tuval.Find("Baslik"), new Vector2(0.2135f, 0.8037f), new Vector2(0.7865f, 0.9074f));
 
             Transform dugmeler = Liste("Dugmeler", tuval, new Vector2(0.38f, 0.2f), new Vector2(0.62f, 0.62f));
+            GriKumsalKur.Sabitle((RectTransform)dugmeler, new Vector2(0.38f, 0.2667f), new Vector2(0.62f, 0.6222f));
             Button yeni = Dugme(dugmeler, "menu_yeni_oyun", metinler);
             Button devam = Dugme(dugmeler, "menu_devam_et", metinler);
             Button parkurlar = Dugme(dugmeler, "menu_parkurlar", metinler);
@@ -129,6 +132,7 @@ namespace IkiDunya.Editor
             panel.GetComponent<Image>().color = new Color(0f, 0f, 0f, 0.7f);
 
             Transform dugmeler = Liste("Dugmeler", panel.transform, new Vector2(0.38f, 0.3f), new Vector2(0.62f, 0.6f));
+            GriKumsalKur.Sabitle((RectTransform)dugmeler, new Vector2(0.38f, 0.3f), new Vector2(0.62f, 0.6f));
             Button oyunaDon = Dugme(dugmeler, "menu_oyuna_don", metinler);
             Button ayarlar = Dugme(dugmeler, "menu_ayarlar", metinler);
             Button anaMenu = Dugme(dugmeler, "menu_ana_menu", metinler);
@@ -307,6 +311,7 @@ namespace IkiDunya.Editor
         private static ParkurlarPaneli ParkurlarKur(Transform ebeveyn, GameObject oncekiPanel, MetinTablosu metinler)
         {
             Transform kutu = Liste("ParkurlarPaneli", ebeveyn, new Vector2(0.3f, 0.2f), new Vector2(0.7f, 0.62f));
+            GriKumsalKur.Sabitle((RectTransform)kutu, new Vector2(0.3f, 0.2667f), new Vector2(0.7f, 0.6222f));
             Yazi("ParkurlarYazisi", kutu, Vector2.zero, Vector2.zero, 30, "menu_parkurlar", metinler);
             var dugmeler = new Object[System.Enum.GetValues(typeof(ParkurTuru)).Length];
             for (int i = 0; i < dugmeler.Length; i++)
@@ -355,7 +360,8 @@ namespace IkiDunya.Editor
             Transform tuval = GriKumsalKur.TuvalKur("ParkurArayuzu", kok);
             tuval.GetComponent<Canvas>().sortingOrder = 45;
 
-            GameObject sure = Kutucuk("Sure", tuval, new Vector2(0.68f, 0.86f), new Vector2(0.98f, 0.98f));
+            // Sağ üstte, ipucu kutusunun (üstten 114) üstünde kalacak boyda.
+            GameObject sure = Kutucuk("Sure", tuval, new Vector2(0.773f, 0.9f), new Vector2(0.992f, 0.985f));
             Text sureYazisi = KutuYazisi(sure.transform, new Vector2(0.03f, 0.5f), new Vector2(0.97f, 1f), 28);
             Text bilgiYazisi = KutuYazisi(sure.transform, new Vector2(0.03f, 0f), new Vector2(0.97f, 0.5f), 24);
             GameObject sonuc = Kutucuk("Sonuc", tuval, new Vector2(0.3f, 0.4f), new Vector2(0.7f, 0.65f));
@@ -378,7 +384,7 @@ namespace IkiDunya.Editor
             var kutu = new GameObject(ad, typeof(RectTransform), typeof(Image));
             kutu.layer = LayerMask.NameToLayer("UI");
             kutu.transform.SetParent(ebeveyn, false);
-            GriKumsalKur.Yasla((RectTransform)kutu.transform, enAz, enCok);
+            GriKumsalKur.Sabitle((RectTransform)kutu.transform, enAz, enCok);
             kutu.GetComponent<Image>().color = new Color(0f, 0f, 0f, 0.6f);
             return kutu;
         }
