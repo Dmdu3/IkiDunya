@@ -1,7 +1,7 @@
 """Kum torbası (Toprak'ın "Kum Torbası Seddi" kartı): fırtınada yuvaları sudan koruyan çuval seddi.
 
     Kum_Torbasi         tek dolu çuval, ~0,6 x 0,36 x 0,13 m; bir ucu iple boğulmuş. Kök tabanın ortasında, uzun kenar X'te.
-    Kum_Torbasi_Seddi   2 m'lik sed parçası (x = -1 .. +1), üç sıra şaşırtmalı çuval, boy ~0,4 m, derinlik ~0,8 m.
+    Kum_Torbasi_Seddi   2 m'lik sed parçası (x = -1 .. +1), üç sıra şaşırtmalı çuval, boy ~0,35 m, derinlik ~0,8 m.
                         Kod her 2 m'de bir dizer; dönüşsüz ve ölçeksiz konur. Kök tabanın ortasında, sed X boyunca.
 
 Dizme: alt ve üst sıranın çuvalları x = -0,75, -0,25, 0,25, 0,75'te; orta sıra yarım adım kaymış (x = -1, -0,5, 0, 0,5).
@@ -17,10 +17,8 @@ from mathutils import Vector
 
 import kumsal_objeleri_uret as k
 
-k.PALET.setdefault("P_Tas_Harabe", "#C9B6A3")
-
-CUVAL = "P_Kaya_Okra"      # çuval bezi (kumun önünde koyu okunur)
-CUVAL_SOLUK = "P_Tas_Harabe"  # güneşte solmuş çuval
+CUVAL = "P_Kaya_Pismis"    # çuval bezi (kumun önünde koyu okunur)
+CUVAL_SOLUK = "P_Kaya_Okra"  # güneşte solmuş çuval
 IP = "P_Kaya_Pas"
 
 ADIM = 0.5   # çuval dizme adımı
@@ -67,7 +65,7 @@ def torba(p, merkez, aci, r, boy=0.6, en=0.36, yukseklik=0.13, malz=CUVAL, bagli
 
     if bagli:
         # İp bilezik: boğumu saran kapalı halka, ve ucunda küçük düğüm ile sarkan ip
-        u = 0.86
+        u = 1 - 2 / seg_u              # son halka: gövde buradan uca daralır, bilezik boğuma oturur
         bilezik = [Vector(q) for q in kesit(u, olcek=1.08)]
         p.tup(bilezik, 0.012, IP, kenar=4, kapali=True)
         uc = yer(boy / 2 * 0.97, 0, (ust - alt) * 0.15)

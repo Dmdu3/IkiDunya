@@ -247,7 +247,7 @@ Uyarılar: kameralardaki kulak `Core/TekKulak` ile tek (açılan kamera alır); 
 
 ## Kart yapıları: kum torbası, gözcü kulübesi, plaj tabelası (Yusuf'un modelleri, 5. parti)
 
-Kaynak betikler `Blender/Yusuf/` (`kum_torbasi.py`, `gozcu_kulubesi.py`, `plaj_tabelasi.py`, toplu: `kumsal_objeleri_5_uret.py`). FBX'ler henüz üretilmedi: Yusuf kendi Blender'ında `blender -b -P Blender/Yusuf/kumsal_objeleri_5_uret.py -- Assets/Sandbox/Yusuf/KumsalObjeleri Blender/Yusuf/kumsal_objeleri_5.blend` çalıştırınca `Sandbox/Yusuf/KumsalObjeleri/` altına düşer. Düzen öteki kumsal objeleriyle aynı (kök tabanın ortasında, metre, önü Blender'da −y).
+Kaynak betikler `Blender/Yusuf/` (`kum_torbasi.py`, `gozcu_kulubesi.py`, `plaj_tabelasi.py`, toplu: `kumsal_objeleri_5_uret.py`). FBX'ler `Models/Kumsal/` altında (`blender -b -P Blender/Yusuf/kumsal_objeleri_5_uret.py -- Assets/_Project/Models/Kumsal Blender/Yusuf/kumsal_objeleri_5.blend`), malzemeleri öteki kumsal objeleri gibi FBX'in içinde. Düzen öteki kumsal objeleriyle aynı (kök tabanın ortasında, metre, önü Blender'da −y).
 - **`Kum_Torbasi_Seddi`** (Kum Torbası Seddi kartı): 2 m'lik parça (x = −1..+1), boy ~0,35 m, derinlik ~0,8 m; 2 m arayla dönüşsüz dizilince dikişsiz. Tek çuval: `Kum_Torbasi` (0,6 × 0,36 × 0,13 m).
 - **`Gozcu_Kulubesi`** (Gözcü Kulübesi kartı): ayak tabanı 2,3 × 2,3 m, döşeme 2,2 m, mahya ~4,6 m, bayrak ~5,35 m; önde ~0,9 m taşan merdiven. Ön saçakta yanan fener (`P_Kehribar`).
 - **`Plaj_Tabelasi`** (Plaj Tabelaları kartı): iki direkli pano (1,4 × 0,9 m, boy ~2,1 m); üzerinde yazı yok, resimler var (kaplumbağa, ışık yasağı, ayak izi yasağı). Pano yüzü ayrı malzeme (`Tabela_Yuzu`), Unity'de dokulu malzemeyle değiştirilebilir. Küçüğü `Plaj_Tabelasi_Kucuk` (tek direk, ~1,3 m).
