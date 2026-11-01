@@ -182,8 +182,8 @@ Pervane sesi klibi bağlı (`Audio/SFX/Pervane.wav`).
 | Takilma, Kurtarma | Yavru ya da yüzücü takılınca; öncü kurtarınca |
 | YavruKurtuldu, YavruKaybedildi | Yavru denize girince, kaybedilince |
 | YengecUyari, MartiUyari, TilkiUyari, TilkiEseliyor | Avcıların uyarıları (titreyen kum, gölge, koşu, yuva eşeleme) |
-| AvciBalikUyari | Avcı balık kovalamaya başlayınca (3B; yuva boş, klip Abdü'de) |
-| Darbe | Her `Geribildirim.Darbe`'de: tekne, avcı yakalaması, çöp girdabı, ürkme, enerji bitmesi (yuva boş, klip Abdü'de) |
+| AvciBalikUyari | Avcı balık kovalamaya başlayınca (3B; geçici sentez klip `AvciBalikUyari.wav`) |
+| Darbe | Her `Geribildirim.Darbe`'de: tekne, avcı yakalaması, çöp girdabı, ürkme, enerji bitmesi (geçici sentez klip `Audio/SFX/Darbe.wav`, Abdü gerçeğiyle değiştirebilir) |
 | Yeme, AgdanKurtulma, KontrolNoktasi, DalgaVurdu | Denizde |
 | Pervane | Tekne (döngü) |
 | Ipucu | İpucu kutusu açılınca |
@@ -270,7 +270,7 @@ Uyarılar: kameralardaki kulak `Core/TekKulak` ile tek (açılan kamera alır); 
 
 ## Cila (#64)
 
-- **Geri bildirim (`Core/Geribildirim`, `GeribildirimAyarlari`, `UI/Night/EkranEfektleri`):** çarpma ve yakalanmada kamera sarsıntısı, kırmızı flaş ve darbe sesi; şiddet `Siddet.Hafif/Orta/Agir`, sayıları `GeribildirimAyarlari`'nda (koda güç yazılmaz); poşette kahverengi bulanma; yavru kurtulunca ve kontrol noktasında yeşil parıltı; enerji azalınca (`Turtle/EnerjiUyarisi`) ekran kenarı kararır ve kalp atışı sesi (`SesTuru.KalpAtisi`, ses yuvası boş; `SesTuru`'nda Yusuf'un seslerinden sonra, en sonda).
+- **Geri bildirim (`Core/Geribildirim`, `GeribildirimAyarlari`, `UI/Night/EkranEfektleri`):** çarpma ve yakalanmada kamera sarsıntısı, kırmızı flaş ve darbe sesi; şiddet `Siddet.Hafif/Orta/Agir`, sayıları `GeribildirimAyarlari`'nda (koda güç yazılmaz); poşette kahverengi bulanma; yavru kurtulunca ve kontrol noktasında yeşil parıltı; enerji azalınca (`Turtle/EnerjiUyarisi`) ekran kenarı kararır ve kalp atışı sesi (`SesTuru.KalpAtisi`, geçici sentez klip `KalpAtisi.wav`; `SesTuru`'nda Yusuf'un seslerinden sonra, en sonda).
 - **Kamera:** yürürken/yüzerken hafif baş sallanması, Shift'te görüş açısı genişler, oyun kolunun sağ çubuğuyla bakış. Sayılar `KameraAyarlari` ve `GeribildirimAyarlari`'nda.
 - **Gece:** yıldızlar ve ay (`Core/GeceGokyuzu`, shader `IkiDunya/Gokyuzu`; `OrtamIsigi` gece açar); anne ve yavrular kumda iz bırakır (`Turtle/IzBirakici`, 25 sn'de silinir).
 - **Su altı ışık hüzmeleri (`Core/SuIsiklari`):** deniz sahnelerinde yüzücünün çevresinde; suyun üstündeyken görünmez.
@@ -302,3 +302,13 @@ Kaynak betikler `Blender/Yusuf/` (`kum_torbasi.py`, `gozcu_kulubesi.py`, `plaj_t
 - Çöp katmanında her ikinci ağ yerine `PlastikHalka` (aynı tuzak, daha küçük alan). Her ikinci şezlongun yanına `Semsiye` (sadece direği engel).
 - Tilki çitinin bittiği uçlara `TilkiCitiSolUc` (`Tilki_Citi_Kose`) ve `TilkiCitiSagUc` (`Tilki_Citi_Kose_Bas`); komşu bölgede de çit varsa uç konmaz.
 - Yuva haritasında yumurtalı yuvanın ortasında üç küre yerine `Yumurta_Kumesi` (`Prefabs/UI/YumurtaKumesiSimgesi`). Tek `Yumurta` modeli kullanılmıyor (kümenin içinde zaten var).
+
+## Son cila (2026-11-01, Toprak, `toprak/son-cila`)
+
+- **Modeller kurulumda:** ağ (`Ag`), hayalet ağ (`Hayalet_Ag`), misina, ışık direği (`Isik_Diregi`) ve kontrol noktası şamandırası (`Samandira`) artık kurulum kodunda bağlanır (`GriKumsalKur.ModelEkle`, `GriDenizKur.ModelVeyaParilti`); elle bağlanan model "Hepsini kur"da silinir. Hayalet ağ ve misinada sadece modelin `P_Isik_Parilti` malzemesi parlar. **Kural:** sahneye ya da kalıba model elle bağlanmaz, kurulum koduna yazılır.
+- **Final:** kızgın kum `Core/KumLekesi` ile kuma serilen, kenarı eriyen düzensiz lekeler (kutular yokuşta havada kalıyordu); kamera başta kaplumbağaya yakın.
+- **Dalga çizgisi** (`DalgaCizgisiGrubu`) sadece yuva gecesi ve insan turunda görünür.
+- **Göstergeler:** çubukların adı yazılı (`CubukKur(..., etiketId)`: yatayda sağında, dikeyde üstünde); sağ altta cihaza göre tuş satırı (`TusSatiriKur`, `MetinYazisi.tuslar`: metindeki `{0}`… eylemin tuşu, cihaz/atama değişince yenilenir). Metinler `gosterge_*`, `tuslar_*`.
+- **Gece:** `StilizeDeniz` gece ay ve ortam ışığı kadar kararır (gündüz aynı); yıldızlar, su altı hüzmeleri ve ay yolu yumuşak kenarlı (`IkiDunya/Gokyuzu`: `_Yuvarlak`, `_SadeceYan`).
+- **Sesler:** `Darbe`, `KalpAtisi`, `AvciBalikUyari` yuvalarında kodla sentezlenmiş geçici klipler.
+- Oyun içi `Debug.Log`'lar sadece geliştirici sürümünde.

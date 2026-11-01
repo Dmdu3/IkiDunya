@@ -4,6 +4,8 @@ Shader "IkiDunya/Gokyuzu"
     Properties
     {
         _BaseColor ("Renk", Color) = (1, 1, 1, 1)
+        [Toggle] _Yuvarlak ("Yuvarlak (yıldız: ortası parlak, kenarı erir)", Float) = 0
+        [Toggle] _SadeceYan ("Sadece yanlar erir (ay yolu, hüzme: u enine)", Float) = 0
     }
     SubShader
     {
@@ -21,18 +23,22 @@ Shader "IkiDunya/Gokyuzu"
 
             CBUFFER_START(UnityPerMaterial)
                 half4 _BaseColor;
+                half _Yuvarlak;
+                half _SadeceYan;
             CBUFFER_END
 
             struct Girdi
             {
                 float4 konum : POSITION;
                 half4 renk : COLOR;
+                float2 uv : TEXCOORD0;
             };
 
             struct Cikti
             {
                 float4 konum : SV_POSITION;
                 half4 renk : COLOR;
+                float2 uv : TEXCOORD0;
             };
 
             Cikti vert(Girdi g)
@@ -40,12 +46,17 @@ Shader "IkiDunya/Gokyuzu"
                 Cikti c;
                 c.konum = TransformObjectToHClip(g.konum.xyz);
                 c.renk = g.renk * _BaseColor;
+                c.uv = g.uv;
                 return c;
             }
 
             half4 frag(Cikti c) : SV_Target
             {
-                return c.renk;
+                half4 renk = c.renk;
+                // Yıldız dörtgeni kare görünmesin: ortadan kenara erir.
+                half uzaklik = lerp(length(c.uv * 2 - 1), abs(c.uv.x * 2 - 1), _SadeceYan);
+                renk.a *= lerp(1, saturate(1 - uzaklik) * saturate(1 - uzaklik), _Yuvarlak);
+                return renk;
             }
             ENDHLSL
         }

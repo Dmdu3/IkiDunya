@@ -242,6 +242,8 @@ Kısa yaz: kart açıklaması en fazla 2 satır, kanıt notu en fazla 3 satır. 
 | asama_gonulluler | Gönüllüler |
 | asama_kartlar | Kartlar |
 | asama_olay | Olay |
+| asama_bitiyor | Hafta bitiyor |
+| asama_kapali | Kumsal |
 | rapor_gelir | Gelen bütçe |
 | rapor_denize_ulasan | Denize ulaşan yavru |
 | rapor_cop_birikti | Çöpü artan bölge |
@@ -320,3 +322,21 @@ Kısa yaz: kart açıklaması en fazla 2 satır, kanıt notu en fazla 3 satır. 
 | parkur_poset_kiyiya | Akıntı açıldı, kıyıya yüz! |
 | parkur_girdap_halka | Halka |
 | parkur_sel_kurtulan | Denize ulaşan |
+
+## Göstergeler ve tuşlar
+
+Çubukların adı ve ekranın sağ altındaki tuş satırı. `{0}`, `{1}`… son kullanılan cihazın (klavye ya da oyun kolu) tuşuyla dolar.
+
+| id | Metin |
+|---|---|
+| gosterge_enerji | Enerji |
+| gosterge_nefes | Nefes |
+| gosterge_yavaslik | Poşet: yavaşsın |
+| gosterge_kum_kesiti | Üstteki kum |
+| gosterge_yuzey_sicakligi | Yüzey |
+| gosterge_cikis_enerjisi | Yavruların gücü |
+| gosterge_gun_dogumu | Gün doğumuna |
+| tuslar_yuva | Yürü {0}  ·  Kaz {1} {2}  ·  Termal {3} |
+| tuslar_kum_alti | Yukarı kaz {0}  ·  Kum serinlemeden çıkma |
+| tuslar_kacis | Yürü {0}  ·  Takılanı kurtar {1}  ·  Termal {2} |
+| tuslar_deniz | Yüz {0}  ·  Yüzeye çık / dal {1}  ·  Hızlan {2} |

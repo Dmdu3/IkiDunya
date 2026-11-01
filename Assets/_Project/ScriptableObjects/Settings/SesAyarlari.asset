@@ -121,13 +121,16 @@ MonoBehaviour:
     - {fileID: 8300000, guid: 231b6f9bb12c8be469d5cf51d53ea424, type: 3}
     duzey: 1
   - tur: 26
-    klipler: []
-    duzey: 1
+    klipler:
+    - {fileID: 8300000, guid: 86e1bc585872cf54fb9b0d48d9e5304e, type: 3}
+    duzey: 0.6
   - tur: 27
-    klipler: []
+    klipler:
+    - {fileID: 8300000, guid: 5cb043c976dff91469b911c1916554ba, type: 3}
     duzey: 1
   - tur: 28
-    klipler: []
+    klipler:
+    - {fileID: 8300000, guid: bc2277f26513a4b438afcf3225feb07f, type: 3}
     duzey: 1
   - tur: 29
     klipler:

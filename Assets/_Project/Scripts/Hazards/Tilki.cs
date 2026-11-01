@@ -168,7 +168,7 @@ namespace IkiDunya.Hazards
             int kayip = Mathf.CeilToInt(yuva.Yumurta * ayarlar.TilkiYumurtaKaybi);
             kumsal.YuvaYumurtaKaybet(hedefYuva, kayip);
             kumsal.KayipIziEkle(new KayipIzi(yuva.Bolge, yuva.Konum, KayipNedeni.Tilki));
-            Debug.Log($"Tilki: {hedefYuva + 1}. yuvayı bozdu, {kayip} yumurta kaybedildi.");
+            if (Debug.isDebugBuild) Debug.Log($"Tilki: {hedefYuva + 1}. yuvayı bozdu, {kayip} yumurta kaybedildi.");
             hedefYuva = -1;
             durum = Durum.Donuyor;
         }

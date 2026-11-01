@@ -54,8 +54,20 @@ namespace IkiDunya.Core
             ag.MarkDynamic();
             ag.vertices = koseler;
             ag.colors = renkler;
+            // Hüzmenin yanları erir (sert kenarlı bant gibi durmasın): u enine 0–1, v sabit; shader'ın yuvarlak modu yanlardan söndürür.
+            var uv = new Vector2[koseler.Length];
+            for (int k = 0; k < uv.Length; k += 4)
+            {
+                uv[k] = uv[k + 3] = new Vector2(0f, 0.5f);
+                uv[k + 1] = uv[k + 2] = new Vector2(1f, 0.5f);
+            }
+            ag.uv = uv;
             ag.triangles = ucgenler;
             GetComponent<MeshFilter>().sharedMesh = ag;
+            var blok = new MaterialPropertyBlock();
+            gorunus.GetPropertyBlock(blok);
+            blok.SetFloat("_Yuvarlak", 1f);
+            gorunus.SetPropertyBlock(blok);
         }
 
         private void OnDestroy()

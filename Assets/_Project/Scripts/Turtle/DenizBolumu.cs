@@ -107,7 +107,7 @@ namespace IkiDunya.Turtle
 
             bitti = true;
             yuzucu.Kilitli = true;
-            Debug.Log("DenizBolumu: bölüm bitti.");
+            if (Debug.isDebugBuild) Debug.Log("DenizBolumu: bölüm bitti.");
             if (finalKamerasi) StartCoroutine(Final());
             else Tamam();
         }

@@ -241,7 +241,7 @@ namespace IkiDunya.Turtle
             int kaybedilen = kumdaKalan + (suruKuruldu ? suru.Kaybedilen : 0);
             int disi = Mathf.RoundToInt(kurtulan * ayarlar.DisiOrani(yuvaBandi));
             var sonuc = new Sonuc(kurtulan, kaybedilen, disi, (int[])nedenler.Clone());
-            Debug.Log($"KacisGecesi: gece bitti — kurtulan {sonuc.Kurtulan} (dişi {sonuc.Disi}, erkek {sonuc.Erkek}), kaybedilen {sonuc.Kaybedilen}.");
+            if (Debug.isDebugBuild) Debug.Log($"KacisGecesi: gece bitti — kurtulan {sonuc.Kurtulan} (dişi {sonuc.Disi}, erkek {sonuc.Erkek}), kaybedilen {sonuc.Kaybedilen}.");
             SonucHazir?.Invoke(sonuc);
         }
 
