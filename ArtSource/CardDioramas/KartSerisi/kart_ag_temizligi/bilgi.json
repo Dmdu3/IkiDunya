@@ -1,0 +1,9 @@
+{
+  "id": "kart_ag_temizligi",
+  "ad": "Hayalet Ağ Temizliği",
+  "tur": "Kampanya",
+  "butce": 3,
+  "bakim": 0,
+  "aciklama": "Denizdeki sahipsiz ağlar ve misinalar toplanır.",
+  "ek": "Balıkçılar +1; dostsa etki iki kat."
+}

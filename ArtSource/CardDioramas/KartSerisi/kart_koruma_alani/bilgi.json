@@ -1,0 +1,9 @@
+{
+  "id": "kart_koruma_alani",
+  "ad": "Koruma Alanı",
+  "tur": "Politika",
+  "butce": 4,
+  "bakim": 1,
+  "aciklama": "Seçilen bölge korunur: şezlong, insan, ışık ve araç kalkar, bir daha giremez.",
+  "ek": "Otel −2; Belediye ilişkisi en az +2 olmalı."
+}

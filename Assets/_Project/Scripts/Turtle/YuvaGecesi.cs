@@ -88,7 +88,9 @@ namespace IkiDunya.Turtle
         private void InsanGordu(Transform gorulen)
         {
             // Ürken anne denize döner; yuva örtüldüyse artık önemi yok.
-            if (durum == Durum.Deneme && gorulen == anne.transform) DenemeBitti("insan gördü");
+            if (durum != Durum.Deneme || gorulen != anne.transform) return;
+            Geribildirim.Darbe(0.5f);
+            DenemeBitti("insan gördü");
         }
 
         private void EnerjiBitti()

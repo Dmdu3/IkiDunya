@@ -1,0 +1,9 @@
+{
+  "id": "kart_arac",
+  "ad": "Araç Yasağı",
+  "tur": "Politika",
+  "butce": 1,
+  "bakim": 0,
+  "aciklama": "Kumsala araç girmez; tekerlek izleri kaybolur.",
+  "ek": "Balıkçılar −1; Çöp kanıtıyla açılır."
+}

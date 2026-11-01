@@ -1,0 +1,30 @@
+{
+  "blender": "5.2.3 LTS",
+  "render_engine": "CYCLES",
+  "size": [
+    512,
+    320
+  ],
+  "channels": 4,
+  "transparent_pixels": 102830,
+  "bbox_alpha_gt_0_02": [
+    108,
+    11,
+    403,
+    308
+  ],
+  "margins_px": [
+    108,
+    11,
+    108,
+    11
+  ],
+  "camera": {
+    "azimuth": -45,
+    "elevation": 35,
+    "orthographic_scale": 7.4797515869140625
+  },
+  "geometry": "original generated mesh and curve objects",
+  "ui_integration": false,
+  "source_saved": true
+}

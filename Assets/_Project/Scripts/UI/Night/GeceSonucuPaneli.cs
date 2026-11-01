@@ -29,6 +29,12 @@ namespace IkiDunya.UI.Night
         [SerializeField] private Text disi;
         [SerializeField] private Text erkek;
 
+        /// <summary>Sonuç paneli ekranda (ipucu kutusu bu sırada bekler).</summary>
+        public static bool Acik { get; private set; }
+
+        [RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.SubsystemRegistration)]
+        private static void StatikleriSifirla() => Acik = false;
+
         private void OnEnable()
         {
             if (yuvaGecesi != null)
@@ -56,6 +62,7 @@ namespace IkiDunya.UI.Night
                 kacisGecesi.SonucHazir -= KacisSonucu;
                 kacisGecesi.SonucKapandi -= Kapat;
             }
+            Acik = false;
         }
 
         private void YuvaSonucu(Yuva yuva)
@@ -67,6 +74,7 @@ namespace IkiDunya.UI.Night
             if (bantAdi != null && tablo != null) bantAdi.text = tablo.Al($"bant_{bant.ToString().ToLowerInvariant()}");
             yumurtaSayisi.text = yuva.Yumurta.ToString();
             yuvaPaneli.SetActive(true);
+            Acik = true;
         }
 
         private void KacisSonucu(KacisGecesi.Sonuc sonuc)
@@ -77,12 +85,14 @@ namespace IkiDunya.UI.Night
             disi.text = sonuc.Disi.ToString();
             erkek.text = sonuc.Erkek.ToString();
             kacisPaneli.SetActive(true);
+            Acik = true;
         }
 
         private void Kapat()
         {
             if (yuvaPaneli != null) yuvaPaneli.SetActive(false);
             if (kacisPaneli != null) kacisPaneli.SetActive(false);
+            Acik = false;
         }
     }
 }

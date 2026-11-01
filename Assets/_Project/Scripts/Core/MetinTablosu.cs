@@ -44,7 +44,8 @@ namespace IkiDunya.Core
             if (sozluk == null)
             {
                 sozluk = new Dictionary<string, string>();
-                foreach (Satir satir in satirlar) sozluk[satir.Id] = satir.Metin;
+                // Tabloda alt satır "\n" diye yazılır (ör. jenerik).
+                foreach (Satir satir in satirlar) sozluk[satir.Id] = satir.Metin?.Replace("\\n", "\n");
             }
             return sozluk.TryGetValue(id, out string metin) && !string.IsNullOrEmpty(metin) ? metin : $"[{id}]";
         }

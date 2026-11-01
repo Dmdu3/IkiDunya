@@ -6,6 +6,9 @@ ozet: Ekipçe alınan kararlar, tarih ve nedeniyle. En yeni en üstte. GDD'yi de
 
 | Tarih | Karar | Neden | Kim |
 |---|---|---|---|
+| 2026-11-01 | Oyun kolu desteği (Input System bağları `GameInput`'ta) ve bölüm başında kısa ara sahne; ara sahne sırasında tuşlar kilitli | Bitmiş oyun hissi; yeni bölüme girerken oyuncu nerede olduğunu görsün | Umut |
+| 2026-11-01 | Çöp Seli'nin ortam sesi `SesAyarlari`'nda ayrı yuva (`copSeliOrtami`), öteki parkurlar `Parkur` adımının sesini paylaşır | Parkur adımı tek yuvaydı; Çöp Seli gece kumsalda geçtiği halde su altı sesiyle çalıyordu | Yusuf |
+| 2026-11-01 | Düğme ve kart sesleri: `SesTuru`'na `DugmeTikla`, `KartOyna`, `KartDagit`; menü düğmeleri `UI/DugmeSesi` ile bağlanır, İleri ve kart sesleri `InsanTuru`'nda çalar | Space düğmeden geçmediği için ses onda da çıksın; anında oynanan kartta tıklama ve kart sesi üst üste binmesin | Yusuf |
 | 2026-11-01 | `KumsalDurumu`: süreli etki, aynı şeyin kalıcısıyla çakışınca kalıcı kazanır (`YapiKoy` bekleyen süreli yapıyı siler, `KatmanDegistir` kırpılan kısmı süreli etkiden düşer, yeni `KatmanSifirla`). Yuvanın bandı zemin + farklar olarak tutulur, ısınma okurken eklenir (`YuvaBandi`); `YuvaTasi` zemin bandını alır, gölgelik bölgedeki yuvaları da serinletir | Bug testi: süre bitince parası ödenmiş gözcü kulübesi siliniyor, koruma alanına insan dönüyordu; sıcak dalgası kaçış gecesine yansımıyor, gölgelik var olan yuvayı serinletmiyordu | Yusuf (Umut ve Toprak'ın onayıyla) |
 | 2026-11-01 | Poşet yutmanın cezası belirgin: −10 enerji, 10 sn yarı hız, ses, ilk seferde ipucu, ekranda yavaşlık çubuğu | Denemede ceza fark edilmiyordu (sadece sessiz bir yavaşlama vardı) | Umut |
 | 2026-11-01 | Sahne kurulum komutları (Kumsal sahnesini kur, Menü ve duraklatmayı kur) insan kısmının kart, görev ve olay asset'lerini yeniden yazmaz; sadece ayarlarda hiç kart yoksa Toprak'ın aracı bir kez çalışır | Eski kurulum her çalıştığında 12 kartlık ilk içeriği yazıp Toprak'ın 27 kartını ve dengesini siliyordu | Umut |
@@ -59,3 +62,5 @@ ozet: Ekipçe alınan kararlar, tarih ve nedeniyle. En yeni en üstte. GDD'yi de
 | 2026-10-30 | main korumalı, PR zorunlu, onay zorunlu değil | 4 kişi için hız; herkes kendi alanını birleştirir | Umut |
 | 2026-10-30 | Oyun sahneleri (`Scenes/Levels`) sadece Umut'ta; herkes `Assets/Sandbox/<ad>` | Unity sahneleri birleştirilemez | Umut |
 | 2026-10-30 | Unity 6000.3.25f1, Universal 3D | Ekipte herkes aynı sürüm | Umut |
+| 2026-11-01 | `KumsalDurumu.InsanSureliAzaldi(bolge)` eklendi: bölgede insanı süreli azaltan etki sürüyor mu | Plaj Tabelaları için yeni yapı türü açmadan kumsalda tabela göstermek | Toprak |
+| 2026-11-01 | Arayüz teması "Belgesel": koyu paneller, serif başlık (Lora) + sans gövde (Source Sans 3), kum rengi vurgu, kutusuz sola yaslı menüler; renk ve yazı tipleri `ArayuzTemasi` asset'inde | Üç tema canlı prototiple karşılaştırıldı (Kumsal kâğıdı, Gece denizi, Belgesel); doğa belgeseli havası seçildi. Yazı tipleri OFL, oyunla dağıtılabilir | Toprak |

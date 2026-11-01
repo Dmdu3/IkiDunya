@@ -86,8 +86,7 @@ namespace IkiDunya.Core
 
         private void AdimBasladi(Adim adim)
         {
-            SesAyarlari.AdimSesi s = ayarlar.AdimSesiAl(adim.Tur);
-            Degistir(s?.Ortam, s?.Muzik);
+            Degistir(ayarlar.OrtamAl(adim), ayarlar.AdimSesiAl(adim.Tur)?.Muzik);
         }
 
         private void MenuyeDonuldu() => Degistir(null, ayarlar.MenuMuzigi);

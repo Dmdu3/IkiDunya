@@ -175,3 +175,4 @@ MonoBehaviour:
   parcalar:
   - {fileID: 4338765473247611403}
   renk: {r: 0.95, g: 0.95, b: 0.8, a: 1}
+  malzemeSirasi: -1

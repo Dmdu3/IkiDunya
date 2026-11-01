@@ -73,6 +73,7 @@ namespace IkiDunya.Hazards
             }
             if (sira < 0) return;
             Debug.Log($"KayipIziHaritasi: kanıt açıldı — {kumsal.KayipIzleri[sira].Kanit}.");
+            Ses.Cal(SesTuru.KanitBulundu);
             kumsal.KanitAc(sira);
         }
     }

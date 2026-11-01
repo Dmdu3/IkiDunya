@@ -1,0 +1,9 @@
+{
+  "id": "kart_acil_sulama",
+  "ad": "Acil Sulama",
+  "tur": "Acil",
+  "butce": 2,
+  "bakim": 0,
+  "aciklama": "Bütün yuvalar bu tur ve bu gece serinletilir.",
+  "ek": "İkinci Isı kanıtıyla etki güçlenir."
+}

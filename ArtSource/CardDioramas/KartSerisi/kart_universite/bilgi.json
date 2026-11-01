@@ -1,0 +1,9 @@
+{
+  "id": "kart_universite",
+  "ad": "Üniversite Ortaklığı",
+  "tur": "Araştırma",
+  "butce": 3,
+  "bakim": 0,
+  "aciklama": "Bundan sonra her tur bir kart fazla gelir.",
+  "ek": "Bir kez oynanır; sonraki turlarda etkilidir."
+}

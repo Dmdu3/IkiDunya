@@ -45,6 +45,7 @@ GameObject:
   - component: {fileID: 185904396725328860}
   - component: {fileID: 456658867981907100}
   - component: {fileID: 2474077975284254519}
+  - component: {fileID: 7213826319903669812}
   m_Layer: 14
   m_Name: Yavru
   m_TagString: Untagged
@@ -133,6 +134,24 @@ MonoBehaviour:
   tur: 0
   gorunus: {fileID: 6306635591573807861}
   kazma: {fileID: 0}
+--- !u!114 &7213826319903669812
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7114611966992186282}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 71a1934396964e24882577e2ca4b9ef7, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::IkiDunya.Turtle.IzBirakici
+  malzeme: {fileID: 2100000, guid: e3a6f42b02f242a45be4e7ecc4768f62, type: 2}
+  aralik: 0.12
+  boy: {x: 0.06, y: 0.04}
+  enFazla: 12
+  omur: 25
+  yanAcikligi: 0.06
 --- !u!1001 &7007139809608054760
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -175,11 +194,11 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 3944017615918732573, guid: 4f34768761e03e1419e7bb9e35cb8b49, type: 3}
       propertyPath: m_LocalRotation.y
-      value: 0
+      value: -0
       objectReference: {fileID: 0}
     - target: {fileID: 3944017615918732573, guid: 4f34768761e03e1419e7bb9e35cb8b49, type: 3}
       propertyPath: m_LocalRotation.z
-      value: 0
+      value: -0
       objectReference: {fileID: 0}
     - target: {fileID: 3944017615918732573, guid: 4f34768761e03e1419e7bb9e35cb8b49, type: 3}
       propertyPath: m_LocalEulerAnglesHint.x

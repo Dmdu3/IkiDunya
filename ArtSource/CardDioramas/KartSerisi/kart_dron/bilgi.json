@@ -1,0 +1,9 @@
+{
+  "id": "kart_dron",
+  "ad": "Dron Taraması",
+  "tur": "Araştırma",
+  "butce": 2,
+  "bakim": 0,
+  "aciklama": "Haritadaki bütün kayıp izleri incelenir, kanıtları açılır.",
+  "ek": "Haritadaki açılmamış izleri tarar."
+}

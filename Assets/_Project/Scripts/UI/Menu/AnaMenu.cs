@@ -1,5 +1,6 @@
 using IkiDunya.Core;
 using UnityEngine;
+using UnityEngine.EventSystems;
 using UnityEngine.UI;
 
 namespace IkiDunya.UI.Menu
@@ -17,6 +18,7 @@ namespace IkiDunya.UI.Menu
 
         private void Awake()
         {
+            DugmeSesi.Bagla(yeniOyun, devamEt, ayarlar, cikis, parkurlar);
             yeniOyun.onClick.AddListener(OyunAkisi.YeniOyun);
             devamEt.onClick.AddListener(OyunAkisi.DevamEt);
             ayarlar.onClick.AddListener(ayarlarPaneli.Ac);
@@ -29,6 +31,8 @@ namespace IkiDunya.UI.Menu
             devamEt.interactable = OyunAkisi.KayitVar;
             Cursor.lockState = CursorLockMode.None;
             Cursor.visible = true;
+            // Oyun koluyla gezilebilsin: ilk düğme seçili.
+            if (EventSystem.current != null) EventSystem.current.SetSelectedGameObject(yeniOyun.gameObject);
         }
 
         private static void Cik()

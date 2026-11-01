@@ -4,7 +4,7 @@ ozet: Mekanik tarafın durumu ve sistemlerin haritası. Bir sistem eklendikçe y
 
 # Durum
 
-Son güncelleme: 2026-11-01 — Alpha main'de, deneme listesi tamam (editörde 300+ FPS). Main'de: insan kısmı (yönetim ekranı, Faz 0–4). Main'de: Yusuf'un kumsalı (#40). Main'de: minigame sahneleri ve Yusuf'un canlıları (#43, #45). Dalda (`umut/metin-animasyon-kamera`): bütün metinlerin ilk taslağı, kodla animasyon, birinci şahısta kendi gövdesi gizli. Unity'de henüz denenmedi.
+Son güncelleme: 2026-11-01 — Dalda (`umut/cila`): Hepsini kur, PC build, F6 paneli, geri bildirim efektleri, kamera hissi, gece gökyüzü ve izler, ara sahneler, final jeneriği, yeni ayarlar, oyun kolu, performans, Kendini dene. Alpha main'de, deneme listesi tamam (editörde 300+ FPS). Main'de: insan kısmı (yönetim ekranı, Faz 0–4). Main'de: Yusuf'un kumsalı (#40). Main'de: minigame sahneleri ve Yusuf'un canlıları (#43, #45). Dalda (`umut/metin-animasyon-kamera`): bütün metinlerin ilk taslağı, kodla animasyon, birinci şahısta kendi gövdesi gizli. Unity'de henüz denenmedi.
 
 ## Sistem haritası
 
@@ -34,15 +34,16 @@ Son güncelleme: 2026-11-01 — Alpha main'de, deneme listesi tamam (editörde 3
 | Çöp yığını (anne takılır) | `Hazards` | `TrashTrap` | Umut | Yapılıyor |
 | İnsanlar ve görüş konisi | `Hazards` | `Insan`, `InsanAyarlari` | Umut | Yapılıyor |
 | Sıcak kum lekesi, gün doğumu, dalga | `Hazards` | `HazardZone`, `GunDogumu`, `Dalga`, `KacisAyarlari` | Umut | Yapılıyor |
-| Kumsalı durumdan kurma (çöp, şezlong, ışık, insan, araç izi, gölgelik, kayıp izleri) | `Hazards` | `KumsalYapilari` | Umut | Yapılıyor |
+| Kumsalı durumdan kurma (çöp, halka, şezlong, şemsiye, ışık, insan, araç izi, gölgelik, çit, gözcü kulübesi, kum torbası seddi, plaj tabelası, kayıp izleri) | `Hazards` | `KumsalYapilari` | Umut | Yapılıyor |
 | Kumsalın ilk hali | `Core` | `KumsalBaslangici`, `DenemeKumsali` | Umut | Yapılıyor |
 | Kaçışta çöp (ağ, halka, tekerlek izi) | `Hazards` | `TrashTrap` | Umut | Yapılıyor |
 | Avcılar | `Hazards` | `Yengec`, `Marti`, `Tilki`, `AvciAyarlari`, `Cover`; `Core/IAvlanabilir` | Umut | Yapılıyor |
 | Işık kaynakları | `Hazards` | `IsikKaynagi` | Umut | Yapılıyor |
 | Kayıp izleri | `Turtle`, `Hazards` | `KacisGecesi` yazar, `KumsalYapilari` kumda gösterir, `KayipIziHaritasi` insan turunda simge + kanıt | Umut | Yapılıyor |
 | İpuçları (ilk karşılaşmada bir kez) | `Core`, `UI/Night` | `Ipucu`, `IpucuPaneli` | Umut | Yapılıyor (yazılar Yusuf'ta) |
-| Ses: olaylar, ortam sesi, müzik | `Core` | `Ses`, `SesYoneticisi`, `SesAyarlari` | Umut | Yapılıyor (klipler Abdü'de) |
+| Ses: olaylar, ortam sesi, müzik | `Core` | `Ses`, `SesYoneticisi`, `SesAyarlari` | Umut | Yapılıyor (ilk klipler bağlı, kalanlar Yusuf'ta) |
 | Kumsal haritası ve tur akışı | `Management`, `UI/Management` | `InsanTuru`, `HaritaSecici`, `YuvaHaritasi`, `YonetimArayuzu` | Toprak | Yapılıyor |
+| Yönetim ekranı görünümü | `UI/Management`, `Art/UI/Resources/KartDioramalari` | `YonetimArayuzu` | Toprak / Abdü | Kart ve gönüllü dioramaları, kompakt paneller ve hedef seçerken gizlenen alt panel eklendi. "Belgesel" temasında: koyu paneller, serif başlıklar, kum vurgusu. Yerleşim tuval biriminde (yazı boyutuyla büyür, 1.5'te çakışmasız denendi); hedef seçerken istem ve Geri alttaki şeritte; kart bilgisi sağda kart panelinin üstünde. |
 | Kaynaklar (bütçe, gönüllü, halk desteği, bakım), rapor, kayıt | `Management` | `YonetimDurumu`, `YonetimAyarlari`; `Core/IOyunVerisi` | Toprak | Yapılıyor |
 | Paydaşlar (Otel, Belediye, Balıkçılar) | `Management` | `Paydas`, `YonetimDurumu`, `YonetimAyarlari` | Toprak | Yapılıyor (Unity'de bir turda denendi, 2026-11-01) |
 | Gönüllüler ve görevler | `Management` | `GorevTanimi`, `Etkiler` | Toprak | Yapılıyor |
@@ -75,6 +76,10 @@ Bütçe, gönüllü ve halk desteği `KumsalDurumu`'nda değil; insan kısmını
 
 ## Araçlar
 
+- **İki Dünya → Hepsini kur:** sorusuz, sırayla Menü, Kumsal, Bölüm 1, Bölüm 5 ve üç parkur sahnesini kurar, Build Settings'teki sahne listesini düzeltir, Menü'yü açar. Model ya da metin değişince tek tık.
+- **İki Dünya → PC build al:** `Build/Windows/IkiDunya.exe` (Windows 64-bit). `Build/` repoya girmez.
+- **İki Dünya → Kendini dene:** oyunu açmadan kontroller (akış sırası, süreli etkilerin geri alınması, kayıp izi → kanıt, metinler.md'de tekrar eden id, kodda olup metinler.md'de olmayan id). Sonuç Console'da.
+- **F6 (oyunda, geliştirici paneli):** akıştaki herhangi bir adıma ya da parkura atlar, menüye döner. Sadece editörde ve development build'de.
 - **İki Dünya → Layer'ları kur:** README'deki layer'ları boş yuvalara ekler.
 - **İki Dünya → Gri kutu kumsalı kur (yuva gecesi):** `Scenes/Prototypes/GriKumsal.unity` — kumsal, termal görünüm, şezlong, çöp yığını, 2 insan (biri fenerli), anne (hareket, kazma), yuva gecesi, enerji ve kazma çubuğu.
 - **İki Dünya → Kumsal sahnesini kur (oyun):** `Scenes/Levels/Kumsal.unity` — iki gecenin hepsi ve geçici insan turu; her grup (`YuvaGecesiNesneleri`, `KacisGecesiNesneleri`, `InsanTuruNesneleri`) sadece kendi adımında açılır. `Sistemler` prefab'ı da konur.
@@ -115,7 +120,7 @@ Henüz yok: yok (animasyonlar modeller gelince).
 
 **Uyarılar.** Teknenin suyun hemen altına düşen gölgesi teknenin 6 m önünde gider, arkasında pervane köpüğü titrer; su altındaki oyuncu tekneyi gelmeden görür. Hayalet ağın kenarları ve misina yavaşça parıldar (`Parilti`), uzaktan seçilir.
 
-Henüz yok: pervane sesi klibi (Abdü).
+Pervane sesi klibi bağlı (`Audio/SFX/Pervane.wav`).
 
 ## Menü, kayıt, final (Faz 7)
 
@@ -170,6 +175,13 @@ Henüz yok: pervane sesi klibi (Abdü).
 | Yeme, AgdanKurtulma, KontrolNoktasi, DalgaVurdu | Denizde |
 | Pervane | Tekne (döngü) |
 | Ipucu | İpucu kutusu açılınca |
+| DugmeTikla | Menü ve yönetim düğmeleri (`UI/DugmeSesi`), tuş atama (`TusSatiri`), İleri ve Space (`InsanTuru`), hedefli kart seçimi, haritada görev verme |
+| KartOyna, KartDagit | Kart oynanınca, el dağıtılınca (`InsanTuru`) |
+| KanitBulundu | Haritada kayıp izine tıklanıp kanıt açılınca (`KayipIziHaritasi`) |
+
+**Klipler (2026-11-01, Yusuf).** Bütün efektler (26) ve bütün adımların ortam sesi bağlı (kaynak ve lisans `docs/varliklar.md`'de). Ortam: `Donus`, `IlkYuzus` ve `Parkur` su altı, `YuvaGecesi` ve `KacisGecesi` kumsal gecesi, `InsanTuru` gündüz kumsal, `Final` sakin deniz. Çöp Seli gece kumsalda geçtiği için `SesAyarlari`'ndaki kendi yuvasından (`copSeliOrtami`) kumsal gecesi sesini çalar.
+
+**Müzikler (2026-11-01, Yusuf).** `Audio/Music/` altında; menü ve adımların müziği bağlı, adla aynı olan dosya bağlı olandır (`Donus.wav`, `InsanTuru.mp3` …), `Adim_Parca` adlı dosyalar bağlı olmayan yedektir. Düzeyler henüz eşitlenmedi, oyunda ortam sesiyle birlikte dinlenmedi.
 
 ## İnsan kısmı (yönetim ekranı)
 
@@ -192,7 +204,7 @@ Toprak'ın onayıyla Umut yazdı (2026-11-01); kodu artık Toprak sürdürür. S
 
 **Metinler.** Bütün yazılar id ile (kart ve görev adları metinler.md'de var; açıklamalar `Açıklama` sütunundan `id_aciklama`, olay seçenekleri `Seçenek A/B` sütunlarından `id_a`, `id_b` olarak aktarılır). Ekranın kendi yazıları için yeni id'ler Yusuf'ta.
 
-Henüz yok: kartların ve olay penceresinin görsel hali (Faz 9), arayüz sesleri, gönüllü atamasını geri alma.
+Henüz yok: kartların ve olay penceresinin görsel hali (Faz 9), gönüllü atamasını geri alma.
 
 ## Kumsal arazisi (Yusuf'un modelleri)
 
@@ -244,20 +256,37 @@ Uyarılar: kameralardaki kulak `Core/TekKulak` ile tek (açılan kamera alır); 
 - **Model dönüşü:** kalıbın kendi dönüşü korunur (Blender eksen düzeltmesi; tekne dik duruyordu). Denizanası artık sürekli yükselmez, aynı derinlik çevresinde kasılır.
 - **Poşet:** −10 enerji (`DenizTehlikeAyarlari.posetEnerjiKaybi`), yarı hız, `PosetYuttu` sesi, `ipucu_poset_yuttu`, deniz göstergesinde yavaşlık çubuğu.
 
+## Cila (#64)
+
+- **Geri bildirim (`Core/Geribildirim`, `GeribildirimAyarlari`, `UI/Night/EkranEfektleri`):** çarpma ve yakalanmada kamera sarsıntısı ve kırmızı flaş; poşette kahverengi bulanma; yavru kurtulunca yeşil parıltı; enerji azalınca (`Turtle/EnerjiUyarisi`) ekran kenarı kararır ve kalp atışı sesi (`SesTuru.KalpAtisi`, ses yuvası boş; `SesTuru`'nda Yusuf'un seslerinden sonra, en sonda).
+- **Kamera:** yürürken/yüzerken hafif baş sallanması, Shift'te görüş açısı genişler, oyun kolunun sağ çubuğuyla bakış. Sayılar `KameraAyarlari` ve `GeribildirimAyarlari`'nda.
+- **Gece:** yıldızlar ve ay (`Core/GeceGokyuzu`, shader `IkiDunya/Gokyuzu`; `OrtamIsigi` gece açar); anne ve yavrular kumda iz bırakır (`Turtle/IzBirakici`, 25 sn'de silinir).
+- **Su altı ışık hüzmeleri (`Core/SuIsiklari`):** deniz sahnelerinde yüzücünün çevresinde; suyun üstündeyken görünmez.
+- **Ara sahneler (`Core/AraSahne`):** Bölüm 1, yuva gecesi, kaçış gecesi ve Bölüm 5 başında kamera geniş bir açıdan oyuncunun gözüne süzülür; bu sırada tuşlar kilitli (`GameInput.Kilitli`).
+- **Final:** kamera yürüyüş boyunca kayar, yazılar belirir, sonra jenerik (`jenerik` metni) akar; tıklayınca ya da jenerik bitince oyun biter.
+- **Ayarlar:** yazı boyutu (bütün arayüz, `Core/ArayuzOlcegi`), ipuçları aç/kapa, tam ekran, çözünürlük, grafik kalitesi (düşük/orta/yüksek). Ayarlar paneli tam ekran koyu zeminde açılır; tuşları sıfırlama düğmesi tuş sütununda.
+- **Yazı boyutu ve taşma (`Core/ArayuzOlcegi`):** yazı boyutu 0.75–1.5 tuvali ölçekler (1.5'te tuval 1280x720 gibi davranır). Tuval her en-boy oranında en az referans kadar kalır (`Expand`). Tuvaldeki her yazı kutusuna sığmazsa kendi boyutunun %60'ına kadar küçülür (best fit); kodla kurulan yazılar `ArayuzOlcegi.Boyut(yazi, boyut)` ile boyut alır. **Kural:** yazıyla büyümesi gereken paneller ekran oranıyla (anchor yüzdesi) değil tuval birimiyle (sabit boy + köşe çapası) kurulur ve 1280x720'ye sığacak boyda seçilir; yoksa yazı büyür, kutu büyümez. Kurulum kodunda oranla verilen kutu için `GriKumsalKur.Sabitle(rect, enAz, enCok)`: kutu 1920x1080'deki yerinde kalır ama en yakın kenara (ya da ortaya) çapalanıp sabit boy alır, büyürken ekrandan taşmaz. Yönetim ekranı, ipucu kutusu, ana menü, duraklatma, parkurlar, gece/deniz çubukları, parkur süre/sonuç kutuları, gece sonuç paneli (boyu satır sayısına göre) ve bölüm geçiş yazısı bu kurala göre; 1.5'te çakışmasız denendi. Sonuç paneli açıkken ipucu kutusu gizlenir ve bekler (`GeceSonucuPaneli.Acik`).
+- **Arayüz teması "Belgesel" (`Core/ArayuzTemasi`, `ScriptableObjects/Settings/ArayuzTemasi`):** bütün arayüzün yazı tipleri ve renkleri tek asset'te; kurulum kodu ve `YonetimArayuzu` renkleri buradan alır, koda renk yazılmaz. Başlıklar serif (Lora), gövde sans (Source Sans 3 Regular, kalın yerlerde SemiBold); dosyalar ve OFL lisansları `Art/UI/Fonts`. Koyu yarı saydam paneller, krem yazı, kum rengi vurgu (seçili seçenek, başlık altı çizgi, aşama). Menüler kutusuz: sol üstte serif başlık + kısa vurgu çizgisi, altında sola yaslı seçenekler (`UI/Menu/MenuSecenegi`: seçiliyken vurgu rengi ve solunda çizgi, fare üstüne gelince seçer). Menü ve ayarların zemini alacakaranlık ufku, duraklatmada oyunun üstünde soldan koyulaşan perde (`UI/Menu/UfukZemini`, kodla çizilir). Renk değişikliği asset'ten yapılır; kurulumla gelen renkler (çubuk zemini, panel) sahneyi yeniden kurunca güncellenir.
+- **İpucu kutusu:** üstte ortada (yönetimin üst çubuğunun altında), boyu yazıya göre; iki yanda 440 birim boş bırakır ki yönetimin sol paneli ve kart bilgisiyle çakışmasın.
+- **Oyun kolu:** sol çubuk hareket, sağ çubuk bakış, LT hızlı, A zıpla/dal, X etkileş, LB/RB kazma sol/sağ, Y ya da d-pad yukarı kazmada yukarı, sağ çubuğa basış termal, Start duraklat. Menülerde ilk düğme seçili gelir. İnsan kısmının harita ekranı (Toprak) oyun koluyla denenmedi.
+- **Performans:** deniz kamerasında uzak düzlem 150 m (sis zaten 100 m'de örter); insanlar, kayalar, deniz çayırı ve deniz tabanının süsleri ekranda çok küçülünce çizilmez (LODGroup), küçük süsler gölge atmaz.
 
 ## Kart yapıları: kum torbası, gözcü kulübesi, plaj tabelası (Yusuf'un modelleri, 5. parti)
 
-Kaynak betikler `Blender/Yusuf/` (`kum_torbasi.py`, `gozcu_kulubesi.py`, `plaj_tabelasi.py`, toplu: `kumsal_objeleri_5_uret.py`). FBX'ler henüz üretilmedi: Yusuf kendi Blender'ında `blender -b -P Blender/Yusuf/kumsal_objeleri_5_uret.py -- Assets/Sandbox/Yusuf/KumsalObjeleri Blender/Yusuf/kumsal_objeleri_5.blend` çalıştırınca `Sandbox/Yusuf/KumsalObjeleri/` altına düşer. Düzen öteki kumsal objeleriyle aynı (kök tabanın ortasında, metre, önü Blender'da −y).
+Kaynak betikler `Blender/Yusuf/` (`kum_torbasi.py`, `gozcu_kulubesi.py`, `plaj_tabelasi.py`, toplu: `kumsal_objeleri_5_uret.py`). FBX'ler `Models/Kumsal/` altında (`blender -b -P Blender/Yusuf/kumsal_objeleri_5_uret.py -- Assets/_Project/Models/Kumsal Blender/Yusuf/kumsal_objeleri_5.blend`), malzemeleri öteki kumsal objeleri gibi FBX'in içinde. Düzen öteki kumsal objeleriyle aynı (kök tabanın ortasında, metre, önü Blender'da −y).
 - **`Kum_Torbasi_Seddi`** (Kum Torbası Seddi kartı): 2 m'lik parça (x = −1..+1), boy ~0,35 m, derinlik ~0,8 m; 2 m arayla dönüşsüz dizilince dikişsiz. Tek çuval: `Kum_Torbasi` (0,6 × 0,36 × 0,13 m).
 - **`Gozcu_Kulubesi`** (Gözcü Kulübesi kartı): ayak tabanı 2,3 × 2,3 m, döşeme 2,2 m, mahya ~4,6 m, bayrak ~5,35 m; önde ~0,9 m taşan merdiven. Ön saçakta yanan fener (`P_Kehribar`).
 - **`Plaj_Tabelasi`** (Plaj Tabelaları kartı): iki direkli pano (1,4 × 0,9 m, boy ~2,1 m); üzerinde yazı yok, resimler var (kaplumbağa, ışık yasağı, ayak izi yasağı). Pano yüzü ayrı malzeme (`Tabela_Yuzu`), Unity'de dokulu malzemeyle değiştirilebilir. Küçüğü `Plaj_Tabelasi_Kucuk` (tek direk, ~1,3 m).
 
-Henüz yok: bu yapılar için gri kutu ve koda bağlama (`KumsalYapilari`; kart etkileri Toprak'ta, yapı kalıpları Umut'ta).
+**Kumsala bağlandı (2026-11-01, Toprak).** Kalıplar `Prefabs/Structures/` altında, `KumsalYapilari` kurar:
+- Gece devriyesi olan bölge (Gözcü Kulübesi kartı, devriye görevi) → `GozcuKulubesi`, bölgenin sağında 31 m içeride, merdiveni denize dönük.
+- Kumul onarımı olan bölge (Kumul Onarımı ve Kum Torbası kartları) → `KumTorbasiSeddi` parçaları deniz kenarından 5 m'de, her parça kıyının o noktadaki yönüne döner; iki ucunda tek `KumTorbasi`.
+- İnsanı süreli azaltan etki süren bölge (Plaj Tabelaları) → `PlajTabelasi` / `PlajTabelasiKucuk` sırayla, 12 m'de. Durum `KumsalDurumu.InsanSureliAzaldi(bolge)`'dan okunur; etki sınırda kırpılıp hiç insan azaltmadıysa tabela çıkmaz.
 
-## Şamandıralar (Yusuf'un modelleri, 6. parti)
-
-Kaynak `Blender/Yusuf/samandira.py` (toplu: `kumsal_objeleri_6_uret.py`); FBX'ler Yusuf'un Blender'ında `Sandbox/Yusuf/KumsalObjeleri/` altına üretilecek. Kumsaldaki çöp şamandırası (`Models/Kumsal/Samandira.fbx`) ayrı, değişmedi.
-- **`Samandira_Isaret`**: çöp girdabında boşluğun iki yanındaki `BoslukIsareti` gri küresinin (0,5 m) yerine. ~0,46 m turuncu şamandıra, ekvatorunda ışıyan kuşak (`P_Isik_Parilti`), ip ve yosun; boy ~0,85 m. Kök ortada (suda asılı).
-- **`Samandira_Kontrol`**: Bölüm 1 ve 5'in kontrol noktasındaki sarı gri silindirin yerine. Gövde ~0,7 m çap, kafes direk ve tepede yanan fener (`P_Kehribar`), boy su üstünde ~1,25 m; kök su hizasında (gövdenin ~0,3 m'si ve zincir suyun altında).
-
-Henüz yok: koda bağlama (`Editor/GriDenizKur.cs`: `Halka` içindeki `BoslukIsareti` ve `Kontrol` içindeki `Samandira` primitive'leri; Umut).
+**Kullanılmayan öteki modeller de bağlandı (2026-11-01):**
+- `Ag`, `HayaletAg`, `Misina`, `OtelIsigi` kalıpları artık `Ag`, `Hayalet_Ag`, `Misina`, `Isik_Diregi` modelini gösterir; eski küpler collider olarak kaldı, renderer'ları kapalı. Hayalet ağ ve misinada `Parilti` modelin parıltı malzemesini (`malzemeSirasi`) yakar.
+- Bölüm 1 ve Poşet sürüsündeki elle kopyalanmış hayalet ağ/misina kopyaları kalıp örneğine çevrildi (kalıp değişince sahne de değişir).
+- Bölüm 1 ve Bölüm 5'teki şamandıra silindirleri `Samandira` modeli; Bölüm 5'in ikinci parlayan plastiği `Parlayan_Plastik_3`.
+- Çöp katmanında her ikinci ağ yerine `PlastikHalka` (aynı tuzak, daha küçük alan). Her ikinci şezlongun yanına `Semsiye` (sadece direği engel).
+- Tilki çitinin bittiği uçlara `TilkiCitiSolUc` (`Tilki_Citi_Kose`) ve `TilkiCitiSagUc` (`Tilki_Citi_Kose_Bas`); komşu bölgede de çit varsa uç konmaz.
+- Yuva haritasında yumurtalı yuvanın ortasında üç küre yerine `Yumurta_Kumesi` (`Prefabs/UI/YumurtaKumesiSimgesi`). Tek `Yumurta` modeli kullanılmıyor (kümenin içinde zaten var).

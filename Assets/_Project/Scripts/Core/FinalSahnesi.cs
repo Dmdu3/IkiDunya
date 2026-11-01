@@ -3,7 +3,7 @@ using UnityEngine.UI;
 
 namespace IkiDunya.Core
 {
-    /// <summary>"30 yıl sonra": büyümüş dişi kaplumbağa aynı kumsala yumurtlamaya döner. Temiz Enerji oynandıysa kumsal serin, oynanmadıysa sıcak ve kızgın. Sonunda tıklayınca oyun biter.</summary>
+    /// <summary>"30 yıl sonra": büyümüş dişi kaplumbağa aynı kumsala yumurtlamaya döner. Temiz Enerji oynandıysa kumsal serin, oynanmadıysa sıcak ve kızgın. Kamera yavaşça kayar, yazılar belirir, sonra jenerik akar; tıklayınca oyun biter.</summary>
     public class FinalSahnesi : MonoBehaviour
     {
         [SerializeField] private KumsalDurumu kumsal;
@@ -20,9 +20,21 @@ namespace IkiDunya.Core
         [SerializeField] private GameObject sicakIzler;
         [SerializeField] private Text baslik;
         [SerializeField] private Text kurtarilan;
+        [Tooltip("Yürüyüş boyunca kayan kamera; boşsa kamera sabit kalır.")]
+        [SerializeField] private Transform kamera;
+        [SerializeField] private Transform kameraSon;
+        [Tooltip("Başlık ve kurtarılan yazısı bununla belirir.")]
+        [SerializeField] private CanvasGroup yazilar;
+        [SerializeField] private float yaziBelirmeSuresi = 3f;
+        [Tooltip("Yürüyüşten sonra aşağıdan yukarı akan jenerik.")]
+        [SerializeField] private RectTransform jenerik;
+        [SerializeField] private float jenerikSuresi = 20f;
 
         private Vector3 baslangic;
         private Color gunesinIlkRengi;
+        private Vector3 kameraIlkYer;
+        private Quaternion kameraIlkDonus;
+        private float jenerikBaslangicY;
         private float gecen;
         private bool aktif;
 
@@ -30,6 +42,8 @@ namespace IkiDunya.Core
         {
             baslangic = kaplumbaga.position;
             gunesinIlkRengi = gunes.color;
+            if (kamera != null) { kameraIlkYer = kamera.position; kameraIlkDonus = kamera.rotation; }
+            if (jenerik != null) jenerikBaslangicY = jenerik.anchoredPosition.y;
         }
 
         private void OnEnable()
@@ -43,6 +57,15 @@ namespace IkiDunya.Core
             sicakIzler.SetActive(!kumsal.TemizEnerji);
             baslik.text = metinler.Al("final_30_yil");
             kurtarilan.text = $"{metinler.Al("final_kurtarilan")} {kumsal.DenizeUlasanYavru}";
+
+            if (kamera != null) kamera.SetPositionAndRotation(kameraIlkYer, kameraIlkDonus);
+            if (yazilar != null) yazilar.alpha = 0f;
+            if (jenerik != null)
+            {
+                jenerik.anchoredPosition = new Vector2(jenerik.anchoredPosition.x, jenerikBaslangicY);
+                if (jenerik.TryGetComponent(out Text jenerikYazisi)) jenerikYazisi.text = metinler.Al("jenerik");
+                jenerik.gameObject.SetActive(false);
+            }
         }
 
         private void OnDisable()
@@ -63,8 +86,26 @@ namespace IkiDunya.Core
             yer.y = Mathf.Max(yer.y, Zemin.Yukseklik(yer, yer.y));
             kaplumbaga.position = yer;
 
-            // Kaplumbağa yürürken tıklama atlanmaz; sonra tıklayınca oyun biter.
-            if (gecen < yuruyusSuresi || !GameInput.TiklaBasildi) return;
+            float oran = Mathf.SmoothStep(0f, 1f, Mathf.Clamp01(gecen / yuruyusSuresi));
+            if (kamera != null && kameraSon != null)
+                kamera.SetPositionAndRotation(Vector3.Lerp(kameraIlkYer, kameraSon.position, oran),
+                    Quaternion.Slerp(kameraIlkDonus, kameraSon.rotation, oran));
+            // Yazılar yürüyüşün ortasından itibaren belirir.
+            if (yazilar != null) yazilar.alpha = Mathf.Clamp01((gecen - yuruyusSuresi * 0.5f) / yaziBelirmeSuresi);
+
+            // Kaplumbağa yürürken tıklama atlanmaz; sonra jenerik akar, tıklayınca ya da jenerik bitince oyun biter.
+            if (gecen < yuruyusSuresi) return;
+            float jenerikOrani = 1f;
+            if (jenerik != null)
+            {
+                jenerik.gameObject.SetActive(true);
+                jenerikOrani = Mathf.Clamp01((gecen - yuruyusSuresi) / jenerikSuresi);
+                // Jenerik başlığın üstünden geçmesin diye yazılar söner.
+                if (yazilar != null) yazilar.alpha = Mathf.Min(yazilar.alpha, 1f - Mathf.Clamp01((gecen - yuruyusSuresi) / yaziBelirmeSuresi));
+                float yol = jenerik.rect.height + ((RectTransform)jenerik.parent).rect.height;
+                jenerik.anchoredPosition = new Vector2(jenerik.anchoredPosition.x, jenerikBaslangicY + yol * jenerikOrani);
+            }
+            if (!GameInput.TiklaBasildi && jenerikOrani < 1f) return;
             if (OyunAkisi.AdimBitti()) aktif = false;
         }
     }
